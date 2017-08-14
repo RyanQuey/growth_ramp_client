@@ -3,15 +3,22 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import registerServiceWorker from './registerServiceWorker';
-import admin from 'firebase-admin'
-import serviceAccount from './serviceAccountKey.json'
+// redux stuff
+import { createStore, applyMiddleware } from 'redux'
+import createSagaMiddleware from 'redux-saga'
 
-// initialize firebase
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-  databaseURL: "https://growth-tools-70f94.firebaseio.com"
-});
+import store from './reducers'
+import fetchUserSaga from './sagas'
 
+/* Seems to already be ran in the reducer???
+ *
+ * const sagaMiddleware = createSagaMiddleware()
+const store = createStore(
+  reducer,
+  applyMiddleware(sagaMiddleware)
+)
 
+sagaMiddleware.run(fetchUserSaga)
+*/
 ReactDOM.render(<App />, document.getElementById('root'));
 registerServiceWorker();
