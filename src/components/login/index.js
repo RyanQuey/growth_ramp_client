@@ -21,10 +21,10 @@ class Login extends Component {
   }
 
   providerLogin(provider) {
-      this.props.signInRequested({
-        signInType: 'PROVIDER', 
-        provider
-      })
+    this.props.signInRequested({
+      signInType: 'PROVIDER', 
+      provider
+    })
   }
 
   render() {
@@ -32,10 +32,11 @@ class Login extends Component {
     return (
       <div id="login">
         <form onSubmit={c.onSubmit}>
-          <label> email </label>
+          <label> Login with email </label>
           <input onChange={c.handleChange} value={c.state.value}></input>
         </form>
         <button onClick={c.providerLogin.bind(c, "GOOGLE")}> Login with Google</button>
+        <button onClick={c.providerLogin.bind(c, "FACEBOOK")}> Login with Facebook</button>
       </div>
     );
   }
