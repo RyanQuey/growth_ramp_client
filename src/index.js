@@ -6,6 +6,7 @@ import registerServiceWorker from './registerServiceWorker';
 // redux stuff
 import { createStore, applyMiddleware } from 'redux'
 import createSagaMiddleware from 'redux-saga'
+import { Provider } from 'react-redux';
 
 import store from './reducers'
 import fetchUserSaga from './sagas'
@@ -20,5 +21,9 @@ const store = createStore(
 
 sagaMiddleware.run(fetchUserSaga)
 */
-ReactDOM.render(<App />, document.getElementById('root'));
+ReactDOM.render(
+  <Provider store={store}>
+    <App />
+  </Provider>, document.getElementById('root')
+);
 registerServiceWorker();
