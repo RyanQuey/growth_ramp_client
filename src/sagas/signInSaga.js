@@ -55,16 +55,13 @@ function* signInWithProvider(provider) {
       break
     case 'GOOGLE':
       authProvider = new firebase.auth.GoogleAuthProvider()
-console.log("regarding in", authProvider );
       break
   }
 
   const signInResult = yield firebase.auth()
     .signInWithPopup(authProvider)
     .then((result) => {
-console.log(result);
-      // This gives you a Google Access Token. You can use it to access the Google API.
-      // not doing anything with the token yet
+      // This gives you a Auth Access Token. You can use it to access the Google API/Facebook API etc..
       var token = result.credential.accessToken;
       //  The signed-in user info.
       //  Only using this data for now, so assigning to the result.user
@@ -73,7 +70,7 @@ console.log(result);
         result.user.history = result.history
       }
 
-console.log( {user: result.user} );
+      console.log( "sign in result:", result );
       return success( {user: result.user} )
     }).catch(function(error) {
       // Handle Errors here.
@@ -83,14 +80,13 @@ console.log( {user: result.user} );
       var email = error.email;
       // The firebase.auth.AuthCredential type that was used.
       var credential = error.credential;
-console.log(error);
+      console.log("PROVIDER SIGN IN ERROR:", error);
     }); 
 
   return signInResult
 }
 
 function* signIn(action) {
-console.log("action", action);
   try {
     const signInType = action.payload.signInType
     const credentials = action.payload.credentials
@@ -114,7 +110,6 @@ console.log("action", action);
 
     if (signInResult) {
       const user = signInResult.user
-console.log(signInResult);
       const userAuthData = {
         displayName: user.displayName,
         email: user.email,
@@ -123,7 +118,6 @@ console.log(signInResult);
         redirect: user.redirect,
         uid: user.uid,
       }
-console.log('user auth data', userAuthData)
       yield put(userFetchRequested(userAuthData))
     } else {
       //

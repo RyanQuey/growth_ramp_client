@@ -3,15 +3,27 @@ import fbApp from '../../firebaseApp';
 const database = fbApp.database();
 
 class ShareButton extends Component {
+  constructor() {
+    super()
+    this.handleChange = this.handleChange.bind(this)
+    this.onSubmit = this.onSubmit.bind(this)
+  }
 
   handleChange(e) {
     const value = e.target.value;
-    //this.setState({value});
-    database.ref('post/').set("this is a test");
+    this.setState({value});
   }
 
   onSubmit() {
-    database.ref('post/').set(" I submit");
+    console.log( this.state.value );//database.ref('post/').set(" I submit");
+    //make sure user cannot submit before login... Or I have to use the watcher that firebase provides
+    var user = firebase.auth().currentUser;
+
+    if (user) {
+    // User is signed in.
+    } else {
+    //   // No user is signed in.
+    }
   }
 
   render() {

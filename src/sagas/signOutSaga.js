@@ -1,19 +1,19 @@
 import 'babel-polyfill'
 import { put, takeLatest } from 'redux-saga/effects'
-import fbApp from '../firebaseApp.js'
+import firebase from 'firebase'
 import { SIGN_OUT_REQUESTED } from '../actions/types'
 import { signOut } from '../actions'
 
 function* signUserOut() {
   try {
-    const isSignedOut = yield fbApp.auth().signOut().then(() => null)
-
-    console.log('isSignedOut?', isSignedOut)
-    yield put(signOut(isSignedOut))
+    //actually call the signout
+    yield firebase.auth().signOut()
+    //handle the successful signout
+    yield put(signOut(true))
 
   } catch (e) {
-    console.log('There was an error in the signUserOut generator function', e.message)
-    yield put(signOut('err'))
+    console.log('There was an error in the signUserOut:', e.message)
+    //yield put(signOut('err'))
   }
 }
 

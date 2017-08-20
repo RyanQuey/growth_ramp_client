@@ -23,7 +23,8 @@ const userReducer = (state = null, action) => {
       return Object.assign({}, state, { [action.payload.name]: action.payload.value })
 
     case SIGN_OUT:
-      return action.isSignedOut ? state : null
+      console.log(" current state", state);
+      return Object.assign({}, state) //need to remove the remove user from state somehow... Or do I? Whatever the case is, this is breaking
 
     case USER_FETCH_SUCCEEDED:
       console.log('Merge old and new user data:', action.payload)
