@@ -15,9 +15,9 @@ class Login extends Component {
       if (user) {
         c.setState({loggedIn: true})
         // User is signed in.
-        } else {
+      } else {
         c.setState({loggedIn: false})
-        //       // No user is signed in.
+        // No user is signed in.
       }
     });
     this.handleChange = this.handleChange.bind(this);
@@ -37,15 +37,22 @@ class Login extends Component {
     })
   }
 
-  handleSignOut() {
+  handleSignOut(e) {
+    e.preventDefault()
+    console.log(" logout click");
     this.props.signOutRequested()
   }
 
   render() {
     const c = this;
+console.log(c.state.loggedIn);
     return (
       <div id="login">
-        {c.loggedIn ? (
+        {c.state.loggedIn ? (
+          <div>
+            <button onClick={c.handleSignOut}>Logout</button>
+          </div>
+        ) : (
           <div>
             <form onSubmit={c.onSubmit}>
               <label> Login with email </label>
@@ -54,17 +61,13 @@ class Login extends Component {
             <button onClick={c.providerLogin.bind(c, "GOOGLE")}> Login with Google</button>
             <button onClick={c.providerLogin.bind(c, "FACEBOOK")}> Login with Facebook</button>
           </div>
-        ) : (
-          <div>
-            <button onClick={c.handleSignOut}>Logout</button>
-          </div>
         )}
       </div>
     );
   }
 }
 
-// getting redux state passed into the state of ConnectedLogin, to be passed into the props of Index
+// getting redux state passed into the *state* of ConnectedLogin, to be passed into the *props* of index
 const mapStateToProps = state => {
   return {
     
@@ -75,7 +78,10 @@ const mapStateToProps = state => {
 const mapDispatchToProps = (dispatch) => {
   return {
     signInRequested: (data) => dispatch(signInRequested(data)),
-    signOutRequested: () => dispatch(signOutRequested())
+    signOutRequested: () => {
+      console.log("the dispatch call from the props");
+      dispatch(signOutRequested())
+    }
   }
 }
 const ConnectedLogin = connect(mapStateToProps, mapDispatchToProps)(Login)

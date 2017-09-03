@@ -37,7 +37,7 @@ export const signOutRequested = payload => (
 )
 //finishes the signout process
 export const signOut = payload => (
-  { type: SIGN_OUT_REQUESTED, payload }
+  { type: SIGN_OUT, payload }
 )
 export const userFetchFailed = payload => (
   { type: USER_FETCH_FAILED, payload }

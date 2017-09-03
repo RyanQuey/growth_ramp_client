@@ -24,6 +24,7 @@ const userReducer = (state = null, action) => {
 
     case SIGN_OUT:
       console.log(" current state", state);
+
       return Object.assign({}, state) //need to remove the remove user from state somehow... Or do I? Whatever the case is, this is breaking
 
     case USER_FETCH_SUCCEEDED:
