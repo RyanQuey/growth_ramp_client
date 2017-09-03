@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+// here, adds the additional string functions
+import helpers from './helpers'
 import logo from './logo.svg';
 import ShareButton from './components/shareButton';
 import Login from './components/login';

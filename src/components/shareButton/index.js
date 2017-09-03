@@ -1,46 +1,55 @@
 import React, { Component } from 'react';
 import firebase from 'firebase';
+import helpers from '../../helpers'
 import fbApp from '../../firebaseApp';
+import PostDraft from '../postDraft';
 const database = fbApp.database();
 
 class ShareButton extends Component {
   constructor() {
     super()
-    this.handleChange = this.handleChange.bind(this)
-    this.onSubmit = this.onSubmit.bind(this)
+    this.state = {}
   }
 
-  handleChange(e) {
-    e.preventDefault()
-    const value = e.target.value;
-    this.setState({value});
+  componentDidMount() {
+    const c = this;
+    // TODO: move this into redux
+
+    firebase.auth().onAuthStateChanged(function(user) {
+      if (user) {
+        c.setState({loggedIn: true, user})
+        // User is signed in.
+        //eventually want to stuff to be in the redux
+        //Only want to retrieve this user's posts
+        database.ref(`post/`).on("value", (snapshot) => {
+          c.setState({posts: snapshot.val()})
+        }, (err) => {
+          helpers.handleError(`The read failed: ${err.code}`)
+        })
+      } else {
+        c.setState({loggedIn: false})
+        database.ref(`post/`).off("value")
+        // No user is signed in.
+      }
+    });
+
   }
 
-  onSubmit(e) {
-    e.preventDefault()
-    console.log( this.state.value );//database.ref('post/').set(" I submit");
-    //make sure user cannot submit before login... Or I have to use the watcher that firebase provides
-    var user = firebase.auth().currentUser;
-
-    if (user) {
-    // User is signed in.
-    } else {
-    // No user is signed in.
-    }
-  }
+  
 
   render() {
     const c = this;
     return (
       <div id="shareButton">
         <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload. Rebekah is the most beautiful woman in the whole wide world and I love her rice pillow
+          Rebekah is the most beautiful woman in the whole wide world and I love her rice pillow
         </p>
-        <form onSubmit={c.onSubmit}>
-          <label> Your post </label>
-          <input onChange={c.handleChange}></input>
-          <button type="submit">Submit</button>
-        </form>
+        {/*this.state.posts.map((post) => {return (*/ }
+        {this.state.loggedIn && this.state.posts ? ( 
+          <PostDraft post={this.state.posts} user={this.state.user}/>
+        ) : (
+          <div> Please login </div>
+        )} 
       </div>
     );
   }

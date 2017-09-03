@@ -11,6 +11,7 @@ class Login extends Component {
     c.state = {
       email: ""
     }
+    // TODO: move this into redux
     firebase.auth().onAuthStateChanged(function(user) {
       if (user) {
         c.setState({loggedIn: true})
