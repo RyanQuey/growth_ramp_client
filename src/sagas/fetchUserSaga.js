@@ -24,7 +24,7 @@ function* getUserData(userAuthInfo) {
     } else {
       ref.set(_.pick(userAuthInfo, ...properties))
 
-      userData = {}//maybe want to define as userAuthInfo ?
+      userData = {}//don't need to return anything, because will be combined with the info returned from firebase login anyways
     }
   }, (err) => {
     helpers.handleError(`The user read failed: ${err.code}`)
@@ -51,7 +51,7 @@ function* fetchData(action) {
       providerData[providerName] = p
     })*/
 
-    const user = Object.assign({}, userData, tokenStuff)
+    const user = Object.assign({}, userData, tokenStuff, {uid: pld.uid})
 
     yield all([
       put(userFetchSucceeded(user)),

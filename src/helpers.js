@@ -7,6 +7,9 @@ export default {
       if (err.code == 2500) {
         obj.message = "Facebook access expired; please login again"
         obj.origin = "facebook"
+      } else if (err.code == 506 && err.error_subcode == 1455006) {
+        obj.message = "Can't make the same status update twice in a row; Please edit and try again"
+        obj.origin = "facebook"
       }
     }
     console.log(err);

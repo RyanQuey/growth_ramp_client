@@ -70,6 +70,8 @@ function* signInWithProvider(provider) {
       let data = result.user
 
       // This gives you a Auth Access Token. You can use it to access the Google API/Facebook API etc..
+      // TODO: don't save this in the store, save it somewhere where it can be reused even if there is a screen refresh
+      //  Maybe can return using the firebase auth user data, just call itonce every time it is necessary to get the token or something?
       var token = result.credential.accessToken;
 
       if (provider  == 'FACEBOOK') {

@@ -55,7 +55,7 @@ class ShareButton extends Component {
           <div className="post-container">
             <div className="posts-draft-container">
               {this.props.posts && Object.keys(this.props.posts).map((key) => {return (
-                <PostDraft post={this.props.posts[key]} key={key}/>
+                <PostDraft post={Object.assign({id: key}, this.props.posts[key])} key={key}/>
               )})}
             </div>
             <a href="#" onClick={this.handleAddPost}>Add a post</a>

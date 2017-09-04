@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import theme from 'theme'
 import PropTypes from 'prop-types'
 import classes from './Input.scss'
 
@@ -83,7 +82,7 @@ class Input extends Component {
           onChange={this.handleChange}
           placeholder={this.props.placeholder}
           style={{ border: (
-            (this.props.color && this.state.errors.length === 0) && `2px solid ${theme.color[this.props.color]}`
+            (this.props.color && this.state.errors.length === 0) && `2px solid ${false && 'theme.color[this.props.color]'}`
           ) }}
           type={this.props.type}
           value={this.props.value}

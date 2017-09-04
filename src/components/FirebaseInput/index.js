@@ -1,8 +1,9 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
-import { setInputVal } from 'actions'
-import { Input } from 'components/elements'
+import helpers from '../../helpers'
+import { setInputVal } from '../../actions'
+import Input from '../Input'
 
 class FirebaseInput extends Component {
   constructor(props) {
@@ -29,6 +30,7 @@ class FirebaseInput extends Component {
     this.setState({ value })
 
     if (errors.length === 0) {
+//TODO: set the store state correctly!
       this.props.setInputVal({ name: this.props.name, value })
     }
   }
@@ -50,6 +52,7 @@ class FirebaseInput extends Component {
 
   render() {
     const c = this
+console.log( this.props.value);
     const input = (value, index, label) => (
       <Input
         id={this.props.id}
@@ -110,13 +113,18 @@ FirebaseInput.propTypes = {
   placeholder: PropTypes.string,
   label: PropTypes.string,
   labelAfter: PropTypes.bool,
+  keys: PropTypes.string.isRequired,
   color: PropTypes.string,
   style: PropTypes.string,
   addFieldButton: PropTypes.node,
 }
 
 const mapStateToProps = (state, ownProps) => {
-  return { [ownProps.name]: state.user[ownProps.name] }
+  let value = helpers.safeDataPath(state, ownProps.keys, "")
+
+  let obj = {}
+  obj[ownProps.name] = value
+  return obj
 }
 
 export default connect(mapStateToProps, { setInputVal })(FirebaseInput)

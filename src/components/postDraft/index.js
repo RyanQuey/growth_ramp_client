@@ -4,6 +4,7 @@ import helpers from '../../helpers'
 import fbApp from '../../firebaseApp';
 import FB from 'fb';
 import { connect } from 'react-redux'
+import FirebaseInput from '../FirebaseInput'
 
 import moment from 'moment';
 
@@ -34,7 +35,7 @@ class PostDraft extends Component {
     // TODO: move this into redux
     // for working on a draft to send later
 
-    database.ref(`posts/${userId}/${postId}/${key}`).update(data, (err) => {
+    database.ref(`posts/${postId}/${key}`).update(data, (err) => {
       if (err) {
         let newError = helpers.handleError(err);
           
@@ -59,7 +60,13 @@ class PostDraft extends Component {
     // User is signed in.
       FB.api(`/me/feed`, 'post', payload, (response) => {
         if (!response || response.error) {
-          helpers.handleError(response.error);
+          let newError = helpers.handleError(response.error);
+            
+          this.setState({
+            postStatus: "error",
+            error: newError,
+          });
+          
         } else {
           alert(' Post ID: ' + response.id);
         }
@@ -72,9 +79,15 @@ class PostDraft extends Component {
 
   render() {
     const c = this;
+    const postId = this.props.post.id
+    const userId = this.props.user.uid
+
     return (
       <div id="post-draft">
         <div className="status-container">
+          {this.state.postStatus === "error" && (
+            <span>Error: {this.state.error.message}</span>
+          )}
           {this.state.postStatus === "pending" && (
             <span>Saving...</span>
           )}
@@ -85,7 +98,13 @@ class PostDraft extends Component {
         <form onSubmit={c.onSubmit}>
           <div>
             <label>Post Title:</label>
-            <input onChange={c.handleChange} data-key="title" value={this.props.post.title}></input>
+            <FirebaseInput 
+              onChange={false && c.handleChange} 
+              data-key={false && "title" }
+              value={this.props.post.title} 
+              name="postTitle"
+              keys={`posts.${postId}.title`}
+            />
           </div>
 
           <div>
