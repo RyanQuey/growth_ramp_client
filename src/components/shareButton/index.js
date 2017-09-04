@@ -3,6 +3,7 @@ import firebase from 'firebase';
 import helpers from '../../helpers'
 import fbApp from '../../firebaseApp';
 import PostDraft from '../postDraft';
+import { createDraftRequested } from '../../actions'
 import { connect } from 'react-redux'
 const database = fbApp.database();
 
@@ -11,38 +12,38 @@ class ShareButton extends Component {
     super()
     this.state = {}
 
-    this.handleAddPost = this.handleAddPost.bind(this)
+    this.handleCreateDraft = this.handleCreateDraft.bind(this)
+    this.handleRemoveDraft = this.handleRemoveDraft.bind(this)
   }
 
   componentDidMount() {
 
   }
 
-  handleAddPost (e){
+  handleCreateDraft (e){
     e.preventDefault()
-    this.setState({postStatus: "pending"});
-
-    // TODO: move this into redux
-    // for working on a draft to send later
+    this.setState({status: "pending"});
     let userId = this.props.user.uid
-    let blankPost = {
-      title: "",
-      content: "",
-      userId,
-    }
-    let postId = database.ref("posts").push(blankPost).key;
-    let relationEntry = {}
-    relationEntry[postId] = true;
+    this.props.createDraftRequested({userId})
+  }
 
-    database.ref(`users/${userId}/posts`).set(relationEntry, (err) => {
+  handleRemoveDraft (e, draftId) {
+    e.preventDefault()
+    let userId = this.props.user.uid
+
+    let updates = {}
+    updates[`users/${userId}/drafts/${draftId}`] = null
+    updates[`drafts/${draftId}`] = null
+    database.ref().update(updates, (err) => {
       if (err) {
         return helpers.handleError(err);
       }
 
-      this.setState({postStatus: "success"});
-      //next, called a success event and retrieve from firebase
+      this.setState({status: "success"});
+      //next, call a success event and retrieve from firebase
     });
   }
+
 
   render() {
     const c = this;
@@ -52,13 +53,17 @@ class ShareButton extends Component {
           Rebekah is the most beautiful woman in the whole wide world and I love her rice pillow
         </p>
         {this.props.user ? (
-          <div className="post-container">
-            <div className="posts-draft-container">
-              {this.props.posts && Object.keys(this.props.posts).map((key) => {return (
-                <PostDraft post={Object.assign({id: key}, this.props.posts[key])} key={key}/>
+          <div className="draft-container">
+            <div className="drafts-draft-container">
+              {this.props.drafts && Object.keys(this.props.drafts).map((key) => {return (
+                <PostDraft 
+                  draft={Object.assign({id: key}, this.props.drafts[key])} 
+                  key={key}
+                  removeDraft={this.handleRemoveDraft}
+                />
               )})}
             </div>
-            <a href="#" onClick={this.handleAddPost}>Add a post</a>
+            <a href="#" onClick={this.handleCreateDraft}>Add a draft</a>
           </div> 
         ) : (
           <div> Please login </div>
@@ -77,10 +82,15 @@ class ShareButton extends Component {
 const mapStateToProps = state => {
   return {
     user: state.user,
-    posts: state.posts,
+    drafts: state.drafts,
+  }
+}
+const mapDispatchToProps = (dispatch) => {
+  return {
+    createDraftRequested: (data) => dispatch(createDraftRequested(data)),
   }
 }
 
-const ConnectedShareButton = connect(mapStateToProps)(ShareButton)
+const ConnectedShareButton = connect(mapStateToProps, mapDispatchToProps)(ShareButton)
 export default ConnectedShareButton
 

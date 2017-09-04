@@ -2,33 +2,39 @@ import 'babel-polyfill'
 import _ from 'lodash'
 import { call, put, takeLatest, all } from 'redux-saga/effects'
 import fbApp from '../firebaseApp.js'
+import firebase  from 'firebase'
 import { isPreloadingStore, userFetchFailed, userFetchSucceeded } from '../actions'
 import { USER_FETCH_REQUESTED } from '../actions/types'
-import helpers from '../helpers'
-
 import { USER_FIELDS_TO_PERSIST, PROVIDER_IDS_MAP  } from '../constants'
+import helpers from '../helpers'
+import FB from 'fb';
+import crypto from 'crypto'
+
+const hmac = crypto.createHmac('sha256', process.env.REACT_APP_FACEBOOK_SECRET_KEY)
+
 const database = fbApp.database();
 
-//retrieves user data from firebase if user exists, otherwise creates new user entry in firebase
 
-function* getUserData(userAuthInfo) {
+//retrieves user data from firebase if user exists, otherwise creates new user entry in firebase
+function* getOrSaveUserData(pld) {
   const properties = _.values(USER_FIELDS_TO_PERSIST)
 
-  const ref = database.ref(`users/${userAuthInfo.uid}`)
+  const ref = database.ref(`users/${pld.uid}`)
 
   let userData
   yield ref.once('value', (snapshot) => {
     if (snapshot.val()) {
-      userData = snapshot.val() || []
+      //is no values retrieved from database, just return info from the payload
+      userData = snapshot.val() || _.pick(pld, ...properties)
 
     } else {
-      ref.set(_.pick(userAuthInfo, ...properties))
+      userData = _.pick(pld, ...properties)
+      ref.set(userData)
 
-      userData = {}//don't need to return anything, because will be combined with the info returned from firebase login anyways
     }
   }, (err) => {
     helpers.handleError(`The user read failed: ${err.code}`)
-    userData = false
+    userData = {}
   })
 
   return userData
@@ -39,23 +45,11 @@ function* fetchData(action) {
     // action.payload is all the data firebase returns from logging in
     const pld = action.payload
 
-//actually, can persist all of this provider data after all, the token is not there
-    const userData = yield call(getUserData, pld)
-    let tokenStuff = {}
-    if (pld.facebookAppSecretProof) {
-      tokenStuff.facebookAppSecretProof = pld.facebookAppSecretProof
-    }
-    /*pld.providerData.forEach((p) => {
-      let providerName = PROVIDER_IDS_MAP[p.providerId]
-      
-      providerData[providerName] = p
-    })*/
+    // can persist all except credential (pld.credential)
+    let userData = yield call(getOrSaveUserData, pld)
 
-    const user = Object.assign({}, userData, tokenStuff, {uid: pld.uid})
-
-    yield all([
-      put(userFetchSucceeded(user)),
-    ])
+    const user = Object.assign({}, userData, {uid: pld.uid})
+    yield put(userFetchSucceeded(user)),
     yield put(isPreloadingStore(false))
 
     /* don't have anywhere to redirect to yet!

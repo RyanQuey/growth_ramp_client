@@ -66,11 +66,15 @@ class Input extends Component {
 
   render() {
     const label = this.props.label ? (<label htmlFor={this.props.name}>{this.props.label}</label>) : null
+    let Tag = 'input'
+    if (this.props.type === 'textarea') {
+      Tag = 'textarea'
+    }
 
     return (
       <div className={this.props.className}>
         {!this.props.labelAfter && label}
-        <input
+        <Tag
           className={
             `input-${this.props.type}
             ${this.props.className || ''}

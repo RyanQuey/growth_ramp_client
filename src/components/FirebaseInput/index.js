@@ -10,30 +10,33 @@ class FirebaseInput extends Component {
     super(props)
 
     this.state = {
-      value: props[props.name],
+      value: props.value,
     }
   }
   componentWillReceiveProps(nextProps) {
-    if (this.props.name !== nextProps.name) {
-      this.setState({ value: nextProps[nextProps.name] })
+    if (this.props.value !== nextProps.value) {
+      this.setState({ value: nextProps.value })
     }
   }
   updateVal(e, errors, index) {
-    const newInput = e.target.value.toString()
+    const v = e.target.value.toString()
     let value
+
+    // if this is really an array of inputs
     if (index) {
       value = this.state.value
-      value[index] = newInput
+      value[index] = v
     } else {
-      value = newInput
+      value = v
     }
     this.setState({ value })
-
+    let path = this.props.keys.replace(/\./g, "/")
     if (errors.length === 0) {
-//TODO: set the store state correctly!
-      this.props.setInputVal({ name: this.props.name, value })
+      this.props.setInputVal({ path, value })
     }
   }
+
+  // if this is really an array of inputs
   addField(e) {
     const c = this
     let value
@@ -47,12 +50,14 @@ class FirebaseInput extends Component {
 
     value.push("")
     this.setState({ value })
-    this.props.setInputVal({ name: this.props.name, value })
+
+    let path = this.props.keys.replace(/\./g, "/")
+    this.props.setInputVal({ path, value })
   }
 
   render() {
     const c = this
-console.log( this.props.value);
+//console.log( this.props.value);
     const input = (value, index, label) => (
       <Input
         id={this.props.id}
@@ -103,7 +108,7 @@ FirebaseInput.propTypes = {
   uid: PropTypes.string,
   setInputVal: PropTypes.func.isRequired,
   id: PropTypes.string,
-  name: PropTypes.string.isRequired,
+  name: PropTypes.string,
   className: PropTypes.string,
   type: PropTypes.string,
   onBlur: PropTypes.func,
@@ -120,10 +125,10 @@ FirebaseInput.propTypes = {
 }
 
 const mapStateToProps = (state, ownProps) => {
-  let value = helpers.safeDataPath(state, ownProps.keys, "")
+  //let value = helpers.safeDataPath(state, ownProps.keys, "")
 
   let obj = {}
-  obj[ownProps.name] = value
+  //obj[ownProps.name] = value
   return obj
 }
 

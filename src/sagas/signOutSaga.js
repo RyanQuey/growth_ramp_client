@@ -6,10 +6,8 @@ import { signOut } from '../actions'
 
 function* signUserOut() {
   try {
-    console.log("before signing up");
     //actually call the signout
     yield firebase.auth().signOut()
-    console.log(" Saying out");
     //handle the successful signout
     yield put(signOut(true))
 

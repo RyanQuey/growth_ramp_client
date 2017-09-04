@@ -1,13 +1,9 @@
 import 'babel-polyfill'
-import { put, takeLatest } from 'redux-saga/effects'
+import { put, takeLatest, all } from 'redux-saga/effects'
 import fbApp from '../firebaseApp.js'
 import firebase from 'firebase'
-import { userFetchRequested } from '../actions'
+import { userFetchRequested, draftsFetchRequested, tokensUpdateRequested } from '../actions'
 import { SIGN_IN_REQUESTED } from '../actions/types'
-import FB from 'fb';
-import crypto from 'crypto'
-
-const hmac = crypto.createHmac('sha256', process.env.REACT_APP_FACEBOOK_SECRET_KEY)
 /*going to do without all of these constants
  * import {
   CREATE_USER,
@@ -20,6 +16,7 @@ const hmac = crypto.createHmac('sha256', process.env.REACT_APP_FACEBOOK_SECRET_K
   SUCCESS,
 } from 'utils/constants'*/
 
+//can probably remove this, and all calls to it
 const success = data => ({ result: 'SUCCESS', user: data.user })
 
 function* createUserWithEmail(data) {
@@ -68,20 +65,7 @@ function* signInWithProvider(provider) {
  
       //will build off of this object and then send it
       let data = result.user
-
-      // This gives you a Auth Access Token. You can use it to access the Google API/Facebook API etc..
-      // TODO: don't save this in the store, save it somewhere where it can be reused even if there is a screen refresh
-      //  Maybe can return using the firebase auth user data, just call itonce every time it is necessary to get the token or something?
-      var token = result.credential.accessToken;
-
-      if (provider  == 'FACEBOOK') {
-        //TODO: might want to do this somewhere else; might be slightly slower, but would make this whole thing much more simple
-        FB.setAccessToken(token)
-      //create a hash of the token using sha256 and Facebook secret as the key (which Facebook requires)
-        hmac.update(token)
-        //TODO: require this in the Facebook app, then pass it in with each request
-        data.facebookAppSecretProof = hmac.digest();
-      }
+      data.credential = result.credential
 
       //  The signed-in user info.
       //  Only using this data for now, so assigning to the result.user
@@ -129,9 +113,22 @@ function* signIn(action) {
 
     if (signInResult) {
       const user = signInResult.user
-      yield put(userFetchRequested(user))
+      let userProviders = []
+      user.providerData && user.providerData.forEach((provider) => {
+        userProviders.push(provider.providerId)
+      })
+      yield all([
+        put(userFetchRequested(user)),
+        put(draftsFetchRequested(user)),
+        put(tokensUpdateRequested({
+          providerIds: userProviders, 
+          credential: user.credential
+        })),
+      ])
+      
     } else {
       //no user found
+      //TODO: make a separate action for the error
       yield put(userFetchRequested(null))
     }
   } catch (err) {

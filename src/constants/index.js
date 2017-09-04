@@ -17,10 +17,10 @@ export const USER_FIELDS_TO_PERSIST = {
   LINKEDIN_URL: 'linkedinURL',
   TWITTER_URL: 'twitterURL',
   PROVIDER_DATA: 'providerData',
-  ID: 'uid',
   //don't want to save the access token to the database
 }
 
+//maps provider IDs provided by firebase
 export const PROVIDER_IDS_MAP = {
   'facebook.com': 'facebook',
   //GITHUB: 'github',

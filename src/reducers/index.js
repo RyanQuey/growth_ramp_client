@@ -5,11 +5,13 @@ import rootSaga from '../sagas'
 import preloadingReducer from './preloading'
 import userReducer from './user'
 import postsReducer from './posts'
+import tokensReducer from './tokens'
 
 const rootReducer = combineReducers({
   preloadingStore: preloadingReducer,
   user: userReducer,
-  posts: postsReducer,
+  drafts: postsReducer,
+  tokens: tokensReducer
 })
 
 const sagaMiddleware = createSagaMiddleware()

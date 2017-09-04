@@ -8,7 +8,7 @@ import Login from './components/login';
 import { connect } from 'react-redux'
 import firebase from 'firebase';
 import store from './reducers'
-import { userFetchRequested, isPreloadingStore } from './actions'
+import { draftsFetchRequested, userFetchRequested, tokensUpdateRequested, isPreloadingStore } from './actions'
 import './App.css';
 
 class App extends Component {
@@ -16,13 +16,21 @@ class App extends Component {
   componentDidMount() {
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
-        //console.log('USER ', user)
     
         //need to retrieve user data from firebase, to put into redux
         //mostly only gets ran when reloading the page after already logged in
         if (!this.props.user) {
           const userData = helpers.extractUserData(user)
           this.props.userFetchRequested(userData)
+          this.props.draftsFetchRequested(userData)
+
+          let userProviders = []
+          userData.providerData && userData.providerData.forEach((provider) => {
+            userProviders.push(provider.providerId)
+          })
+          if (userProviders.length > 0) {
+            this.props.tokensUpdateRequested({providerIds: userProviders})
+          }
         }
     
       } else {
@@ -65,6 +73,8 @@ const mapStateToProps = state => {
 const mapDispatchToProps = (dispatch) => {
   return {
     userFetchRequested: (data) => dispatch(userFetchRequested(data)),
+    draftsFetchRequested: (data) => dispatch(draftsFetchRequested(data)),
+    tokensUpdateRequested: (data) => dispatch(tokensUpdateRequested(data)),
   }
 }
 const ConnectedApp = connect(mapStateToProps, mapDispatchToProps)(App)

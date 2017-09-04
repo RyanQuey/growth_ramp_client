@@ -17,36 +17,7 @@ class PostDraft extends Component {
 
     this.state = {}
 
-    this.handleChange = this.handleChange.bind(this)
     this.onSubmit = this.onSubmit.bind(this)
-  }
-
-  handleChange(e) {
-    e.preventDefault()
-    this.setState({postStatus: "pending"});
-
-    const value = e.target.value;
-    const key = e.target.dataset.key;
-    const data = {}
-    data[key] = value
-    const postId = Object.keys(this.props.post)[0]
-    const userId = this.props.user.uid
-
-    // TODO: move this into redux
-    // for working on a draft to send later
-
-    database.ref(`posts/${postId}/${key}`).update(data, (err) => {
-      if (err) {
-        let newError = helpers.handleError(err);
-          
-        this.setState({
-          postStatus: "error",
-          error: newError,
-        });
-      } else {
-        this.setState({postStatus: "success"});
-      }
-    });
   }
 
   onSubmit(e) {
@@ -54,21 +25,21 @@ class PostDraft extends Component {
     //alert(" Eventually will send to Facebook etc.")
     //make sure user cannot submit before login... Or I have to use the watcher that firebase provides
     let user = this.props.user;
-    let payload = { message: this.props.post.content }//, appsecret_proof: this.props.user.facebookAppSecretProof }
+    let payload = { message: this.props.draft.content }//, appsecret_proof: this.props.user.facebookAppSecretProof }
 
     if (user) {
     // User is signed in.
-      FB.api(`/me/feed`, 'post', payload, (response) => {
+      FB.api(`/me/feed`, 'draft', payload, (response) => {
         if (!response || response.error) {
           let newError = helpers.handleError(response.error);
             
           this.setState({
-            postStatus: "error",
+            status: "error",
             error: newError,
           });
           
         } else {
-          alert(' Post ID: ' + response.id);
+          alert(' Draft ID: ' + response.id);
         }
       })
     } else {
@@ -79,37 +50,40 @@ class PostDraft extends Component {
 
   render() {
     const c = this;
-    const postId = this.props.post.id
+    const draftId = this.props.draft.id
     const userId = this.props.user.uid
 
     return (
       <div id="post-draft">
+        <i onClick={(e) => this.props.removeDraft(e, draftId)} className={`fa fa-times-circle danger clickable `} />&nbsp;
         <div className="status-container">
-          {this.state.postStatus === "error" && (
+          {this.state.status === "error" && (
             <span>Error: {this.state.error.message}</span>
           )}
-          {this.state.postStatus === "pending" && (
+          {this.state.status === "pending" && (
             <span>Saving...</span>
           )}
-          {this.state.postStatus === "success" && (
+          {this.state.status === "success" && (
             <span>Draft saved</span>
           )}
         </div>
         <form onSubmit={c.onSubmit}>
           <div>
-            <label>Post Title:</label>
+            <label>Draft Title:</label>
             <FirebaseInput 
-              onChange={false && c.handleChange} 
-              data-key={false && "title" }
-              value={this.props.post.title} 
-              name="postTitle"
-              keys={`posts.${postId}.title`}
+              value={this.props.draft.title} 
+              name="draftTitle"
+              keys={`drafts.${draftId}.title`}
             />
           </div>
 
           <div>
-            <label> Your post </label>
-            <textarea onChange={c.handleChange} data-key="content" value={this.props.post.content} ></textarea>
+            <label> Your draft </label>
+            <FirebaseInput 
+              type="textarea"
+              value={this.props.draft.content} 
+              keys={`drafts.${draftId}.content`}
+            />
           </div>
           <button type="submit">Promote your stuff</button>
         </form>

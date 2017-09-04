@@ -1,19 +1,35 @@
 import {
-  POSTS_FETCH_SUCCEEDED,
+  CREATE_DRAFT_SUCCEEDED,
+  DRAFTS_FETCH_SUCCEEDED,
+  INPUT_UPDATE_SUCCEEDED,
 } from '../actions/types'
+import helpers from '../helpers'
+import _ from 'lodash'
 
-const postsReducer = (state = null, action) => {
+const draftsReducer = (state = null, action) => {
 
   switch (action.type) {
 
-    case POSTS_FETCH_SUCCEEDED:
-      console.log('Merge old and new posts data:', action.payload)
+    case CREATE_DRAFT_SUCCEEDED:
       return Object.assign({}, state, action.payload)
+
+    case DRAFTS_FETCH_SUCCEEDED:
+      return Object.assign({}, state, action.payload)
+
+    case INPUT_UPDATE_SUCCEEDED:
+      let pathArray = action.payload.path.split("/")
+      let root = pathArray.shift()
+      let relativePath = pathArray.join(".")
+      if (root === "posts") {
+        let newState = Object.assign({}, state)
+        _.set(newState, relativePath, action.payload.value)
+        return newState
+      }
 
     default:
       return state
   }
 }
 
-export default postsReducer
+export default draftsReducer
 

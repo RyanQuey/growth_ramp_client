@@ -58,9 +58,9 @@ class Login extends Component {
             <input onChange={c.handleChange} value={c.state.value}></input>
           </form>
         )}
-        {user && _.values(PROVIDERS).map((p) => {
+        {_.values(PROVIDERS).map((p) => {
           const token = `${p.toLowerCase()}Token`
-          //this works, but temporarily disabling ticket because neatest button available in case the token expires
+          //this works, but temporarily disabling this because neatest button available in case the token expires
           //if (!helpers.safeDataPath(c.props, `user.${p}`, false)) {
             return <button key={p} onClick={c.providerLogin.bind(c, p.toUpperCase())}>{`Login ${preposition} ${p.capitalize()}`}</button>
           //}
