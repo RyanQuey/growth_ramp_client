@@ -4,6 +4,10 @@ import fbApp from '../firebaseApp.js'
 import firebase from 'firebase'
 import { userFetchRequested } from '../actions'
 import { SIGN_IN_REQUESTED } from '../actions/types'
+import FB from 'fb';
+import crypto from 'crypto'
+
+const hmac = crypto.createHmac('sha256', process.env.REACT_APP_FACEBOOK_SECRET_KEY)
 /*going to do without all of these constants
  * import {
   CREATE_USER,
@@ -61,16 +65,29 @@ function* signInWithProvider(provider) {
   const signInResult = yield firebase.auth()
     .signInWithPopup(authProvider)
     .then((result) => {
+ 
+      //will build off of this object and then send it
+      let data = result.user
+
       // This gives you a Auth Access Token. You can use it to access the Google API/Facebook API etc..
       var token = result.credential.accessToken;
-      //  The signed-in user info.
-      //  Only using this data for now, so assigning to the result.user
-      result.user.redirect = true
-      if (result.history) {
-        result.user.history = result.history
+
+      if (provider  == 'FACEBOOK') {
+        //TODO: might want to do this somewhere else; might be slightly slower, but would make this whole thing much more simple
+        FB.setAccessToken(token)
+      //create a hash of the token using sha256 and Facebook secret as the key (which Facebook requires)
+        hmac.update(token)
+        //TODO: require this in the Facebook app, then pass it in with each request
+        data.facebookAppSecretProof = hmac.digest();
       }
 
-      console.log( "sign in result:", result );
+      //  The signed-in user info.
+      //  Only using this data for now, so assigning to the result.user
+      data.redirect = true
+      if (result.history) {
+        data.history = result.history
+      }
+
       return success( {user: result.user} )
     }).catch(function(error) {
       // Handle Errors here.
@@ -110,18 +127,10 @@ function* signIn(action) {
 
     if (signInResult) {
       const user = signInResult.user
-      const userAuthData = {
-        displayName: user.displayName,
-        email: user.email,
-        history: user.history,
-        photoURL: user.photoURL,
-        redirect: user.redirect,
-        uid: user.uid,
-      }
-      yield put(userFetchRequested(userAuthData))
+      yield put(userFetchRequested(user))
     } else {
-      //
-      //yield put(userFetchRequested(null))
+      //no user found
+      yield put(userFetchRequested(null))
     }
   } catch (err) {
     console.log('Error in Sign In Saga', err)

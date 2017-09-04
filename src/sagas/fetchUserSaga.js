@@ -1,51 +1,61 @@
 import 'babel-polyfill'
 import _ from 'lodash'
-import { call, put, takeLatest } from 'redux-saga/effects'
+import { call, put, takeLatest, all } from 'redux-saga/effects'
 import fbApp from '../firebaseApp.js'
 import { isPreloadingStore, userFetchFailed, userFetchSucceeded } from '../actions'
 import { USER_FETCH_REQUESTED } from '../actions/types'
-/*going to do without all of these constants
-import { FIELDS } from 'utils/constants'
-*/
+import helpers from '../helpers'
 
-function* getVals(userAuthInfo) {
-  const properties = _.values('FIELDS')
+import { USER_FIELDS_TO_PERSIST, PROVIDER_IDS_MAP  } from '../constants'
+const database = fbApp.database();
 
-  const ref = fbApp.database().ref(`users/${userAuthInfo.uid}`)
+//retrieves user data from firebase if user exists, otherwise creates new user entry in firebase
 
-  const userData = yield ref.once('value').then((snapshot) => {
-    // If snapshot.val() is not undefined, user has signed in before
+function* getUserData(userAuthInfo) {
+  const properties = _.values(USER_FIELDS_TO_PERSIST)
+
+  const ref = database.ref(`users/${userAuthInfo.uid}`)
+
+  let userData
+  yield ref.once('value', (snapshot) => {
     if (snapshot.val()) {
-      const vals = {}
+      userData = snapshot.val() || []
 
-      properties.forEach((property) => {
-        if (snapshot.val()[property]) {
-          vals[property] = snapshot.val()[property]
-        }
-      })
+    } else {
+      ref.set(_.pick(userAuthInfo, ...properties))
 
-      return vals
+      userData = {}//maybe want to define as userAuthInfo ?
     }
-
-    ref.set(_.omit(userAuthInfo, 'uid'))
-    return {}
+  }, (err) => {
+    helpers.handleError(`The user read failed: ${err.code}`)
+    userData = false
   })
 
   return userData
 }
 
-function* fetchUserData(action) {
+function* fetchData(action) {
   try {
-    const userAuthInfo = {
-      displayName: action.payload.displayName,
-      email: action.payload.email,
-      photoURL: action.payload.photoURL,
-      uid: action.payload.uid,
-    }
-    const userData = yield call(getVals, userAuthInfo)
-    const user = Object.assign({}, userAuthInfo, userData)
+    // action.payload is all the data firebase returns from logging in
+    const pld = action.payload
 
-    yield put(userFetchSucceeded(user))
+//actually, can persist all of this provider data after all, the token is not there
+    const userData = yield call(getUserData, pld)
+    let tokenStuff = {}
+    if (pld.facebookAppSecretProof) {
+      tokenStuff.facebookAppSecretProof = pld.facebookAppSecretProof
+    }
+    /*pld.providerData.forEach((p) => {
+      let providerName = PROVIDER_IDS_MAP[p.providerId]
+      
+      providerData[providerName] = p
+    })*/
+
+    const user = Object.assign({}, userData, tokenStuff)
+
+    yield all([
+      put(userFetchSucceeded(user)),
+    ])
     yield put(isPreloadingStore(false))
 
     /* don't have anywhere to redirect to yet!
@@ -62,5 +72,5 @@ function* fetchUserData(action) {
 }
 
 export default function* fetchUserSaga() {
-  yield takeLatest(USER_FETCH_REQUESTED, fetchUserData)
+  yield takeLatest(USER_FETCH_REQUESTED, fetchData)
 }

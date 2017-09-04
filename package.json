@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "fb": "^2.0.0",
     "firebase": "^4.2.0",
     "fs": "0.0.1-security",
     "lodash": "^4.17.4",

@@ -9,21 +9,23 @@ import createSagaMiddleware from 'redux-saga'
 import { Provider } from 'react-redux';
 
 import store from './reducers'
-import fetchUserSaga from './sagas'
 
-/* Seems to already be ran in the reducer???
- *
- * const sagaMiddleware = createSagaMiddleware()
-const store = createStore(
-  reducer,
-  applyMiddleware(sagaMiddleware)
-)
+const root = document.getElementById('app')
 
-sagaMiddleware.run(fetchUserSaga)
-*/
 ReactDOM.render(
   <Provider store={store}>
     <App />
-  </Provider>, document.getElementById('root')
+  </Provider>, root
 );
+
 registerServiceWorker();
+
+
+//currently not preloading anything, but if I was, put the watcher here to let the main app know when to render
+export const preloadFinished = store.subscribe((newState) => {
+  //probably just want to cal an event, to signal preloading is over?
+  if (false) {
+    //ReactDOM.render(renderApp(), root)
+  }
+})
+

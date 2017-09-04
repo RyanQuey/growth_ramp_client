@@ -1,3 +1,4 @@
+//currently not preloading anything (?)
 import { IS_PRELOADING_STORE } from '../actions/types'
 
 const preloadingReducer = (state = true, action) => {

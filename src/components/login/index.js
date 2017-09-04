@@ -2,7 +2,10 @@ import App from '../../firebaseApp';
 import { signInRequested, signOutRequested } from '../../actions'
 import React, { Component } from 'react';
 import { connect } from 'react-redux'
+import _ from 'lodash'
 import firebase from 'firebase';
+import helpers from '../../helpers'
+import { PROVIDERS } from '../../constants'
 
 class Login extends Component {
   constructor() {
@@ -11,18 +14,12 @@ class Login extends Component {
     c.state = {
       email: ""
     }
-    // TODO: move this into redux
-    firebase.auth().onAuthStateChanged(function(user) {
-      if (user) {
-        c.setState({loggedIn: true})
-        // User is signed in.
-      } else {
-        c.setState({loggedIn: false})
-        // No user is signed in.
-      }
-    });
     this.handleChange = this.handleChange.bind(this);
     this.handleSignOut = this.handleSignOut.bind(this);
+  }
+
+  componentDidMount() {
+
   }
 
   handleChange(e) {
@@ -46,23 +43,28 @@ class Login extends Component {
 
   render() {
     const c = this;
-console.log(c.state.loggedIn);
+    const user = this.props.user;
+    const preposition = user ? "to" : "with";
     return (
       <div id="login">
-        {c.state.loggedIn ? (
+        {user ? (
           <div>
+            Welcome {user.displayName}!&nbsp;
             <button onClick={c.handleSignOut}>Logout</button>
           </div>
         ) : (
-          <div>
-            <form onSubmit={c.onSubmit}>
-              <label> Login with email </label>
-              <input onChange={c.handleChange} value={c.state.value}></input>
-            </form>
-            <button onClick={c.providerLogin.bind(c, "GOOGLE")}> Login with Google</button>
-            <button onClick={c.providerLogin.bind(c, "FACEBOOK")}> Login with Facebook</button>
-          </div>
+          <form onSubmit={c.onSubmit}>
+            <label> Login with email </label>
+            <input onChange={c.handleChange} value={c.state.value}></input>
+          </form>
         )}
+        {user && _.values(PROVIDERS).map((p) => {
+          const token = `${p.toLowerCase()}Token`
+          //this works, but temporarily disabling ticket because neatest button available in case the token expires
+          //if (!helpers.safeDataPath(c.props, `user.${p}`, false)) {
+            return <button key={p} onClick={c.providerLogin.bind(c, p.toUpperCase())}>{`Login ${preposition} ${p.capitalize()}`}</button>
+          //}
+        })}
       </div>
     );
   }
@@ -71,7 +73,7 @@ console.log(c.state.loggedIn);
 // getting redux state passed into the *state* of ConnectedLogin, to be passed into the *props* of index
 const mapStateToProps = state => {
   return {
-    
+    user: state.user
   }
 }
 

@@ -4,10 +4,12 @@ import createSagaMiddleware from 'redux-saga'
 import rootSaga from '../sagas'
 import preloadingReducer from './preloading'
 import userReducer from './user'
+import postsReducer from './posts'
 
 const rootReducer = combineReducers({
   preloadingStore: preloadingReducer,
   user: userReducer,
+  posts: postsReducer,
 })
 
 const sagaMiddleware = createSagaMiddleware()

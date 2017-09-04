@@ -2,6 +2,9 @@ import React, { Component } from 'react';
 import firebase from 'firebase';
 import helpers from '../../helpers'
 import fbApp from '../../firebaseApp';
+import FB from 'fb';
+import { connect } from 'react-redux'
+
 import moment from 'moment';
 
 const database = fbApp.database();
@@ -13,52 +16,57 @@ class PostDraft extends Component {
 
     this.state = {}
 
-    this.handleTitle = this.handleTitle.bind(this)
-    this.handleContent = this.handleContent.bind(this)
+    this.handleChange = this.handleChange.bind(this)
     this.onSubmit = this.onSubmit.bind(this)
   }
 
-  handleTitle(e) {
+  handleChange(e) {
     e.preventDefault()
-    const value = e.target.value;
     this.setState({postStatus: "pending"});
+
+    const value = e.target.value;
+    const key = e.target.dataset.key;
+    const data = {}
+    data[key] = value
+    const postId = Object.keys(this.props.post)[0]
+    const userId = this.props.user.uid
 
     // TODO: move this into redux
     // for working on a draft to send later
-    database.ref(`post/`).update({title: value}, (err) => {
-      if (err) {
-        return helpers.handleError(err);
-      }
-      this.setState({postStatus: "success"});
-    });
-  }
 
-  handleContent(e) {
-    e.preventDefault()
-    const value = e.target.value;
-    this.setState({postStatus: "pending"});
-
-    // TODO: move this into redux
-    // for working on a draft to send later
-    database.ref('post/').update({content: value}, (err) => {
+    database.ref(`posts/${userId}/${postId}/${key}`).update(data, (err) => {
       if (err) {
-        return helpers.handleError(err);
+        let newError = helpers.handleError(err);
+          
+        this.setState({
+          postStatus: "error",
+          error: newError,
+        });
+      } else {
+        this.setState({postStatus: "success"});
       }
-      this.setState({postStatus: "success"});
     });
   }
 
   onSubmit(e) {
     e.preventDefault()
-    alert(" Eventually will send to Facebook etc.")
+    //alert(" Eventually will send to Facebook etc.")
     //make sure user cannot submit before login... Or I have to use the watcher that firebase provides
-    // TODO: move this into redux
-    var user = firebase.auth().currentUser;
+    let user = this.props.user;
+    let payload = { message: this.props.post.content }//, appsecret_proof: this.props.user.facebookAppSecretProof }
 
     if (user) {
     // User is signed in.
+      FB.api(`/me/feed`, 'post', payload, (response) => {
+        if (!response || response.error) {
+          helpers.handleError(response.error);
+        } else {
+          alert(' Post ID: ' + response.id);
+        }
+      })
     } else {
     // No user is signed in.
+    alert(" Please sign in 1st")
     }
   }
 
@@ -77,12 +85,12 @@ class PostDraft extends Component {
         <form onSubmit={c.onSubmit}>
           <div>
             <label>Post Title:</label>
-            <input onChange={c.handleTitle} value={this.props.post.title}></input>
+            <input onChange={c.handleChange} data-key="title" value={this.props.post.title}></input>
           </div>
 
           <div>
             <label> Your post </label>
-            <textarea onChange={c.handleContent} value={this.props.post.content} ></textarea>
+            <textarea onChange={c.handleChange} data-key="content" value={this.props.post.content} ></textarea>
           </div>
           <button type="submit">Promote your stuff</button>
         </form>
@@ -91,5 +99,11 @@ class PostDraft extends Component {
   }
 }
 
-export default PostDraft 
+const mapStateToProps = state => {
+  return {
+    user: state.user,
+  }
+}
 
+const ConnectedPostDraft = connect(mapStateToProps)(PostDraft)
+export default ConnectedPostDraft

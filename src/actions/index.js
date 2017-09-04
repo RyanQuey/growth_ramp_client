@@ -1,7 +1,11 @@
 import { 
+  CREATE_FACEBOOK_POST,
+  CREATE_POST_DRAFT,
   INPUT_UPDATE_SUCCESSFUL,
   IS_PRELOADING_STORE,
   LOG_IN_WITH_PROVIDER,
+  POSTS_FETCH_REQUESTED,
+  POSTS_FETCH_SUCCEEDED,
   SET_CURRENT_USER,
   SET_IMAGE,
   SET_INPUT_VAL,
@@ -13,11 +17,24 @@ import {
   USER_FETCH_SUCCEEDED,
 } from './types'
 
+export const createFacebookPost = (payload) => (
+  { type: CREATE_FACEBOOK_POST, payload }
+)
+export const createPostDraft = (payload) => (
+  { type: CREATE_POST_DRAFT, payload }
+)
 export const isPreloadingStore = preloadingData => (
   { 
     type: IS_PRELOADING_STORE, 
     payload: { preloadingData }
   }
+)
+//not been used yet
+export const postsFetchRequested = payload => (
+  { type: POSTS_FETCH_REQUESTED, payload }
+)
+export const postsFetchSucceeded = payload => (
+  { type: POSTS_FETCH_SUCCEEDED, payload }
 )
 export const setCurrentUser = (payload) => (
   { type: SET_CURRENT_USER, payload }
