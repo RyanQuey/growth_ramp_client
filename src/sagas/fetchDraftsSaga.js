@@ -14,7 +14,7 @@ function* getDrafts(userId){
   //Only want to retrieve this user's drafts once...for now
   //TODO: set up a listener, so that all data the matter which browser etc. will be lively updated (?), Even if multiple people are working on it
   let drafts
-  yield database.ref(`posts`).orderByChild('userId').equalTo(userId).once("value", (snapshot) => {
+  yield database.ref(`drafts`).orderByChild('userId').equalTo(userId).once("value", (snapshot) => {
     drafts = snapshot.val() || []
   }, (err) => {
     helpers.handleError(`The drafts read failed: ${err.code}`)

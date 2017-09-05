@@ -29,7 +29,7 @@ console.log("should be dothrottlene now");
   }
 }
 
-export default function* newDraft() {
+export default function* createNewDraft() {
   yield takeLatest(CREATE_DRAFT_REQUESTED, newDraft)
 }
 

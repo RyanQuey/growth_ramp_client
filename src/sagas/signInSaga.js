@@ -84,6 +84,8 @@ function* signInWithProvider(provider) {
       // The firebase.auth.AuthCredential type that was used.
       var credential = error.credential;
       console.log("PROVIDER SIGN IN ERROR:", error);
+      alert("PROVIDER SIGN IN ERROR:", error.message);
+//TODO: need to alert the user better 
     }); 
 
   return signInResult
@@ -117,6 +119,7 @@ function* signIn(action) {
       user.providerData && user.providerData.forEach((provider) => {
         userProviders.push(provider.providerId)
       })
+console.log(user, signInResult);
       yield all([
         put(userFetchRequested(user)),
         put(draftsFetchRequested(user)),
