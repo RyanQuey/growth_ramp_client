@@ -1,28 +1,35 @@
 import {
-  CREATE_DRAFT_SUCCEEDED,
-  DRAFTS_FETCH_SUCCEEDED,
+  POST_CREATE_SUCCEEDED,
+  POSTS_FETCH_SUCCEEDED,
   INPUT_UPDATE_SUCCEEDED,
 } from '../actions/types'
 import helpers from '../helpers'
 import _ from 'lodash'
 
-const draftsReducer = (state = null, action) => {
+const postsReducer = (state = null, action) => {
 
   switch (action.type) {
 
-    case CREATE_DRAFT_SUCCEEDED:
+    case POST_CREATE_SUCCEEDED:
       return Object.assign({}, state, action.payload)
 
-    case DRAFTS_FETCH_SUCCEEDED:
+    case POSTS_FETCH_SUCCEEDED:
       return Object.assign({}, state, action.payload)
 
     case INPUT_UPDATE_SUCCEEDED:
       let pathArray = action.payload.path.split("/")
       let root = pathArray.shift()
       let relativePath = pathArray.join(".")
+      let value = action.payload.value
       if (root === "posts") {
         let newState = Object.assign({}, state)
-        _.set(newState, relativePath, action.payload.value)
+        //when deleting a resource
+        if (value === null) {
+          _.unset(newState, relativePath)
+        } else {
+          _.set(newState, relativePath, value)
+        }
+
         return newState
       }
 
@@ -31,5 +38,5 @@ const draftsReducer = (state = null, action) => {
   }
 }
 
-export default draftsReducer
+export default postsReducer
 

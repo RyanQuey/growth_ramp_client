@@ -1,12 +1,14 @@
 import { 
-  CREATE_FACEBOOK_POST,
-  CREATE_DRAFT_REQUESTED,
-  CREATE_DRAFT_SUCCEEDED,
+  FACEBOOK_POST_PUBLISH_REQUESTED,
   INPUT_UPDATE_SUCCEEDED,
   IS_PRELOADING_STORE,
   LOG_IN_WITH_PROVIDER,
-  DRAFTS_FETCH_REQUESTED,
-  DRAFTS_FETCH_SUCCEEDED,
+  POST_CREATE_REQUESTED,
+  POST_CREATE_SUCCEEDED,
+  POSTS_FETCH_REQUESTED,
+  POSTS_FETCH_SUCCEEDED,
+  POST_REMOVE_REQUESTED,
+  POST_REMOVE_SUCCEEDED,
   SET_CURRENT_USER,
   SET_IMAGE,
   SET_INPUT_VAL,
@@ -21,14 +23,8 @@ import {
   USER_FETCH_SUCCEEDED,
 } from './types'
 
-export const createFacebookPost = (payload) => (
-  { type: CREATE_FACEBOOK_POST, payload }
-)
-export const createDraftSucceeded = (payload) => (
-  { type: CREATE_DRAFT_SUCCEEDED, payload }
-)
-export const createDraftRequested = (payload) => (
-  { type: CREATE_DRAFT_REQUESTED, payload }
+export const facebookPostPublishRequested = (payload) => (
+  { type: FACEBOOK_POST_PUBLISH_REQUESTED, payload }
 )
 export const isPreloadingStore = preloadingData => (
   { 
@@ -36,11 +32,23 @@ export const isPreloadingStore = preloadingData => (
     payload: { preloadingData }
   }
 )
-export const draftsFetchRequested = payload => (
-  { type: DRAFTS_FETCH_REQUESTED, payload }
+export const postCreateRequested = (payload) => (
+  { type: POST_CREATE_REQUESTED, payload }
 )
-export const draftsFetchSucceeded = payload => (
-  { type: DRAFTS_FETCH_SUCCEEDED, payload }
+export const postCreateSucceeded = (payload) => (
+  { type: POST_CREATE_SUCCEEDED, payload }
+)
+export const postsFetchRequested = payload => (
+  { type: POSTS_FETCH_REQUESTED, payload }
+)
+export const postsFetchSucceeded = payload => (
+  { type: POSTS_FETCH_SUCCEEDED, payload }
+)
+export const postRemoveRequested = (payload) => (
+  { type: POST_REMOVE_REQUESTED, payload }
+)
+export const postRemoveSucceeded = (payload) => (
+  { type: POST_REMOVE_SUCCEEDED, payload }
 )
 export const setCurrentUser = (payload) => (
   { type: SET_CURRENT_USER, payload }

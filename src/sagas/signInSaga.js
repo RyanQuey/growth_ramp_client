@@ -2,8 +2,10 @@ import 'babel-polyfill'
 import { put, takeLatest, all } from 'redux-saga/effects'
 import fbApp from '../firebaseApp.js'
 import firebase from 'firebase'
-import { userFetchRequested, draftsFetchRequested, tokensUpdateRequested } from '../actions'
+import { userFetchRequested, postsFetchRequested, tokensUpdateRequested } from '../actions'
 import { SIGN_IN_REQUESTED } from '../actions/types'
+import helpers from '../helpers'
+
 /*going to do without all of these constants
  * import {
   CREATE_USER,
@@ -78,13 +80,12 @@ function* signInWithProvider(provider) {
     }).catch(function(error) {
       // Handle Errors here.
       var errorCode = error.code;
-      var errorMessage = error.message;
       // The email of the user's account used.
       var email = error.email;
       // The firebase.auth.AuthCredential type that was used.
       var credential = error.credential;
-      console.log("PROVIDER SIGN IN ERROR:", error);
       alert("PROVIDER SIGN IN ERROR:", error.message);
+      helpers.handleError(error)
 //TODO: need to alert the user better 
     }); 
 
@@ -119,10 +120,9 @@ function* signIn(action) {
       user.providerData && user.providerData.forEach((provider) => {
         userProviders.push(provider.providerId)
       })
-console.log(user, signInResult);
       yield all([
         put(userFetchRequested(user)),
-        put(draftsFetchRequested(user)),
+        put(postsFetchRequested(user)),
         put(tokensUpdateRequested({
           providerIds: userProviders, 
           credential: user.credential

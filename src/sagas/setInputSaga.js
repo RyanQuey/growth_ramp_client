@@ -11,6 +11,7 @@ function* updateFirebaseInput(action) {
     const ref = fbApp.database().ref(pld.path)
     const value = pld.value
 
+console.log(value, pld.path);
     yield ref.set(value)
 
     //TODO: probably want to call a different action depending on the part of the stores being updated and what readers are we called

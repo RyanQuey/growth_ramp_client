@@ -10,7 +10,7 @@ import tokensReducer from './tokens'
 const rootReducer = combineReducers({
   preloadingStore: preloadingReducer,
   user: userReducer,
-  drafts: postsReducer,
+  posts: postsReducer,
   tokens: tokensReducer
 })
 

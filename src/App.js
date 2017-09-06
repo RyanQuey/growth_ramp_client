@@ -8,7 +8,7 @@ import Login from './components/login';
 import { connect } from 'react-redux'
 import firebase from 'firebase';
 import store from './reducers'
-import { draftsFetchRequested, userFetchRequested, tokensUpdateRequested, isPreloadingStore } from './actions'
+import { postsFetchRequested, userFetchRequested, tokensUpdateRequested, isPreloadingStore } from './actions'
 import './App.css';
 
 class App extends Component {
@@ -22,7 +22,7 @@ class App extends Component {
         if (!this.props.user) {
           const userData = helpers.extractUserData(user)
           this.props.userFetchRequested(userData)
-          this.props.draftsFetchRequested(userData)
+          this.props.postsFetchRequested(userData)
 
           let userProviders = []
           userData.providerData && userData.providerData.forEach((provider) => {
@@ -73,7 +73,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = (dispatch) => {
   return {
     userFetchRequested: (data) => dispatch(userFetchRequested(data)),
-    draftsFetchRequested: (data) => dispatch(draftsFetchRequested(data)),
+    postsFetchRequested: (data) => dispatch(postsFetchRequested(data)),
     tokensUpdateRequested: (data) => dispatch(tokensUpdateRequested(data)),
   }
 }

@@ -1,19 +1,19 @@
 import 'babel-polyfill'
 import { all, call } from 'redux-saga/effects'
 import fetchUserSaga from './fetchUserSaga'
-import fetchDraftsSaga from './fetchDraftsSaga'
+import fetchPostsSaga from './fetchPostsSaga'
 import setInputSaga from './setInputSaga'
 import signInSaga from './signInSaga'
 import signOutSaga from './signOutSaga'
 import updateTokensSaga from './updateTokensSaga'
-import createDraftSaga from './createDraftSaga'
+import createPostSaga from './createPostSaga'
 
 export default function* rootSaga() {
   yield all([
     call(fetchUserSaga),
-    call(fetchDraftsSaga),
+    call(fetchPostsSaga),
     call(signInSaga),
-    call(createDraftSaga),
+    call(createPostSaga),
     call(setInputSaga),
     call(signOutSaga),
     call(updateTokensSaga),
