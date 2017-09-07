@@ -26,6 +26,7 @@ const postsReducer = (state = null, action) => {
         //when deleting a resource
         if (value === null) {
           _.unset(newState, relativePath)
+        //when updating a resource
         } else {
           _.set(newState, relativePath, value)
         }

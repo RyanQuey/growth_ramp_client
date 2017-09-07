@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "codebird": "^2.6.0",
     "fb": "^2.0.0",
     "firebase": "^4.2.0",
     "fs": "0.0.1-security",

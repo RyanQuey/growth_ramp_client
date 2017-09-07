@@ -1,6 +1,5 @@
 import 'babel-polyfill'
 import { put, takeLatest, all } from 'redux-saga/effects'
-import fbApp from '../firebaseApp.js'
 import firebase from 'firebase'
 import { userFetchRequested, postsFetchRequested, tokensUpdateRequested } from '../actions'
 import { SIGN_IN_REQUESTED } from '../actions/types'
@@ -46,23 +45,26 @@ function* signInWithEmail(data) {
   return signInResult
 }
 
-function* signInWithProvider(provider) {
-  let authProvider
+function* signInWithProvider(providerName) {
+  let provider
 
-  switch (provider) {
+  switch (providerName) {
     case 'FACEBOOK':
-      authProvider = new firebase.auth.FacebookAuthProvider()
+      provider = new firebase.auth.FacebookAuthProvider()
       break
     case 'GITHUB':
-      authProvider = new firebase.auth.GithubAuthProvider()
+      provider = new firebase.auth.GithubAuthProvider()
       break
     case 'GOOGLE':
-      authProvider = new firebase.auth.GoogleAuthProvider()
+      provider = new firebase.auth.GoogleAuthProvider()
+      break
+    case 'TWITTER':
+      provider = new firebase.auth.TwitterAuthProvider()
       break
   }
 
   const signInResult = yield firebase.auth()
-    .signInWithPopup(authProvider)
+    .signInWithPopup(provider)
     .then((result) => {
  
       //will build off of this object and then send it
@@ -79,12 +81,12 @@ function* signInWithProvider(provider) {
       return success( {user: result.user} )
     }).catch(function(error) {
       // Handle Errors here.
-      var errorCode = error.code;
+      //var errorCode = error.code;
       // The email of the user's account used.
-      var email = error.email;
+      //var email = error.email;
       // The firebase.auth.AuthCredential type that was used.
-      var credential = error.credential;
-      alert("PROVIDER SIGN IN ERROR:", error.message);
+      //var credential = error.credential;
+      alert(`PROVIDER SIGN IN ERROR: ${error.message}`);
       helpers.handleError(error)
 //TODO: need to alert the user better 
     }); 

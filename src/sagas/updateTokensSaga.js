@@ -3,12 +3,16 @@ import _ from 'lodash'
 import { call, put, takeLatest, takeEvery, all, fork, join } from 'redux-saga/effects'
 import fbApp from '../firebaseApp.js'
 import firebase  from 'firebase'
+import CodeBird from 'codebird'
 import { tokensUpdateFailed, tokensUpdateSucceeded } from '../actions'
 import { TOKENS_UPDATE_REQUESTED } from '../actions/types'
 import { USER_FIELDS_TO_PERSIST, PROVIDER_IDS_MAP  } from '../constants'
 import helpers from '../helpers'
 import FB from 'fb';
 import crypto from 'crypto'
+
+const codeBird = new CodeBird
+codeBird.setConsumerKey(process.env.REACT_APP_TWITTER_CONSUMER_KEY, process.env.REACT_APP_TWITTER_CONSUMER_SECRET)
 
 const hmac = crypto.createHmac('sha256', process.env.REACT_APP_FACEBOOK_SECRET_KEY)
 
@@ -38,13 +42,20 @@ function* getTokens(providerId, credential) {
         tokenInfo.facebookAppSecretProof = hmac.digest('hex');//use hex?
 
         break
+      case 'twitter':
+        
+        codeBird.setToken(process.env.REACT_APP_TWITTER_ACCESS_TOKEN, process.env.REACT_APP_TWITTER_TOKEN_SECRET)
+        tokenInfo.twitterApi = codeBird
+        break
+        
       case 'google':
         break
         
       default:
         //not really sure which token this returns...
-        provider = firebase.auth().FacebookAuthProvider.getIdToken(true)
+        provider = firebase.auth().getIdToken(true)
     }
+    //might not want to put this into store...
     tokenInfo[providerName] = {}
     tokenInfo[providerName].accessToken = providerToken
     
