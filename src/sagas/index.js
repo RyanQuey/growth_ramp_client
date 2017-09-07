@@ -5,12 +5,14 @@ import fetchPostsSaga from './fetchPostsSaga'
 import setInputSaga from './setInputSaga'
 import signInSaga from './signInSaga'
 import signOutSaga from './signOutSaga'
+import linkAccountSaga from './linkAccountSaga'
 import updateTokensSaga from './updateTokensSaga'
 import createPostSaga from './createPostSaga'
 
 export default function* rootSaga() {
   yield all([
     call(fetchUserSaga),
+    call(linkAccountSaga),
     call(fetchPostsSaga),
     call(signInSaga),
     call(createPostSaga),

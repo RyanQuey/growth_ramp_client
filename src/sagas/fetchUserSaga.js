@@ -31,6 +31,7 @@ function* getOrSaveUserData(pld) {
       userData = _.pick(pld, ...properties)
       ref.set(userData)
 
+      //TODO: probably will redirect to a page where they fill out more profile information, basically, signing up.
     }
   }, (err) => {
     helpers.handleError(`The user read failed: ${err.code}`)
@@ -43,8 +44,9 @@ function* getOrSaveUserData(pld) {
 function* fetchData(action) {
   try {
     // action.payload is all the data firebase returns from logging in
-    const pld = action.payload
 
+    const pld = action.payload
+console.log(pld);
     // can persist all except credential (pld.credential)
     let userData = yield call(getOrSaveUserData, pld)
 

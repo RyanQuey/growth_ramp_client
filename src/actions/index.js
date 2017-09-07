@@ -2,6 +2,8 @@ import {
   FACEBOOK_POST_PUBLISH_REQUESTED,
   INPUT_UPDATE_SUCCEEDED,
   IS_PRELOADING_STORE,
+  LINK_ACCOUNT_REQUESTED,
+  LINK_ACCOUNT_SUCCEEDED,
   LOG_IN_WITH_PROVIDER,
   POST_CREATE_REQUESTED,
   POST_CREATE_SUCCEEDED,
@@ -31,6 +33,12 @@ export const isPreloadingStore = preloadingData => (
     type: IS_PRELOADING_STORE, 
     payload: { preloadingData }
   }
+)
+export const linkAccountRequested = (payload) => (
+  { type: LINK_ACCOUNT_REQUESTED, payload }
+)
+export const linkAccountSucceeded = (payload) => (
+  { type: LINK_ACCOUNT_SUCCEEDED, payload }
 )
 export const postCreateRequested = (payload) => (
   { type: POST_CREATE_REQUESTED, payload }

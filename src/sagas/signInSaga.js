@@ -1,46 +1,27 @@
 import 'babel-polyfill'
-import { put, takeLatest, all } from 'redux-saga/effects'
 import firebase from 'firebase'
+import { put, takeLatest, all } from 'redux-saga/effects'
 import { userFetchRequested, postsFetchRequested, tokensUpdateRequested } from '../actions'
 import { SIGN_IN_REQUESTED } from '../actions/types'
 import helpers from '../helpers'
 
-/*going to do without all of these constants
- * import {
-  CREATE_USER,
-  EMAIL,
-  FACEBOOK,
-  GITHUB,
-  GOOGLE,
-  NEW_EMAIL,
-  PROVIDER,
-  SUCCESS,
-} from 'utils/constants'*/
-
-//can probably remove this, and all calls to it
-const success = data => ({ result: 'SUCCESS', user: data.user })
-
 function* createUserWithEmail(data) {
   const password = Math.random().toString(36).slice(-8) 
 
-  // The user data returned by firebase is one level flatter
-  // than the user data for an existing user so we have to pass obj
   const createUserResult = yield firebase.auth()
     .createUserWithEmailAndPassword(data.email, password)
     .then((user) => {
       const userData = user
       userData.redirect = true
       userData.history = data.history
-      return success({ user: userData })
+      return userData
     })
 
   return createUserResult
 }
 
 function* signInWithEmail(data) {
-  const signInResult = yield firebase.auth()
-    .signInWithEmailAndPassword(data.email, data.password)
-    .then(user => success(user))
+  const signInResult = yield firebase.auth().signInWithEmailAndPassword(data.email, data.password)
 
   return signInResult
 }
@@ -78,16 +59,17 @@ function* signInWithProvider(providerName) {
         data.history = result.history
       }
 
-      return success( {user: result.user} )
-    }).catch(function(error) {
+      return data
+    }).catch(function(err) {
       // Handle Errors here.
       //var errorCode = error.code;
       // The email of the user's account used.
       //var email = error.email;
       // The firebase.auth.AuthCredential type that was used.
       //var credential = error.credential;
-      alert(`PROVIDER SIGN IN ERROR: ${error.message}`);
-      helpers.handleError(error)
+
+      helpers.handleError(err)
+      alert(`PROVIDER SIGN IN ERROR: ${err.message}`);
 //TODO: need to alert the user better 
     }); 
 
@@ -95,10 +77,11 @@ function* signInWithProvider(providerName) {
 }
 
 function* signIn(action) {
+  const pld = action.payload
   try {
-    const signInType = action.payload.signInType
-    const credentials = action.payload.credentials
-    const provider = action.payload.provider
+    const signInType = pld.signInType
+    const credentials = pld.credentials
+    const provider = pld.provider
 
     let signInResult
     switch (signInType) {
@@ -117,19 +100,29 @@ function* signIn(action) {
     }
 
     if (signInResult) {
-      const user = signInResult.user
+      console.log(signInResult);
       let userProviders = []
-      user.providerData && user.providerData.forEach((provider) => {
+      signInResult.providerData && signInResult.providerData.forEach((provider) => {
         userProviders.push(provider.providerId)
       })
-      yield all([
-        put(userFetchRequested(user)),
-        put(postsFetchRequested(user)),
-        put(tokensUpdateRequested({
+
+      if (pld.wantTokenOnly) {
+        yield  put(tokensUpdateRequested({
           providerIds: userProviders, 
-          credential: user.credential
-        })),
-      ])
+          credential: signInResult.credential
+        }))
+
+      //otherwise, get/set all user data
+      } else {
+        yield all([
+          put(userFetchRequested(signInResult)),
+          put(postsFetchRequested(signInResult)),
+          put(tokensUpdateRequested({
+            providerIds: userProviders, 
+            credential: signInResult.credential
+          })),
+        ])
+      }
       
     } else {
       //no user found

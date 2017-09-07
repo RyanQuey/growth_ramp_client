@@ -2,6 +2,7 @@ import {
   POST_CREATE_SUCCEEDED,
   POSTS_FETCH_SUCCEEDED,
   INPUT_UPDATE_SUCCEEDED,
+  SIGN_OUT,
 } from '../actions/types'
 import helpers from '../helpers'
 import _ from 'lodash'
@@ -9,12 +10,6 @@ import _ from 'lodash'
 const postsReducer = (state = null, action) => {
 
   switch (action.type) {
-
-    case POST_CREATE_SUCCEEDED:
-      return Object.assign({}, state, action.payload)
-
-    case POSTS_FETCH_SUCCEEDED:
-      return Object.assign({}, state, action.payload)
 
     case INPUT_UPDATE_SUCCEEDED:
       let pathArray = action.payload.path.split("/")
@@ -33,6 +28,15 @@ const postsReducer = (state = null, action) => {
 
         return newState
       }
+
+    case POST_CREATE_SUCCEEDED:
+      return Object.assign({}, state, action.payload)
+
+    case POSTS_FETCH_SUCCEEDED:
+      return Object.assign({}, state, action.payload)
+
+    case SIGN_OUT:
+      return false
 
     default:
       return state

@@ -8,6 +8,16 @@ export const PROVIDERS = {
   //REDDIT: 'reddit',
 }
 
+//maps provider IDs provided by firebase
+export const PROVIDER_IDS_MAP = {
+  'facebook.com': 'facebook',
+  //GITHUB: 'github',
+  'google.com': 'google',
+  'linkedin.com': 'linkedIn',
+  'twitter.com': 'twitter',
+  //REDDIT: 'reddit',
+}
+
 // Input fields
 export const USER_FIELDS_TO_PERSIST = {
   AVATAR_URL: 'photoURL',
@@ -20,12 +30,3 @@ export const USER_FIELDS_TO_PERSIST = {
   //don't want to save the access token to the database
 }
 
-//maps provider IDs provided by firebase
-export const PROVIDER_IDS_MAP = {
-  'facebook.com': 'facebook',
-  //GITHUB: 'github',
-  'google.com': 'google',
-  'LinkedIn.com': 'linkedIn',
-  TWITTER: 'twitter',
-  //REDDIT: 'reddit',
-}
