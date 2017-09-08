@@ -1,8 +1,8 @@
 import 'babel-polyfill'
 import firebase from 'firebase'
 import { put, takeLatest, all } from 'redux-saga/effects'
-import { linkAccountRequested, tokensUpdateRequested, linkAccountSucceeded  } from '../actions'
-import { LINK_ACCOUNT_REQUESTED } from '../actions/types'
+import { linkAccountRequest, tokensUpdateRequest, linkAccountSucceed  } from '../actions'
+import { LINK_ACCOUNT_REQUEST } from '../actions/types'
 import helpers from '../helpers'
 
 function* linkEmail(data) {
@@ -76,11 +76,11 @@ function* linkAccount(action) {
         userProviders.push(provider.providerId)
       })
       yield all([
-        put(tokensUpdateRequested({
+        put(tokensUpdateRequest({
           providerIds: userProviders, 
           credential: linkResult.credential
         })),
-        put(linkAccountSucceeded({
+        put(linkAccountSucceed({
           providerData: linkResult.providerData
         }))
       ])
@@ -96,5 +96,5 @@ function* linkAccount(action) {
 }
 
 export default function* linkAccountSaga() {
-  yield takeLatest(LINK_ACCOUNT_REQUESTED, linkAccount)
+  yield takeLatest(LINK_ACCOUNT_REQUEST, linkAccount)
 }

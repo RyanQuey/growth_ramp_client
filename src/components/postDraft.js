@@ -1,11 +1,9 @@
 import React, { Component } from 'react';
 import firebase from 'firebase';
-import FB from 'fb';
 import { connect } from 'react-redux'
 import FirebaseInput from './shared/firebaseInput'
-import helpers from '../helpers'
 import fbApp from '../firebaseApp';
-import { setInputVal } from '../actions'
+import { setInputVal, postPublishRequest } from '../actions'
 
 const database = fbApp.database();
 
@@ -35,35 +33,17 @@ class PostDraft extends Component {
     //alert(" Eventually will send to Facebook etc.")
     //make sure user cannot submit before login... Or I have to use the watcher that firebase provides
     let user = this.props.user;
-    let payload = { message: this.props.post.content }//, appsecret_proof: this.props.user.facebookAppSecretProof }
+    let payload = { 
+      post: this.props.post, 
+      //hard coding for now
+      providers: ["facebook", "twitter"],
+      //appsecret_proof: this.props.user.facebookAppSecretProof ,
+    }
 
     if (user) {
-    // User is signed in.
-      //Facebook
-      FB.api(`/me/feed`, 'post', payload, (response) => {
-        if (!response || response.error) {
-          let newError = helpers.handleError(response.error);
-            
-          this.setState({
-            status: "error",
-            error: newError,
-          });
-          
-        } else {
-          alert('Facebook post ID: ' + response.id);
-        }
-      })
-
-      //Twitter
-      if (this.props.tokens && this.props.tokens.twitterApi) {
-        const t = this.props.tokens.twitterApi
-        t.__call("statuses_update", {"status": this.props.post.content}, function(reply){console.log(reply)});
-      } else {
-        console.log(" Need to get that twitter access token");
-      }
+      this.props.postPublishRequest(payload)
     } else {
-    // No user is signed in.
-    alert(" Please sign in 1st")
+      alert(" Please sign in 1st")
     }
   }
 
@@ -118,5 +98,5 @@ const mapStateToProps = state => {
   }
 }
 
-const ConnectedPostDraft = connect(mapStateToProps, { setInputVal })(PostDraft)
+const ConnectedPostDraft = connect(mapStateToProps, { setInputVal, postPublishRequest })(PostDraft)
 export default ConnectedPostDraft

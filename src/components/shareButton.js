@@ -3,7 +3,7 @@ import firebase from 'firebase';
 import helpers from '../helpers'
 import fbApp from '../firebaseApp';
 import PostDraft from './postDraft';
-import { postCreateRequested } from '../actions'
+import { postCreateRequest } from '../actions'
 import { connect } from 'react-redux'
 const database = fbApp.database();
 
@@ -23,7 +23,8 @@ class ShareButton extends Component {
     e.preventDefault()
     this.setState({status: "pending"});
     let userId = this.props.user.uid
-    this.props.postCreateRequested({userId})
+    this.props.postCreateRequest({userId})
+console.log(firebase.auth().currentUser);
   }
 
   render() {
@@ -68,7 +69,7 @@ const mapStateToProps = state => {
 }
 const mapDispatchToProps = (dispatch) => {
   return {
-    postCreateRequested: (data) => dispatch(postCreateRequested(data)),
+    postCreateRequest: (data) => dispatch(postCreateRequest(data)),
   }
 }
 

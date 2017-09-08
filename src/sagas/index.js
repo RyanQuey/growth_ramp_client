@@ -8,6 +8,7 @@ import signOutSaga from './signOutSaga'
 import linkAccountSaga from './linkAccountSaga'
 import updateTokensSaga from './updateTokensSaga'
 import createPostSaga from './createPostSaga'
+import publishPostSaga from './publishPostSaga'
 
 export default function* rootSaga() {
   yield all([
@@ -16,6 +17,7 @@ export default function* rootSaga() {
     call(fetchPostsSaga),
     call(signInSaga),
     call(createPostSaga),
+    call(publishPostSaga),
     call(setInputSaga),
     call(signOutSaga),
     call(updateTokensSaga),

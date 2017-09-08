@@ -1,62 +1,66 @@
 import { 
-  FACEBOOK_POST_PUBLISH_REQUESTED,
-  INPUT_UPDATE_SUCCEEDED,
+  INPUT_UPDATE_SUCCESS,
   IS_PRELOADING_STORE,
-  LINK_ACCOUNT_REQUESTED,
-  LINK_ACCOUNT_SUCCEEDED,
+  LINK_ACCOUNT_REQUEST,
+  LINK_ACCOUNT_SUCCESS,
   LOG_IN_WITH_PROVIDER,
-  POST_CREATE_REQUESTED,
-  POST_CREATE_SUCCEEDED,
-  POSTS_FETCH_REQUESTED,
-  POSTS_FETCH_SUCCEEDED,
-  POST_REMOVE_REQUESTED,
-  POST_REMOVE_SUCCEEDED,
+  POST_CREATE_REQUEST,
+  POST_CREATE_SUCCESS,
+  POSTS_FETCH_REQUEST,
+  POSTS_FETCH_SUCCESS,
+  POST_PUBLISH_REQUEST,
+  POST_PUBLISH_SUCCESS,
+  POST_REMOVE_REQUEST,
+  POST_REMOVE_SUCCESS,
   SET_CURRENT_USER,
   SET_IMAGE,
   SET_INPUT_VAL,
-  SIGN_IN_REQUESTED,
+  SIGN_IN_REQUEST,
   SIGN_OUT,
-  SIGN_OUT_REQUESTED,
+  SIGN_OUT_REQUEST,
   TOKENS_UPDATE_FAILED,
-  TOKENS_UPDATE_REQUESTED,
-  TOKENS_UPDATE_SUCCEEDED,
+  TOKENS_UPDATE_REQUEST,
+  TOKENS_UPDATE_SUCCESS,
   USER_FETCH_FAILED,
-  USER_FETCH_REQUESTED,
-  USER_FETCH_SUCCEEDED,
+  USER_FETCH_REQUEST,
+  USER_FETCH_SUCCESS,
 } from './types'
 
-export const facebookPostPublishRequested = (payload) => (
-  { type: FACEBOOK_POST_PUBLISH_REQUESTED, payload }
-)
 export const isPreloadingStore = preloadingData => (
   { 
     type: IS_PRELOADING_STORE, 
     payload: { preloadingData }
   }
 )
-export const linkAccountRequested = (payload) => (
-  { type: LINK_ACCOUNT_REQUESTED, payload }
+export const linkAccountRequest = (payload) => (
+  { type: LINK_ACCOUNT_REQUEST, payload }
 )
-export const linkAccountSucceeded = (payload) => (
-  { type: LINK_ACCOUNT_SUCCEEDED, payload }
+export const linkAccountSucceed = (payload) => (
+  { type: LINK_ACCOUNT_SUCCESS, payload }
 )
-export const postCreateRequested = (payload) => (
-  { type: POST_CREATE_REQUESTED, payload }
+export const postCreateRequest = (payload) => (
+  { type: POST_CREATE_REQUEST, payload }
 )
-export const postCreateSucceeded = (payload) => (
-  { type: POST_CREATE_SUCCEEDED, payload }
+export const postCreateSucceed = (payload) => (
+  { type: POST_CREATE_SUCCESS, payload }
 )
-export const postsFetchRequested = payload => (
-  { type: POSTS_FETCH_REQUESTED, payload }
+export const postsFetchRequest = payload => (
+  { type: POSTS_FETCH_REQUEST, payload }
 )
-export const postsFetchSucceeded = payload => (
-  { type: POSTS_FETCH_SUCCEEDED, payload }
+export const postsFetchSucceed = payload => (
+  { type: POSTS_FETCH_SUCCESS, payload }
 )
-export const postRemoveRequested = (payload) => (
-  { type: POST_REMOVE_REQUESTED, payload }
+export const postPublishRequest = (payload) => (
+  { type: POST_PUBLISH_REQUEST, payload }
 )
-export const postRemoveSucceeded = (payload) => (
-  { type: POST_REMOVE_SUCCEEDED, payload }
+export const postPublishSucceed = (payload) => (
+  { type: POST_PUBLISH_SUCCESS, payload }
+)
+export const postRemoveRequest = (payload) => (
+  { type: POST_REMOVE_REQUEST, payload }
+)
+export const postRemoveSucceed = (payload) => (
+  { type: POST_REMOVE_SUCCESS, payload }
 )
 export const setCurrentUser = (payload) => (
   { type: SET_CURRENT_USER, payload }
@@ -67,12 +71,12 @@ export const setImage = payload => (
 export const setInputVal = payload => (
   { type: SET_INPUT_VAL, payload }
 )
-export const signInRequested = payload => (
-  { type: SIGN_IN_REQUESTED, payload }
+export const signInRequest = payload => (
+  { type: SIGN_IN_REQUEST, payload }
 )
 //starts the signout process
-export const signOutRequested = payload => (
-  { type: SIGN_OUT_REQUESTED, payload }
+export const signOutRequest = payload => (
+  { type: SIGN_OUT_REQUEST, payload }
 )
 //finishes the signout process
 export const signOut = payload => (
@@ -83,20 +87,20 @@ export const tokensUpdateFailed = payload => (
   { type: TOKENS_UPDATE_FAILED, payload }
 )
 //set the token for use with the provider API, or let the user know that they need to sign in again
-export const tokensUpdateRequested = payload => (
-  { type: TOKENS_UPDATE_REQUESTED, payload }
+export const tokensUpdateRequest = payload => (
+  { type: TOKENS_UPDATE_REQUEST, payload }
 )
-export const tokensUpdateSucceeded = payload => (
-  { type: TOKENS_UPDATE_SUCCEEDED, payload }
+export const tokensUpdateSucceed = payload => (
+  { type: TOKENS_UPDATE_SUCCESS, payload }
 )
 export const userFetchFailed = payload => (
   { type: USER_FETCH_FAILED, payload }
 )
-export const userFetchRequested = payload => (
-  { type: USER_FETCH_REQUESTED, payload }
+export const userFetchRequest = payload => (
+  { type: USER_FETCH_REQUEST, payload }
 )
-export const userFetchSucceeded = payload => (
-  { type: USER_FETCH_SUCCEEDED, payload }
+export const userFetchSucceed = payload => (
+  { type: USER_FETCH_SUCCESS, payload }
 )
 
 

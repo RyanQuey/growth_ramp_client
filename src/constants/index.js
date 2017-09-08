@@ -3,7 +3,7 @@ export const PROVIDERS = {
   FACEBOOK: 'facebook',
   //GITHUB: 'github',
   GOOGLE: 'google',
-  LINKEDIN: 'linkedIn',
+  LINKEDIN: 'linkedin',
   TWITTER: 'twitter',
   //REDDIT: 'reddit',
 }
@@ -13,7 +13,7 @@ export const PROVIDER_IDS_MAP = {
   'facebook.com': 'facebook',
   //GITHUB: 'github',
   'google.com': 'google',
-  'linkedin.com': 'linkedIn',
+  'linkedin.com': 'linkedin',
   'twitter.com': 'twitter',
   //REDDIT: 'reddit',
 }

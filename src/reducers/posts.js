@@ -1,7 +1,7 @@
 import {
-  POST_CREATE_SUCCEEDED,
-  POSTS_FETCH_SUCCEEDED,
-  INPUT_UPDATE_SUCCEEDED,
+  POST_CREATE_SUCCESS,
+  POSTS_FETCH_SUCCESS,
+  INPUT_UPDATE_SUCCESS,
   SIGN_OUT,
 } from '../actions/types'
 import helpers from '../helpers'
@@ -11,7 +11,7 @@ const postsReducer = (state = null, action) => {
 
   switch (action.type) {
 
-    case INPUT_UPDATE_SUCCEEDED:
+    case INPUT_UPDATE_SUCCESS:
       let pathArray = action.payload.path.split("/")
       let root = pathArray.shift()
       let relativePath = pathArray.join(".")
@@ -29,10 +29,10 @@ const postsReducer = (state = null, action) => {
         return newState
       }
 
-    case POST_CREATE_SUCCEEDED:
+    case POST_CREATE_SUCCESS:
       return Object.assign({}, state, action.payload)
 
-    case POSTS_FETCH_SUCCEEDED:
+    case POSTS_FETCH_SUCCESS:
       return Object.assign({}, state, action.payload)
 
     case SIGN_OUT:

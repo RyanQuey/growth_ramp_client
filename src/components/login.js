@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import _ from 'lodash'
 import helpers from '../helpers'
 import { PROVIDERS, PROVIDER_IDS_MAP } from '../constants'
-import { signInRequested, signOutRequested, linkAccountRequested } from '../actions'
+import { signInRequest, signOutRequest, linkAccountRequest } from '../actions'
 
 class Login extends Component {
   constructor() {
@@ -44,18 +44,18 @@ class Login extends Component {
     }
     //if already logged in but not yet linked
     if (user && !alreadyLinked) {
-      return this.props.linkAccountRequested(data)
+      return this.props.linkAccountRequest(data)
 
     } else if (user) {
       data.wantTokenOnly = true
     }
-    return this.props.signInRequested(data)
+    return this.props.signInRequest(data)
   }
 
   handleSignOut(e) {
     e.preventDefault()
     console.log(" logout click");
-    this.props.signOutRequested()
+    this.props.signOutRequest()
   }
 
   render() {
@@ -93,15 +93,12 @@ const mapStateToProps = state => {
   }
 }
 
-// can be passed in as { signInRequested } into connect as a shortcut, but learning the long way for now until I can get used to it, and know how to modify the dispatches for later on
+// can be passed in as { signInRequest } into connect as a shortcut, but learning the long way for now until I can get used to it, and know how to modify the dispatches for later on
 const mapDispatchToProps = (dispatch) => {
   return {
-    signInRequested: (data) => dispatch(signInRequested(data)),
-    linkAccountRequested: (data) => dispatch(linkAccountRequested(data)),
-    signOutRequested: () => {
-      console.log("the dispatch call from the props");
-      dispatch(signOutRequested())
-    }
+    signInRequest: (data) => dispatch(signInRequest(data)),
+    linkAccountRequest: (data) => dispatch(linkAccountRequest(data)),
+    signOutRequest: () => {dispatch(signOutRequest())}
   }
 }
 const ConnectedLogin = connect(mapStateToProps, mapDispatchToProps)(Login)

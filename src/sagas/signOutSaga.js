@@ -1,7 +1,7 @@
 import 'babel-polyfill'
 import { put, takeLatest } from 'redux-saga/effects'
 import firebase from 'firebase'
-import { SIGN_OUT_REQUESTED } from '../actions/types'
+import { SIGN_OUT_REQUEST } from '../actions/types'
 import { signOut } from '../actions'
 
 function* signUserOut() {
@@ -18,5 +18,5 @@ function* signUserOut() {
 }
 
 export default function* signOutSaga() {
-  yield takeLatest(SIGN_OUT_REQUESTED, signUserOut)
+  yield takeLatest(SIGN_OUT_REQUEST, signUserOut)
 }

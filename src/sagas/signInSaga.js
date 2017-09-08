@@ -1,8 +1,8 @@
 import 'babel-polyfill'
 import firebase from 'firebase'
 import { put, takeLatest, all } from 'redux-saga/effects'
-import { userFetchRequested, postsFetchRequested, tokensUpdateRequested } from '../actions'
-import { SIGN_IN_REQUESTED } from '../actions/types'
+import { userFetchRequest, postsFetchRequest, tokensUpdateRequest } from '../actions'
+import { SIGN_IN_REQUEST } from '../actions/types'
 import helpers from '../helpers'
 
 function* createUserWithEmail(data) {
@@ -83,6 +83,7 @@ function* signIn(action) {
     const credentials = pld.credentials
     const provider = pld.provider
 
+    yield firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL)
     let signInResult
     switch (signInType) {
       case 'CREATE_USER':
@@ -107,7 +108,7 @@ function* signIn(action) {
       })
 
       if (pld.wantTokenOnly) {
-        yield  put(tokensUpdateRequested({
+        yield  put(tokensUpdateRequest({
           providerIds: userProviders, 
           credential: signInResult.credential
         }))
@@ -115,9 +116,9 @@ function* signIn(action) {
       //otherwise, get/set all user data
       } else {
         yield all([
-          put(userFetchRequested(signInResult)),
-          put(postsFetchRequested(signInResult)),
-          put(tokensUpdateRequested({
+          put(userFetchRequest(signInResult)),
+          put(postsFetchRequest(signInResult)),
+          put(tokensUpdateRequest({
             providerIds: userProviders, 
             credential: signInResult.credential
           })),
@@ -127,13 +128,19 @@ function* signIn(action) {
     } else {
       //no user found
       //TODO: make a separate action for the error
-      yield put(userFetchRequested(null))
+      yield put(userFetchRequest(null))
     }
   } catch (err) {
+    if (err.code === 'auth/account-exists-with-different-credential' ) {
+      //see https://firebase.google.com/docs/auth/web/twitter-login for how to Link Twitter is their initial login 
+      //Alternatively, can just force them to login with one of the ways they already set up
+
+    }
     console.log('Error in Sign In Saga', err)
+
   }
 }
 
 export default function* signInSaga() {
-  yield takeLatest(SIGN_IN_REQUESTED, signIn)
+  yield takeLatest(SIGN_IN_REQUEST, signIn)
 }

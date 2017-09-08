@@ -4,8 +4,8 @@ import { call, put, takeLatest, takeEvery, all, fork, join } from 'redux-saga/ef
 import fbApp from '../firebaseApp.js'
 import firebase  from 'firebase'
 import CodeBird from 'codebird'
-import { tokensUpdateFailed, tokensUpdateSucceeded } from '../actions'
-import { TOKENS_UPDATE_REQUESTED } from '../actions/types'
+import { tokensUpdateFailed, tokensUpdateSucceed } from '../actions'
+import { TOKENS_UPDATE_REQUEST } from '../actions/types'
 import { USER_FIELDS_TO_PERSIST, PROVIDER_IDS_MAP  } from '../constants'
 import helpers from '../helpers'
 import FB from 'fb';
@@ -55,7 +55,7 @@ function* getTokens(providerId, credential) {
         //not really sure which token this returns...
         provider = firebase.auth().getIdToken(true)
     }
-    //might not want to put this into store...
+    //might not want to put this into store...probably just use Boolean instead
     tokenInfo[providerName] = {}
     tokenInfo[providerName].accessToken = providerToken
     
@@ -85,7 +85,7 @@ function* updateData(action) {
     
     const tokens = Object.assign({}, tokenInfo)
 
-    yield put(tokensUpdateSucceeded(tokens))
+    yield put(tokensUpdateSucceed(tokens))
   } catch (err) {
     console.log('token update failed', err)
     yield put(tokensUpdateFailed(err.message))
@@ -93,5 +93,5 @@ function* updateData(action) {
 }
 
 export default function* updateTokenSaga() {
-  yield takeLatest(TOKENS_UPDATE_REQUESTED, updateData)
+  yield takeLatest(TOKENS_UPDATE_REQUEST, updateData)
 }

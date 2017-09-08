@@ -8,7 +8,7 @@ import Login from './components/login';
 import { connect } from 'react-redux'
 import firebase from 'firebase';
 import store from './reducers'
-import { postsFetchRequested, userFetchRequested, tokensUpdateRequested, isPreloadingStore } from './actions'
+import { postsFetchRequest, userFetchRequest, tokensUpdateRequest, isPreloadingStore } from './actions'
 import './App.css';
 
 class App extends Component {
@@ -21,15 +21,15 @@ class App extends Component {
         //mostly only gets ran when reloading the page after already logged in
         if (!this.props.user) {
           const userData = helpers.extractUserData(user)
-          this.props.userFetchRequested(userData)
-          this.props.postsFetchRequested(userData)
+          this.props.userFetchRequest(userData)
+          this.props.postsFetchRequest(userData)
 
           let userProviders = []
           userData.providerData && userData.providerData.forEach((provider) => {
             userProviders.push(provider.providerId)
           })
           if (userProviders.length > 0) {
-            this.props.tokensUpdateRequested({providerIds: userProviders})
+            this.props.tokensUpdateRequest({providerIds: userProviders})
           }
         }
     
@@ -69,12 +69,12 @@ const mapStateToProps = state => {
   }
 }
 
-// can be passed in as { signInRequested } into connect as a shortcut, but learning the long way for now until I can get used to it, and know how to modify the dispatches for later on
+// can be passed in as { signInRequest } into connect as a shortcut, but learning the long way for now until I can get used to it, and know how to modify the dispatches for later on
 const mapDispatchToProps = (dispatch) => {
   return {
-    userFetchRequested: (data) => dispatch(userFetchRequested(data)),
-    postsFetchRequested: (data) => dispatch(postsFetchRequested(data)),
-    tokensUpdateRequested: (data) => dispatch(tokensUpdateRequested(data)),
+    userFetchRequest: (data) => dispatch(userFetchRequest(data)),
+    postsFetchRequest: (data) => dispatch(postsFetchRequest(data)),
+    tokensUpdateRequest: (data) => dispatch(tokensUpdateRequest(data)),
   }
 }
 const ConnectedApp = connect(mapStateToProps, mapDispatchToProps)(App)

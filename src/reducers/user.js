@@ -1,12 +1,12 @@
 import {
-  CREATE_DRAFT_SUCCEEDED,
-  INPUT_UPDATE_SUCCEEDED,
-  LINK_ACCOUNT_SUCCEEDED,
+  CREATE_DRAFT_SUCCESS,
+  INPUT_UPDATE_SUCCESS,
+  LINK_ACCOUNT_SUCCESS,
   LOG_IN_WITH_PROVIDER,
   SET_CURRENT_USER,
   SET_IMAGE,
   SIGN_OUT,
-  USER_FETCH_SUCCEEDED,
+  USER_FETCH_SUCCESS,
   
 } from '../actions/types'
 import helpers from '../helpers'
@@ -15,7 +15,7 @@ import _ from 'lodash'
 const userReducer = (state = null, action) => {
 
   switch (action.type) {
-    case LINK_ACCOUNT_SUCCEEDED:
+    case LINK_ACCOUNT_SUCCESS:
       return Object.assign({}, state, { providerData: action.payload.providerData })
     case LOG_IN_WITH_PROVIDER:
       return action.payload
@@ -26,7 +26,7 @@ const userReducer = (state = null, action) => {
     case SET_IMAGE:
       return Object.assign({}, state, { [action.payload.name]: action.payload.url })
 
-    case INPUT_UPDATE_SUCCEEDED:
+    case INPUT_UPDATE_SUCCESS:
       let pathArray = action.payload.path.split("/")
       let root = pathArray.shift()
       let relativePath = pathArray.join(".")
@@ -41,7 +41,7 @@ const userReducer = (state = null, action) => {
     case SIGN_OUT:
       return false
 
-    case USER_FETCH_SUCCEEDED:
+    case USER_FETCH_SUCCESS:
       return Object.assign({}, state, action.payload)
 
     default:
