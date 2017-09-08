@@ -1,7 +1,7 @@
 import 'babel-polyfill'
 import firebase from 'firebase'
 import { put, takeLatest, all } from 'redux-saga/effects'
-import { linkAccountRequest, tokensUpdateRequest, linkAccountSucceed  } from '../actions'
+import { linkAccountRequest, tokensUpdateRequest, linkAccountSuccess  } from '../actions'
 import { LINK_ACCOUNT_REQUEST } from '../actions/types'
 import helpers from '../helpers'
 
@@ -80,7 +80,7 @@ function* linkAccount(action) {
           providerIds: userProviders, 
           credential: linkResult.credential
         })),
-        put(linkAccountSucceed({
+        put(linkAccountSuccess({
           providerData: linkResult.providerData
         }))
       ])

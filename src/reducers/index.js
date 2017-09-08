@@ -11,7 +11,7 @@ const rootReducer = combineReducers({
   preloadingStore: preloadingReducer,
   user: userReducer,
   posts: postsReducer,
-  tokens: tokensReducer
+  tokenInfo: tokensReducer
 })
 
 const sagaMiddleware = createSagaMiddleware()

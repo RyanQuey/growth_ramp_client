@@ -1,7 +1,7 @@
 import 'babel-polyfill'
 import firebase from 'firebase'
 import { put, takeLatest, all } from 'redux-saga/effects'
-import { userFetchRequest, postsFetchRequest, tokensUpdateRequest } from '../actions'
+import { userFetchRequest, postsFetchRequest, tokensUpdateRequest, signInPopupClosed } from '../actions'
 import { SIGN_IN_REQUEST } from '../actions/types'
 import helpers from '../helpers'
 
@@ -68,8 +68,12 @@ function* signInWithProvider(providerName) {
       // The firebase.auth.AuthCredential type that was used.
       //var credential = error.credential;
 
-      helpers.handleError(err)
-      alert(`PROVIDER SIGN IN ERROR: ${err.message}`);
+      
+      let errObj = helpers.handleError(err)
+        //see https://firebase.google.com/docs/auth/web/twitter-login for how to Link Twitter is their initial login 
+        //Alternatively, can just force them to login with one of the ways they already set up
+  
+      //alert(`PROVIDER SIGN IN ERROR: ${err.message}`);
 //TODO: need to alert the user better 
     }); 
 
@@ -101,7 +105,7 @@ function* signIn(action) {
     }
 
     if (signInResult) {
-      console.log(signInResult);
+      console.log(signInResult, pld);
       let userProviders = []
       signInResult.providerData && signInResult.providerData.forEach((provider) => {
         userProviders.push(provider.providerId)
@@ -124,20 +128,19 @@ function* signIn(action) {
           })),
         ])
       }
-      
     } else {
       //no user found
       //TODO: make a separate action for the error
-      yield put(userFetchRequest(null))
+      //yield put(userFetchRequest(null))
     }
+     return " all done" 
   } catch (err) {
-    if (err.code === 'auth/account-exists-with-different-credential' ) {
-      //see https://firebase.google.com/docs/auth/web/twitter-login for how to Link Twitter is their initial login 
-      //Alternatively, can just force them to login with one of the ways they already set up
-
-    }
     console.log('Error in Sign In Saga', err)
 
+  } finally {
+    //this action is necessary to signal that it is finished, to consider that there are never 2 pop-ups open at the same time
+    console.log("finished");
+    yield put(signInPopupClosed())
   }
 }
 

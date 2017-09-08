@@ -3,7 +3,7 @@ import _ from 'lodash'
 import { call, put, takeLatest, all } from 'redux-saga/effects'
 import fbApp from '../firebaseApp.js'
 import firebase  from 'firebase'
-import { isPreloadingStore, userFetchFailed, userFetchSucceed } from '../actions'
+import { isPreloadingStore, userFetchFailure, userFetchSuccess } from '../actions'
 import { USER_FETCH_REQUEST } from '../actions/types'
 import { USER_FIELDS_TO_PERSIST, PROVIDER_IDS_MAP  } from '../constants'
 import helpers from '../helpers'
@@ -50,7 +50,7 @@ function* fetchData(action) {
     let userData = yield call(getOrSaveUserData, pld)
 
     const user = Object.assign({}, userData, {uid: pld.uid})
-    yield put(userFetchSucceed(user)),
+    yield put(userFetchSuccess(user)),
     yield put(isPreloadingStore(false))
 
     /* don't have anywhere to redirect to yet!
@@ -62,7 +62,7 @@ function* fetchData(action) {
 
   } catch (err) {
     console.log('user fetch failed', err)
-    yield put(userFetchFailed(err.message))
+    yield put(userFetchFailure(err.message))
   }
 }
 

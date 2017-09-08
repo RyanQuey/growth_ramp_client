@@ -11,8 +11,13 @@ export default {
         obj.message = "Can't make the same status update twice in a row; Please edit and try again"
         obj.origin = "facebook"
       }
+    } else if (err.code === 'auth/account-exists-with-different-credential' ) {
+      alert("Error signing in with provider: The account you logged in with exists for a different user. Each social media account can only be attached to one Growth Ramp account")
+    } else {
+      obj = err
     }
     console.log(err);
+//probably one pop up to appear
 
     return obj
   },

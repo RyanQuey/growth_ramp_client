@@ -2,7 +2,7 @@ import 'babel-polyfill'
 import _ from 'lodash'
 import { call, put, takeLatest, all } from 'redux-saga/effects'
 import fbApp from '../firebaseApp.js'
-import { postsFetchSucceed } from '../actions'
+import { postsFetchSuccess } from '../actions'
 import { POSTS_FETCH_REQUEST } from '../actions/types'
 import helpers from '../helpers'
 
@@ -34,7 +34,7 @@ function* fetchData(action) {
     const posts = Object.assign({}, postsData)
 
     yield all([
-      put(postsFetchSucceed(posts)),
+      put(postsFetchSuccess(posts)),
     ])
 
   } catch (err) {

@@ -4,7 +4,7 @@ import { call, put, takeLatest, takeEvery, all, fork, join } from 'redux-saga/ef
 import fbApp from '../firebaseApp.js'
 import firebase  from 'firebase'
 import CodeBird from 'codebird'
-import { tokensUpdateFailed, tokensUpdateSucceed } from '../actions'
+import { tokensUpdateFailure, tokensUpdateSuccess } from '../actions'
 import { TOKENS_UPDATE_REQUEST } from '../actions/types'
 import { USER_FIELDS_TO_PERSIST, PROVIDER_IDS_MAP  } from '../constants'
 import helpers from '../helpers'
@@ -21,6 +21,7 @@ const tokenInfo = {}
 
 //called when there is no token in the store (e.g., initial store load), or expired token in the store
 function* getTokens(providerId, credential) {
+console.log(providerId, credential);
   let provider, providerToken
   let providerName = PROVIDER_IDS_MAP[providerId]
   if (credential && credential.providerId === providerId) {
@@ -31,6 +32,7 @@ function* getTokens(providerId, credential) {
     //or, skip firebase: https://developers.facebook.com/docs/facebook-login/access-tokens/expiration-and-extension/ 
     //providerToken = firebase.auth().FacebookAuthProvider.credential(firebaseToken)
   }
+console.log(providerToken, providerName);
   if (providerToken) {
     switch (providerName) {
       case 'facebook':
@@ -45,7 +47,8 @@ function* getTokens(providerId, credential) {
       case 'twitter':
         
         codeBird.setToken(process.env.REACT_APP_TWITTER_ACCESS_TOKEN, process.env.REACT_APP_TWITTER_TOKEN_SECRET)
-        tokenInfo.twitterApi = codeBird
+        tokenInfo.twitter = {}
+        tokenInfo.twitter.api = codeBird
         break
         
       case 'google':
@@ -56,8 +59,8 @@ function* getTokens(providerId, credential) {
         provider = firebase.auth().getIdToken(true)
     }
     //might not want to put this into store...probably just use Boolean instead
-    tokenInfo[providerName] = {}
-    tokenInfo[providerName].accessToken = providerToken
+    tokenInfo[providerName] = tokenInfo[providerName] || {}
+    tokenInfo[providerName].authenticated = true
     
   }
 
@@ -85,10 +88,10 @@ function* updateData(action) {
     
     const tokens = Object.assign({}, tokenInfo)
 
-    yield put(tokensUpdateSucceed(tokens))
+    yield put(tokensUpdateSuccess(tokens))
   } catch (err) {
     console.log('token update failed', err)
-    yield put(tokensUpdateFailed(err.message))
+    yield put(tokensUpdateFailure(err.message))
   }
 }
 

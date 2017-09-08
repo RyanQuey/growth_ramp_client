@@ -94,7 +94,7 @@ class PostDraft extends Component {
 const mapStateToProps = state => {
   return {
     user: state.user,
-    tokens: state.tokens,
+    tokenInfo: state.tokenInfo,
   }
 }
 
