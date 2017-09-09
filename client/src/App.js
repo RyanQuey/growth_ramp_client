@@ -4,8 +4,7 @@ import $ from 'jquery'
 import helpers from './helpers'
 import './prototypeHelpers'
 import logo from './logo.svg';
-import ShareButton from './components/shareButton';
-import Login from './components/login';
+import Layout from './components/layout';
 import { connect } from 'react-redux'
 import firebase from 'firebase';
 import store from './reducers'
@@ -50,15 +49,13 @@ class App extends Component {
     return (
       <div className="App">
         {this.props.preloadingStore ? (
-          <div>loading...</div>
+          <div>
+            <img src={logo} className="App-logo" alt="logo" />
+            <div>loading...</div>
+          </div>
         ) : (
           <div>
-            <div className="App-header">
-              <Login />
-              <img src={logo} className="App-logo" alt="logo" />
-              <h2>Welcome</h2>
-            </div>
-            <ShareButton />
+            <Layout />
           </div>  
         )}
       </div>
