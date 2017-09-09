@@ -15,7 +15,8 @@ import './App.css';
 class App extends Component {
 
   componentDidMount() {
-    $.get('/users').then(res => console.log(res.json()))
+    $.get('/users')
+    .then(res => console.log("got it", res))
 
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
