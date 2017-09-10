@@ -1,23 +1,55 @@
 // Social contants
 export const PROVIDERS = {
-  FACEBOOK: 'facebook',
+  FACEBOOK: {
+    name: 'Facebook',
+    providerId: 'facebook.com',
+    channels: [
+      "PERSONAL_POST",
+      //"PRIVATE_MESSAGE",
+      "GROUP_POST",
+      "PAGE_POST",//mostly for businesses
+      //"DARK_POST",
+      //"BUSINESS_MESSAGE",
+    ],
+  },
   //GITHUB: 'github',
-  GOOGLE: 'google',
-  LINKEDIN: 'linkedin',
-  TWITTER: 'twitter',
+  GOOGLE: {
+    name: 'Google',
+    providerId: 'google.com',
+    channels: []
+  },
+  LINKEDIN: {
+    name: 'LinkedIn',
+    providerId: 'linkedin.com',
+    channels: [
+      "PERSONAL_POST",
+      //"PRIVATE_MESSAGE",
+      "GROUP_POST",
+      "PAGE_POST", //mostly for businesses
+    ]
+  },
+  TWITTER: {
+    name: 'Twitter',
+    providerId: 'twitter.com',
+    channels: [
+      "PERSONAL_POST", //tweet. distinct from business post?
+      "PRIVATE_MESSAGE",
+    ]
+  },  
   //REDDIT: 'reddit',
 }
 
 //maps provider IDs provided by firebase
 export const PROVIDER_IDS_MAP = {
-  'facebook.com': 'facebook',
-  //GITHUB: 'github',
-  'google.com': 'google',
-  'linkedin.com': 'linkedin',
-  'twitter.com': 'twitter',
-  //REDDIT: 'reddit',
+  'facebook.com': 'FACEBOOK',
+  //GITHUB: 'GITHUB',
+  'google.com': 'GOOGLE',
+  'linkedin.com': 'LINKEDIN',
+  'twitter.com': 'TWITTER',
+  //REDDIT: 'REDDIT',
 }
 
+// to determine which fields to extract from firebase auth responses
 // Input fields
 export const USER_FIELDS_TO_PERSIST = {
   AVATAR_URL: 'photoURL',

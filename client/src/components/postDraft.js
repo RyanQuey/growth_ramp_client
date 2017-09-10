@@ -3,10 +3,9 @@ import firebase from 'firebase';
 import { connect } from 'react-redux'
 import FirebaseInput from './shared/firebaseInput'
 import fbApp from '../firebaseApp';
-import { setInputVal, postPublishRequest } from '../actions'
+import { SET_INPUT_VALUE, POST_PUBLISH_REQUEST } from '../actions'
 
 const database = fbApp.database();
-
 
 class PostDraft extends Component {
   constructor() {
@@ -97,6 +96,12 @@ const mapStateToProps = state => {
     tokenInfo: state.tokenInfo,
   }
 }
+const mapDispatchToProps = (dispatch) => {
+  return {
+    setInputValue: (payload) => dispatch({type: SET_INPUT_VALUE, payload}),
+    planPublishRequest: (payload) => dispatch({type: PLAN_PUBLISH_REQUEST, payload}),
+  }
+}
 
-const ConnectedPostDraft = connect(mapStateToProps, { setInputVal, postPublishRequest })(PostDraft)
+const ConnectedPostDraft = connect(mapStateToProps, mapDispatchToProps)(PostDraft)
 export default ConnectedPostDraft

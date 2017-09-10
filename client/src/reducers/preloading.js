@@ -1,5 +1,4 @@
-//currently not preloading anything (?)
-import { IS_PRELOADING_STORE } from '../actions/types'
+import { IS_PRELOADING_STORE } from '../actions'
 
 const preloadingReducer = (state = true, action) => {
   switch (action.type) {

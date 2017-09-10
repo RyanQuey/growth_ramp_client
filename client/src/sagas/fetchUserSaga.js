@@ -3,9 +3,8 @@ import _ from 'lodash'
 import { call, put, takeLatest, all } from 'redux-saga/effects'
 import fbApp from '../firebaseApp.js'
 import firebase  from 'firebase'
-import { isPreloadingStore, userFetchFailure, userFetchSuccess } from '../actions'
-import { USER_FETCH_REQUEST } from '../actions/types'
-import { USER_FIELDS_TO_PERSIST, PROVIDER_IDS_MAP  } from '../constants'
+import { USER_FETCH_REQUEST, USER_FETCH_SUCCESS, PROVIDER_IDS_MAP, IS_PRELOADING_STORE, USER_FETCH_FAILURE } from '../actions'
+import { USER_FIELDS_TO_PERSIST } from '../constants'
 import helpers from '../helpers'
 import FB from 'fb';
 
@@ -47,8 +46,9 @@ function* fetchData(action) {
     let userData = yield call(getOrSaveUserData, pld)
 
     const user = Object.assign({}, userData, {uid: pld.uid})
-    yield put(userFetchSuccess(user)),
-    yield put(isPreloadingStore(false))
+    yield put({type: USER_FETCH_SUCCESS, payload: user})
+    //not really preloading yet. this breaks it also
+    yield put({type: IS_PRELOADING_STORE, payload: {preloadingData: false}})
 
     /* don't have anywhere to redirect to yet!
     if (action.payload.redirect) {
@@ -59,7 +59,8 @@ function* fetchData(action) {
 
   } catch (err) {
     console.log('user fetch failed', err)
-    yield put(userFetchFailure(err.message))
+    yield put({type: IS_PRELOADING_STORE, payload: {preloadingData: false}})
+    yield put({type: USER_FETCH_FAILURE, payload: err.message})
   }
 }
 

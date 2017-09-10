@@ -1,25 +1,15 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Icon } from 'components/elements'
-import theme from 'theme'
-import { StyleSheet, css } from 'aphrodite'
-import classes from './DropDown.scss'
-
-const styles = StyleSheet.create({
-  icon: {
-    color: theme.color.black,
-  },
-  select: {
-    backgroundColor: theme.color.white,
-  },
-})
+//import { Icon } from 'components/elements'
+//import theme from 'theme'
+//import { StyleSheet, css } from 'aphrodite'
+import classes from './dropDown.scss'
 
 const DropDown = ({ value, handleChange, handleSubmit, items, name, submitButton, label, labelAfter }) => (
   <div className={classes.selectWrapper}>
     {!labelAfter && (label ? (<label htmlFor={name}>{label}</label>) : null)}
     <div className={classes.selectCtn}>
       <select
-        className={`${css(styles.select)} ${classes.dropDown}`}
         name={name}
         id={name}
         onChange={handleChange}
@@ -28,7 +18,7 @@ const DropDown = ({ value, handleChange, handleSubmit, items, name, submitButton
         {items.map(item => <option key={item} value={item}>{item}</option>)}
       </select>
 
-      <Icon className={`${css(styles.icon)} ${classes.angleDown}`} name="angle-down" />
+      {/* <Icon className={`${css(styles.icon)} ${classes.angleDown}`} name="angle-down" /> */}
     </div>
 
     {submitButton.text

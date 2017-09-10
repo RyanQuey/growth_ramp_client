@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
 import helpers from '../../helpers'
-import { setInputVal } from '../../actions'
+import { SET_INPUT_VALUE } from '../../actions'
 import Input from './input'
 
 class FirebaseInput extends Component {
@@ -47,7 +47,7 @@ class FirebaseInput extends Component {
     this.setState({ value })
 
     let path = this.props.keys.replace(/\./g, "/")
-    this.props.setInputVal({ path, value })
+    this.props.setInputValue({ path, value })
   }
 
   render() {
@@ -126,6 +126,11 @@ const mapStateToProps = (state, ownProps) => {
   //obj[ownProps.name] = value
   return obj
 }
+const mapDispatchToProps = (dispatch) => {
+  return {
+    setInputValue: (payload) => dispatch({type: SET_INPUT_VALUE, payload}),
+  }
+}
 
-export default connect(mapStateToProps, { setInputVal })(FirebaseInput)
+export default connect(mapStateToProps, mapDispatchToProps)(FirebaseInput)
 

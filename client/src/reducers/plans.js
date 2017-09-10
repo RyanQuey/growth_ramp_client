@@ -1,13 +1,13 @@
 import {
-  POST_CREATE_SUCCESS,
-  POST_FETCH_SUCCESS,
+  PLAN_CREATE_SUCCESS,
+  PLAN_FETCH_SUCCESS,
   INPUT_UPDATE_SUCCESS,
   SIGN_OUT,
 } from '../actions'
 import helpers from '../helpers'
 import _ from 'lodash'
 
-const postsReducer = (state = null, action) => {
+const plansReducer = (state = {}, action) => {
 
   switch (action.type) {
 
@@ -16,7 +16,7 @@ const postsReducer = (state = null, action) => {
       let root = pathArray.shift()
       let relativePath = pathArray.join(".")
       let value = action.payload.value
-      if (root === "posts") {
+      if (root === "plans") {
         let newState = Object.assign({}, state)
         //when deleting a resource
         if (value === null) {
@@ -29,11 +29,10 @@ const postsReducer = (state = null, action) => {
         return newState
       }
 
-    case POST_CREATE_SUCCESS:
+    case PLAN_CREATE_SUCCESS:
       return Object.assign({}, state, action.payload)
 
-    case POST_FETCH_SUCCESS:
-      console.log("poststate", action.payload );
+    case PLAN_FETCH_SUCCESS:
       return Object.assign({}, state, action.payload)
 
     case SIGN_OUT:
@@ -44,5 +43,5 @@ const postsReducer = (state = null, action) => {
   }
 }
 
-export default postsReducer
+export default plansReducer
 

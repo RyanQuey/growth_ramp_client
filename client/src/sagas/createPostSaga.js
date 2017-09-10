@@ -1,7 +1,7 @@
 import 'babel-polyfill'
 import { put, select, takeLatest } from 'redux-saga/effects'
 import fbApp from '../firebaseApp.js'
-import { POST_CREATE_SUCCESS, POST_CREATE_REQUEST } from '../actions/types'
+import { POST_CREATE_SUCCESS, POST_CREATE_REQUEST } from '../actions'
 import _ from 'lodash'
 const database = fbApp.database();
 
@@ -13,6 +13,7 @@ function* newPost(action) {
       title: "",
       content: "",
       userId: pld.userId,
+      id: Math.rand(16)
     }
     let postId = database.ref("posts").push(blankPost).key;
 

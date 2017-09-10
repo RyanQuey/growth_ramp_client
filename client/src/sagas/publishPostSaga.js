@@ -2,8 +2,7 @@ import 'babel-polyfill'
 import { put, select, take, takeLatest, call } from 'redux-saga/effects'
 import { delay } from 'redux-saga'
 import fbApp from '../firebaseApp.js'
-import { POST_PUBLISH_REQUEST, SIGN_IN_POPUP_CLOSED } from '../actions/types'
-import { postPublishSuccess, signInRequest } from '../actions'
+import { POST_PUBLISH_REQUEST, SIGN_IN_POPUP_CLOSED, POST_PUBLISH_SUCCESS, SIGN_IN_REQUEST } from '../actions'
 import FB from 'fb';
 import helpers from '../helpers'
 import _ from 'lodash'
@@ -50,7 +49,7 @@ function* checkForToken(providerName, index, logins) {
       provider: providerName.toUpperCase(),
       wantTokenOnly: true,
     }
-    let a = yield put(signInRequest(data))
+    let a = yield put({type: SIGN_IN_REQUEST, payload: data})
     tokenInfo = yield select(state => helpers.safeDataPath(state, `tokens.${providerName}.accessToken`, false))
     yield take(SIGN_IN_POPUP_CLOSED)
     logins++
@@ -78,7 +77,7 @@ console.log(tokenInfo);
     }
     //mark post as published
     yield database.ref(`posts/${pld.post.id}/published`).set(true)
-    yield put(postPublishSuccess({providers: pld.providers}))
+    yield put({type: POST_PUBLISH_SUCCESS, payload: {providers: pld.providers}})
 
   } catch (err) {
     console.log(`Error in Create post Saga ${err}`)

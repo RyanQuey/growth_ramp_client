@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import $ from 'jquery'
 // here, adds the additional string functions
 import helpers from './helpers'
 import './prototypeHelpers'
@@ -8,14 +7,15 @@ import Layout from './components/layout';
 import { connect } from 'react-redux'
 import firebase from 'firebase';
 import store from './reducers'
-import { postsFetchRequest, userFetchRequest, tokensUpdateRequest, isPreloadingStore } from './actions'
+import { POST_FETCH_REQUEST, PLAN_FETCH_REQUEST, USER_FETCH_REQUEST, TOKEN_UPDATE_REQUEST, IS_PRELOADING_STORE } from './actions'
 import './App.css';
+import $ from 'jquery'; 
 
 class App extends Component {
 
   componentDidMount() {
     $.get('/users')
-    .then(res => console.log("got it", res))
+    .then(res => console.log("got it: ", res))
 
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
@@ -25,20 +25,21 @@ class App extends Component {
         if (!this.props.user) {
           const userData = helpers.extractUserData(user)
           this.props.userFetchRequest(userData)
-          this.props.postsFetchRequest(userData)
+          this.props.postFetchRequest(userData)
+          this.props.planFetchRequest(userData)
 
           let userProviders = []
           userData.providerData && userData.providerData.forEach((provider) => {
             userProviders.push(provider.providerId)
           })
           if (userProviders.length > 0) {
-            this.props.tokensUpdateRequest({providerIds: userProviders})
+            this.props.tokenUpdateRequest({providerIds: userProviders})
           }
         }
     
       } else {
         // stop preloading, because no user in firebase to preload
-        store.dispatch(isPreloadingStore(false))
+        this.props.isPreloadingStore({preloadingData: false})
 
       }
     })
@@ -73,9 +74,11 @@ const mapStateToProps = state => {
 // can be passed in as { signInRequest } into connect as a shortcut, but learning the long way for now until I can get used to it, and know how to modify the dispatches for later on
 const mapDispatchToProps = (dispatch) => {
   return {
-    userFetchRequest: (data) => dispatch(userFetchRequest(data)),
-    postsFetchRequest: (data) => dispatch(postsFetchRequest(data)),
-    tokensUpdateRequest: (data) => dispatch(tokensUpdateRequest(data)),
+    userFetchRequest: (data) => dispatch({type: USER_FETCH_REQUEST, payload: data}),
+    postFetchRequest: (data) => dispatch({type: POST_FETCH_REQUEST, payload: data}),
+    planFetchRequest: (data) => dispatch({type: PLAN_FETCH_REQUEST, payload: data}),
+    tokenUpdateRequest: (data) => dispatch({type: TOKEN_UPDATE_REQUEST, payload: data}),
+    isPreloadingStore: (data) => dispatch({type: IS_PRELOADING_STORE, payload: data}),
   }
 }
 const ConnectedApp = connect(mapStateToProps, mapDispatchToProps)(App)

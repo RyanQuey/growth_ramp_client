@@ -47,11 +47,13 @@ class Input extends Component {
 
   handleChange(e) {
     const errors = this.validate(e)
+    //index is in case this is part of an array
     this.props.onChange(e, errors, this.props.index)
   }
 
   validate(e) {
     const errors = []
+    //change this validation system
     if (this.props.validations) {
       this.props.validations.forEach((v) => {
         // if current value doesn't pass validation

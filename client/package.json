@@ -8,6 +8,7 @@
     "fb": "^2.0.0",
     "firebase": "^4.2.0",
     "fs": "0.0.1-security",
+    "jquery": "^3.2.1",
     "lodash": "^4.17.4",
     "moment": "^2.18.1",
     "react": "^15.6.1",
@@ -15,7 +16,8 @@
     "react-redux": "^5.0.6",
     "redux": "^3.7.2",
     "redux-devtools-extension": "^2.13.2",
-    "redux-saga": "^0.15.6"
+    "redux-saga": "^0.15.6",
+    "uuid": "^3.1.0"
   },
   "devDependencies": {
     "@webpack-blocks/dev-server2": "^0.4.0",

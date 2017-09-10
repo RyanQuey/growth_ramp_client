@@ -1,8 +1,7 @@
 import 'babel-polyfill'
 import firebase from 'firebase'
 import { put, takeLatest, all } from 'redux-saga/effects'
-import { userFetchRequest, postsFetchRequest, tokensUpdateRequest, signInPopupClosed } from '../actions'
-import { SIGN_IN_REQUEST } from '../actions/types'
+import { USER_FETCH_REQUEST, POST_FETCH_REQUEST, TOKEN_UPDATE_REQUEST, SIGN_IN_POPUP_CLOSED, SIGN_IN_REQUEST } from '../actions'
 import helpers from '../helpers'
 
 function* createUserWithEmail(data) {
@@ -112,20 +111,20 @@ function* signIn(action) {
       })
 
       if (pld.wantTokenOnly) {
-        yield  put(tokensUpdateRequest({
+        yield  put({type: TOKEN_UPDATE_REQUEST, payload: {
           providerIds: userProviders, 
           credential: signInResult.credential
-        }))
+        }})
 
       //otherwise, get/set all user data
       } else {
         yield all([
-          put(userFetchRequest(signInResult)),
-          put(postsFetchRequest(signInResult)),
-          put(tokensUpdateRequest({
+          put({type: USER_FETCH_REQUEST, payload: signInResult}),
+          put({type: POST_FETCH_REQUEST, payload: signInResult}),
+          put({type: TOKEN_UPDATE_REQUEST, payload: {
             providerIds: userProviders, 
             credential: signInResult.credential
-          })),
+          }}),
         ])
       }
     } else {
@@ -140,7 +139,7 @@ function* signIn(action) {
   } finally {
     //this action is necessary to signal that it is finished, to consider that there are never 2 pop-ups open at the same time
     console.log("finished");
-    yield put(signInPopupClosed())
+    yield put({type: SIGN_IN_POPUP_CLOSED, payload: undefined})
   }
 }
 

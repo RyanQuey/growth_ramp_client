@@ -8,7 +8,7 @@ import {
   SIGN_OUT,
   USER_FETCH_SUCCESS,
   
-} from '../actions/types'
+} from '../actions'
 import helpers from '../helpers'
 import _ from 'lodash'
 

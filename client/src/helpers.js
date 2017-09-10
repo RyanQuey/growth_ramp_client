@@ -1,3 +1,6 @@
+import uuid from 'uuid/v1';
+import $ from 'jquery'; 
+
 export default {
   //eventually will probably do more, but just this for now  
   handleError: (err) => {
@@ -21,7 +24,7 @@ export default {
 
     return obj
   },
-  // extracts the relevant firebaseData data from the firebase data
+  // extracts the relevant firebaseData data from the firebase auth data received on login/request
   extractUserData: (firebaseData) => {
     let userData = {
       displayName: firebaseData.displayName,
@@ -54,4 +57,17 @@ export default {
 
     return returnValue;
   },
+
+  uniqueId: function () {
+    return uuid()
+  },
+
+  handleParam: function (e, key) {
+    const objKey = key || e.target.dataset.key
+    const obj = {};
+
+    obj[objKey] = e.target.value;
+
+    this.setState(obj);
+  }
 }

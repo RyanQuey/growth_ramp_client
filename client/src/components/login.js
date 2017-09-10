@@ -2,8 +2,12 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import _ from 'lodash'
 import helpers from '../helpers'
+import { 
+  SIGN_IN_REQUEST, 
+  SIGN_OUT_REQUEST, 
+  LINK_ACCOUNT_REQUEST,
+} from '../actions'
 import { PROVIDERS, PROVIDER_IDS_MAP } from '../constants'
-import { signInRequest, signOutRequest, linkAccountRequest } from '../actions'
 
 class Login extends Component {
   constructor() {
@@ -75,10 +79,11 @@ class Login extends Component {
             <input onChange={c.handleChange} value={c.state.value}></input>
           </form>
         )}
-        {_.values(PROVIDERS).map((p) => {
+        {Object.keys(PROVIDERS).map((key) => {
+          const providerName = PROVIDERS[key].name
           //this works, but temporarily disabling this because neatest button available in case the token expires
           //
-            return <button key={p} onClick={c.providerLogin.bind(c, p.toUpperCase())}>{`Login ${preposition} ${p.capitalize()}`}</button>
+            return <button key={key} onClick={c.providerLogin.bind(c, providerName)}>{`Login ${preposition} ${providerName}`}</button>
           //}
         })}
       </div>
@@ -96,9 +101,9 @@ const mapStateToProps = state => {
 // can be passed in as { signInRequest } into connect as a shortcut, but learning the long way for now until I can get used to it, and know how to modify the dispatches for later on
 const mapDispatchToProps = (dispatch) => {
   return {
-    signInRequest: (data) => dispatch(signInRequest(data)),
-    linkAccountRequest: (data) => dispatch(linkAccountRequest(data)),
-    signOutRequest: () => {dispatch(signOutRequest())}
+    signInRequest: (payload) => dispatch({type: SIGN_IN_REQUEST, payload}),
+    linkAccountRequest: (payload) => dispatch({type: LINK_ACCOUNT_REQUEST, payload}),
+    signOutRequest: (payload) => {dispatch({type: SIGN_OUT_REQUEST, payload})}
   }
 }
 const ConnectedLogin = connect(mapStateToProps, mapDispatchToProps)(Login)

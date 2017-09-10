@@ -1,7 +1,7 @@
 import 'babel-polyfill'
 import { put, select, throttle } from 'redux-saga/effects'
 import fbApp from '../firebaseApp.js'
-import { INPUT_UPDATE_SUCCESS, SET_INPUT_VAL } from '../actions/types'
+import { INPUT_UPDATE_SUCCESS, SET_INPUT_VALUE } from '../actions'
 import _ from 'lodash'
 
 function* updateFirebaseInput(action) {
@@ -24,5 +24,5 @@ console.log(value, pld.path);
 
 export default function* setInput() {
   //NOTE: might try using yield throttle(300, SET_INPUT_VAL...
-  yield throttle(300, SET_INPUT_VAL, updateFirebaseInput)
+  yield throttle(300, SET_INPUT_VALUE, updateFirebaseInput)
 }
