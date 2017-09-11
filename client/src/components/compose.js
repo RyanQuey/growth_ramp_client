@@ -37,6 +37,9 @@ class Compose extends Component {
   }
 
   render() {
+    if (this.props.hide) {
+      return null
+    }
     const c = this;
     const postId = this.props.post//.id
     const userId = this.props.user.uid

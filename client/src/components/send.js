@@ -17,11 +17,15 @@ class Send extends Component {
   }
 
   render() {
+    if (this.props.hide) {
+      return null
+    }
     const c = this;
     const userId = this.props.user.uid
 
     return (
       <div id="send-container">
+        <h1 className="display-3">Send</h1>
         Now you send it
       </div>
     );

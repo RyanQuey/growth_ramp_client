@@ -6,6 +6,7 @@ import Start from './start'
 import Send from './send'
 import Channels from './channels'
 import Compose from './compose'
+import PromoToolFooter from './promoToolFooter'
 import { POST_CREATE_REQUEST } from '../actions'
 
 const sections = {
@@ -19,6 +20,8 @@ class ContentContainer extends Component {
   constructor() {
     super()
     this.state = {
+      //will need to use a store, if this is ever used in subcomponents of the subcomponents
+      currentSection: "Start",
     }
 
     this.switchTo = this.switchTo.bind(this)
@@ -30,10 +33,12 @@ class ContentContainer extends Component {
 
   switchTo(next) {
     const ref = this.refs[next]
+    this.setState({
+      currentSection: next,
+    })
     //TODO: want to use refs
     //might be able to use bind and the contentIndex ?
-console.log(ref, this.refs, next);
-    $(ref)[0].firstElementChild.click();
+    //$(ref)[0].firstElementChild.click();
   }
 
   render() {
@@ -59,24 +64,25 @@ console.log(ref, this.refs, next);
           })}
         </ul>
 
-        <div className="tab-content">
+        <div className="tab-conten">
           {this.props.user ? (
             Object.keys(sections).map((section) => {
               contentIndex += 1
               const Tag = sections[section]
               return (
-                <div 
-                  id={section} 
-                  key={section}
-                  className={`tab-pane ${contentIndex > 1 ? "" : "show active"}`} 
-                  role="tabpanel"
-                  aria-labelledby={`${section}-tab`} 
-                >
-                  <h1 className="display-3">{section}</h1>
+                <div>
+                  {false && <div 
+                    id={section} 
+                    key={section}
+                    className={`tab-pane ${contentIndex > 1 ? "" : "show active"}`} 
+                    role="tabpanel"
+                    aria-labelledby={`${section}-tab`} 
+                  ></div>}
                   <Tag 
                     switchTo={this.switchTo}
+                    hide={section !== this.state.currentSection}
                   />
-                </div>    
+                </div>  
               )
             })
           ) : (
@@ -84,7 +90,10 @@ console.log(ref, this.refs, next);
           )} 
 
         </div>
-
+        <PromoToolFooter
+          switchTo={this.switchTo}
+          currentSection={this.state.currentSection}
+        />  
       </div>
     );
   }

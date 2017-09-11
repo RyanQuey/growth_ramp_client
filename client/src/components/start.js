@@ -26,6 +26,7 @@ class Start extends Component {
     }
 
     this.handlePlanCreate = this.handlePlanCreate.bind(this)
+    this.handleChoosePlan = this.handleChoosePlan.bind(this)
     this.reset = this.reset.bind(this)
     this.handleAddPlan = this.handleAddPlan.bind(this)
     this.handleChangeName = this.handleChangeName.bind(this)
@@ -51,7 +52,6 @@ class Start extends Component {
   }
 
   handleChangeName (e, errors) {
-console.log(e);
     helpers.handleParam.bind(this, e, "name")()
   }
 
@@ -60,8 +60,6 @@ console.log(e);
     this.setState({status: "PENDING"});
     let userId = this.props.user.uid
     //will have to set the some other way, in case someone else makes one that's later than them or something, and firebase updates it
-    //yield take(POST_CREATE_SUCCESS)
-    //use refs
     this.props.planCreateRequest({userId, name: this.state.name})
     this.props.switchTo("Channels")  
   }
@@ -85,6 +83,9 @@ console.log(e);
   }
 
   render() {
+    if (this.props.hide) {
+      return null
+    }
     const c = this;
     const userId = this.props.user.uid
     const plans = this.props.plans
@@ -142,6 +143,7 @@ Make a new plan!!
 
     return (
       <div>
+        <h1 className="display-3">Start</h1>
         {form}
         {this.state.mode !== "CHOOSE_PLAN" && <button onClick={this.reset}>Back</button>}
       </div>
