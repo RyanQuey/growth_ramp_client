@@ -70,7 +70,8 @@ export default window.store
  *   name
  *   userId
  *   posts: [postId, postId, ...]
- *   channelConfigurations: [array of IDs]
+ *   channels: [array of channel IDs]
+ *   providers: [array of string constantss of provider names] (necessary to toggle entire providers without messing up channel configurations)
  *   createdAt     
  *   updatedAt
  *******************************

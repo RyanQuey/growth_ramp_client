@@ -70,14 +70,14 @@ class ContentContainer extends Component {
               contentIndex += 1
               const Tag = sections[section]
               return (
-                <div>
+                <div key={section}>
                   {false && <div 
                     id={section} 
                     key={section}
                     className={`tab-pane ${contentIndex > 1 ? "" : "show active"}`} 
                     role="tabpanel"
                     aria-labelledby={`${section}-tab`} 
-                  ></div>}
+                  >this was when I was using Jquery to move the tabs round</div>}
                   <Tag 
                     switchTo={this.switchTo}
                     hide={section !== this.state.currentSection}

@@ -14,6 +14,7 @@ const currentPlanReducer = (state = null, action) => {
 
     case INPUT_UPDATE_SUCCESS:
       // path should be like "plans/127$3451191/title etc"
+      // TODO: make this less fragile by updating directly when plans overall get updated...(or maybe better, vice versa, so this gets going first?? )
       let pathArray = action.payload.path.split("/")
       let root = pathArray.shift()
       let planId = pathArray.shift()
@@ -32,11 +33,8 @@ const currentPlanReducer = (state = null, action) => {
       //payload should be the new plan
       return Object.assign({}, action.payload)
 
-    case PLAN_FETCH_SUCCESS:
-      return Object.assign({}, state, action.payload)
-
-    //should be the new user
     case CHOOSE_PLAN: 
+console.log("choose plan", action.payload);
       return Object.assign({}, action.payload)
 
     case SIGN_OUT:

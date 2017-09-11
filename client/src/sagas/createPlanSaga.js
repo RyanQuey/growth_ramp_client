@@ -14,7 +14,8 @@ function* create(action) {
     const planId = helpers.uniqueId()
     const newPlan = {
       posts: [],
-      channelConfigurations: [],
+      channels: [],
+      providers: [],
       createdAt: moment().format(),
       name: pld.name || "",
       utmOptions: {},

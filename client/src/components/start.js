@@ -38,10 +38,10 @@ class Start extends Component {
     }
   }
 
-  handleChoosePlan(planId) {
-    //maybe this is excessive...maybe can just call the props?
+  handleChoosePlan(e) {
+    let value = e.target.value
     this.props.switchTo("Channels")  
-    this.props.choosePlan(this.props.plans[planId])
+    this.props.choosePlan(this.props.plans[value])
   }
 
   handleAddPlan (e){
@@ -97,15 +97,15 @@ class Start extends Component {
     if (this.state.mode === "ADD_PLAN") {form = (
       <div>
 Make a new plan!!
-          <div>
+          <form>
             <label>plan Name:</label>
               <Input 
                 value={this.state.name} 
                 data-key="name"
                 onChange={this.handleChangeName}
               />
-            <button onClick={this.handlePlanCreate}>Submit</button>
-          </div>    
+            <button type="submit" onClick={this.handlePlanCreate}>Submit</button>
+          </form>    
       </div>
     )} else if (["CHOOSE_PLAN", "CONFIGURE_PLAN"].includes(this.state.mode)) {form = (
       <div>
@@ -113,11 +113,12 @@ Make a new plan!!
           {Object.keys(plans).length > 0 ? (
             <div> Select one of your previous plans 
               <select onChange={this.handleChoosePlan}>
-              {plans && Object.keys(plans).map((planId) => {
-                return (
-                  <option key={planId} value={planId}>{plans[planId].name}</option>
-                )
-              })}
+                <option value="">Select a plan</option>
+                {plans && Object.keys(plans).map((planId) => {    
+                  return (
+                    <option key={planId} value={planId}>{plans[planId].name}</option>
+                  )
+                })}
               </select>
             </div>
           ) : (

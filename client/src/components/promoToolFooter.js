@@ -18,6 +18,8 @@ class PromoToolFooter extends Component {
       //the farthest they got in the workflow
       placeInFlow: "Start"
     }
+
+    this.goBack = this.goBack.bind(this)
   }
 
   componentWillReceiveProps(props) {
