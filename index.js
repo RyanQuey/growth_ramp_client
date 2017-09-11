@@ -10,6 +10,11 @@ const users = require('./routes/users');
 
 const app = express();
 
+// view engine setup
+// can probably streamline this more, but for now this facilitates sending back data also
+//app.set('views', path.join(__dirname, 'views'));
+//app.set('view engine', 'jade');
+
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
@@ -19,7 +24,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'client/build')));//for serving the react files
 
 app.use('/api/', index);
-app.use('/api/users', users);
+app.use('/api/users/', users);
 
 app.get("/health", function(req, res){
     res.send("Everything Ok")
@@ -36,6 +41,8 @@ app.get('*', (req, res) => {
 app.use(function(req, res, next) {
   const err = new Error('Not Found');
   err.status = 404;
+  err.message = "Route ( or resource?) does not exist"
+  // this is what forwards to the next one
   next(err);
 });
 
@@ -45,9 +52,13 @@ app.use(function(err, req, res, next) {
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-  // render the error page
+  // what is returned in an error
   res.status(err.status || 500);
-  res.render('error');
+  res.json({ 
+    error: err, 
+    message: err.message,
+    status: err.status || 500,
+  });
 });
 
 const port = process.env.PORT || 5000;

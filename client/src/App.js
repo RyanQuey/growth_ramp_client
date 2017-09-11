@@ -14,7 +14,7 @@ import $ from 'jquery';
 class App extends Component {
 
   componentDidMount() {
-    $.get('/users')
+    $.get('/api/users')
     .then(res => console.log("got it: ", res))
 
     firebase.auth().onAuthStateChanged((user) => {
