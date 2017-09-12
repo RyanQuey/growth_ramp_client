@@ -1,8 +1,8 @@
 const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const devServer = require('@webpack-blocks/dev-server2')
-//const splitVendor = require('webpack-blocks-split-vendor')
-//const happypack = require('webpack-blocks-happypack')
+const splitVendor = require('webpack-blocks-split-vendor')
+const happypack = require('webpack-blocks-happypack')
 const {
   addPlugins, createConfig, entryPoint, env, setOutput,
   sourceMaps, defineConstants, webpack,
@@ -10,7 +10,7 @@ const {
 
 const host = process.env.HOST || 'localhost'
 const port = process.env.PORT || 3000
-const sourceDir = process.env.SOURCE || 'src'
+const sourceDir = process.env.SOURCE || 'client/src'
 const publicPath = `/${process.env.PUBLIC_PATH || ''}/`.replace('//', '/')
 const sourcePath = path.join(process.cwd(), sourceDir)
 const nodeModulesPath = path.join(process.cwd(), 'node_modules')
@@ -70,6 +70,14 @@ const resolveModules = modules => () => ({
   },
 })
 
+const node = () => ({
+  node: {
+    fs: 'empty',
+    net: 'empty',
+    tls: 'empty'
+  }
+})
+
 const config = createConfig([
   entryPoint({
     app: sourcePath,
@@ -87,12 +95,12 @@ const config = createConfig([
     new webpack.ProgressPlugin(),
     new HtmlWebpackPlugin({
       filename: 'index.html',
-      template: path.join(process.cwd(), 'public/index.html'),
+      template: path.join(process.cwd(), 'client/public/index.html'),
     }),
   ]),
-  /*happypack([
+  happypack([
     babel(),
-  ]),*/
+  ]),
   assets(),
   sass(),
   css(),
@@ -113,11 +121,13 @@ const config = createConfig([
   ]),
 
   env('production', [
-    //splitVendor(),
-    //addPlugins([
-    //  new webpack.optimize.UglifyJsPlugin({ compress: { warnings: false } }),
-    //]),
+    splitVendor(),
+    addPlugins([
+      new webpack.optimize.UglifyJsPlugin({ compress: { warnings: false } }),
+    ]),
   ]),
+  node,
 ])
 
 module.exports = config
+

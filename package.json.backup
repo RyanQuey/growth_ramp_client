@@ -1,0 +1,26 @@
+{
+  "name": "growth_tools_api",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "body-parser": "~1.17.1",
+    "codebird": "^2.6.0",
+    "cookie-parser": "~1.4.3",
+    "express": "^4.15.4",
+    "debug": "~2.6.3",
+    "fb": "^2.0.0",
+    "firebase": "^4.2.0",
+    "fs": "0.0.1-security",
+    "jade": "^1.11.0",
+    "jquery": "^3.2.1",
+    "lodash": "^4.17.4",
+    "moment": "^2.18.1",
+    "uuid": "^3.1.0",
+    "morgan": "~1.8.1",
+    "serve-favicon": "~2.4.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "node index.js"
+  }
+}

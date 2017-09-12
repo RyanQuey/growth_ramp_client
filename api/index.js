@@ -1,3 +1,10 @@
+const result = require('dotenv').config()
+if (result.error) {
+  throw result.error
+}
+
+console.log(result.parsed)
+
 const express = require('express');
 const path = require('path');
 const favicon = require('serve-favicon');

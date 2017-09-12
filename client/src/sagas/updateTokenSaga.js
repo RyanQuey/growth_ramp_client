@@ -13,7 +13,8 @@ import crypto from 'crypto'
 const codeBird = new CodeBird
 codeBird.setConsumerKey(process.env.REACT_APP_TWITTER_CONSUMER_KEY, process.env.REACT_APP_TWITTER_CONSUMER_SECRET)
 
-const hmac = crypto.createHmac('sha256', process.env.REACT_APP_FACEBOOK_SECRET_KEY)
+//disabling environment variables in the front-end; so remove this  ||  when this gets moved to the backend. I will want to throw an error at that point
+const hmac = crypto.createHmac('sha256', process.env.REACT_APP_FACEBOOK_SECRET_KEY || "abc")
 
 const database = fbApp.database();
 const tokenInfo = {}

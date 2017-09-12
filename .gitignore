@@ -4,26 +4,25 @@
 **/*.swo
 
 # dependencies
-**/node_modules
+node_modules
 
 # testing
-*/coverage
+coverage
 
-# production
-*/build
-*/dist
+# production/build
+build
+dist
+.happypack
 
 # misc
 */.DS_Store
-#*/.env is currently allowed, for public environment variables...maybe don't want that though
-*/.env.local
-*/.env.development.local
-*/.env.test.local
-*/.env.production.local
+**/.env 
+.env
+**/.env*
 
 #credentials
 **/serviceAccountKey.json
 
-*/npm-debug.log*
-*/yarn-debug.log*
-*/yarn-error.log*
+**/npm-debug.log*
+**/yarn-debug.log*
+**/yarn-error.log*
