@@ -40,9 +40,12 @@
     "sails-disk": "~0.10.9",
     "sails-postgresql": "^0.12.2",
     "serve-favicon": "~2.4.2",
-    "uuid": "^3.1.0"
+    "uuid": "^3.1.0",
+    "webpack-blocks-split-vendor": "^0.2.1"
   },
   "devDependencies": {
+    "@webpack-blocks/dev-server2": "^0.4.0",
+    "@webpack-blocks/webpack2": "^0.4.0",
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.2",
@@ -58,7 +61,7 @@
     "sass-loader": "^6.0.6"
   },
   "scripts": {
-    "dev": "npm run watch && nodemon -w api -w config",
+    "dev": "npm run build && nodemon -w api -w config",
     "watch": "webpack --watch webpack.config.js",
     "start": "node app.js",
     "build": "webpack",

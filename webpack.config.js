@@ -1,6 +1,9 @@
 const path = require('path')
-const HtmlWebpackPlugin = require('html-webpack-plugin')
+//const HtmlWebpackPlugin = require('html-webpack-plugin')
+
+//might get rid of this eventually
 const devServer = require('@webpack-blocks/dev-server2')
+
 const splitVendor = require('webpack-blocks-split-vendor')
 const happypack = require('webpack-blocks-happypack')
 const {
@@ -20,7 +23,7 @@ const nodeModulesPath = path.join(process.cwd(), 'node_modules')
 
 //currently taking advantage of the sails default, where the asset/index.html gets served if routes aren't set for the homepage
 //maybe eventually separate the JavaScript from that index.HTML file
-const clientOutputPath = path.join(process.cwd(), 'assets')
+const clientOutputPath = path.join(process.cwd(), 'assets/js')
 
 const babel = () => () => ({
   module: {
@@ -101,10 +104,10 @@ const clientConfig = createConfig([
   }),
   addPlugins([
     new webpack.ProgressPlugin(),
-    new HtmlWebpackPlugin({
+    /*new HtmlWebpackPlugin({
       filename: 'index.html', //this will be the output, put in the output path set above
       template: path.join(process.cwd(), 'srcClient/index.html'), //the source index file
-    }),
+    }),*/
   ]),
   happypack([
     babel(),
