@@ -40,12 +40,29 @@
     "sails-disk": "~0.10.9",
     "sails-postgresql": "^0.12.2",
     "serve-favicon": "~2.4.2",
-    "uuid": "^3.1.0",
-    "webpack-blocks-split-vendor": "^0.2.1"
+    "uuid": "^3.1.0"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.26.0",
+    "babel-polyfill": "^6.23.0",
+    "babel-preset-env": "^1.6.0",
+    "babel-preset-react": "^6.24.1",
+    "cross-env": "^5.0.5",
+    "eslint-config-airbnb": "^15.1.0",
+    "firebase": "^4.3.1",
+    "html-webpack-plugin": "^2.30.1",
+    "node-sass": "^4.5.3",
+    "sass-loader": "^6.0.6"
   },
   "scripts": {
-    "debug": "node debug app.js",
-    "start": "node app.js"
+    "dev": "npm run watch && nodemon -w api -w config",
+    "watch": "webpack --watch webpack.config.js",
+    "start": "node app.js",
+    "build": "webpack",
+    "debug": "node debug app.js"
   },
   "main": "app.js",
   "repository": {

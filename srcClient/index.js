@@ -11,6 +11,7 @@ import { Provider } from 'react-redux';
 import store from './reducers'
 
 const root = document.getElementById('app')
+console.log("at least it's getting loaded");
 
 ReactDOM.render(
   <Provider store={store}>

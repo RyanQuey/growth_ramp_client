@@ -10,11 +10,17 @@ const {
 
 const host = process.env.HOST || 'localhost'
 const port = process.env.PORT || 3000
-const sourceDir = process.env.SOURCE || 'client/src'
-const publicPath = `/${process.env.PUBLIC_PATH || ''}/`.replace('//', '/')
-const sourcePath = path.join(process.cwd(), sourceDir)
+const clientSourceDir = process.env.SOURCE || 'srcClient'
+
+//this is how client-side assets will be accessible in a browser
+//path starts with a '/', so the path will be a path relative to the server, not the index.html
+const publicPath = `/${process.env.PUBLIC_PATH || 'assets'}/`.replace('//', '/')
+const clientSourcePath = path.join(process.cwd(), clientSourceDir)
 const nodeModulesPath = path.join(process.cwd(), 'node_modules')
-const outputPath = path.join(process.cwd(), 'dist')
+
+//currently taking advantage of the sails default, where the asset/index.html gets served if routes aren't set for the homepage
+//maybe eventually separate the JavaScript from that index.HTML file
+const clientOutputPath = path.join(process.cwd(), 'assets')
 
 const babel = () => () => ({
   module: {
@@ -40,7 +46,7 @@ const sass = () => () => ({
         }, {
           loader: 'sass-loader',
           options: {
-            includePaths: [sourcePath, nodeModulesPath],
+            includePaths: [clientSourcePath, nodeModulesPath],
           },
         }],
       },
@@ -78,13 +84,15 @@ const node = () => ({
   }
 })
 
-const config = createConfig([
+// currently only using an client
+const clientConfig = createConfig([
+  //default target is web, which is the case here
   entryPoint({
-    app: sourcePath,
+    app: clientSourcePath,
   }),
   setOutput({
     filename: '[name].js',
-    path: outputPath,
+    path: clientOutputPath,
     publicPath,
   }),
   defineConstants({
@@ -94,8 +102,8 @@ const config = createConfig([
   addPlugins([
     new webpack.ProgressPlugin(),
     new HtmlWebpackPlugin({
-      filename: 'index.html',
-      template: path.join(process.cwd(), 'client/public/index.html'),
+      filename: 'index.html', //this will be the output, put in the output path set above
+      template: path.join(process.cwd(), 'srcClient/index.html'), //the source index file
     }),
   ]),
   happypack([
@@ -104,7 +112,7 @@ const config = createConfig([
   assets(),
   sass(),
   css(),
-  resolveModules(sourceDir),
+  resolveModules(clientSourceDir),
   env('development', [
     devServer({
       contentBase: 'public',
@@ -129,5 +137,5 @@ const config = createConfig([
   node,
 ])
 
-module.exports = config
+module.exports = clientConfig
 
