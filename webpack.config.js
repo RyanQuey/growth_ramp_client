@@ -1,8 +1,7 @@
 const path = require('path')
-//
-//const HtmlWebpackPlugin = require('html-webpack-plugin')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
 
-//might get rid of this eventually
+//might get rid of this eventually, if I switch to a node server
 const devServer = require('@webpack-blocks/dev-server2')
 
 const splitVendor = require('webpack-blocks-split-vendor')
@@ -14,17 +13,18 @@ const {
 
 const host = process.env.HOST || 'localhost'
 const port = process.env.PORT || 3000
-const clientSourceDir = process.env.SOURCE || 'src'
+const sourceDir = process.env.SOURCE || 'src'
 
 //this is how client-side assets will be accessible in a browser
 //path starts with a '/', so the path will be a path relative to the server, not the index.html
 const publicPath = `/${process.env.PUBLIC_PATH || 'public'}/`.replace('//', '/')
-const clientSourcePath = path.join(process.cwd(), clientSourceDir)
+const sourcePath = path.join(process.cwd(), sourceDir)
 const nodeModulesPath = path.join(process.cwd(), 'node_modules')
 
 //currently taking advantage of the sails default, where the asset/index.html gets served if routes aren't set for the homepage
 //maybe eventually separate the JavaScript from that index.HTML file
-const clientOutputPath = path.join(process.cwd(), 'dist')
+const outputPath = path.join(process.cwd(), 'public')
+console.log(outputPath);
 
 const babel = () => () => ({
   module: {
@@ -50,7 +50,7 @@ const sass = () => () => ({
         }, {
           loader: 'sass-loader',
           options: {
-            includePaths: [clientSourcePath, nodeModulesPath],
+            includePaths: [sourcePath, nodeModulesPath],
           },
         }],
       },
@@ -84,19 +84,21 @@ const node = () => ({
   node: {
     fs: 'empty',
     net: 'empty',
-    tls: 'empty'
+    tls: 'empty',
+    child_process: 'empty',
+    module: 'empty',
   }
 })
 
 // currently only using an client
-const clientConfig = createConfig([
+const config = createConfig([
   //default target is web, which is the case here
   entryPoint({
-    app: clientSourcePath,
+    app: sourcePath,
   }),
   setOutput({
     filename: '[name].js',
-    path: clientOutputPath,
+    path: outputPath,
     publicPath,
   }),
   defineConstants({
@@ -116,7 +118,7 @@ const clientConfig = createConfig([
   assets(),
   sass(),
   css(),
-  resolveModules(clientSourceDir),
+  resolveModules(sourceDir),
   env('development', [
     devServer({
       contentBase: 'public',
@@ -141,5 +143,5 @@ const clientConfig = createConfig([
   node,
 ])
 
-module.exports = clientConfig
+module.exports = config
 

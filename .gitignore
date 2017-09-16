@@ -13,10 +13,10 @@ coverage
 build
 dist
 .happypack
-assets/main.js
-assets/main.js.map
-assets/app.js
-assets/app.js.map
+public/main.js
+public/main.js.map
+public/app.js
+public/app.js.map
 
 # misc
 */.DS_Store
