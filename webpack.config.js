@@ -1,4 +1,5 @@
 const path = require('path')
+//
 //const HtmlWebpackPlugin = require('html-webpack-plugin')
 
 //might get rid of this eventually
@@ -13,17 +14,17 @@ const {
 
 const host = process.env.HOST || 'localhost'
 const port = process.env.PORT || 3000
-const clientSourceDir = process.env.SOURCE || 'srcClient'
+const clientSourceDir = process.env.SOURCE || 'src'
 
 //this is how client-side assets will be accessible in a browser
 //path starts with a '/', so the path will be a path relative to the server, not the index.html
-const publicPath = `/${process.env.PUBLIC_PATH || 'assets'}/`.replace('//', '/')
+const publicPath = `/${process.env.PUBLIC_PATH || 'public'}/`.replace('//', '/')
 const clientSourcePath = path.join(process.cwd(), clientSourceDir)
 const nodeModulesPath = path.join(process.cwd(), 'node_modules')
 
 //currently taking advantage of the sails default, where the asset/index.html gets served if routes aren't set for the homepage
 //maybe eventually separate the JavaScript from that index.HTML file
-const clientOutputPath = path.join(process.cwd(), 'assets/js')
+const clientOutputPath = path.join(process.cwd(), 'dist')
 
 const babel = () => () => ({
   module: {
