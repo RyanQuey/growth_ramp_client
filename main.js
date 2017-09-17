@@ -41,42 +41,25 @@ app.use('/api/*', function(req, res) {
   const body = req.body;
   const headers = {}
 
-  if(req.headers["x-user-token"]){
-    headers["x-user-token"] = req.headers["x-user-token"]
-  }else{
-    if(req.headers["x-id"]){
-      headers["x-id"] = req.headers["x-id"]
-    }
-
-    if(req.headers["x-token"]){
-      headers["x-token"] = req.headers["x-token"]
-    }
-  }
-
-console.log(`${apiUrl}${req.originalUrl.split('api/')[1]}`);
-console.log(method);
+  const url = `${apiUrl}${req.originalUrl.split('/api')[1]}`
   request[method]({
     //remove the 'api' in front, so we can take advantage of the default sails routes
-    url: `${apiUrl}${req.originalUrl.split('/api')[1]}`,
+    url: url,
     headers: headers,
     form: req.body
   })
-.on('error', function(err, res, body) {
+  .on('error', function(err, res, body) {
       console.error("***error:***")
       console.log(err)
 
-    console.log( "***body:***", body, "***header:***", headers);
-//console.log(req);
+    console.log( "***body:***", body, "***header:***", headers, "***url***", url);
+  //console.log(req);
 //TODO: might need to shut down server for security reasons if there is an error? or at least, certain kinds of errors?
 //https://stackoverflow.com/questions/14168433/node-js-error-connect-econnrefused
 
   })
   //return the response to the place where the request was made
   .pipe(res)
-});
-
-app.get("/health", function(req, res){
-    res.send("Everything healthy")
 });
 
 // The "catchall" handler: for any request that doesn't
