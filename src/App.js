@@ -9,17 +9,17 @@ import firebase from 'firebase';
 import store from './reducers'
 import { POST_FETCH_REQUEST, PLAN_FETCH_REQUEST, USER_FETCH_REQUEST, TOKEN_UPDATE_REQUEST, IS_PRELOADING_STORE } from './actions'
 import './App.css';
-import $ from 'jquery'; 
+import $ from 'jquery';
 
 class App extends Component {
 
   componentDidMount() {
-    $.get('/api/users')
+    $.get('/api/test')
     .then(res => console.log("got it: ", res))
 
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
-    
+
         //need to retrieve user data from firebase, to put into redux
         //mostly only gets ran when reloading the page after already logged in
         if (!this.props.user) {
@@ -36,16 +36,16 @@ class App extends Component {
             this.props.tokenUpdateRequest({providerIds: userProviders})
           }
         }
-    
+
       } else {
         // stop preloading, because no user in firebase to preload
         this.props.isPreloadingStore({preloadingData: false})
 
       }
     })
-    
+
   }
-  
+
   render() {
     return (
       <div className="App">
@@ -57,7 +57,7 @@ class App extends Component {
         ) : (
           <div>
             <Layout />
-          </div>  
+          </div>
         )}
       </div>
     );

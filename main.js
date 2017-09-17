@@ -1,3 +1,9 @@
+process.on('uncaughtException', function (exception) {
+  console.log(exception); // to see your exception details in the console
+  // if you are on production, maybe you can send the exception details to your
+  // email as well ?
+});
+
 const result = require('dotenv').config()
 if (result.error) {
   throw result.error
@@ -21,29 +27,49 @@ const request = require('request')
 const app = express();
 const apiUrl = process.env.API_URL;
 
-// view engine setup
-// can probably streamline this more, but for now this facilitates sending back data also
-//app.set('views', path.join(__dirname, 'views'));
-//app.set('view engine', 'jade');
-
 // uncomment after placing your favicon in /public
 app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
 app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: false })); // for parsing application/x-www-form-urlencoded
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));//for serving the react files
+//get requests for static files will be relative to the public folder (/app = project_root/public/app)
+app.use(express.static(path.join(__dirname, '/public')));
 
 app.use('/api/*', function(req, res) {
   const method = req.method.toLowerCase();
   const body = req.body;
   const headers = {}
 
+  if(req.headers["x-user-token"]){
+    headers["x-user-token"] = req.headers["x-user-token"]
+  }else{
+    if(req.headers["x-id"]){
+      headers["x-id"] = req.headers["x-id"]
+    }
+
+    if(req.headers["x-token"]){
+      headers["x-token"] = req.headers["x-token"]
+    }
+  }
+
+console.log(`${apiUrl}${req.originalUrl.split('api/')[1]}`);
+console.log(method);
   request[method]({
     //remove the 'api' in front, so we can take advantage of the default sails routes
-    url: `${apiUrl}${req.url.split('api/')[1]}`,
-    headers: req.headers,
+    url: `${apiUrl}${req.originalUrl.split('/api')[1]}`,
+    headers: headers,
     form: req.body
+  })
+.on('error', function(err, res, body) {
+      console.error("***error:***")
+      console.log(err)
+
+    console.log( "***body:***", body, "***header:***", headers);
+//console.log(req);
+//TODO: might need to shut down server for security reasons if there is an error? or at least, certain kinds of errors?
+//https://stackoverflow.com/questions/14168433/node-js-error-connect-econnrefused
+
   })
   //return the response to the place where the request was made
   .pipe(res)
@@ -58,7 +84,6 @@ app.get("/health", function(req, res){
 // let react handle the routing from there
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname + 'public/index.html'));
-  //res.sendFile(path.join(process.cwd() + '/public/index.html'));
 });
 
 // catch 404 and forward to error handler
