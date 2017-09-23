@@ -59,7 +59,10 @@ function* signInWithProvider(providerName) {
           providerPath = new firebase.auth.GoogleAuthProvider()
           break
         case 'TWITTER':
-          providerPath = new firebase.auth.TwitterAuthProvider()
+console.log("now logging into twitter, via the front end server");
+          axios.get('/login/twitter')
+          .then(() => {resolve()})
+          .catch((err) => {console.log(err);})
           break
       }
     })
