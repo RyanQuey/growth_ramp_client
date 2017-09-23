@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import axios from 'axios'
 import './index.css';
 import App from './App';
 import registerServiceWorker from './registerServiceWorker';
@@ -8,10 +9,12 @@ import { createStore, applyMiddleware } from 'redux'
 import createSagaMiddleware from 'redux-saga'
 import { Provider } from 'react-redux';
 
-import store from './reducers'
+//import initializers from './initializers'
 
 const root = document.getElementById('app')
-console.log("at least it's getting loaded");
+
+window.React = React;
+window.axios = axios;
 
 ReactDOM.render(
   <Provider store={store}>

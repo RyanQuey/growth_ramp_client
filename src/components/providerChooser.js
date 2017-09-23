@@ -29,7 +29,7 @@ class ProviderChooser extends Component {
   addProvider() {
     //either you will add providers you have disabled for this plan, or login to totally new providers
     //while there are only three providers, can show all of them...or get users used to the future UI by only showing already added providers?
-    
+
     //check if you already have this token
 
     //then add to plan
@@ -51,20 +51,20 @@ class ProviderChooser extends Component {
       <div>
         {providers ? (
           providers.map((provider) => {
-            return <button type="button" className="btn-outline-primary btn-lg" onClick={this.chooseProvider.bind(this, provider)}>{provider}</button>  
+            return <button type="button" className="btn-outline-primary btn-lg" onClick={this.chooseProvider.bind(this, provider)}>{provider}</button>
           })
         ) : (
           <h3>You have no providers yet, add some providers to this plan to get started</h3>
         )}
-        <button type="button" className="btn-outline-primary btn-sm" onClick={this.clickAddProvider}>Add a provider</button>  
+        <button type="button" className="btn-outline-primary btn-sm" onClick={this.clickAddProvider}>Add a provider</button>
         {this.state.mode === 'ADD_PROVIDER' && (
-            <div> <h3>Select a platform to add</h3>
-                {Object.keys(PROVIDERS).map((provider) => {
-                  return (
-                    <button type="button" className="btn-info btn-sm" onClick={this.addProvider}>{provider.titleCase()}</button>
-                  )
-                })}
-            </div>
+          <div> <h3>Select a platform to add</h3>
+            {Object.keys(PROVIDERS).map((provider) => {
+              return (
+                <button type="button" className="btn-info btn-sm" onClick={this.addProvider}>{provider.titleCase()}</button>
+              )
+            })}
+          </div>
         )}
       </div>
     );

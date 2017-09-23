@@ -5,7 +5,7 @@ import { USER_FETCH_REQUEST, POST_FETCH_REQUEST, TOKEN_UPDATE_REQUEST, SIGN_IN_P
 import helpers from '../helpers'
 
 function* createUserWithEmail(data) {
-  const password = Math.random().toString(36).slice(-8) 
+  const password = Math.random().toString(36).slice(-8)
 
   const createUserResult = yield firebase.auth()
     .createUserWithEmailAndPassword(data.email, password)
@@ -26,29 +26,29 @@ function* signInWithEmail(data) {
 }
 
 function* signInWithProvider(providerName) {
-  let provider
+  let providerPath
 
   switch (providerName) {
     case 'FACEBOOK':
-      provider = new firebase.auth.FacebookAuthProvider()
+      //cannot make cores request using Ajax. instead,make an actual link
+      providerPath = '/login/facebook'
       break
     case 'GITHUB':
-      provider = new firebase.auth.GithubAuthProvider()
+      providerPath = new firebase.auth.GithubAuthProvider()
       break
     case 'GOOGLE':
-      provider = new firebase.auth.GoogleAuthProvider()
+      providerPath = new firebase.auth.GoogleAuthProvider()
       break
     case 'TWITTER':
-      provider = new firebase.auth.TwitterAuthProvider()
+      providerPath = new firebase.auth.TwitterAuthProvider()
       break
   }
 
-  const signInResult = yield firebase.auth()
-    .signInWithPopup(provider)
+  const signInResult = yield axios.get(providerPath)
     .then((result) => {
- 
+
       //will build off of this object and then send it
-      let data = result.user
+      /*let data = result.user
       data.credential = result.credential
 
       //  The signed-in user info.
@@ -56,9 +56,10 @@ function* signInWithProvider(providerName) {
       data.redirect = true
       if (result.history) {
         data.history = result.history
-      }
+      }*/
+console.log(result);
 
-      return data
+      return result//data
     }).catch(function(err) {
       // Handle Errors here.
       //var errorCode = error.code;
@@ -67,14 +68,14 @@ function* signInWithProvider(providerName) {
       // The firebase.auth.AuthCredential type that was used.
       //var credential = error.credential;
 
-      
+
       let errObj = helpers.handleError(err)
-        //see https://firebase.google.com/docs/auth/web/twitter-login for how to Link Twitter is their initial login 
+        //see https://firebase.google.com/docs/auth/web/twitter-login for how to Link Twitter is their initial login
         //Alternatively, can just force them to login with one of the ways they already set up
-  
+
       //alert(`PROVIDER SIGN IN ERROR: ${err.message}`);
-//TODO: need to alert the user better 
-    }); 
+//TODO: need to alert the user better
+    });
 
   return signInResult
 }
@@ -112,7 +113,7 @@ function* signIn(action) {
 
       if (pld.wantTokenOnly) {
         yield  put({type: TOKEN_UPDATE_REQUEST, payload: {
-          providerIds: userProviders, 
+          providerIds: userProviders,
           credential: signInResult.credential
         }})
 
@@ -122,7 +123,7 @@ function* signIn(action) {
           put({type: USER_FETCH_REQUEST, payload: signInResult}),
           put({type: POST_FETCH_REQUEST, payload: signInResult}),
           put({type: TOKEN_UPDATE_REQUEST, payload: {
-            providerIds: userProviders, 
+            providerIds: userProviders,
             credential: signInResult.credential
           }}),
         ])
@@ -132,7 +133,7 @@ function* signIn(action) {
       //TODO: make a separate action for the error
       //yield put(userFetchRequest(null))
     }
-     return " all done" 
+     return " all done"
   } catch (err) {
     console.log('Error in Sign In Saga', err)
 

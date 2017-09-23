@@ -1,4 +1,5 @@
 // Social contants
+//keep this in sync with backend constants
 export const PROVIDERS = {
   FACEBOOK: {
     name: 'Facebook',
@@ -35,7 +36,7 @@ export const PROVIDERS = {
       "PERSONAL_POST", //tweet. distinct from business post?
       "PRIVATE_MESSAGE",
     ]
-  },  
+  },
   //REDDIT: 'reddit',
 }
 
