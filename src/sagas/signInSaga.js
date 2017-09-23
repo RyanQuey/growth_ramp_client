@@ -28,25 +28,47 @@ function* signInWithEmail(data) {
 function* signInWithProvider(providerName) {
   let providerPath
 
-  switch (providerName) {
-    case 'FACEBOOK':
-      //cannot make cores request using Ajax. instead,make an actual link
-      providerPath = '/login/facebook'
-      break
-    case 'GITHUB':
-      providerPath = new firebase.auth.GithubAuthProvider()
-      break
-    case 'GOOGLE':
-      providerPath = new firebase.auth.GoogleAuthProvider()
-      break
-    case 'TWITTER':
-      providerPath = new firebase.auth.TwitterAuthProvider()
-      break
-  }
+  const loginFunction = (() => {
+    new Promise((resolve, reject) => {
+      let providerData = {}
+      switch (providerName) {
+        case 'FACEBOOK':
+          console.log("now logging into Facebook via the browser");
+          FB.login((response) => {
+            console.log(response);
+            const data = response.authResponse
+            providerData.accessToken = data.accessToken
+            providerData.accessTokenExpires = data.expiresIn
+            providerData.userIdForProvider = data.userID
 
-  const signInResult = yield axios.get(providerPath)
-    .then((result) => {
+            return resolve(providerData)
+          }, {
+            scope: 'email, publish_actions, managed_pages, publish_pages',
+            return_scopes: true,
+            enable_profile_selector: true, //When true, prompt the user to grant permission for one or more Pages
+            profile_selector_ids: ''//pages to grant permission for
+          })
 
+           //need to call this from the browser, as far as I can tell
+
+          break
+        case 'GITHUB':
+          providerPath = new firebase.auth.GithubAuthProvider()
+          break
+        case 'GOOGLE':
+          providerPath = new firebase.auth.GoogleAuthProvider()
+          break
+        case 'TWITTER':
+          providerPath = new firebase.auth.TwitterAuthProvider()
+          break
+      }
+    })
+  })
+
+  try {
+    const providerData = yield loginFunction()
+console.log(providerData);
+    axios.post('api/users/login_with_provider', providerData)
       //will build off of this object and then send it
       /*let data = result.user
       data.credential = result.credential
@@ -57,27 +79,11 @@ function* signInWithProvider(providerName) {
       if (result.history) {
         data.history = result.history
       }*/
-console.log(result);
 
-      return result//data
-    }).catch(function(err) {
-      // Handle Errors here.
-      //var errorCode = error.code;
-      // The email of the user's account used.
-      //var email = error.email;
-      // The firebase.auth.AuthCredential type that was used.
-      //var credential = error.credential;
-
-
-      let errObj = helpers.handleError(err)
-        //see https://firebase.google.com/docs/auth/web/twitter-login for how to Link Twitter is their initial login
-        //Alternatively, can just force them to login with one of the ways they already set up
-
-      //alert(`PROVIDER SIGN IN ERROR: ${err.message}`);
-//TODO: need to alert the user better
-    });
-
-  return signInResult
+      return providerData//data
+  } catch (err) {
+    let errObj = helpers.handleError(err)
+  }
 }
 
 function* signIn(action) {
@@ -85,9 +91,9 @@ function* signIn(action) {
   try {
     const signInType = pld.signInType
     const credentials = pld.credentials
+console.log(pld);
     const provider = pld.provider
 
-    yield firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL)
     let signInResult
     switch (signInType) {
       case 'CREATE_USER':
@@ -104,6 +110,7 @@ function* signIn(action) {
         break
     }
 
+console.log(signInResult);
     if (signInResult) {
       console.log(signInResult, pld);
       let userProviders = []

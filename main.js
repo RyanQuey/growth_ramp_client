@@ -20,40 +20,23 @@ const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const request = require('request')
-
-const passport = require('passport');
-const FacebookStrategy = require('passport-facebook').Strategy
-//const TwitterStrategy = require('passport-twitter').Strategy
+const axios = require('axios')
+const url = require('url')
+const uuid = require('uuid/v5')
+const NodeFB = require('fb')
 
 const domain = process.env.CLIENT_URL || 'http://www.local.dev:5000'
 const callbackPath = process.env.PROVIDER_CALLBACK_PATH || '/provider_redirect'
 const callbackUrl = domain + callbackPath
 
-//do I need this? wasn't in the Facebook example
-passport.initialize()
-
-passport.use(new FacebookStrategy(
-  {
-    clientID: process.env.CLIENT_FACEBOOK_ID,
-    clientSecret: process.env.CLIENT_FACEBOOK_SECRET,
-    callbackURL: `${callbackUrl}/facebook`,
-    //enableProof: true //need to do this eventually
-  },
-  function(accessToken, refreshToken, profile, done) {
-    //done is a call back that must be called "providing a user to complete authentication" (see the docs)
-    //User.findOrCreate({ })
-    console.log(accessToken, refreshToken, profile, done);
-    axios.post('/api/users/login_with_provider', {accessToken, refreshToken, profile})
-    .then((user) => {
-      console.log(user);
-      return done(null, user)
-    })
-    .catch((err) => {
-      console.log(err);
-      return done(err, false)
-    })
-  }
-))
+const fbOptions = {
+  client_id: process.env.CLIENT_FACEBOOK_ID,
+  client_secret: process.env.CLIENT_FACEBOOK_SECRET,
+  redirect_uri: `${callbackUrl}/facebook`,
+  //Promise: require('bluebird')//maybe want to do this?
+  //scope: 'email, '
+}
+//appsecret is automatically set (?)
 
 const app = express();
 const apiUrl = process.env.API_URL;
@@ -67,39 +50,50 @@ app.use(cookieParser());
 //get requests for static files will be relative to the public folder (/app = project_root/public/app)
 app.use(express.static(path.join(__dirname, '/public')));
 
-/////////////////////////////////////
-//might want to use sessions,and this
-/*
-passport.serializeUser(function(user, done) {
-  done(null, user.id);
-});
+  const secretString = uuid("beware_lest_you_get_caught_sleeping", process.env.CLIENT_FACEBOOK_SECRET)
+app.get('/login/facebook', (req, res) => {
+  const fbUrl = NodeFB.getLoginUrl(Object.assign(fbOptions, {
+    display: 'popup',
+    state: secretString, //An arbitrary unique string created by your app to guard against Cross-site Request Forgery. TODO: find out how to use this
+    response_type: 'code' //get back a code for refreshing and an access_token
+  }))
 
-passport.deserializeUser(function(id, done) {
-  User.findById(id, function(err, user) {
-    done(err, user);
-  });
-});
-*/
+  res.redirect(fbUrl)
+})
 
-
-
-
-
-
-
-
-
-
-
-app.get('/login/facebook',
-  passport.authenticate('facebook')
-)
-
-//oauth with Facebook will send back here no matter what (?)
 app.get(`${callbackPath}/facebook`, (req, res) => {
-  console.log("made it back");
-//maybe don't need this
+  //access_token is automatically saved to cookies(?)
+  /*const refreshToken = req.query.code //Facebook calls refresh token a code
+  const returnedState = req.query.state
+  //make sure that this request came from Facebook, not an attacker
+  if(req.query.error) {
+    console.log("Error making call back after logging into Facebook:");
+    if(req.query.error_description) {
+      console.log(req.query.error_description);
+    } else {
+      console.log(req.query.error);
+    }
+    return;
+  } else if (!returnedState !== secretString) {
+    console.log("cors attack");
+    //we have a cors situation on our hands(?)
+  } else if (!refreshToken) {
+    console.log('not a oauth callback');
+    return;
+  }
+
+  //generates a query string in order to pass the data using a redirect (redirects don't allow post)
+  const pathWithQuery = url.format({
+    pathname: '/',
+    refreshToken,
+  })
+
+  //maybe don't need this
+  */
+console.log("should never go herexv");
   res.redirect('/')
+  //TODO: handle the errors, particularly if the user denies permission
+  //https://developers.facebook.com/docs/facebook-login/manually-build-a-login-flow
 })
 
 app.use('/api/*', function(req, res) {
