@@ -1,8 +1,8 @@
 import uuid from 'uuid/v1';
-import $ from 'jquery'; 
+import $ from 'jquery';
 
 export default {
-  //eventually will probably do more, but just this for now  
+  //eventually will probably do more, but just this for now
   handleError: (err) => {
     let obj = {}
     //if a response from oauth...
@@ -24,15 +24,26 @@ export default {
 
     return obj
   },
-  // extracts the relevant firebaseData data from the firebase auth data received on login/request
-  extractUserData: (firebaseData) => {
-    let userData = {
-      displayName: firebaseData.displayName,
-      email: firebaseData.email,
-      photoURL: firebaseData.photoURL,
-      uid: firebaseData.uid,
-      providerData: firebaseData.providerData,
+
+  // extracts the relevant passport profile data from the profile auth data received on login/request
+  extractUserData: (passportProfile) => {
+    //starting out basing  it off of Facebook
+    /*let userData = {
+      displayName: passportProfile.displayName,
+      email: passportProfile.email,
+      photoURL: passportProfile.photoURL,
+      uid: passportProfile.uid,
+      providerData: passportProfile.providerData,
+      provider:
+    }*/
+
+    if (passportProfile.provider === "twitter") {
+      passportProfile.displayName = passportProfile.user_name
     }
+
+    const userData = _.pickBy(passportProfile, (value, key) => {
+      return ["id", "displayName", "email", "provider"].includes(key)
+    })
 
     return userData
   },
