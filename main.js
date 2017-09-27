@@ -33,39 +33,38 @@ const TwitterStrategy = require('passport-twitter').Strategy
 const domain = env.CLIENT_URL || 'http://www.local.dev:5000'
 const callbackPath = env.PROVIDER_CALLBACK_PATH || '/provider_redirect'
 const callbackUrl = domain + callbackPath
+const Helpers = require('./src/helpers')
 
-const contactApi = function(url, method, headers, body, cb) {
-  request[method]({
+
+const tradeTokenForUser = ((providerData, done) => {
+  console.log("beginning to trade token for user");
+  const url = "/users/login_with_provider"
+
+  const body = providerData
+  const headers = {}
+
+  console.log("beginning API call");
+  request.post({
     //remove the 'api' in front, so we can take advantage of the default sails routes
     url: `${apiUrl}${url}`,
     headers: headers,
     form: body
-  }
-, function (err, res, body) {
+  }, function (err, res, responseBody) {
     if(err) {
       console.error("***error:***")
       console.log(err)
-      console.log( "***body:***", body, "***header:***", headers, "***url***", url);
+      //console.log( "***body:***", body, "***header:***", headers, "***url***", url);
       //TODO: might need to shut down server for security reasons if there is an error? or at least, certain kinds of errors?
       //https://stackoverflow.com/questions/14168433/node-js-error-connect-econnrefused
 
-    } else if (cb) {
-      cb(res, body)
+    } else {
+      ((res, responseBody) => {
+        console.log("I made it", res, responseBody);
+        //
+        done(null, responseBody)
+      })
     }
   })
-}
-
-const tradeTokenForUser = ((profile, tokenInfo, done) => {
-  console.log("beginning API callvim ");
-  const url = "/users/login_with_provider"
-  const body = {profile,tokenInfo}
-  const headers = {}
-  const cb = ((res, responseBody) => {
-    console.log("I made it", res, responseBody);
-    done(null, responseBody)
-  })
-
-  contactApi(url, 'post', headers, body, cb)
 })
 const facebookOptions = {
   clientID: env.CLIENT_FACEBOOK_ID,
@@ -81,11 +80,9 @@ passport.use(new FacebookStrategy(
     if (!refreshToken) {
       refreshToken = req.query.code
     }
-console.log(refreshToken);
-    const tokenInfo = {
-      accessToken, refreshToken
-    }
-    tradeTokenForUser(profile, tokenInfo, done)
+    const providerData = Helpers.extractPassportData(accessToken, refreshToken, profile)
+
+    tradeTokenForUser(providerData, done)
   }
 ))
 //appsecret is automatically set (?)
@@ -98,14 +95,10 @@ const twitterOptions = {
 passport.use(new TwitterStrategy(
   twitterOptions,
   function(accessToken, tokenSecret, profile, done) {
-    console.log("info from the callback",accessToken, tokenSecret, profile);
-    const tokenInfo = {
-      accessToken,//originally called just token
-      refreshToken: tokenSecret
-    }
-    //normally, need to retrieve user here
+    //passing in the token secret as the refresh token for twitter
+    const providerData = Helpers.extractPassportData(accessToken, tokenSecret, profile)
 
-    tradeTokenForUser(profile, tokenInfo, done)
+    tradeTokenForUser(providerData, done)
   }
 ))
 
@@ -149,13 +142,16 @@ app.get('/login/twitter', ((req, res, next) => {
 app.get(`${callbackPath}/twitter`, (req, res, next) => {
   //call the callback defined in the strategy
   passport.authenticate('twitter',
+
     //gets called after the call back to find in the strategy
     function(err, user, info) {
       console.log(req.user, req.account);
-console.log("********************************************");
+      console.log("********************************************");
       console.log(user, info);
       if (err) {
+        console.log("error after authenticating in twitter");
         console.log(err);
+        //next ...I think sends this along to the next route that matches, which will just render the app anyway(?)
         return next(err);
       }
       //if (!user) { return res.redirect('/'); }
@@ -167,6 +163,7 @@ console.log("********************************************");
 
 app.get('/login/facebook', (req, res, next) => {
   //need to find out if can have these...or even if I need to
+  console.log("beginning to authenticate with Facebook");
   const otherOptions = {
     display: 'popup',
     state: secretString, //An arbitrary unique string created by your app to guard against Cross-site Request Forgery. TODO: find out how to use this
@@ -178,12 +175,31 @@ app.get('/login/facebook', (req, res, next) => {
 //req.user automatically sent to the authenticated user
 
 app.get(`${callbackPath}/facebook`, (req, res, next) => {
+  //TODO: Facebook recommends verifying any request made to this callback path, since anyone can ask the access it, not to Facebook, and pass in any sort of token
+  //maybe want to do the same thing with twitter, who actually sends an oauth_verifier along with the tokens
   //call the callback defined in the strategy
-  passport.authenticate('facebook')(req, res, next)
-  //TODO: handle the errors, particularly if the user denies permission
-  //https://developers.facebook.com/docs/facebook-login/manually-build-a-login-flow
-console.log("********************************************");
-  res.redirect('/')
+  console.log("made into the redirect path");
+  passport.authenticate('facebook',
+    //
+    //gets called after the call back to find in the strategy
+    function(err, user, info) {
+      console.log(req.user, req.account);
+      console.log("********************************************");
+      console.log(user, info);
+      if (err) {
+        //TODO: handle the errors, particularly if the user denies permission
+        //https://developers.facebook.com/docs/facebook-login/manually-build-a-login-flow
+        console.log("error after authenticating in Facebook");
+        console.log(err);
+        //next ...I think sends this along to the next route that matches, which will just render the app anyway(?)
+        return next(err);
+      }
+      //if (!user) { return res.redirect('/'); }
+
+      return res.redirect('/');
+    }
+
+  )(req, res, next)
 })
 
 app.use('/api/*', function(req, res) {
@@ -202,7 +218,7 @@ app.use('/api/*', function(req, res) {
   .on('error', function(err, response, responseBody) {
       console.error("***error:***")
       console.log(err)
-      console.log( "***body:***", responseBody, "***header:***", headers, "***url***", url);
+      //console.log( "***body:***", responseBody, "***header:***", headers, "***url***", url);
       //TODO: might need to shut down server for security reasons if there is an error? or at least, certain kinds of errors?
       //https://stackoverflow.com/questions/14168433/node-js-error-connect-econnrefused
 

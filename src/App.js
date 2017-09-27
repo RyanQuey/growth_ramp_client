@@ -9,12 +9,11 @@ import firebase from 'firebase';
 import store from './reducers'
 import { POST_FETCH_REQUEST, PLAN_FETCH_REQUEST, USER_FETCH_REQUEST, TOKEN_UPDATE_REQUEST, IS_PRELOADING_STORE } from './actions'
 import './App.css';
-import $ from 'jquery';
 
 class App extends Component {
 
   componentDidMount() {
-    $.get('/api/test')
+    axios.get('/api/test')
     .then(res => console.log("got it: ", res))
 
     firebase.auth().onAuthStateChanged((user) => {

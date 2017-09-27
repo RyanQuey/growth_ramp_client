@@ -25,25 +25,25 @@ export default {
     return obj
   },
 
-  // extracts the relevant passport profile data from the profile auth data received on login/request
-  extractUserData: (passportProfile) => {
-    //starting out basing  it off of Facebook
-    /*let userData = {
-      displayName: passportProfile.displayName,
-      email: passportProfile.email,
-      photoURL: passportProfile.photoURL,
-      uid: passportProfile.uid,
-      providerData: passportProfile.providerData,
-      provider:
-    }*/
-
-    if (passportProfile.provider === "twitter") {
-      passportProfile.displayName = passportProfile.user_name
+  // extracts the relevant passport profile data from the profile auth data received on login/request, and matches it to the database columns
+  extractPassportData: (accessToken, refreshToken, passportProfile) => {
+    passportProfile.name = passportProfile.provider.toUpperCase()
+    if (passportProfile.name === "TWITTER") {
+      passportProfile.userName = passportProfile.user_name
     }
 
-    const userData = _.pickBy(passportProfile, (value, key) => {
-      return ["id", "displayName", "email", "provider"].includes(key)
+    if (passportProfile.name === "FACEBOOK") {
+      passportProfile.userName = passportProfile.displayName
+    }
+
+    passportProfile.providerUserId = passportProfile.id
+
+    let userData = _.pickBy(passportProfile, (value, key) => {
+      return ["providerUserId", "userName", "email", "name"].includes(key)
     })
+
+    userData.accessToken = accessToken
+    userData.refreshToken = refreshToken
 
     return userData
   },
