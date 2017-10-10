@@ -2,9 +2,9 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import _ from 'lodash'
 import helpers from '../helpers'
-import { 
-  SIGN_IN_REQUEST, 
-  SIGN_OUT_REQUEST, 
+import {
+  SIGN_IN_REQUEST,
+  SIGN_OUT_REQUEST,
   LINK_ACCOUNT_REQUEST,
 } from '../actions'
 import { PROVIDERS, PROVIDER_IDS_MAP } from '../constants'
@@ -25,15 +25,15 @@ class Login extends Component {
   }
 
   handleChange(e) {
-    
+
     let value = e.target.value
     this.setState({email: value});
   }
 
   //need to enable with e-mail
-  providerLogin(providerName) {
+  /*providerLogin(providerName) {
     const c = this;
-    const user = helpers.safeDataPath(c.props, `user`, false) 
+    const user = helpers.safeDataPath(c.props, `user`, false)
     const userProviders = user && c.props.user.providerData || []
     let alreadyLinked = false
     if (userProviders.some((p) => {
@@ -43,7 +43,7 @@ class Login extends Component {
       alreadyLinked = true
     }
     const data = {
-      signInType: 'PROVIDER', 
+      signInType: 'PROVIDER',
       provider: providerName,
     }
     //if already logged in but not yet linked
@@ -53,8 +53,9 @@ class Login extends Component {
     } else if (user) {
       data.wantTokenOnly = true
     }
+
     return this.props.signInRequest(data)
-  }
+  }*/
 
   handleSignOut(e) {
     e.preventDefault()
@@ -83,7 +84,7 @@ class Login extends Component {
           const providerName = PROVIDERS[key].name
           //this works, but temporarily disabling this because neatest button available in case the token expires
           //
-            return <button key={key} onClick={c.providerLogin.bind(c, providerName)}>{`Login ${preposition} ${providerName}`}</button>
+            return <a href={`/login/${providerName}`} key={key} onClick={false && c.providerLogin.bind(c, providerName)}>{`Login ${preposition} ${providerName}`}</a>
           //}
         })}
       </div>

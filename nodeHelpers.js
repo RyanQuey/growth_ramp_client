@@ -1,5 +1,6 @@
 const uuid = require('uuid/v1');
 const $ = require('jquery');
+const _ = require('lodash')
 
 module.exports = {
   //eventually will probably do more, but just this for now

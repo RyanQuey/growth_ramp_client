@@ -26,15 +26,19 @@ function* signInWithEmail(data) {
 }
 
 function* signInWithProvider(providerName) {
+console.log(providerName);
   let providerPath
 
   const loginFunction = (() => {
     new Promise((resolve, reject) => {
       let providerData = {}
-      switch (providerName) {
+      switch (providerName.toUpperCase()) {
         case 'FACEBOOK':
-          console.log("now logging into Facebook via the browser");
-          FB.login((response) => {
+          console.log("now logging into Facebook  via the front end server");
+          axios.get('/login/facebook')
+          .then(() => {resolve()})
+          .catch((err) => {console.log(err);})
+          /*FB.login((response) => {
             console.log(response);
             const data = response.authResponse
             providerData.accessToken = data.accessToken
@@ -50,6 +54,8 @@ function* signInWithProvider(providerName) {
           })
 
            //need to call this from the browser, as far as I can tell
+           //passport needs to be done through the server though
+           */
 
           break
         case 'GITHUB':
