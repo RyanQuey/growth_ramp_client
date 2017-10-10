@@ -1,5 +1,6 @@
 const path = require('path')
-const HtmlWebpackPlugin = require('html-webpack-plugin')
+//is constantly reloading the browser...just turned it offf
+//const HtmlWebpackPlugin = require('html-webpack-plugin')
 
 //might get rid of this eventually, if I switch to a node server
 const devServer = require('@webpack-blocks/dev-server2')
@@ -17,14 +18,13 @@ const sourceDir = process.env.SOURCE || 'src'
 
 //this is how client-side assets will be accessible in a browser
 //path starts with a '/', so the path will be a path relative to the server, not the index.html
-const publicPath = `/${process.env.PUBLIC_PATH || 'public'}/`.replace('//', '/')
+const publicPath = `/${process.env.PUBLIC_PATH || 'dist'}/`.replace('//', '/')
 const sourcePath = path.join(process.cwd(), sourceDir)
 const nodeModulesPath = path.join(process.cwd(), 'node_modules')
 
 //currently taking advantage of the sails default, where the asset/index.html gets served if routes aren't set for the homepage
 //maybe eventually separate the JavaScript from that index.HTML file
-const outputPath = path.join(process.cwd(), 'public')
-console.log(outputPath);
+const outputPath = path.join(process.cwd(), 'dist')
 
 const babel = () => () => ({
   module: {
@@ -100,6 +100,8 @@ const config = createConfig([
     filename: '[name].js',
     path: outputPath,
     publicPath,
+    hotUpdateChunkFilename: 'hot/hot-update.js',
+    hotUpdateMainFilename: 'hot/hot-update.json'
   }),
   defineConstants({
     'process.env.NODE_ENV': process.env.NODE_ENV,
@@ -107,10 +109,6 @@ const config = createConfig([
   }),
   addPlugins([
     new webpack.ProgressPlugin(),
-    /*new HtmlWebpackPlugin({
-      filename: 'index.html', //this will be the output, put in the output path set above
-      template: path.join(process.cwd(), 'srcClient/index.html'), //the source index file
-    }),*/
   ]),
   happypack([
     babel(),
@@ -119,7 +117,7 @@ const config = createConfig([
   sass(),
   css(),
   resolveModules(sourceDir),
-  env('development', [
+  env('development', [ //probably thewebpack dev server; so can probably remove
     devServer({
       contentBase: 'public',
       stats: 'errors-only',

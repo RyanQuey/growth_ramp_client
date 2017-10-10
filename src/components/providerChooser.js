@@ -45,7 +45,7 @@ class ProviderChooser extends Component {
       return null
     }
 
-    const providers = this.props.currentPlan.providers
+    const providers = this.props.currentPlan && this.props.currentPlan.providers
 
     return (
       <div>

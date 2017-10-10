@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 // here, adds the additional string functions
 import helpers from './helpers'
 import './prototypeHelpers'
-import logo from './logo.svg';
+import logo from './images/logo.png';
 import Layout from './components/layout';
 import { connect } from 'react-redux'
 import firebase from 'firebase';

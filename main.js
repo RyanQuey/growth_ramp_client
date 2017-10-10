@@ -33,7 +33,7 @@ const TwitterStrategy = require('passport-twitter').Strategy
 const domain = env.CLIENT_URL || 'http://www.local.dev:5000'
 const callbackPath = env.PROVIDER_CALLBACK_PATH || '/provider_redirect'
 const callbackUrl = domain + callbackPath
-const Helpers = require('./src/helpers')
+const Helpers = require('./nodeHelpers')
 
 
 const tradeTokenForUser = ((providerData, done) => {
@@ -113,17 +113,17 @@ passport.deserializeUser(function(obj, cb) {
 });
 
 const app = express();
-const apiUrl = process.env.API_URL;
+const apiUrl = process.env.API_URL || 'http://localhost:1337';
 const secretString = uuid("beware_lest_you_get_caught_sleeping", process.env.CLIENT_FACEBOOK_SECRET)
 
 // uncomment after placing your favicon in /public
-app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+app.use(favicon(path.join(__dirname, 'dist', 'favicon.ico')));
 app.use(logger('dev'));
 app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: false })); // for parsing application/x-www-form-urlencoded
 //app.use(cookieParser()); //apparently incompatible with express-sessions
 //get requests for static files will be relative to the public folder (/app = project_root/public/app)
-app.use(express.static(path.join(__dirname, '/public')));
+app.use(express.static(path.join(__dirname, '/dist')));
 app.use(session({
   secret: secretString,
   cookie: {
@@ -208,6 +208,7 @@ app.use('/api/*', function(req, res) {
   const headers = {}
 
   const url = `${apiUrl}${req.originalUrl.split('/api')[1]}`
+console.log(url);
   //can eventually combine with tradeTokenForUser? piping makes it harder; you cannot pipe on just any function
   request[method]({
     //remove the 'api' in front, so we can take advantage of the default sails routes
