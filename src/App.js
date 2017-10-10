@@ -1,14 +1,14 @@
 import React, { Component } from 'react';
 // here, adds the additional string functions
-import helpers from './helpers'
-import './prototypeHelpers'
-import logo from './images/logo.png';
-import Layout from './components/layout';
+import helpers from 'helpers'
+import 'prototypeHelpers'
+import logo from 'images/logo.png';
+import Layout from 'components/layout';
 import { connect } from 'react-redux'
 import firebase from 'firebase';
-import store from './reducers'
-import { POST_FETCH_REQUEST, PLAN_FETCH_REQUEST, USER_FETCH_REQUEST, TOKEN_UPDATE_REQUEST, IS_PRELOADING_STORE } from './actions'
-import './App.css';
+import store from 'reducers'
+import { POST_FETCH_REQUEST, PLAN_FETCH_REQUEST, USER_FETCH_REQUEST, TOKEN_UPDATE_REQUEST, IS_PRELOADING_STORE } from 'actions'
+import 'App.css';
 
 class App extends Component {
 

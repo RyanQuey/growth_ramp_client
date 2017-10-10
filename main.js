@@ -24,8 +24,12 @@ const request = require('request')
 //const axios = require('axios') don't use for now; is unnecessary, and request works, whereas this one gets blocked (maybe because sending to port eighty?)
 const url = require('url')
 const uuid = require('uuid/v5')
+const fs = require('fs-extra')
 
-const NodeFB = require('fb')
+//to modify the HTML file with the  data
+//no sense in a full-fledged template engine for something this simple
+const Transform = require('stream').Transform
+
 const passport = require('passport')
 const FacebookStrategy = require('passport-facebook').Strategy
 const TwitterStrategy = require('passport-twitter').Strategy
@@ -37,37 +41,33 @@ const Helpers = require('./nodeHelpers')
 
 
 const tradeTokenForUser = ((providerData, done) => {
-  console.log("beginning to trade token for user");
   const url = "/users/login_with_provider"
 
   const body = providerData
   const headers = {}
 
-  console.log("beginning API call");
+  let timeout
   request.post({
     //remove the 'api' in front, so we can take advantage of the default sails routes
     url: `${apiUrl}${url}`,
     headers: headers,
     form: body
   }, function (err, res, responseBody) {
+    clearTimeout(timeout)
     if(err) {
       console.error("***error:***")
-      console.log(err)
       done(err)
       //console.log( "***body:***", body, "***header:***", headers, "***url***", url);
       //TODO: might need to shut down server for security reasons if there is an error? or at least, certain kinds of errors?
       //https://stackoverflow.com/questions/14168433/node-js-error-connect-econnrefused
 
     } else {
-      ((res, responseBody) => {
-        console.log("I made it", res, responseBody);
-        //
-        done(null, responseBody)
-      })
+      console.log("I made it", res);
+      done(null, responseBody)
     }
   })
 
-  setTimeout(() => {
+  timeout = setTimeout(() => {
     console.log("timed out...our backend probably isn't working");
     done()
   }, 3000)
@@ -149,34 +149,36 @@ console.log("logging in with twitter");
 }))
 app.get(`${callbackPath}/twitter`, (req, res, next) => {
   //call the callback defined in the strategy
+  //NOTE: in order to get it to pop up, will require some client-side JavaScript, https://github.com/jaredhanson/passport-facebook/issues/18  ...looks like a mess. otherwise , though,
   passport.authenticate('twitter',
 
     //gets called after the callback defined in the strategy
-    function(err, user, info) {
+    function(err, userAndProvider, info) {
       console.log(req.user, req.account);
       console.log("********************************************");
-      console.log(user, info);
-      if (err || !user) {
-        console.log("error after authenticating in twitter");
+      console.log("user and provider", userAndProvider, "info",info);
+      if (err || !userAndProvider) {
+        console.log("error after authenticating in twitter:");
         console.log(err);
         //next ...I think sends this along to the next route that matches, which will just render the app anyway(?)
         return next(err);
       }
       //if (!user) { return res.redirect('/'); }
 
-      return res.redirect('/');
+      //return res.redirect('/');
+      //TODO: do something with the oauthtoken and oauth verifier in the URL to twitter returns? doesn't match the token the passport persists...
+      req.url = '/'
+      res.locals.userAndProvider = userAndProvider
+
+      return next()
     }
   )(req, res, next)
 })
 
+//TODO: make this the Twitter one, which works
 app.get('/login/facebook', (req, res, next) => {
   //need to find out if can have these...or even if I need to
   console.log("beginning to authenticate with Facebook");
-  const otherOptions = {
-    display: 'popup',
-    state: secretString, //An arbitrary unique string created by your app to guard against Cross-site Request Forgery. TODO: find out how to use this
-    response_type: 'code' //get back a code for refreshing and an access_token
-  }
   passport.authenticate('facebook')(req, res, next)
 })
 
@@ -239,7 +241,22 @@ console.log(url);
 // match one above, send back React's index.html file.
 // let react handle the routing from there
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname + '/public/index.html'));
+  if (res.locals && Object.keys(res.locals).length > 0) {
+    const parser = new Transform()
+    parser._transform = function(stream, encoding, done) {
+      const str = stream.toString().replace('serverResponse = ""', `serverResponse = ${JSON.stringify(res.locals)}`)
+      this.push(str)
+      done()
+    }
+
+    fs.createReadStream('dist/index.html')
+    .pipe(parser)
+    .pipe(res)
+
+  } else {
+    res.sendFile(path.join(__dirname + '/dist/index.html'));
+  }
+
 });
 
 // catch 404 and forward to error handler

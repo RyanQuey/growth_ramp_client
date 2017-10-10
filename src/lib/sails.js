@@ -25,5 +25,10 @@ const Sails = {socket}
   }
 })
 
+//handle provider redirects
+io.socket.on(`LOGIN_WITH_${providerName.toUpperCase()}`, (data) => {
+  console.log(data);
+})
+
 window.Sails = Sails;
-export default Sails;
+//export default Sails; unnecessary, defining to window

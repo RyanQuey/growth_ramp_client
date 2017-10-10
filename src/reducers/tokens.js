@@ -8,7 +8,7 @@ const tokensReducer = (state = null, action) => {
   switch (action.type) {
 
     case SIGN_OUT:
-      return false
+      return null
 
     case TOKEN_UPDATE_SUCCESS:
       console.log('Merge old and new token data:', action.payload)

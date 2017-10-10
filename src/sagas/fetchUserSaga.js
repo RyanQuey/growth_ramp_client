@@ -1,12 +1,11 @@
 import 'babel-polyfill'
 import _ from 'lodash'
 import { call, put, takeLatest, all } from 'redux-saga/effects'
-import fbApp from '../firebaseApp.js'
+import fbApp from 'firebaseApp.js'
 import firebase  from 'firebase'
-import { USER_FETCH_REQUEST, USER_FETCH_SUCCESS, PROVIDER_IDS_MAP, IS_PRELOADING_STORE, USER_FETCH_FAILURE } from '../actions'
-import { USER_FIELDS_TO_PERSIST } from '../constants'
-import helpers from '../helpers'
-import FB from 'fb';
+import { USER_FETCH_REQUEST, USER_FETCH_SUCCESS, IS_PRELOADING_STORE, USER_FETCH_FAILURE } from 'actions'
+import { USER_FIELDS_TO_PERSIST, PROVIDER_IDS_MAP } from 'constants'
+import helpers from 'helpers'
 
 const database = fbApp.database();
 

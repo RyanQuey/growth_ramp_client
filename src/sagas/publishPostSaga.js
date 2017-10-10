@@ -1,10 +1,10 @@
 import 'babel-polyfill'
 import { put, select, take, takeLatest, call } from 'redux-saga/effects'
 import { delay } from 'redux-saga'
-import fbApp from '../firebaseApp.js'
-import { POST_PUBLISH_REQUEST, SIGN_IN_POPUP_CLOSED, POST_PUBLISH_SUCCESS, SIGN_IN_REQUEST } from '../actions'
-import FB from 'fb';
-import helpers from '../helpers'
+import fbApp from 'firebaseApp.js'
+import { POST_PUBLISH_REQUEST, SIGN_IN_POPUP_CLOSED, POST_PUBLISH_SUCCESS, SIGN_IN_REQUEST } from 'actions'
+//import FB from 'fb';
+import helpers from 'helpers'
 import _ from 'lodash'
 const database = fbApp.database();
 
@@ -12,14 +12,14 @@ const database = fbApp.database();
 function* sendToProvider(providerName, pld, tokenInfo) {
   const publishFunctions = {
     facebook: () => {
-      FB.api(`/me/feed`, 'post', pld.post.message, (response) => {
+      /*FB.api(`/me/feed`, 'post', pld.post.message, (response) => {
         if (!response || response.error) {
           let newError = helpers.handleError(response.error);
-            
+
         } else {
           alert('Facebook post ID: ' + response.id);
         }
-      })
+      })*/
     },
     twitter: () => {
       tokenInfo.api.__call("statuses_update", {
@@ -29,7 +29,7 @@ function* sendToProvider(providerName, pld, tokenInfo) {
       });
     },
     linkedin: () => {
-  
+
     },
   }
 
@@ -42,10 +42,10 @@ function* checkForToken(providerName, index, logins) {
   if (!tokenInfo.authenticated) {
     if (logins > 0) {
       //needs a button click; Twitter and perhaps Facebook, don't allow one to go after the other like this
-      throw "Please login again with " + providerName 
+      throw "Please login again with " + providerName
     }
     const data = {
-      signInType: 'PROVIDER', 
+      signInType: 'PROVIDER',
       provider: providerName.toUpperCase(),
       wantTokenOnly: true,
     }
@@ -66,7 +66,7 @@ function* publish(action) {
       const providerName = pld.providers[i]
       console.log("now starting ", providerName);
       //since I'm passing the token, another reason why this should be done in the backend
-      
+
       let result = yield call(checkForToken, providerName, i, logins)
       let tokenInfo = result.tokenInfo
 console.log(tokenInfo);

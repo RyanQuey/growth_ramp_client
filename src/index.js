@@ -10,15 +10,14 @@ import { createStore, applyMiddleware } from 'redux'
 import createSagaMiddleware from 'redux-saga'
 import { Provider } from 'react-redux';
 
-import initializers from './initializers'
-initializers()
-
-const root = document.getElementById('app')
-
 window.React = React;
 window.axios = axios;
 window.Cookies = Cookies
 
+import initializers from './initializers'
+initializers()
+
+const root = document.getElementById('app')
 ReactDOM.render(
   <Provider store={store}>
     <App />

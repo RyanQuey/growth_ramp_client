@@ -1,5 +1,5 @@
-import providers from './providers'
+import handleLocals from './handleLocals'
 
 export default ()=>{
-  providers()
+  handleLocals()
 }

@@ -3,15 +3,12 @@ import _ from 'lodash'
 import { call, put, takeLatest, takeEvery, all, fork, join } from 'redux-saga/effects'
 import fbApp from '../firebaseApp.js'
 import firebase  from 'firebase'
-import CodeBird from 'codebird'
+//import CodeBird from 'codebird' using twit, and in the backend
 import { TOKEN_UPDATE_REQUEST, TOKEN_UPDATE_FAILURE, TOKEN_UPDATE_SUCCESS } from '../actions'
 import { USER_FIELDS_TO_PERSIST, PROVIDER_IDS_MAP  } from '../constants'
 import helpers from '../helpers'
-import FB from 'fb';
+//import FB from 'fb'; do this in the backend
 import crypto from 'crypto'
-
-const codeBird = new CodeBird
-codeBird.setConsumerKey(process.env.REACT_APP_TWITTER_CONSUMER_KEY, process.env.REACT_APP_TWITTER_CONSUMER_SECRET)
 
 //disabling environment variables in the front-end; so remove this  ||  when this gets moved to the backend. I will want to throw an error at that point
 const hmac = crypto.createHmac('sha256', process.env.REACT_APP_FACEBOOK_SECRET_KEY || "abc")
@@ -21,15 +18,15 @@ const tokenInfo = {}
 
 //called when there is no token in the store (e.g., initial store load), or expired token in the store
 function* getTokens(providerId, credential) {
-console.log(providerId, credential);
+/*console.log(providerId, credential);
   let provider, providerToken
   let providerName = PROVIDER_IDS_MAP[providerId]
   if (credential && credential.providerId === providerId) {
     providerToken = credential.accessToken
   } else {
     let firebaseToken = firebase.auth().currentUser.getToken()
-    //it doesn't work currently, I can't get this data provider token in this way...try https://firebase.google.com/docs/auth/web/account-linking 
-    //or, skip firebase: https://developers.facebook.com/docs/facebook-login/access-tokens/expiration-and-extension/ 
+    //it doesn't work currently, I can't get this data provider token in this way...try https://firebase.google.com/docs/auth/web/account-linking
+    //or, skip firebase: https://developers.facebook.com/docs/facebook-login/access-tokens/expiration-and-extension/
     //providerToken = firebase.auth().FacebookAuthProvider.credential(firebaseToken)
   }
 console.log(providerToken, providerName);
@@ -50,10 +47,10 @@ console.log(providerToken, providerName);
       //can't do this, read us can store something like a codeBird
         tokenInfo.twitter.api = codeBird
         break
-        
+
       case 'google':
         break
-        
+
       default:
         //not really sure which token this returns...
         provider = firebase.auth().getIdToken(true)
@@ -61,11 +58,12 @@ console.log(providerToken, providerName);
     //might not want to put this into store...probably just use Boolean instead
     tokenInfo[providerName] = tokenInfo[providerName] || {}
     tokenInfo[providerName].authenticated = true
-    
+
   }
 
   // TODO: don't save this in the store, save it somewhere where it can be reused even if there is a screen refresh...without all of the database calls if possible (am I making database calls?)
   return tokenInfo
+*/
 }
 
 function* updateData(action) {
@@ -85,7 +83,7 @@ function* updateData(action) {
       yield join(...tasks)
     }
 
-    
+
     const tokens = Object.assign({}, tokenInfo)
 
     yield put({type: TOKEN_UPDATE_SUCCESS, payload: tokens})
