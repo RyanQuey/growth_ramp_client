@@ -8,9 +8,7 @@ import {
   SIGN_OUT,
   FETCH_USER_SUCCESS,
 
-} from 'actions'
-import helpers from 'helpers'
-import _ from 'lodash'
+} from 'constants/actionTypes'
 
 const userReducer = (state = null, action) => {
 

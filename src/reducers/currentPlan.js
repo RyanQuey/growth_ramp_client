@@ -4,7 +4,7 @@ import {
   INPUT_UPDATE_SUCCESS,
   SIGN_OUT,
   CHOOSE_PLAN
-} from '../actions'
+} from 'constants/actionTypes'
 import helpers from '../helpers'
 import _ from 'lodash'
 

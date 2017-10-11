@@ -136,7 +136,7 @@ app.use(bodyParser.urlencoded({ extended: false })); // for parsing application/
 //app.use(cookieParser()); //apparently incompatible with express-sessions
 //get requests for static files will be relative to the public folder (/app = project_root/public/app)
 app.use(express.static(path.join(__dirname, '/dist')));
-//NOTE: express session and passport session required no matter what in order for passport oauth to work
+//NOTE: express session and passport session required no matter what in order for passport oauth to work...I'm not really using it though
 app.use(session({
   secret: secretString,
   cookie: {

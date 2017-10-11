@@ -3,9 +3,7 @@ import {
   FETCH_POST_SUCCESS,
   INPUT_UPDATE_SUCCESS,
   SIGN_OUT,
-} from '../actions'
-import helpers from '../helpers'
-import _ from 'lodash'
+} from 'constants/actionTypes'
 
 const postsReducer = (state = null, action) => {
 

@@ -1,7 +1,7 @@
 import {
   UPDATE_TOKEN_SUCCESS,
   SIGN_OUT,
-} from '../actions'
+} from 'constants/actionTypes'
 
 const tokensReducer = (state = null, action) => {
 

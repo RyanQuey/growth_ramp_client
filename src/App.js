@@ -3,7 +3,8 @@ import React, { Component } from 'react';
 import helpers from 'helpers'
 import 'prototypeHelpers'
 import logo from 'images/logo.png';
-import Layout from 'components/layout';
+import { Authenticated, Unauthenticated } from 'components/yields'
+//import Layout from 'components/layout';
 import { connect } from 'react-redux'
 import firebase from 'firebase';
 import store from 'reducers'
@@ -16,12 +17,8 @@ class App extends Component {
     axios.get('/api/test')
     .then(res => console.log("got it: ", res))
 
-    firebase.auth().onAuthStateChanged((user) => {
-      if (user) {
 
-        //need to retrieve user data from firebase, to put into redux
-        //mostly only gets ran when reloading the page after already logged in
-        if (!this.props.user) {
+        /*if (this.props.user) {
           const userData = helpers.extractUserData(user)
           this.props.userFetchRequest(userData)
           this.props.postFetchRequest(userData)
@@ -34,14 +31,7 @@ class App extends Component {
           if (userProviders.length > 0) {
             this.props.tokenUpdateRequest({providerIds: userProviders})
           }
-        }
-
-      } else {
-        // stop preloading, because no user in firebase to preload
-        this.props.isPreloadingStore({preloadingData: false})
-
-      }
-    })
+        }*/
 
   }
 
@@ -55,7 +45,11 @@ class App extends Component {
           </div>
         ) : (
           <div>
-            <Layout />
+            {this.props.user ? (
+              <Authenticated />
+            ) : (
+              <Unauthenticated />
+            )}
           </div>
         )}
       </div>

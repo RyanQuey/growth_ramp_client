@@ -1,7 +1,7 @@
 import 'babel-polyfill'
 import firebase from 'firebase'
 import { put, takeLatest, all } from 'redux-saga/effects'
-import { LINK_ACCOUNT_REQUEST, UPDATE_TOKEN_REQUEST, LINK_ACCOUNT_SUCCESS } from '../actions'
+import { LINK_ACCOUNT_REQUEST, UPDATE_TOKEN_REQUEST, LINK_ACCOUNT_SUCCESS } from 'constants/actionTypes'
 import helpers from '../helpers'
 
 function* linkEmail(data) {

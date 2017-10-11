@@ -9,10 +9,16 @@ import registerServiceWorker from './registerServiceWorker';
 import { createStore, applyMiddleware } from 'redux'
 import createSagaMiddleware from 'redux-saga'
 import { Provider } from 'react-redux';
+import _ from 'lodash'
+import moment from 'moment'
+import Helpers from 'helpers'
 
 window.React = React;
 window.axios = axios;
 window.Cookies = Cookies
+window._ = _
+window.moment = moment
+window.Helpers = Helpers
 
 import initializers from './initializers'
 initializers()

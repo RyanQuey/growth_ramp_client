@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
 import helpers from '../../helpers'
-import { SET_INPUT_VALUE } from '../../actions'
+import { SET_INPUT_VALUE } from '../constants/actionTypes'
 import Input from './input'
 
 class FirebaseInput extends Component {
