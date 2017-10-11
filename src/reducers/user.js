@@ -7,9 +7,9 @@ import {
   SET_IMAGE,
   SIGN_OUT,
   USER_FETCH_SUCCESS,
-  
-} from '../actions'
-import helpers from '../helpers'
+
+} from 'actions'
+import helpers from 'helpers'
 import _ from 'lodash'
 
 const userReducer = (state = null, action) => {

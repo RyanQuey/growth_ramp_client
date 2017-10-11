@@ -94,6 +94,11 @@ console.log(signInResult);
   }
 }
 
+const setCookie = (user) => {
+  Cookie.set('sessionUser', user)
+}
+
 export default function* signInSaga() {
   yield takeLatest(SIGN_IN_REQUEST, signIn)
+  yield takeLatest(SET_CURRENT_USER, setCookie)
 }

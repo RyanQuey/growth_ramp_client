@@ -31,8 +31,8 @@ class Login extends Component {
   }
 
   //need to enable with e-mail
-  /*providerLogin(providerName) {
-    const c = this;
+  providerLogin(providerName) {
+    /*const c = this;
     const user = helpers.safeDataPath(c.props, `user`, false)
     const userProviders = user && c.props.user.providerData || []
     let alreadyLinked = false
@@ -54,8 +54,8 @@ class Login extends Component {
       data.wantTokenOnly = true
     }
 
-    return this.props.signInRequest(data)
-  }*/
+    return this.props.signInRequest(data)*/
+  }
 
   handleSignOut(e) {
     e.preventDefault()
@@ -84,9 +84,10 @@ class Login extends Component {
           const providerName = PROVIDERS[key].name
           //this works, but temporarily disabling this because neatest button available in case the token expires
           //
-            return <a href={`/login/${providerName}`} key={key} onClick={false && c.providerLogin.bind(c, providerName)}>{`Login ${preposition} ${providerName}`}</a>
+            return <a href={`/login/${providerName}`} key={key} onClick={c.providerLogin.bind(c, providerName)}>{`Login ${preposition} ${providerName}`}</a>
           //}
         })}
+        <a href={`/login/local`} >{`Login with username and password`}</a>
       </div>
     );
   }

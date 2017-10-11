@@ -39,6 +39,26 @@ const callbackPath = env.PROVIDER_CALLBACK_PATH || '/provider_redirect'
 const callbackUrl = domain + callbackPath
 const Helpers = require('./nodeHelpers')
 
+const findUser = (params, cb) => {
+  let timeout
+  request.get({
+    //remove the 'api' in front, so we can take advantage of the default sails routes
+    url: `${apiUrl}/users`,
+    form: params,
+    timeout: 3000
+  }, function (err, res, responseBody) {
+    if(err) {
+      console.error("***error:***")
+      cb(err)
+      //TODO: might need to shut down server for security reasons if there is an error? or at least, certain kinds of errors?
+      //https://stackoverflow.com/questions/14168433/node-js-error-connect-econnrefused
+
+    } else {
+      console.log("I made it", res);
+      cb(null, responseBody)
+    }
+  })
+}
 
 const tradeTokenForUser = ((providerData, done) => {
   const url = "/users/login_with_provider"
@@ -51,13 +71,12 @@ const tradeTokenForUser = ((providerData, done) => {
     //remove the 'api' in front, so we can take advantage of the default sails routes
     url: `${apiUrl}${url}`,
     headers: headers,
-    form: body
+    form: body,
+    timeout: 3000
   }, function (err, res, responseBody) {
-    clearTimeout(timeout)
     if(err) {
       console.error("***error:***")
       done(err)
-      //console.log( "***body:***", body, "***header:***", headers, "***url***", url);
       //TODO: might need to shut down server for security reasons if there is an error? or at least, certain kinds of errors?
       //https://stackoverflow.com/questions/14168433/node-js-error-connect-econnrefused
 
@@ -66,11 +85,6 @@ const tradeTokenForUser = ((providerData, done) => {
       done(null, responseBody)
     }
   })
-
-  timeout = setTimeout(() => {
-    console.log("timed out...our backend probably isn't working");
-    done()
-  }, 3000)
 })
 
 
@@ -110,16 +124,6 @@ passport.use(new TwitterStrategy(
   }
 ))
 
-//I don't know what this does
-//things seem to work with or without it , at least at this point
-passport.serializeUser(function(user, cb) {
-  cb(null, user);
-});
-
-passport.deserializeUser(function(obj, cb) {
-  cb(null, obj);
-});
-
 const app = express();
 const apiUrl = process.env.API_URL || 'http://localhost:1337';
 const secretString = uuid("beware_lest_you_get_caught_sleeping", process.env.CLIENT_FACEBOOK_SECRET)
@@ -132,6 +136,7 @@ app.use(bodyParser.urlencoded({ extended: false })); // for parsing application/
 //app.use(cookieParser()); //apparently incompatible with express-sessions
 //get requests for static files will be relative to the public folder (/app = project_root/public/app)
 app.use(express.static(path.join(__dirname, '/dist')));
+//NOTE: express session and passport session required no matter what in order for passport oauth to work
 app.use(session({
   secret: secretString,
   cookie: {
@@ -211,6 +216,13 @@ app.get(`${callbackPath}/facebook`, (req, res, next) => {
 
   )(req, res, next)
 })
+
+app.post('/login/local',
+  passport.authenticate('local', { failureRedirect: '/login' }),
+  function(req, res) {
+    res.redirect('/');
+  }
+);
 
 app.use('/api/*', function(req, res) {
   const method = req.method.toLowerCase();
