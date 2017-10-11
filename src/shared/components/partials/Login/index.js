@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { userActions, errorActions } from 'shared/actions'
 import { Button, Flexbox, Input } from 'shared/components/elements'
+import { SocialLogin } from 'user/components/partials'
 
 import errorTypes from 'constants/errors'
 
@@ -133,21 +134,12 @@ class Login extends Component {
             {generalText}
           </Button>
           <br />
-          <h3>Or {socialText.toLowerCase()} through Google or Facebook:</h3>
-          <Button
-            background="facebook"
-            disabled={(this.state.loginPending)}
-          >
-            {socialText}&nbsp;with Facebook
-          </Button>
-          <Button
-            background="google"
-            disabled={(this.state.loginPending)}
-          >
-            {socialText}&nbsp;with Google
-          </Button>
+
+          <h3>Or {socialText.toLowerCase()} through one of your social networks:</h3>
 
           <br/>
+          <SocialLogin loginPending={this.state.loginPending}/>
+
           <a
             onClick={this.toggleView}
             href="#"

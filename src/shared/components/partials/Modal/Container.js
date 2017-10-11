@@ -58,15 +58,15 @@ class ModalContainer extends Component {
     //if (!this.props.bare) {
       innerContent.push(
         <div key="header" className={modalHeader}>
-          <button type="button" className={closeButton} data-dismiss="modal" aria-label="Close" onClick={this.close}>
+          {!this.props.disableClose && <button type="button" className={closeButton} data-dismiss="modal" aria-label="Close" onClick={this.close}>
             <span aria-hidden="true">×</span>
-          </button>
-          
+          </button>}
+
           <h1 className={modalTitle}>{this.props.title}</h1>
         </div>
       )
     //}
-    
+
     innerContent.push(this.props.children)
 
     if (this.props.visible) {
@@ -96,7 +96,7 @@ class ModalContainer extends Component {
 }
 
 const mapStateToProps = (state) => {
-  return { 
+  return {
     alerts: state.alerts,
     currentModal: state.viewSettings.currentModal,
   }

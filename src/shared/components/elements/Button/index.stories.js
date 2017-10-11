@@ -1,8 +1,8 @@
 import React from 'react'
 import { storiesOf } from '@kadira/storybook'
-import Logo from '.'
+import Button from '.'
 
-storiesOf('Logo', module)
+storiesOf('Button', module)
   .add('default', () => (
-    <Logo />
+    <Button>Hello</Button>
   ))

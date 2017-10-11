@@ -1,12 +1,9 @@
 import { Component } from 'react'
-import { Authenticated, Unauthenticated } from './yields'
+import { Authenticated, Unauthenticated } from 'user/components/yields'
+import { connect } from 'react-redux'
 
-
-export default class App extends Component {
-  //not really sure what this is
+class User extends Component {
   componentDidMount() {
-    //console.log('Unsubscribing from Firebase_Auth_Change and Preload_Store Observers')
-    //unsubscribeAuth()
   }
   render() {
     return (
@@ -21,3 +18,11 @@ export default class App extends Component {
   }
 }
 
+const mapStateToProps = state => {
+  return {
+    user: state.user,
+  }
+}
+
+const ConnectedUser = connect(mapStateToProps)(User)
+export default ConnectedUser

@@ -1,3 +1,11 @@
+//alerts
+export const CLOSE_ALERTS = 'CLOSE_ALERTS'
+export const NEW_ALERT = 'NEW_ALERT'
+
+//errors
+export const CLEAR_ERRORS = 'CLEAR_ERRORS'
+export const HANDLE_ERRORS = 'HANDLE_ERRORS'
+
 //plans
 export const CHOOSE_PLAN = 'CHOOSE_PLAN'
 export const CREATE_PLAN_REQUEST = 'CREATE_PLAN_REQUEST'
@@ -43,4 +51,7 @@ export const SIGN_IN_REQUEST = 'SIGN_IN_REQUEST'
 export const SIGN_OUT = 'SIGN_OUT'
 export const SIGN_OUT_REQUEST = 'SIGN_OUT_REQUEST'
 
-//miscellaneous
+//viewSettings
+export const SET_CURRENT_MODAL = 'SET_CURRENT_MODAL'
+export const CLOSE_MODAL = 'CLOSE_MODAL'
+export const SET_VIEW_MODE = 'SET_VIEW_MODE'

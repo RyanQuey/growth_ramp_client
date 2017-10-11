@@ -8,10 +8,13 @@ import App from './App';
 import registerServiceWorker from './registerServiceWorker';
 // redux stuff
 import { Provider } from 'react-redux';
+
 import _ from 'lodash'
 import moment from 'moment'
+import 'prototypeHelpers'
 import Helpers from 'helpers'
 import store from 'shared/reducers'
+import 'theme/index.scss'
 
 window.React = React;
 window.axios = axios;

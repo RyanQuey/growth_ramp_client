@@ -12,6 +12,7 @@ class Home extends Component {
         <div className="menu-ctn">
         </div>
         <h1>You are Home</h1>
+        <h5>You should login!</h5>
       </div>
     )
   }

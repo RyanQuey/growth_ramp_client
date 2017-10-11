@@ -1,30 +1,21 @@
+const result = require('dotenv').config()
+if (result.error) {
+  throw result.error
+}
+
+console.log(result.parsed)
+const env = result.parsed // this should === process.env
+const domain = env.CLIENT_URL || 'http://www.local.dev:5000'
+const callbackPath = env.PROVIDER_CALLBACK_PATH || '/provider_redirect'
+const callbackUrl = domain + callbackPath
+
 const uuid = require('uuid/v1');
 const $ = require('jquery');
 const _ = require('lodash')
 
 module.exports = {
+  callbackPath: callbackPath,
   //eventually will probably do more, but just this for now
-  handleError: (err) => {
-    let obj = {}
-    //if a response from oauth...
-    if (err && err.type === "OAuthException") { //got this from using an inactive access token making a Facebook post
-      if (err.code === 2500) {
-        obj.message = "Facebook access expired; please login again"
-        obj.origin = "facebook"
-      } else if (err.code === 506 && err.error_subcode === 1455006) {
-        obj.message = "Can't make the same status update twice in a row; Please edit and try again"
-        obj.origin = "facebook"
-      }
-    } else if (err.code === 'auth/account-exists-with-different-credential' ) {
-      alert("Error signing in with provider: The account you logged in with exists for a different user. Each social media account can only be attached to one Growth Ramp account")
-    } else {
-      obj = err
-    }
-    console.log(err);
-//probably one pop up to appear
-
-    return obj
-  },
 
   // extracts the relevant passport profile data from the profile auth data received on login/request, and matches it to the database columns
   extractPassportData: (accessToken, refreshToken, passportProfile) => {
@@ -74,12 +65,87 @@ module.exports = {
     return uuid()
   },
 
-  handleParam: function (e, key) {
-    const objKey = key || e.target.dataset.key
-    const obj = {};
+  findUser: (params, cb) => {
+    let timeout
+    request.get({
+      //remove the 'api' in front, so we can take advantage of the default sails routes
+      url: `${apiUrl}/users`,
+      form: params,
+      timeout: 3000
+    }, function (err, res, responseBody) {
+      if(err) {
+        console.error("***error:***")
+        cb(err)
+        //TODO: might need to shut down server for security reasons if there is an error? or at least, certain kinds of errors?
+        //https://stackoverflow.com/questions/14168433/node-js-error-connect-econnrefused
 
-    obj[objKey] = e.target.value;
+      } else {
+        console.log("I made it", res);
+        cb(null, responseBody)
+      }
+    })
+  },
 
-    this.setState(obj);
-  }
+  tradeTokenForUser: ((providerData, done) => {
+    const url = "/users/login_with_provider"
+
+    const body = providerData
+    const headers = {}
+
+    let timeout
+    request.post({
+      //remove the 'api' in front, so we can take advantage of the default sails routes
+      url: `${apiUrl}${url}`,
+      headers: headers,
+      form: body,
+      timeout: 3000
+    }, function (err, res, responseBody) {
+      if(err) {
+        console.error("***error:***")
+        done(err)
+        //TODO: might need to shut down server for security reasons if there is an error? or at least, certain kinds of errors?
+        //https://stackoverflow.com/questions/14168433/node-js-error-connect-econnrefused
+
+      } else {
+        console.log("I made it", res);
+        done(null, responseBody)
+      }
+    })
+  }),
+
+
+  twitterOptions: {
+    consumerKey: env.TWITTER_CONSUMER_KEY,
+    consumerSecret: env.TWITTER_CONSUMER_SECRET,
+    callbackUrl: `${callbackUrl}/twitter`
+  },
+
+  facebookOptions: {
+    clientID: env.CLIENT_FACEBOOK_ID,
+    clientSecret: env.CLIENT_FACEBOOK_SECRET,
+    callbackURL: `${callbackUrl}/facebook`,
+    passReqToCallback: true,//to extract the code from the query...for some reason, passport doesn't get it by default
+    //scope: 'email, '
+  },
+
+  //gets called after the callback defined in the strategy
+  providerCallback: function(err, userAndProvider, info) {
+    console.log(req.user, req.account);
+    console.log("********************************************");
+    console.log("user and provider", userAndProvider, "info",info);
+    if (err || !userAndProvider) {
+      console.log("error after authenticating into provider:");
+      console.log(err);
+      //next ...I think sends this along to the next route that matches, which will just render the app anyway(?)
+      return next(err);
+    }
+    /*return res.redirect(url.format({
+      pathname: "/",
+      query: {
+      }
+    }));*/
+    req.query = {userAndProvider: userAndProvider}
+    next()
+  },
+
 }

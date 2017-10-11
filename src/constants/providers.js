@@ -14,11 +14,11 @@ export const PROVIDERS = {
     ],
   },
   //GITHUB: 'github',
-  GOOGLE: {
+  /*GOOGLE: {
     name: 'Google',
     providerId: 'google.com',
     channels: []
-  },
+  },*/
   LINKEDIN: {
     name: 'LinkedIn',
     providerId: 'linkedin.com',

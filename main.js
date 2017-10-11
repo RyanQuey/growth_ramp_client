@@ -3,13 +3,6 @@ process.on('uncaughtException', function (exception) {
   // if you are on production, maybe you can send the exception details to your
   // email as well ?
 });
-const result = require('dotenv').config()
-if (result.error) {
-  throw result.error
-}
-
-console.log(result.parsed)
-const env = result.parsed // this should === process.env
 
 const express = require('express');
 const session = require("express-session")// passport with providers require sessions. https://github.com/jaredhanson/passport-twitter/issues/43
@@ -34,69 +27,10 @@ const passport = require('passport')
 const FacebookStrategy = require('passport-facebook').Strategy
 const TwitterStrategy = require('passport-twitter').Strategy
 
-const domain = env.CLIENT_URL || 'http://www.local.dev:5000'
-const callbackPath = env.PROVIDER_CALLBACK_PATH || '/provider_redirect'
-const callbackUrl = domain + callbackPath
 const Helpers = require('./nodeHelpers')
 
-const findUser = (params, cb) => {
-  let timeout
-  request.get({
-    //remove the 'api' in front, so we can take advantage of the default sails routes
-    url: `${apiUrl}/users`,
-    form: params,
-    timeout: 3000
-  }, function (err, res, responseBody) {
-    if(err) {
-      console.error("***error:***")
-      cb(err)
-      //TODO: might need to shut down server for security reasons if there is an error? or at least, certain kinds of errors?
-      //https://stackoverflow.com/questions/14168433/node-js-error-connect-econnrefused
-
-    } else {
-      console.log("I made it", res);
-      cb(null, responseBody)
-    }
-  })
-}
-
-const tradeTokenForUser = ((providerData, done) => {
-  const url = "/users/login_with_provider"
-
-  const body = providerData
-  const headers = {}
-
-  let timeout
-  request.post({
-    //remove the 'api' in front, so we can take advantage of the default sails routes
-    url: `${apiUrl}${url}`,
-    headers: headers,
-    form: body,
-    timeout: 3000
-  }, function (err, res, responseBody) {
-    if(err) {
-      console.error("***error:***")
-      done(err)
-      //TODO: might need to shut down server for security reasons if there is an error? or at least, certain kinds of errors?
-      //https://stackoverflow.com/questions/14168433/node-js-error-connect-econnrefused
-
-    } else {
-      console.log("I made it", res);
-      done(null, responseBody)
-    }
-  })
-})
-
-
-const facebookOptions = {
-  clientID: env.CLIENT_FACEBOOK_ID,
-  clientSecret: env.CLIENT_FACEBOOK_SECRET,
-  callbackURL: `${callbackUrl}/facebook`,
-  passReqToCallback: true,//to extract the code from the query...for some reason, passport doesn't get it by default
-  //scope: 'email, '
-}
 passport.use(new FacebookStrategy(
-  facebookOptions,
+  Helpers.facebookOptions,
   function(req, accessToken, refreshToken, profile, done) {
     //console.log(accessToken, refreshToken, profile);
     if (!refreshToken) {
@@ -104,23 +38,18 @@ passport.use(new FacebookStrategy(
     }
     const providerData = Helpers.extractPassportData(accessToken, refreshToken, profile)
 
-    return tradeTokenForUser(providerData, done)
+    return Helpers.tradeTokenForUser(providerData, done)
   }
 ))
 //appsecret is automatically set (?)
 
-const twitterOptions = {
-  consumerKey: env.TWITTER_CONSUMER_KEY,
-  consumerSecret: env.TWITTER_CONSUMER_SECRET,
-  callbackUrl: `${callbackUrl}/twitter`
-}
 passport.use(new TwitterStrategy(
-  twitterOptions,
+  Helpers.twitterOptions,
   function(accessToken, tokenSecret, profile, done) {
     //passing in the token secret as the refresh token for twitter
     const providerData = Helpers.extractPassportData(accessToken, tokenSecret, profile)
     //need to set a timeout for this. maybe wrap in a promise?
-    return tradeTokenForUser(providerData, done)
+    return Helpers.tradeTokenForUser(providerData, done)
   }
 ))
 
@@ -152,32 +81,11 @@ app.get('/login/twitter', ((req, res, next) => {
 console.log("logging in with twitter");
   passport.authenticate('twitter')(req, res, next)
 }))
-app.get(`${callbackPath}/twitter`, (req, res, next) => {
-  //call the callback defined in the strategy
+app.get(`${Helpers.callbackPath}/twitter`, (req, res, next) => {
   //NOTE: in order to get it to pop up, will require some client-side JavaScript, https://github.com/jaredhanson/passport-facebook/issues/18  ...looks like a mess. otherwise , though,
+  //call the callback defined in the strategy
   passport.authenticate('twitter',
-
-    //gets called after the callback defined in the strategy
-    function(err, userAndProvider, info) {
-      console.log(req.user, req.account);
-      console.log("********************************************");
-      console.log("user and provider", userAndProvider, "info",info);
-      if (err || !userAndProvider) {
-        console.log("error after authenticating in twitter:");
-        console.log(err);
-        //next ...I think sends this along to the next route that matches, which will just render the app anyway(?)
-        return next(err);
-      }
-      //if (!user) { return res.redirect('/'); }
-
-      //return res.redirect('/');
-      //TODO: do something with the oauthtoken and oauth verifier in the URL to twitter returns? doesn't match the token the passport persists...
-      req.url = '/'
-      res.locals.userAndProvider = userAndProvider
-
-      return next()
-    }
-  )(req, res, next)
+    Helpers.providerCallback)(req, res, next)
 })
 
 //TODO: make this the Twitter one, which works
@@ -187,42 +95,14 @@ app.get('/login/facebook', (req, res, next) => {
   passport.authenticate('facebook')(req, res, next)
 })
 
-//req.user automatically sent to the authenticated user
-
-app.get(`${callbackPath}/facebook`, (req, res, next) => {
+app.get(`${Helpers.callbackPath}/facebook`, (req, res, next) => {
   //TODO: Facebook recommends verifying any request made to this callback path, since anyone can ask the access it, not to Facebook, and pass in any sort of token
   //maybe want to do the same thing with twitter, who actually sends an oauth_verifier along with the tokens
-  //call the callback defined in the strategy
   console.log("made into the redirect path");
+  //call the callback defined in the strategy
   passport.authenticate('facebook',
-    //
-    //gets called after the call back defined in the strategy
-    function(err, user, info) {
-      console.log(req.user, req.account);
-      console.log("********************************************");
-      console.log(user, info);
-      if (err || !user) {
-        //TODO: handle the errors, particularly if the user denies permission
-        //https://developers.facebook.com/docs/facebook-login/manually-build-a-login-flow
-        console.log("error after authenticating in Facebook");
-        console.log(err);
-        //next ...I think sends this along to the next route that matches, which will just render the app anyway(?)
-        return next(err);
-      }
-      //if (!user) { return res.redirect('/'); }
-
-      return res.redirect('/');
-    }
-
-  )(req, res, next)
+    Helpers.providerCallback)(req, res, next)
 })
-
-app.post('/login/local',
-  passport.authenticate('local', { failureRedirect: '/login' }),
-  function(req, res) {
-    res.redirect('/');
-  }
-);
 
 app.use('/api/*', function(req, res) {
   const method = req.method.toLowerCase();
@@ -253,22 +133,7 @@ console.log(url);
 // match one above, send back React's index.html file.
 // let react handle the routing from there
 app.get('*', (req, res) => {
-  if (res.locals && Object.keys(res.locals).length > 0) {
-    const parser = new Transform()
-    parser._transform = function(stream, encoding, done) {
-      const str = stream.toString().replace('serverResponse = ""', `serverResponse = ${JSON.stringify(res.locals)}`)
-      this.push(str)
-      done()
-    }
-
-    fs.createReadStream('dist/index.html')
-    .pipe(parser)
-    .pipe(res)
-
-  } else {
-    res.sendFile(path.join(__dirname + '/dist/index.html'));
-  }
-
+  res.sendFile(path.join(__dirname + '/dist/index.html'));
 });
 
 // catch 404 and forward to error handler

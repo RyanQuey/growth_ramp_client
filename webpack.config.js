@@ -17,13 +17,12 @@ const port = process.env.PORT || 3000
 const sourceDir = process.env.SOURCE || 'src'
 
 //this is how client-side assets will be accessible in a browser
-//path starts with a '/', so the path will be a path relative to the server, not the index.html
-const publicPath = `/${process.env.PUBLIC_PATH || 'dist'}/`.replace('//', '/')
+//path starts with a '/', so the path will be a path relative to the server, and the outputPath, not the index.html
+const publicPath = `/${process.env.PUBLIC_PATH || ''}/`.replace('//', '/')
 const sourcePath = path.join(process.cwd(), sourceDir)
 const nodeModulesPath = path.join(process.cwd(), 'node_modules')
 
-//currently taking advantage of the sails default, where the asset/index.html gets served if routes aren't set for the homepage
-//maybe eventually separate the JavaScript from that index.HTML file
+//note that this sets point of reference eg for the public path
 const outputPath = path.join(process.cwd(), 'dist')
 
 const babel = () => () => ({

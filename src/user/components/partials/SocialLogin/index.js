@@ -4,30 +4,14 @@ import {
   SIGN_IN_REQUEST,
   SIGN_OUT_REQUEST,
   LINK_ACCOUNT_REQUEST,
-} from 'actions'
-import { PROVIDERS, PROVIDER_IDS_MAP } from '../constants'
+} from 'constants/actionTypes'
+import { PROVIDERS, PROVIDER_IDS_MAP } from 'constants/providers'
+import { Button } from 'shared/components/elements'
 
-class Login extends Component {
+class SocialLogin extends Component {
   constructor() {
     super()
-    const c = this;
-    c.state = {
-      email: ""
-    }
-    this.handleChange = this.handleChange.bind(this);
-    this.handleSignOut = this.handleSignOut.bind(this);
   }
-
-  componentDidMount() {
-
-  }
-
-  handleChange(e) {
-
-    let value = e.target.value
-    this.setState({email: value});
-  }
-
   //need to enable with e-mail
   providerLogin(providerName) {
     /*const c = this;
@@ -55,37 +39,35 @@ class Login extends Component {
     return this.props.signInRequest(data)*/
   }
 
-  handleSignOut(e) {
+  /*handleSignOut(e) {
     e.preventDefault()
     console.log(" logout click");
     this.props.signOutRequest()
-  }
+  }*/
 
   render() {
-    const c = this;
     const user = this.props.user;
     const preposition = user ? "to" : "with";
     return (
-      <div id="login">
-        {user ? (
-          <div>
-            Welcome {user.displayName}!&nbsp;
-            <button onClick={c.handleSignOut}>Logout</button>
-          </div>
-        ) : (
-          <form onSubmit={c.onSubmit}>
-            <label> Login with email </label>
-            <input onChange={c.handleChange} value={c.state.value}></input>
-          </form>
-        )}
+      <div>
         {Object.keys(PROVIDERS).map((key) => {
           const providerName = PROVIDERS[key].name
-          //this works, but temporarily disabling this because neatest button available in case the token expires
-          //
-            return <a href={`/login/${providerName}`} key={key} onClick={c.providerLogin.bind(c, providerName)}>{`Login ${preposition} ${providerName}`}</a>
-          //}
+
+            return (
+              <Button
+                background={providerName.toLowerCase()}
+                disabled={(this.props.loginPending)}
+                key={providerName}
+              >
+                <a
+                  href={`/login/${providerName}`}
+                  onClick={this.providerLogin.bind(this, providerName)}
+                >
+                  {`Login ${preposition} ${providerName}`}
+                </a>
+              </Button>
+            )
         })}
-        {!this.props.user && <a href={`/login/local`} >{`Login with username and password`}</a>}
       </div>
     );
   }
@@ -106,5 +88,5 @@ const mapDispatchToProps = (dispatch) => {
     signOutRequest: (payload) => {dispatch({type: SIGN_OUT_REQUEST, payload})}
   }
 }
-const ConnectedLogin = connect(mapStateToProps, mapDispatchToProps)(Login)
-export default ConnectedLogin
+
+export default connect(mapStateToProps, mapDispatchToProps)(SocialLogin)
