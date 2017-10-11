@@ -9,6 +9,7 @@ export default () => {
   if (window.serverResponse && window.serverResponse.userAndProvider) {
     const data = JSON.parse(serverResponse.userAndProvider)
 
+    //
     if (data) {
       store.dispatch({type: SET_CURRENT_USER, payload: data.user})
 
