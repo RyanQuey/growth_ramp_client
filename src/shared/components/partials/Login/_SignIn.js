@@ -122,7 +122,7 @@ class SignIn extends Component {
 }
 
 const mapStateToProps = (state) => {
-  return { user: state.shared.user }
+  return { user: state.user }
 }
 
 const styles = {

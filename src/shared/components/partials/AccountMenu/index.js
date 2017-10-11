@@ -65,7 +65,7 @@ UserHeader.propTypes = {
 }
 
 const mapStateToProps = (state) => {
-  return { user: state.shared.user }
+  return { user: state.user }
 }
 
 export default connect(mapStateToProps)(UserHeader)

@@ -5,8 +5,6 @@ import {
   SIGN_OUT,
   CHOOSE_PLAN
 } from 'constants/actionTypes'
-import helpers from '../helpers'
-import _ from 'lodash'
 
 const currentPlanReducer = (state = null, action) => {
 
@@ -33,7 +31,7 @@ const currentPlanReducer = (state = null, action) => {
       //payload should be the new plan
       return Object.assign({}, action.payload)
 
-    case CHOOSE_PLAN: 
+    case CHOOSE_PLAN:
 console.log("choose plan", action.payload);
       return Object.assign({}, action.payload)
 

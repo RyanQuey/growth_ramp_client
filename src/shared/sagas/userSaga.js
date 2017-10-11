@@ -1,5 +1,15 @@
 import { call, put, takeLatest, all } from 'redux-saga/effects'
-import { FETCH_USER_REQUEST, FETCH_USER_SUCCESS, FETCH_POST_REQUEST, UPDATE_TOKEN_REQUEST, SIGN_IN_POPUP_CLOSED, SIGN_IN_REQUEST,  SIGN_OUT_REQUEST, SIGN_OUT  }  from 'constants/actionTypes'
+import {
+  FETCH_USER_REQUEST,
+  FETCH_USER_SUCCESS,
+  FETCH_POST_REQUEST,
+  UPDATE_TOKEN_REQUEST,
+  SIGN_IN_POPUP_CLOSED,
+  SIGN_IN_REQUEST,
+  SIGN_OUT_REQUEST,
+  SIGN_OUT,
+  SET_CURRENT_USER
+}  from 'constants/actionTypes'
 import { USER_FIELDS_TO_PERSIST, PROVIDER_IDS_MAP } from 'constants'
 
 function* createUserWithEmail(data) {

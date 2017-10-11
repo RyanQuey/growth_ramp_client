@@ -38,7 +38,7 @@ Sidebar.propTypes = {
 
 const mapStateToProps = (state) => {
   return { 
-    user: state.shared.user }
+    user: state.user }
 }
 
 export default withRouter(connect(mapStateToProps)(Sidebar))

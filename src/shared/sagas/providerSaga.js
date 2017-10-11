@@ -1,19 +1,13 @@
-import 'babel-polyfill'
-import _ from 'lodash'
 import { call, put, takeLatest, takeEvery, all, fork, join } from 'redux-saga/effects'
-import fbApp from '../firebaseApp.js'
-import firebase  from 'firebase'
 //import CodeBird from 'codebird' using twit, and in the backend
 import { UPDATE_TOKEN_REQUEST, UPDATE_TOKEN_FAILURE, UPDATE_TOKEN_SUCCESS } from 'constants/actionTypes'
-import { USER_FIELDS_TO_PERSIST, PROVIDER_IDS_MAP  } from '../constants'
-import helpers from '../helpers'
+import { USER_FIELDS_TO_PERSIST, PROVIDER_IDS_MAP  } from 'constants'
 //import FB from 'fb'; do this in the backend
 import crypto from 'crypto'
 
 //disabling environment variables in the front-end; so remove this  ||  when this gets moved to the backend. I will want to throw an error at that point
 const hmac = crypto.createHmac('sha256', process.env.REACT_APP_FACEBOOK_SECRET_KEY || "abc")
 
-const database = fbApp.database();
 const tokenInfo = {}
 
 //called when there is no token in the store (e.g., initial store load), or expired token in the store

@@ -1,7 +1,7 @@
 import {
   SET_CURRENT_USER,
   UPDATE_TOKEN_SUCCESS
-} from 'actions'
+} from 'constants/actionTypes'
 
 export default () => {
   //pulls a global variable from the HTML file, what was dynamically rendered via the front end server

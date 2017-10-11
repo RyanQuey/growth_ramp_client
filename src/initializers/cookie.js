@@ -1,4 +1,8 @@
 import Cookies from "js-cookie"
+{
+  CHECK_USER_TOKEN,
+  SET_CURRENT_USER
+} from 'constants/actionTypes'
 const Cookie = {
   get: function(key){
     try {

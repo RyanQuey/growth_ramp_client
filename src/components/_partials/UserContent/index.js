@@ -41,8 +41,8 @@ UserContent.propTypes = {
 }
 const mapStateToProps = (state) => {
   return { 
-    alerts: state.shared.alerts,
-    currentModal: state.shared.viewSettings.currentModal,
+    alerts: state.alerts,
+    currentModal: state.viewSettings.currentModal,
   }
 }
 

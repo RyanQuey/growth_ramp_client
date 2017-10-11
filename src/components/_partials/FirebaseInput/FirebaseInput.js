@@ -127,7 +127,7 @@ FirebaseInput.propTypes = {
 }
 
 const mapStateToProps = (state, ownProps) => {
-  return { [ownProps.name]: state.shared.user[ownProps.name] }
+  return { [ownProps.name]: state.user[ownProps.name] }
 }
 
 export default connect(mapStateToProps)(FirebaseInput)

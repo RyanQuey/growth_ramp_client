@@ -1,32 +1,51 @@
 import {
-  UPDATE_FIREBASE,
+  CREATE_DRAFT_SUCCESS,
+  INPUT_UPDATE_SUCCESS,
+  LINK_ACCOUNT_SUCCESS,
   LOG_IN_WITH_PROVIDER,
   SET_CURRENT_USER,
   SET_IMAGE,
   SIGN_OUT,
-  FETCH_USER,
+  FETCH_USER_SUCCESS,
+
 } from 'constants/actionTypes'
 
-export default (state = null, action) => {
+const userReducer = (state = null, action) => {
 
-//TODO: make it consistent and only attach data to action.payload
   switch (action.type) {
+    case LINK_ACCOUNT_SUCCESS:
+      return Object.assign({}, state, { providerData: action.payload.providerData })
     case LOG_IN_WITH_PROVIDER:
       return action.payload
 
+    case SET_CURRENT_USER:
+      return action.payload
+
     case SET_IMAGE:
-      if (action.payload.path.split("/")[0] === "users") {
-        return Object.assign({}, state, { [action.payload.name]: action.payload.url })      
+      return Object.assign({}, state, { [action.payload.name]: action.payload.url })
+
+    case INPUT_UPDATE_SUCCESS:
+      let pathArray = action.payload.path.split("/")
+      let root = pathArray.shift()
+      let relativePath = pathArray.join(".")
+      if (root === "user") {
+        let newState = Object.assign({}, state)
+        _.set(newState, relativePath, action.payload.value)
+        return newState
+      } else {
+        return state
       }
 
     case SIGN_OUT:
-      return action.isSignedOut ? state : null
+      return false
 
-    case FETCH_USER:
-      return Object.assign({}, state, action.payload.user)
+    case FETCH_USER_SUCCESS:
+      return Object.assign({}, state, action.payload)
 
     default:
       return state
   }
 }
+
+export default userReducer
 

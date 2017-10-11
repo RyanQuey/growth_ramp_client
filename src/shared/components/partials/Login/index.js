@@ -170,8 +170,8 @@ Login.propTypes = {
 
 const mapStateToProps = (state) => {
   return {
-    user: state.shared.user,
-    errors: state.shared.errors,
+    user: state.user,
+    errors: state.errors,
   }
 }
 

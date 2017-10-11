@@ -26,7 +26,7 @@ export default (state = {}, action) => {
       //designate this alert for the modal if it's open
       //don't need to designate this option for non-modal components...at least for now
       const currentState = store.getState()
-      const currentModal = Helpers.safeDataPath(currentState, "shared.viewSettings.currentModal", false)
+      const currentModal = Helpers.safeDataPath(currentState, "viewSettings.currentModal", false)
       if (currentModal && !alert.options.forComponent) {
         alert.options.forComponent = currentModal
       }

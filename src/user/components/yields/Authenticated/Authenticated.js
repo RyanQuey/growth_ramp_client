@@ -32,7 +32,7 @@ Authenticated.propTypes = {
 }
 const mapStateToProps = (state) => {
   return { 
-    alerts: state.shared.alerts,
+    alerts: state.alerts,
   }
 }
 

@@ -42,7 +42,7 @@ class UserLogin extends Component {
 }
 
 const mapStateToProps = (state) => {
-  return { currentModal: state.shared.viewSettings.currentModal }
+  return { currentModal: state.viewSettings.currentModal }
 }
 
 export default connect(mapStateToProps)(UserLogin)

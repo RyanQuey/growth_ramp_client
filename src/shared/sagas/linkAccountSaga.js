@@ -1,15 +1,12 @@
-import 'babel-polyfill'
-import firebase from 'firebase'
 import { put, takeLatest, all } from 'redux-saga/effects'
 import { LINK_ACCOUNT_REQUEST, UPDATE_TOKEN_REQUEST, LINK_ACCOUNT_SUCCESS } from 'constants/actionTypes'
-import helpers from '../helpers'
 
 function* linkEmail(data) {
   const credential = firebase.auth().EmailAuthProvider.credential(data.email, data.password)
   const user = yield firebase.auth.currentUser.link(credential)
   user.redirect = true
   user.history = data.history
-  return user 
+  return user
 }
 
 function* linkProvider(providerName) {
@@ -47,7 +44,7 @@ function* linkProvider(providerName) {
     }).catch(function(err) {
       helpers.handleError(err)
       alert(`PROVIDER LINK ERROR: ${err.message}`);
-    }); 
+    });
 
   return linkResult
 }
@@ -76,7 +73,7 @@ function* linkAccount(action) {
       })
       yield all([
         put({type: UPDATE_TOKEN_REQUEST, payload: {
-          providerIds: userProviders, 
+          providerIds: userProviders,
           credential: linkResult.credential
         }}),
         put({type: LINK_ACCOUNT_SUCCESS, payload: {
@@ -84,7 +81,7 @@ function* linkAccount(action) {
         }})
       ])
 
-      
+
     } else {
       //no user found
       //TODO: make a separate action for the error
