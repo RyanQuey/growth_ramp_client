@@ -1,6 +1,6 @@
 import {
   SET_CURRENT_USER,
-  TOKEN_UPDATE_SUCCESS
+  UPDATE_TOKEN_SUCCESS
 } from 'actions'
 
 export default () => {
@@ -17,7 +17,7 @@ export default () => {
       const tokenInfo = {
         [p.name]: p
       }
-      store.dispatch({type: TOKEN_UPDATE_SUCCESS, payload: tokenInfo})
+      store.dispatch({type: UPDATE_TOKEN_SUCCESS, payload: tokenInfo})
     }
   }
 }

@@ -1,6 +1,6 @@
 import {
-  PLAN_CREATE_SUCCESS,
-  PLAN_FETCH_SUCCESS,
+  CREATE_PLAN_SUCCESS,
+  FETCH_PLAN_SUCCESS,
   INPUT_UPDATE_SUCCESS,
   SIGN_OUT,
 } from '../actions'
@@ -29,10 +29,10 @@ const plansReducer = (state = {}, action) => {
         return newState
       }
 
-    case PLAN_CREATE_SUCCESS:
+    case CREATE_PLAN_SUCCESS:
       return Object.assign({}, state, action.payload)
 
-    case PLAN_FETCH_SUCCESS:
+    case FETCH_PLAN_SUCCESS:
       return Object.assign({}, state, action.payload)
 
     case SIGN_OUT:

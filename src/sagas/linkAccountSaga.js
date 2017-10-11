@@ -1,7 +1,7 @@
 import 'babel-polyfill'
 import firebase from 'firebase'
 import { put, takeLatest, all } from 'redux-saga/effects'
-import { LINK_ACCOUNT_REQUEST, TOKEN_UPDATE_REQUEST, LINK_ACCOUNT_SUCCESS } from '../actions'
+import { LINK_ACCOUNT_REQUEST, UPDATE_TOKEN_REQUEST, LINK_ACCOUNT_SUCCESS } from '../actions'
 import helpers from '../helpers'
 
 function* linkEmail(data) {
@@ -75,7 +75,7 @@ function* linkAccount(action) {
         userProviders.push(provider.providerId)
       })
       yield all([
-        put({type: TOKEN_UPDATE_REQUEST, payload: {
+        put({type: UPDATE_TOKEN_REQUEST, payload: {
           providerIds: userProviders, 
           credential: linkResult.credential
         }}),

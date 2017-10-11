@@ -4,7 +4,7 @@ import { call, put, takeLatest, takeEvery, all, fork, join } from 'redux-saga/ef
 import fbApp from '../firebaseApp.js'
 import firebase  from 'firebase'
 //import CodeBird from 'codebird' using twit, and in the backend
-import { TOKEN_UPDATE_REQUEST, TOKEN_UPDATE_FAILURE, TOKEN_UPDATE_SUCCESS } from '../actions'
+import { UPDATE_TOKEN_REQUEST, UPDATE_TOKEN_FAILURE, UPDATE_TOKEN_SUCCESS } from '../actions'
 import { USER_FIELDS_TO_PERSIST, PROVIDER_IDS_MAP  } from '../constants'
 import helpers from '../helpers'
 //import FB from 'fb'; do this in the backend
@@ -86,13 +86,13 @@ function* updateData(action) {
 
     const tokens = Object.assign({}, tokenInfo)
 
-    yield put({type: TOKEN_UPDATE_SUCCESS, payload: tokens})
+    yield put({type: UPDATE_TOKEN_SUCCESS, payload: tokens})
   } catch (err) {
     console.log('token update failed', err)
-    yield put({type: TOKEN_UPDATE_FAILURE, payload: err.message})
+    yield put({type: UPDATE_TOKEN_FAILURE, payload: err.message})
   }
 }
 
 export default function* updateTokenSaga() {
-  yield takeLatest(TOKEN_UPDATE_REQUEST, updateData)
+  yield takeLatest(UPDATE_TOKEN_REQUEST, updateData)
 }

@@ -5,9 +5,9 @@ import { take } from 'redux-saga/effects'
 import { FirebaseInput, Input } from './shared'
 import fbApp from '../firebaseApp';
 import {
-  PLAN_CREATE_SUCCESS,
+  CREATE_PLAN_SUCCESS,
   SET_INPUT_VALUE,
-  PLAN_CREATE_REQUEST,
+  CREATE_PLAN_REQUEST,
   CHOOSE_PLAN,
 } from '../actions'
 import $ from 'jquery'; 
@@ -164,7 +164,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = (dispatch) => {
   return {
     setInputValue: (payload) => dispatch({type: SET_INPUT_VALUE, payload}),
-    planCreateRequest: (payload) => dispatch({type: PLAN_CREATE_REQUEST, payload}),
+    planCreateRequest: (payload) => dispatch({type: CREATE_PLAN_REQUEST, payload}),
     choosePlan: (payload) => dispatch({type: CHOOSE_PLAN, payload}),
   }
 }

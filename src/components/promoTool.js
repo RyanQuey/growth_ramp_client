@@ -7,7 +7,7 @@ import Send from './send'
 import Channels from './channels'
 import Compose from './compose'
 import PromoToolFooter from './promoToolFooter'
-import { POST_CREATE_REQUEST } from '../actions'
+import { CREATE_POST_REQUEST } from '../actions'
 
 const sections = {
   Start,
@@ -107,7 +107,7 @@ const mapStateToProps = state => {
 }
 const mapDispatchToProps = (dispatch) => {
   return {
-    postCreateRequest: (data) => dispatch({type: POST_CREATE_REQUEST, payload: data}),
+    postCreateRequest: (data) => dispatch({type: CREATE_POST_REQUEST, payload: data}),
   }
 }
 

@@ -2,7 +2,7 @@ import 'babel-polyfill'
 import { put, select, take, takeLatest, call } from 'redux-saga/effects'
 import { delay } from 'redux-saga'
 import fbApp from 'firebaseApp.js'
-import { POST_PUBLISH_REQUEST, SIGN_IN_POPUP_CLOSED, POST_PUBLISH_SUCCESS, SIGN_IN_REQUEST } from 'actions'
+import { PUBLISH_POST_REQUEST, SIGN_IN_POPUP_CLOSED, PUBLISH_POST_SUCCESS, SIGN_IN_REQUEST } from 'actions'
 //import FB from 'fb';
 import helpers from 'helpers'
 import _ from 'lodash'
@@ -77,7 +77,7 @@ console.log(tokenInfo);
     }
     //mark post as published
     yield database.ref(`posts/${pld.post.id}/published`).set(true)
-    yield put({type: POST_PUBLISH_SUCCESS, payload: {providers: pld.providers}})
+    yield put({type: PUBLISH_POST_SUCCESS, payload: {providers: pld.providers}})
 
   } catch (err) {
     console.log(`Error in Create post Saga ${err}`)
@@ -85,6 +85,6 @@ console.log(tokenInfo);
 }
 
 export default function* publishPost() {
-  yield takeLatest(POST_PUBLISH_REQUEST, publish)
+  yield takeLatest(PUBLISH_POST_REQUEST, publish)
 }
 

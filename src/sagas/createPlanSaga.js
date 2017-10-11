@@ -1,7 +1,7 @@
 import 'babel-polyfill'
 import { put, select, takeLatest, all } from 'redux-saga/effects'
 import fbApp from '../firebaseApp.js'
-import { PLAN_CREATE_SUCCESS, PLAN_CREATE_REQUEST, CHOOSE_PLAN } from '../actions'
+import { CREATE_PLAN_SUCCESS, CREATE_PLAN_REQUEST, CHOOSE_PLAN } from '../actions'
 import _ from 'lodash'
 import helpers from '../helpers'
 import moment from 'moment'
@@ -30,7 +30,7 @@ function* create(action) {
 
     pld.plan = {[planId]: newPlan} 
     yield all([
-      put({ type: PLAN_CREATE_SUCCESS, payload: {[planId]: newPlan }}),
+      put({ type: CREATE_PLAN_SUCCESS, payload: {[planId]: newPlan }}),
       put({ type: CHOOSE_PLAN, payload: newPlan }),
     ])
 
@@ -40,6 +40,6 @@ function* create(action) {
 }
 
 export default function* createNewPlan() {
-  yield takeLatest(PLAN_CREATE_REQUEST, create)
+  yield takeLatest(CREATE_PLAN_REQUEST, create)
 }
 

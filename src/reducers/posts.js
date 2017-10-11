@@ -1,6 +1,6 @@
 import {
-  POST_CREATE_SUCCESS,
-  POST_FETCH_SUCCESS,
+  CREATE_POST_SUCCESS,
+  FETCH_POST_SUCCESS,
   INPUT_UPDATE_SUCCESS,
   SIGN_OUT,
 } from '../actions'
@@ -29,10 +29,10 @@ const postsReducer = (state = null, action) => {
         return newState
       }
 
-    case POST_CREATE_SUCCESS:
+    case CREATE_POST_SUCCESS:
       return Object.assign({}, state, action.payload)
 
-    case POST_FETCH_SUCCESS:
+    case FETCH_POST_SUCCESS:
       console.log("poststate", action.payload );
       return Object.assign({}, state, action.payload)
 

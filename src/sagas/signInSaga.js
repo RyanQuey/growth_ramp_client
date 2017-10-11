@@ -1,7 +1,7 @@
 import 'babel-polyfill'
 import firebase from 'firebase'
 import { put, takeLatest, all } from 'redux-saga/effects'
-import { USER_FETCH_REQUEST, POST_FETCH_REQUEST, TOKEN_UPDATE_REQUEST, SIGN_IN_POPUP_CLOSED, SIGN_IN_REQUEST } from 'actions'
+import { FETCH_USER_REQUEST, FETCH_POST_REQUEST, UPDATE_TOKEN_REQUEST, SIGN_IN_POPUP_CLOSED, SIGN_IN_REQUEST } from 'actions'
 import helpers from '../helpers'
 
 function* createUserWithEmail(data) {
@@ -62,7 +62,7 @@ console.log(signInResult);
       })
 
       if (pld.wantTokenOnly) {
-        yield  put({type: TOKEN_UPDATE_REQUEST, payload: {
+        yield  put({type: UPDATE_TOKEN_REQUEST, payload: {
           providerIds: userProviders,
           credential: signInResult.credential
         }})
@@ -70,9 +70,9 @@ console.log(signInResult);
       //otherwise, get/set all user data
       } else {
         yield all([
-          put({type: USER_FETCH_REQUEST, payload: signInResult}),
-          put({type: POST_FETCH_REQUEST, payload: signInResult}),
-          put({type: TOKEN_UPDATE_REQUEST, payload: {
+          put({type: FETCH_USER_REQUEST, payload: signInResult}),
+          put({type: FETCH_POST_REQUEST, payload: signInResult}),
+          put({type: UPDATE_TOKEN_REQUEST, payload: {
             providerIds: userProviders,
             credential: signInResult.credential
           }}),

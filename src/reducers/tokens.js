@@ -1,5 +1,5 @@
 import {
-  TOKEN_UPDATE_SUCCESS,
+  UPDATE_TOKEN_SUCCESS,
   SIGN_OUT,
 } from '../actions'
 
@@ -10,7 +10,7 @@ const tokensReducer = (state = null, action) => {
     case SIGN_OUT:
       return null
 
-    case TOKEN_UPDATE_SUCCESS:
+    case UPDATE_TOKEN_SUCCESS:
       console.log('Merge old and new token data:', action.payload)
       return Object.assign({}, state, action.payload)
 

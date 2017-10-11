@@ -1,6 +1,6 @@
 import {
-  PLAN_CREATE_SUCCESS,
-  PLAN_FETCH_SUCCESS,
+  CREATE_PLAN_SUCCESS,
+  FETCH_PLAN_SUCCESS,
   INPUT_UPDATE_SUCCESS,
   SIGN_OUT,
   CHOOSE_PLAN
@@ -29,7 +29,7 @@ const currentPlanReducer = (state = null, action) => {
       }
       return state;
 
-    case PLAN_CREATE_SUCCESS:
+    case CREATE_PLAN_SUCCESS:
       //payload should be the new plan
       return Object.assign({}, action.payload)
 

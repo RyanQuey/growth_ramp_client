@@ -7,7 +7,7 @@ import Layout from 'components/layout';
 import { connect } from 'react-redux'
 import firebase from 'firebase';
 import store from 'reducers'
-import { POST_FETCH_REQUEST, PLAN_FETCH_REQUEST, USER_FETCH_REQUEST, TOKEN_UPDATE_REQUEST, IS_PRELOADING_STORE } from 'actions'
+import { FETCH_POST_REQUEST, FETCH_PLAN_REQUEST, FETCH_USER_REQUEST, UPDATE_TOKEN_REQUEST, IS_PRELOADING_STORE } from 'actions'
 import 'App.css';
 
 class App extends Component {
@@ -73,10 +73,10 @@ const mapStateToProps = state => {
 // can be passed in as { signInRequest } into connect as a shortcut, but learning the long way for now until I can get used to it, and know how to modify the dispatches for later on
 const mapDispatchToProps = (dispatch) => {
   return {
-    userFetchRequest: (data) => dispatch({type: USER_FETCH_REQUEST, payload: data}),
-    postFetchRequest: (data) => dispatch({type: POST_FETCH_REQUEST, payload: data}),
-    planFetchRequest: (data) => dispatch({type: PLAN_FETCH_REQUEST, payload: data}),
-    tokenUpdateRequest: (data) => dispatch({type: TOKEN_UPDATE_REQUEST, payload: data}),
+    userFetchRequest: (data) => dispatch({type: FETCH_USER_REQUEST, payload: data}),
+    postFetchRequest: (data) => dispatch({type: FETCH_POST_REQUEST, payload: data}),
+    planFetchRequest: (data) => dispatch({type: FETCH_PLAN_REQUEST, payload: data}),
+    tokenUpdateRequest: (data) => dispatch({type: UPDATE_TOKEN_REQUEST, payload: data}),
     isPreloadingStore: (data) => dispatch({type: IS_PRELOADING_STORE, payload: data}),
   }
 }
