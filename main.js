@@ -101,11 +101,11 @@ app.get(`${Helpers.callbackPath}/:provider`, (req, res, next) => {
       //next ...I think sends this along to the next route that matches, which will just render the app anyway(?)
       return next(err);
     }
-    //NOTE: don't try changing this are making more simple, unless you have lots of free time...is just a time draiting the.
-    //note that userAndProvider is a JSON string, but not in query format. making this more simple probably begins with trying to return this not as a JSON string from Sails in the first place...or just JSON.parse it here if I can't
-    res.locals = userAndProvider
-
-    next()
+    //NOTE: don't try changing this are making more simple, unless you have lots of free time...is just a time drain
+    //it appears that you cannot change the URL in the browser without doing res.redirect, even if you change the req.query, or res.locals
+    //and another approach would be to set res.locals, then transform the html file before sending...but that seems potentially dangerous and hacky.(?). this saves a step.
+    res.redirect(`/?userAndProvider=${userAndProvider}`)
+    //next()
   }
 
   //TODO: Facebook recommends verifying any request made to this callback path, since anyone can ask the access it, not to Facebook, and pass in any sort of token
@@ -144,8 +144,8 @@ console.log(url);
 // match one above, send back React's index.html file.
 // let react handle the routing from there
 app.get('*', (req, res) => {
-  if (res.locals && Object.keys(res.locals).length > 0) {
-    const parser = new Transform()
+    req.query = res.locals
+    /*const parser = new Transform()
     parser._transform = function(stream, encoding, done) {
       const str = stream.toString().replace('serverResponse = ""', `serverResponse = ${JSON.stringify(res.locals)}`)
       this.push(str)
@@ -156,10 +156,10 @@ app.get('*', (req, res) => {
     .pipe(parser)
     .pipe(res)
 
-  } else {
+  } else {*/
     res.sendFile(path.join(__dirname + '/dist/index.html'));
+  if (res.locals && Object.keys(res.locals).length > 0) {
   }
-
 });
 
 // catch 404 and forward to error handler

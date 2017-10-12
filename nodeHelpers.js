@@ -1,3 +1,4 @@
+//TODO for helpers that overlap with the JavaScript helpers in the front and,, can just import from there. DRY things up
 const request = require('request')
 const result = require('dotenv').config()
 
