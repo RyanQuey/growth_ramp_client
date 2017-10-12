@@ -6,6 +6,9 @@ export const NEW_ALERT = 'NEW_ALERT'
 export const CLEAR_ERRORS = 'CLEAR_ERRORS'
 export const HANDLE_ERRORS = 'HANDLE_ERRORS'
 
+//miscellaneous
+export const HANDLE_QUERY = 'HANDLE_QUERY'
+
 //plans
 export const CHOOSE_PLAN = 'CHOOSE_PLAN'
 export const CREATE_PLAN_REQUEST = 'CREATE_PLAN_REQUEST'

@@ -81,27 +81,38 @@ app.get('/login/twitter', ((req, res, next) => {
 console.log("logging in with twitter");
   passport.authenticate('twitter')(req, res, next)
 }))
-app.get(`${Helpers.callbackPath}/twitter`, (req, res, next) => {
-  //NOTE: in order to get it to pop up, will require some client-side JavaScript, https://github.com/jaredhanson/passport-facebook/issues/18  ...looks like a mess. otherwise , though,
-  //call the callback defined in the strategy
-  passport.authenticate('twitter',
-    Helpers.providerCallback)(req, res, next)
-})
 
-//TODO: make this the Twitter one, which works
+//TODO: make this combine dynamically into the Twitter one, which works
 app.get('/login/facebook', (req, res, next) => {
-  //need to find out if can have these...or even if I need to
-  console.log("beginning to authenticate with Facebook");
   passport.authenticate('facebook')(req, res, next)
 })
 
-app.get(`${Helpers.callbackPath}/facebook`, (req, res, next) => {
+app.get(`${Helpers.callbackPath}/:provider`, (req, res, next) => {
+  const providerName = req.params.provider.toLowerCase()
+  if (!["facebook", "twitter", "google"].includes(providerName)) {next()}
+
+  const providerCallback = function(err, userAndProvider, info) {
+    console.log(req.user, req.account);
+    console.log("********************************************");
+    console.log("user and provider", userAndProvider, "info",info);
+    if (err || !userAndProvider) {
+      console.log("error after authenticating into provider:");
+      console.log(err);
+      //next ...I think sends this along to the next route that matches, which will just render the app anyway(?)
+      return next(err);
+    }
+    //NOTE: don't try changing this are making more simple, unless you have lots of free time...is just a time draiting the.
+    //note that userAndProvider is a JSON string, but not in query format. making this more simple probably begins with trying to return this not as a JSON string from Sails in the first place...or just JSON.parse it here if I can't
+    req.query.userAndProvider = userAndProvider
+
+    next()
+  }
+
   //TODO: Facebook recommends verifying any request made to this callback path, since anyone can ask the access it, not to Facebook, and pass in any sort of token
   //maybe want to do the same thing with twitter, who actually sends an oauth_verifier along with the tokens
-  console.log("made into the redirect path");
-  //call the callback defined in the strategy
-  passport.authenticate('facebook',
-    Helpers.providerCallback)(req, res, next)
+  //NOTE: in order to get it to pop up, will require some client-side JavaScript, https://github.com/jaredhanson/passport-facebook/issues/18  ...looks like a mess. otherwise , though,
+  //calls the callback defined in the strategy, THEN passes that info to the providerCallback
+  passport.authenticate(providerName, providerCallback)(req, res, next)
 })
 
 app.use('/api/*', function(req, res) {
@@ -133,6 +144,7 @@ console.log(url);
 // match one above, send back React's index.html file.
 // let react handle the routing from there
 app.get('*', (req, res) => {
+console.log(req.query, req.url);
   res.sendFile(path.join(__dirname + '/dist/index.html'));
 });
 

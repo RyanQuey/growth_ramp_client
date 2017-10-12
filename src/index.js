@@ -2,6 +2,9 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import axios from 'axios'
 import babel from 'babel-polyfill'
+import {
+  BrowserRouter,
+} from 'react-router-dom'
 
 import './index.css';
 import App from './App';
@@ -26,9 +29,12 @@ import initializers from './initializers'
 initializers()
 
 const root = document.getElementById('app')
+
 ReactDOM.render(
   <Provider store={store}>
-    <App />
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
   </Provider>, root
 );
 

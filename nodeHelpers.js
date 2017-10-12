@@ -1,4 +1,6 @@
+const request = require('request')
 const result = require('dotenv').config()
+
 if (result.error) {
   throw result.error
 }
@@ -8,6 +10,7 @@ const env = result.parsed // this should === process.env
 const domain = env.CLIENT_URL || 'http://www.local.dev:5000'
 const callbackPath = env.PROVIDER_CALLBACK_PATH || '/provider_redirect'
 const callbackUrl = domain + callbackPath
+const apiUrl = process.env.API_URL || 'http://localhost:1337';
 
 const uuid = require('uuid/v1');
 const $ = require('jquery');
@@ -128,24 +131,5 @@ module.exports = {
     //scope: 'email, '
   },
 
-  //gets called after the callback defined in the strategy
-  providerCallback: function(err, userAndProvider, info) {
-    console.log(req.user, req.account);
-    console.log("********************************************");
-    console.log("user and provider", userAndProvider, "info",info);
-    if (err || !userAndProvider) {
-      console.log("error after authenticating into provider:");
-      console.log(err);
-      //next ...I think sends this along to the next route that matches, which will just render the app anyway(?)
-      return next(err);
-    }
-    /*return res.redirect(url.format({
-      pathname: "/",
-      query: {
-      }
-    }));*/
-    req.query = {userAndProvider: userAndProvider}
-    next()
-  },
 
 }

@@ -1,12 +1,12 @@
 import { Component } from 'react';
 import logo from 'images/logo.png';
 import User from 'user/components'
-console.log(User);
 import { connect } from 'react-redux'
 import 'App.css';
 import {
   withRouter,
 } from 'react-router-dom'
+import { HANDLE_QUERY } from 'constants/actionTypes'
 
 class App extends Component {
 
@@ -16,9 +16,11 @@ class App extends Component {
 
     //extract the query string
     const query = this.props.location.search
-    //TODO
+console.log(query);
+    store.dispatch({type: HANDLE_QUERY, payload: query})
+    //right now, this is only returning user and provider
 
-    this.props.history.push(this.props.location.pathname)
+    //this.props.history.push(this.props.location.pathname)
   }
 
   render() {
