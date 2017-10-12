@@ -7,14 +7,22 @@ import {
   ModalFooter,
 } from 'shared/components/partials/Modal'
 import { viewSettingActions } from 'shared/actions'
+import { Button, Flexbox, Input } from 'shared/components/elements'
+import classes from './style.scss'
 
-class SetPassword extends Component {
+class SetPasswordModal extends Component {
   constructor() {
     super()
     this.handleClose = this.handleClose.bind(this)
     this.handlePassword = this.handlePassword.bind(this)
+    this.state = {
+      password: "",
+    }
   }
   handleClose (){
+    viewSettingActions.closeModal()
+  }
+  handleSubmit (){
     viewSettingActions.closeModal()
   }
   handlePassword(e, errors) {
@@ -26,7 +34,7 @@ class SetPassword extends Component {
   render (){
     return (
       <ModalContainer
-        visible={this.props.currentModal === "UserLogin"}
+        visible={this.props.currentModal === "SetPasswordModal"}
         onClose={this.handleClose}
         disableClose={true}
         >
@@ -44,7 +52,7 @@ class SetPassword extends Component {
               />
               <Button
                 onClick={() => this.handleSubmit()}
-                disabled={(this.props.errors)}
+                disabled={(this.props.errors && this.props.errors.length > 0 || false)}
                 type="submit"
               >
                 Set Password
@@ -63,5 +71,5 @@ const mapStateToProps = (state) => {
   }
 }
 
-export default connect(mapStateToProps)(SetPassword)
+export default connect(mapStateToProps)(SetPasswordModal)
 

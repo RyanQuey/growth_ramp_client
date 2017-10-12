@@ -9,18 +9,17 @@ import {
 import { HANDLE_QUERY } from 'constants/actionTypes'
 
 class App extends Component {
-
   componentDidMount() {
     axios.get('/api/test')
     .then(res => console.log("got it: ", res))
 
     //extract the query string
     const query = this.props.location.search
-console.log(query);
-    store.dispatch({type: HANDLE_QUERY, payload: query})
     //right now, this is only returning user and provider
+    store.dispatch({type: HANDLE_QUERY, payload: query})
 
-    //this.props.history.push(this.props.location.pathname)
+    //turned this back on for when I can retrieve from the cookies
+    this.props.history.push(this.props.location.pathname)
   }
 
   render() {

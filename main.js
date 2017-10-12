@@ -144,22 +144,7 @@ console.log(url);
 // match one above, send back React's index.html file.
 // let react handle the routing from there
 app.get('*', (req, res) => {
-    req.query = res.locals
-    /*const parser = new Transform()
-    parser._transform = function(stream, encoding, done) {
-      const str = stream.toString().replace('serverResponse = ""', `serverResponse = ${JSON.stringify(res.locals)}`)
-      this.push(str)
-      done()
-    }
-
-    fs.createReadStream('dist/index.html')
-    .pipe(parser)
-    .pipe(res)
-
-  } else {*/
-    res.sendFile(path.join(__dirname + '/dist/index.html'));
-  if (res.locals && Object.keys(res.locals).length > 0) {
-  }
+  res.sendFile(path.join(__dirname + '/dist/index.html'));
 });
 
 // catch 404 and forward to error handler

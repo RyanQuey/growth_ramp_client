@@ -1,3 +1,4 @@
+import $ from 'jquery'
 import Cookies from "js-cookie"
 import {
   CHECK_USER_TOKEN,
@@ -8,7 +9,8 @@ export default () => {
   const Cookie = {
     get: function(key){
       try {
-        return $.parseJSON(Cookies.get(key))
+        const cookie = Cookies.get(key)
+        return $.parseJSON(cookie)
 
       } catch (e) {
 
@@ -21,6 +23,8 @@ export default () => {
       Cookies.remove(key, { domain: '.' + this.host })
     }
   }
+  window.Cookie = Cookie
+  window.Cookies = Cookies
 
   Cookie.host = location.host.split(".")
   Cookie.host.shift()
@@ -39,6 +43,5 @@ export default () => {
     }
   }
 
-  window.Cookie = Cookie
 }
 

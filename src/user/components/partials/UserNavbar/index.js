@@ -24,7 +24,7 @@ class UserNavbar extends Component {
 
   openLoginModal(e) {
     e.preventDefault()
-    viewSettingActions.openModal("UserLogin")
+    viewSettingActions.openModal("UserLoginModal")
   }
 
   render() {

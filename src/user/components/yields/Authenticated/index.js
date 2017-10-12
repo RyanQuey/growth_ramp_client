@@ -3,63 +3,46 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Home, Profile, SignUp } from 'user/components/templates'
 import { Flexbox, Alert } from 'shared/components/elements'
-import { UserNavbar, UserSidebar, SetPassword } from 'user/components/partials'
+import { UserNavbar, UserSidebar, UserContent, SetPasswordModal } from 'user/components/partials'
 import { FETCH_POST_REQUEST, FETCH_PLAN_REQUEST, FETCH_USER_REQUEST, UPDATE_TOKEN_REQUEST, IS_PRELOADING_STORE } from 'constants/actionTypes'
+import { viewSettingActions } from 'shared/actions'
 import classes from './Authenticated.scss'
 import { BrowserRouter } from 'react-router-dom'
 
 class Authenticated extends Component {
   componentDidMount () {
-          const userData = Helpers.extractUserData(this.props.user)
-          this.props.userFetchRequest(userData)
-          this.props.postFetchRequest(userData)
-          this.props.planFetchRequest(userData)
-
-          let userProviders = []
-          userData.providerData && userData.providerData.forEach((provider) => {
-            userProviders.push(provider.providerId)
-          })
-          if (userProviders.length > 0) {
-            this.props.tokenUpdateRequest({providerIds: userProviders})
-          }
-
+  }
+  componentWillReceiveProps (props) {
+    if (props.user && !props.user.password) {
+      viewSettingActions.openModal("SetPasswordModal")
+    }
   }
   render() {
     const { children } = this.props
     return (
-      <BrowserRouter>
+      <div>
         <Flexbox direction="column">
           <UserNavbar />
-
           <Flexbox>
-            {this.props.user.password ? (
-              <div>
-                <UserSidebar />
-
-                <UserContent />
-              </div>
-            ) : (
-              <SetPassword />
-            )}
+            <div>
+              <UserSidebar />
+              <UserContent />
+            </div>
           </Flexbox>
         </Flexbox>
-      </BrowserRouter>
+
+        <SetPasswordModal />
+      </div>
     )
   }
 }
 
 Authenticated.propTypes = {
-  children: PropTypes.node.isRequired,
 }
 
 // can be passed in as { signInRequest } into connect as a shortcut, but learning the long way for now until I can get used to it, and know how to modify the dispatches for later on
 const mapDispatchToProps = (dispatch) => {
   return {
-    userFetchRequest: (data) => dispatch({type: FETCH_USER_REQUEST, payload: data}),
-    postFetchRequest: (data) => dispatch({type: FETCH_POST_REQUEST, payload: data}),
-    planFetchRequest: (data) => dispatch({type: FETCH_PLAN_REQUEST, payload: data}),
-    tokenUpdateRequest: (data) => dispatch({type: UPDATE_TOKEN_REQUEST, payload: data}),
-    isPreloadingStore: (data) => dispatch({type: IS_PRELOADING_STORE, payload: data}),
   }
 }
 const mapStateToProps = (state) => {

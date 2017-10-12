@@ -24,8 +24,6 @@ const handleQuery = (rawQuery) => {
           store.dispatch({type: UPDATE_TOKEN_SUCCESS, payload: { [provider.name]: provider}})
           break;
 
-        case "providerData":
-          break;
       }
     }
   }

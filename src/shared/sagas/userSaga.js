@@ -69,23 +69,6 @@ console.log(signInResult);
         userProviders.push(provider.providerId)
       })
 
-      if (pld.wantTokenOnly) {
-        yield  put({type: UPDATE_TOKEN_REQUEST, payload: {
-          providerIds: userProviders,
-          credential: signInResult.credential
-        }})
-
-      //otherwise, get/set all user data
-      } else {
-        yield all([
-          put({type: FETCH_USER_REQUEST, payload: signInResult}),
-          put({type: FETCH_POST_REQUEST, payload: signInResult}),
-          put({type: UPDATE_TOKEN_REQUEST, payload: {
-            providerIds: userProviders,
-            credential: signInResult.credential
-          }}),
-        ])
-      }
     } else {
       //no user found
       //TODO: make a separate action for the error
@@ -102,8 +85,8 @@ console.log(signInResult);
   }
 }
 
-const setCookie = (user) => {
-  Cookie.set('sessionUser', user)
+const setCookie = (action) => {
+  Cookie.set('sessionUser', action.payload)
 }
 
 function* fetchData(action) {

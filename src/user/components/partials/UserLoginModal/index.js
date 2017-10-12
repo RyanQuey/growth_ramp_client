@@ -1,7 +1,7 @@
 import { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-import { 
+import {
   ModalContainer,
   ModalBody,
   ModalFooter,
@@ -30,7 +30,7 @@ class UserLogin extends Component {
   render (){
     return (
       <ModalContainer
-        visible={this.props.currentModal === "UserLogin"}
+        visible={this.props.currentModal === "UserLoginModal"}
         onClose={this.handleClose}
         >
           <ModalBody>
