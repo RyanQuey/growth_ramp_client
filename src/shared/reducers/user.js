@@ -7,6 +7,7 @@ import {
   SET_IMAGE,
   SIGN_OUT,
   FETCH_USER_SUCCESS,
+  UPDATE_USER_SUCCESS,
 
 } from 'constants/actionTypes'
 
@@ -15,11 +16,12 @@ const userReducer = (state = null, action) => {
   switch (action.type) {
     case LINK_ACCOUNT_SUCCESS:
       return Object.assign({}, state, { providerData: action.payload.providerData })
-    case LOG_IN_WITH_PROVIDER:
-      return action.payload
 
     case SET_CURRENT_USER:
-      return action.payload
+      return Object.assign({}, action.payload)
+
+    case UPDATE_USER_SUCCESS:
+      return Object.assign({}, action.payload)
 
     case SET_IMAGE:
       return Object.assign({}, state, { [action.payload.name]: action.payload.url })

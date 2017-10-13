@@ -13,9 +13,9 @@ export default (state = {}, action) => {
 
       let lastAlertId
       if (Object.keys(state).length >0) {
-        const alertCount = Object.keys(state).length 
+        const alertCount = Object.keys(state).length
         const lastAlert = state[alertCount -1]
-        lastAlertId = state[newAlertId].id
+        lastAlertId = state[lastAlert].id
       } else {
         lastAlertId = 0
       }
@@ -30,7 +30,7 @@ export default (state = {}, action) => {
       if (currentModal && !alert.options.forComponent) {
         alert.options.forComponent = currentModal
       }
-       
+
       const toMerge = {
         [newId]: alert
       }

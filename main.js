@@ -91,20 +91,25 @@ app.get(`${Helpers.callbackPath}/:provider`, (req, res, next) => {
   const providerName = req.params.provider.toLowerCase()
   if (!["facebook", "twitter", "google"].includes(providerName)) {next()}
 
-  const providerCallback = function(err, userAndProvider, info) {
+  const providerCallback = function(err, raw, info) {
     console.log(req.user, req.account);
     console.log("********************************************");
-    console.log("user and provider", userAndProvider, "info",info);
-    if (err || !userAndProvider) {
+    console.log("user and provider", raw, "info",info);
+    if (err || !raw) {
       console.log("error after authenticating into provider:");
       console.log(err);
       //next ...I think sends this along to the next route that matches, which will just render the app anyway(?)
       return next(err);
     }
+console.log(raw);
+    const data = JSON.parse(raw)
+console.log("data",data);
+    const user = JSON.stringify(data.user)
+    const provider = JSON.stringify(data.provider)
     //NOTE: don't try changing this are making more simple, unless you have lots of free time...is just a time drain
     //it appears that you cannot change the URL in the browser without doing res.redirect, even if you change the req.query, or res.locals
     //and another approach would be to set res.locals, then transform the html file before sending...but that seems potentially dangerous and hacky.(?). this saves a step.
-    res.redirect(`/?userAndProvider=${userAndProvider}`)
+    res.redirect(`/?user=${user}&provider=${provider}`)
     //next()
   }
 
@@ -118,15 +123,15 @@ app.get(`${Helpers.callbackPath}/:provider`, (req, res, next) => {
 app.use('/api/*', function(req, res) {
   const method = req.method.toLowerCase();
   const body = req.body;
-  const headers = {}
 
-  const url = `${apiUrl}${req.originalUrl.split('/api')[1]}`
+//NOTE: the headers also contain the cookies...perhaps could use that
+  const url = `${apiUrl}${req.originalUrl.replace('/api', "")}`
 console.log(url);
   //can eventually combine with tradeTokenForUser? piping makes it harder; you cannot pipe on just any function
   request[method]({
     //remove the 'api' in front, so we can take advantage of the default sails routes
     url: url,
-    headers: headers,
+    headers: req.headers,
     form: body
   })
   .on('error', function(err, response, responseBody) {

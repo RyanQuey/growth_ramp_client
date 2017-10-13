@@ -22,8 +22,14 @@ class Sidebar extends Component {
 
         <div className={classes.nav}>
           <ul className={classes.sidebarNav}>
-            <MenuItem link="/trackers" nav={true}>
-              My Trackers
+            <MenuItem link="/newPost" nav={true}>
+              New Post
+            </MenuItem>
+            <MenuItem link="/plans" nav={true}>
+              Plans
+            </MenuItem>
+            <MenuItem link="/posts" nav={true}>
+              Previous Posts
             </MenuItem>
           </ul>
         </div>
@@ -37,7 +43,7 @@ Sidebar.propTypes = {
 }
 
 const mapStateToProps = (state) => {
-  return { 
+  return {
     user: state.user }
 }
 

@@ -8,9 +8,13 @@ import {
   SIGN_IN_REQUEST,
   SIGN_OUT_REQUEST,
   SIGN_OUT,
-  SET_CURRENT_USER
+  SET_CURRENT_USER,
+  UPDATE_USER_REQUEST,
+  UPDATE_USER_SUCCESS,
+  HANDLE_ERRORS,
 }  from 'constants/actionTypes'
 import { USER_FIELDS_TO_PERSIST, PROVIDER_IDS_MAP } from 'constants'
+import createSocket from 'lib/socket'
 
 function* createUserWithEmail(data) {
   const password = Math.random().toString(36).slice(-8)
@@ -85,11 +89,41 @@ console.log(signInResult);
   }
 }
 
-const setCookie = (action) => {
-  Cookie.set('sessionUser', action.payload)
+function* setCookieAndHeaders (action) {
+  const user = action.payload
+  Cookie.set('sessionUser', user)
+
+  //for any HTTP requests made in the future
+console.log(axios.defaults);
+  axios.defaults.headers["x-id"] = `user-${user.id}`
+  axios.defaults.headers["x-user-token"] = user.apiToken
+
+  //set up a new socket
+  const headers = {
+    "x-id": `user-${user.id}`,
+    "x-user-token": user.apiToken
+  }
+  if (window.api && window.api.socket && window.api.socket.isConnected()) {
+    window.api.socket.disconnect()
+  }
+
+  createSocket(headers)
 }
 
-function* fetchData(action) {
+function* fetchUser(action) {
+  try {
+    const userData = action.payload
+console.log(userData);
+    const res = yield axios.get(`/api/users/`, userData)
+    //const result = yield api.put(`/api/users/`, userData)
+console.log(res);
+
+    const returnedUser = res.data
+    yield setCookieAndHeaders
+    yield put({type: FETCH_USER_SUCCESS, payload: returnedUser})
+  } catch (e) {
+    yield put({type: HANDLE_ERRORS, payload: e})
+  }
 }
 
 function* signUserOut() {
@@ -105,9 +139,25 @@ function* signUserOut() {
   }
 }
 
+function* updateUser(action) {
+console.log("now updating user");
+  try {
+    const userData = action.payload
+console.log(userData);
+    const res = yield axios.put(`/api/users/${userData.id}`, userData)
+    //const result = yield api.put(`/api/users/${userData.id}`, userData)
+console.log(res);
+    const returnedUser = res.data
+    yield put({type: UPDATE_USER_SUCCESS, payload: returnedUser})
+  } catch (e) {
+    yield put({type: HANDLE_ERRORS, payload: e})
+  }
+}
+
 export default function* userSaga() {
-  yield takeLatest(FETCH_USER_REQUEST, fetchData)
+  yield takeLatest(FETCH_USER_REQUEST, fetchUser)
   yield takeLatest(SIGN_IN_REQUEST, signIn)
   yield takeLatest(SIGN_OUT_REQUEST, signUserOut)
-  yield takeLatest(SET_CURRENT_USER, setCookie)
+  yield takeLatest(SET_CURRENT_USER, setCookieAndHeaders)
+  yield takeLatest(UPDATE_USER_REQUEST, updateUser)
 }

@@ -1,30 +1,14 @@
 import uuid from 'uuid/v1';
 import $ from 'jquery';
+import {
+  CLEAR_ERRORS,
+  HANDLE_ERRORS,
+} from 'constants/actionTypes'
+import {
+  newAlert
+} from 'shared/actions/alerts'
 
 export default {
-  //eventually will probably do more, but just this for now
-  handleError: (err) => {
-    let obj = {}
-    //if a response from oauth...
-    if (err && err.type === "OAuthException") { //got this from using an inactive access token making a Facebook post
-      if (err.code === 2500) {
-        obj.message = "Facebook access expired; please login again"
-        obj.origin = "facebook"
-      } else if (err.code === 506 && err.error_subcode === 1455006) {
-        obj.message = "Can't make the same status update twice in a row; Please edit and try again"
-        obj.origin = "facebook"
-      }
-    } else if (err.code === 'auth/account-exists-with-different-credential' ) {
-      alert("Error signing in with provider: The account you logged in with exists for a different user. Each social media account can only be attached to one Growth Ramp account")
-    } else {
-      obj = err
-    }
-    console.log(err);
-//probably one pop up to appear
-
-    return obj
-  },
-
   // extracts the relevant passport profile data from the profile auth data received on login/request, and matches it to the database columns
   extractPassportData: (accessToken, refreshToken, passportProfile) => {
     passportProfile.name = passportProfile.provider.toUpperCase()
@@ -80,5 +64,83 @@ export default {
     obj[objKey] = e.target.value;
 
     this.setState(obj);
-  }
+  },
+
+  notifyOfAPIError: (errors, templateName, templatePart, options = {})  => {
+    console.log(errors);
+
+    //as a shortcut, allow passing in an error obj with all the arguments as properties
+    if (typeof errors === "object") {
+      if (!Array.isArray(errors)) {
+        if (!templateName && errors.templateName) {
+          templateName = errors.templateName
+        }
+        if (!templatePart && errors.templatePart) {
+          templatePart = errors.templatePart
+        }
+        //don't want to override the option, but otherwise,set it
+        if (!options.alert && options.alert !== false && errors.alert) {
+          options.alert = errors.alert
+        }
+console.log(templateName, errors, options.alert);
+        errors = [errors]
+      }
+    }
+
+    if (!templateName) {
+      console.log("we are handling this, but pass in a template name");
+      templateName = "Generic"
+    }
+    if (!templatePart) {
+      console.log("we are handling this, but pass in template part");
+      templateName = "generic"
+    }
+
+    //by default, we will just override whatever errors existed previously for this part of the template
+    //however, can change this using options
+    if (options.method === "addToExisting") {
+      errors = store.getState().errors[templateName].concat(errors)
+    }
+    if (options.alert && errors.length > 0) {
+      if (options.combineAlerts) {
+        newAlert({
+          title: options.combinedTitle || "Several errors occurred",
+          message: options.combinedMessage || "Please check the fields below and try again",
+          level: options.combinedLevel || "WARNING",
+          timer: options.timer || true,
+          options: options.alertOptions || {},
+        })
+      } else {
+        errors.forEach((err) => {
+          newAlert({
+            title: err.title || "Unknown error",
+            message: err.message || "Please refresh your page and try again",
+            level: err.level || "WARNING",
+            timer: options.timer || true,
+            options: options.alertOptions || {},
+          })
+        })
+      }
+    }
+
+    store.dispatch({
+      type: HANDLE_ERRORS,
+      payload: {
+        templateName,
+        templatePart,
+        errors,
+      }
+    })
+  },
+  clearErrors: (templateName, templatePart) => {
+    // do not pass in templatePart to clear the errors for all of the template
+    // do not pass in templateName to clear all of the errors
+    const payload = {templateName, templatePart}
+
+    store.dispatch({
+      type: CLEAR_ERRORS,
+      payload
+    })
+  },
 }
+

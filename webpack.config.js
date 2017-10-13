@@ -15,6 +15,7 @@ const {
 const host = process.env.HOST || 'localhost'
 const port = process.env.PORT || 3000
 const sourceDir = process.env.SOURCE || 'src'
+const apiUrl = process.env.API_URL || 'http://localhost:1337'
 
 //this is how client-side assets will be accessible in a browser
 //path starts with a '/', so the path will be a path relative to the server, and the outputPath, not the index.html
@@ -105,6 +106,7 @@ const config = createConfig([
   defineConstants({
     'process.env.NODE_ENV': process.env.NODE_ENV,
     'process.env.PUBLIC_PATH': publicPath.replace(/\/$/, ''),
+    'process.env.API_URL': apiUrl,
   }),
   addPlugins([
     new webpack.ProgressPlugin(),

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { Flexbox, Navbar } from 'shared/components/elements'
 import classes from './Unauthenticated.scss'
 import { UserLoginModal, UserNavbar, UserSidebar, UserContent } from 'user/components/partials'
-import { Home } from 'user/components/templates'
+import { UnauthenticatedContent } from 'user/components/templates'
 
 //TODO: this will be the picture with the library and search box in the middle
 class Unauthenticated extends Component {
@@ -13,7 +13,7 @@ class Unauthenticated extends Component {
       <div>
         <Flexbox direction="column">
           <UserNavbar />
-          <Home />
+          <UnauthenticatedContent />
         </Flexbox>
 
         <UserLoginModal />

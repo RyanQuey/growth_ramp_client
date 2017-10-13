@@ -2,14 +2,18 @@ import $ from 'jquery'
 import Cookies from "js-cookie"
 import {
   CHECK_USER_TOKEN,
-  SET_CURRENT_USER
+  SET_CURRENT_USER,
+  FETCH_USER_REQUEST,
 } from 'constants/actionTypes'
+
+import createSocket from 'lib/socket'
 
 export default () => {
   const Cookie = {
     get: function(key){
       try {
         const cookie = Cookies.get(key)
+        //JSON.parse doesn't work for some reason, jquery adds some action stuff which makes it work
         return $.parseJSON(cookie)
 
       } catch (e) {
@@ -35,11 +39,12 @@ export default () => {
   if(Cookie.get('sessionUser')){
     let cu = Cookie.get('sessionUser');
     if (cu.id) {
-      //ask the API if the token is legitimate
-      store.dispatch({type: CHECK_USER_TOKEN, payload: cu.apiToken})
+      //TODO: check it user info is up-to-date with the backend. Also, if they have an expired API token, don't want them working for a while thinking their loggedin, then a make request to the API and find out otherwise
+      store.dispatch({type: FETCH_USER_REQUEST, payload: {id: cu.id, apiToken: cu.apiToken}});
 
-
-      store.dispatch({type: SET_CURRENT_USER, payload: cu});
+    } else {
+      //is no user, create socket without user headers
+      createSocket()
     }
   }
 

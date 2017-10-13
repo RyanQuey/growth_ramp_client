@@ -14,12 +14,45 @@ const handleQuery = (rawQuery) => {
       const pair = variables[i].split('=')
       const key = decodeURIComponent(pair[0])
       const value = decodeURIComponent(pair[1])
+console.log(key, value);
 
       switch (key) {
-        case "userAndProvider":
-          const data = JSON.parse(value)
-          const user = data.user
-          const provider = data.providerData
+        case "user":
+          const user = JSON.parse(value)
+
+          if (
+            !user || !(typeof user === "object") || Object.keys(user).length === 0
+          ) {
+            Helpers.notifyOfAPIError({
+              title: "Error logging in using provider:",
+              message: "Please try again",
+              templateName: "Home",
+              templatePart: "noUser",
+              alert: true
+            })
+            return
+          }
+
+          store.dispatch({type: SET_CURRENT_USER, payload: user})
+          store.dispatch({type: UPDATE_TOKEN_SUCCESS, payload: { [provider.name]: provider}})
+          break;
+
+        case "provider":
+          const provider = JSON.parse(value)
+
+          if (
+            !provider || !(typeof provider === "object") || Object.keys(provider).length === 0
+          ) {
+            Helpers.notifyOfAPIError({
+              title: "Error logging in using provider:",
+              message: "Please try again",
+              templateName: "Home",
+              templatePart: "noProvider",
+              alert: true
+            })
+            return
+          }
+
           store.dispatch({type: SET_CURRENT_USER, payload: user})
           store.dispatch({type: UPDATE_TOKEN_SUCCESS, payload: { [provider.name]: provider}})
           break;

@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux'
-import $ from 'jquery'
 import {
   Start,
   Send,
@@ -17,7 +16,8 @@ const sections = {
   Send,
 }
 
-class ContentContainer extends Component {
+console.log(sections);
+class PromoTool extends Component {
   constructor() {
     super()
     this.state = {
@@ -108,10 +108,10 @@ const mapStateToProps = state => {
 }
 const mapDispatchToProps = (dispatch) => {
   return {
-    postCreateRequest: (data) => dispatch({type: CREATE_POST_REQUEST, payload: data}),
+    createPostRequest: (data) => dispatch({type: CREATE_POST_REQUEST, payload: data}),
   }
 }
 
-const ConnectedContentContainer = connect(mapStateToProps, mapDispatchToProps)(ContentContainer)
-export default ConnectedContentContainer
+export default connect(mapStateToProps, mapDispatchToProps)(PromoTool)
+
 
