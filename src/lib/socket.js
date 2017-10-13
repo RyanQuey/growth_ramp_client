@@ -9,7 +9,6 @@ export const setupSession = (user) => {
     createSocket()
   } else {
     //for any HTTP requests made in the future
-  console.log(axios.defaults);
     axios.defaults.headers["x-id"] = `user-${user.id}`
     axios.defaults.headers["x-user-token"] = user.apiToken
 
