@@ -12,12 +12,12 @@ import { withRouter } from 'react-router-dom'
 class Authenticated extends Component {
   componentDidMount () {
     if (this.props.user && !this.props.user.password) {
-      this.props.history.push("/SetPassword")
+      this.props.history.push("/SetCredentials")
     }
   }
   componentWillReceiveProps (props) {
     if (props.user && !props.user.password) {
-      this.props.history.push("/SetPassword")
+      this.props.history.push("/SetCredentials")
     }
   }
   render() {

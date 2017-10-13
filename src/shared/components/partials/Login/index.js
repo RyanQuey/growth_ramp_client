@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { userActions, errorActions } from 'shared/actions'
 import { Button, Flexbox, Input } from 'shared/components/elements'
-import { SocialLogin } from 'user/components/partials'
+import { SocialLogin, UserCredentials } from 'shared/components/partials'
 
 import errorTypes from 'constants/errors'
 
@@ -13,15 +13,12 @@ class Login extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      email: '',
-      validEmail: false,
       view: props.initialView || 'LOGIN',
       loginPending: false
     }
 
     this.toggleView = this.toggleView.bind(this)
-    this.handleEmail = this.handleEmail.bind(this)
-    this.handlePassword = this.handlePassword.bind(this)
+    this.setPending = this.setPending.bind(this)
   }
   componentWillReceiveProps (props) {
     const user = props.user
@@ -47,6 +44,9 @@ class Login extends Component {
       }
     })
   }
+  setPending() {
+    this.setState({loginPending: true})
+  }
 
   toggleView(e) {
     e.preventDefault()
@@ -58,44 +58,6 @@ class Login extends Component {
     }
   }
 
-  handlePassword(e, errors) {
-    this.setState({
-      password: e.target.value,
-    })
-  }
-  handleEmail(e, errors) {
-    this.setState({
-      email: e.target.value,
-      validEmail: (errors.length === 0),
-    })
-  }
-  signInWithEmail() {
-    let type
-    this.setState({ loginPending: true });
-    if (this.state.view === 'SIGN_UP') {
-      type = CREATE_WITH_EMAIL
-    } else {
-      type = EMAIL
-    }
-    userActions.signIn(
-      type,
-      {
-        email: this.state.email,
-        password: this.state.password,
-        history: this.props.history,
-      },
-    )
-  }
-  providerSignIn(provider) {
-    this.setState({ loginPending: true });
-    userActions.signIn(
-      PROVIDER,
-      {
-        provider,
-        history: this.props.history,
-      },
-    )
-  }
   render() {
     const view = this.state.view
     const generalText = view === "LOGIN" ? "Login" : "Sign Up"
@@ -105,52 +67,29 @@ class Login extends Component {
     return (
       <Flexbox className={classes.fields} direction="column" justify="center" align="center">
         <h1 color="primary">{generalText}</h1>
-        <div className={classes.form}>
-          <h3>Email address{view === "LOGIN" && " and password" }:</h3>
-          <Input
-            color="primary"
-            onChange={(e, errors) => this.handleEmail(e, errors)}
-            placeholder="your-email@gmail.com"
-            type="email"
-            value={this.state.email}
-            validations={['required', 'email']}
-          />
+        <UserCredentials
+          view={view}
+          buttonText={generalText}
+          pending={this.state.loginPending}
+          setPending={this.setPending}
+        />
+        <br />
+        <h3>Or {socialText.toLowerCase()} through one of your social networks:</h3>
+        <br/>
+        <SocialLogin
+          loginPending={this.state.loginPending}
+          setPending={this.setPending}
+        />
+        <a
+          onClick={this.toggleView}
+          href="#"
+        >
           {view === "LOGIN" ? (
-            <Input
-              color="primary"
-              onChange={(e, errors) => this.handlePassword(e, errors)}
-              placeholder="password"
-              type="password"
-              value={this.state.password}
-              validations={['required']}
-            />
+            "Don't have an account? Click here to sign up"
           ) : (
-            <h5>We&apos;ll send you an email to set your password.</h5>
+            "Already have an account? Click here to login"
           )}
-          <Button
-            onClick={() => this.signInWithEmail()}
-            disabled={(!this.state.validEmail || this.state.loginPending)}
-          >
-            {generalText}
-          </Button>
-          <br />
-
-          <h3>Or {socialText.toLowerCase()} through one of your social networks:</h3>
-
-          <br/>
-          <SocialLogin loginPending={this.state.loginPending}/>
-
-          <a
-            onClick={this.toggleView}
-            href="#"
-          >
-            {view === "LOGIN" ? (
-              "Don't have an account? Click here to sign up"
-            ) : (
-              "Already have an account? Click here to login"
-            )}
-          </a>
-        </div>
+        </a>
       </Flexbox>
     )
   }

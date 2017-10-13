@@ -3,10 +3,9 @@ import Cookies from "js-cookie"
 import {
   CHECK_USER_TOKEN,
   SET_CURRENT_USER,
-  FETCH_USER_REQUEST,
+  FETCH_CURRENT_USER_REQUEST,
 } from 'constants/actionTypes'
-
-import createSocket from 'lib/socket'
+import { setupSession } from 'lib/socket'
 
 export default () => {
   const Cookie = {
@@ -38,9 +37,11 @@ export default () => {
   //anything else I want to say to the browser, besides cookies?
   if(Cookie.get('sessionUser')){
     let cu = Cookie.get('sessionUser');
+    setupSession(cu)
+
     if (cu.id) {
       //TODO: check it user info is up-to-date with the backend. Also, if they have an expired API token, don't want them working for a while thinking their loggedin, then a make request to the API and find out otherwise
-      store.dispatch({type: FETCH_USER_REQUEST, payload: {id: cu.id, apiToken: cu.apiToken}});
+      store.dispatch({type: FETCH_CURRENT_USER_REQUEST, payload: {id: cu.id, apiToken: cu.apiToken}});
 
     } else {
       //is no user, create socket without user headers

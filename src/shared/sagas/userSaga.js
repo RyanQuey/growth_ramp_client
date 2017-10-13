@@ -1,7 +1,9 @@
 import { call, put, takeLatest, all } from 'redux-saga/effects'
 import {
   FETCH_USER_REQUEST,
+  FETCH_CURRENT_USER_REQUEST,
   FETCH_USER_SUCCESS,
+  FETCH_CURRENT_USER_SUCCESS,
   FETCH_POST_REQUEST,
   UPDATE_TOKEN_REQUEST,
   SIGN_IN_POPUP_CLOSED,
@@ -14,7 +16,7 @@ import {
   HANDLE_ERRORS,
 }  from 'constants/actionTypes'
 import { USER_FIELDS_TO_PERSIST, PROVIDER_IDS_MAP } from 'constants'
-import createSocket from 'lib/socket'
+import { setupSession } from 'lib/socket'
 
 function* createUserWithEmail(data) {
   const password = Math.random().toString(36).slice(-8)
@@ -89,41 +91,37 @@ console.log(signInResult);
   }
 }
 
-function* setCookieAndHeaders (action) {
+function* setCookieAndSession (action) {
   const user = action.payload
   Cookie.set('sessionUser', user)
 
-  //for any HTTP requests made in the future
-console.log(axios.defaults);
-  axios.defaults.headers["x-id"] = `user-${user.id}`
-  axios.defaults.headers["x-user-token"] = user.apiToken
-
-  //set up a new socket
-  const headers = {
-    "x-id": `user-${user.id}`,
-    "x-user-token": user.apiToken
-  }
-  if (window.api && window.api.socket && window.api.socket.isConnected()) {
-    window.api.socket.disconnect()
-  }
-
-  createSocket(headers)
+  setupSession(user)
 }
 
-function* fetchUser(action) {
+function* fetchUser(action, options = {}) {
   try {
     const userData = action.payload
 console.log(userData);
-    const res = yield axios.get(`/api/users/`, userData)
+    const res = yield axios.get(`/api/users/${userData.id}`)
     //const result = yield api.put(`/api/users/`, userData)
 console.log(res);
-
     const returnedUser = res.data
-    yield setCookieAndHeaders
-    yield put({type: FETCH_USER_SUCCESS, payload: returnedUser})
+
+    if (options.currentUser) {
+      //no reason to restart the socket; this event should only occur is already retrieving the user data from the cookie, which means that API token and headers already are set correctly.
+      //for a new login, use SET_CURRENT_USER
+      Cookie.set('sessionUser', returnedUser)
+      yield put({type: FETCH_CURRENT_USER_SUCCESS, payload: returnedUser})
+    } else {
+
+      yield put({type: FETCH_USER_SUCCESS, payload: returnedUser})
+    }
   } catch (e) {
-    yield put({type: HANDLE_ERRORS, payload: e})
+    yield Helpers.notifyOfAPIError(e)
   }
+}
+function* fetchCurrentUser(action) {
+  yield call(fetchUser, action, {currentUser: true})
 }
 
 function* signUserOut() {
@@ -145,7 +143,7 @@ console.log("now updating user");
     const userData = action.payload
 console.log(userData);
     const res = yield axios.put(`/api/users/${userData.id}`, userData)
-    //const result = yield api.put(`/api/users/${userData.id}`, userData)
+    //const res = yield api.put(`/api/users/${userData.id}`, userData)
 console.log(res);
     const returnedUser = res.data
     yield put({type: UPDATE_USER_SUCCESS, payload: returnedUser})
@@ -156,8 +154,9 @@ console.log(res);
 
 export default function* userSaga() {
   yield takeLatest(FETCH_USER_REQUEST, fetchUser)
+  yield takeLatest(FETCH_CURRENT_USER_REQUEST, fetchCurrentUser)
   yield takeLatest(SIGN_IN_REQUEST, signIn)
   yield takeLatest(SIGN_OUT_REQUEST, signUserOut)
-  yield takeLatest(SET_CURRENT_USER, setCookieAndHeaders)
+  yield takeLatest(SET_CURRENT_USER, setCookieAndSession)
   yield takeLatest(UPDATE_USER_REQUEST, updateUser)
 }

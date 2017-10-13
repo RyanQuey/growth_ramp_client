@@ -4,6 +4,28 @@
 import socketClient from 'socket.io-client'
 import sailsClient from 'sails.io.js'
 
+export const setupSession = (user) => {
+  if (!user) {
+    createSocket()
+  } else {
+    //for any HTTP requests made in the future
+  console.log(axios.defaults);
+    axios.defaults.headers["x-id"] = `user-${user.id}`
+    axios.defaults.headers["x-user-token"] = user.apiToken
+
+    //set up a new socket
+    const headers = {
+      "x-id": `user-${user.id}`,
+      "x-user-token": user.apiToken
+    }
+    if (window.api && window.api.socket && window.api.socket.isConnected()) {
+      window.api.socket.disconnect()
+    }
+
+    createSocket(headers)
+  }
+}
+
 //only run this if it hasn't been ran before
 //otherwise, if this file gets imported multiple times on accident (since it shouldn't), could cause trouble
 //TODO: move to initializer 's; unless this should be ran multiple times
@@ -31,8 +53,7 @@ const createSocket = (headers) => {
     api[action] = (rawUrl, data, options) => {
 
       const url = rawUrl.replace('/api', "")
-  console.log(url);
-  console.log(socket[action]);
+  console.log(url, data);
       new Promise((resolve, reject)=>{
         //socket takes a call back for the second parameter
         //this automatically defines the callback for you

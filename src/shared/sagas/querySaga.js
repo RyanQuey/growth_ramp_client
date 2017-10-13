@@ -14,7 +14,6 @@ const handleQuery = (rawQuery) => {
       const pair = variables[i].split('=')
       const key = decodeURIComponent(pair[0])
       const value = decodeURIComponent(pair[1])
-console.log(key, value);
 
       switch (key) {
         case "user":
@@ -34,7 +33,6 @@ console.log(key, value);
           }
 
           store.dispatch({type: SET_CURRENT_USER, payload: user})
-          store.dispatch({type: UPDATE_TOKEN_SUCCESS, payload: { [provider.name]: provider}})
           break;
 
         case "provider":
@@ -53,7 +51,6 @@ console.log(key, value);
             return
           }
 
-          store.dispatch({type: SET_CURRENT_USER, payload: user})
           store.dispatch({type: UPDATE_TOKEN_SUCCESS, payload: { [provider.name]: provider}})
           break;
 

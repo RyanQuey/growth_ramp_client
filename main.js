@@ -123,6 +123,16 @@ console.log("data",data);
 app.use('/api/*', function(req, res) {
   const method = req.method.toLowerCase();
   const body = req.body;
+  //for some reason axios is using 'content-type': 'application/json;charset=UTF-8'
+  //this might have something to do with it: https://github.com/axios/axios/issues/362
+  delete req.headers["content-type"]
+console.log(req.headers);
+console.log(body);
+  //only want to take these headers; for the rest, set them again automatically using request (though axios could probably do it too)
+  const headers = {
+    'x-user-token': req.headers['x-user-token'],
+    'x-id': req.headers['x-id'],
+  }
 
 //NOTE: the headers also contain the cookies...perhaps could use that
   const url = `${apiUrl}${req.originalUrl.replace('/api', "")}`
@@ -131,7 +141,7 @@ console.log(url);
   request[method]({
     //remove the 'api' in front, so we can take advantage of the default sails routes
     url: url,
-    headers: req.headers,
+    headers: headers,
     form: body
   })
   .on('error', function(err, response, responseBody) {
