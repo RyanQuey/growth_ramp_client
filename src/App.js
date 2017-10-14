@@ -16,10 +16,12 @@ class App extends Component {
     //extract the query string
     const query = this.props.location.search
     //right now, this is only returning user and provider
-    store.dispatch({type: HANDLE_QUERY, payload: query})
+    if (query) {
+      store.dispatch({type: HANDLE_QUERY, payload: query})
 
-    //turned this back on for when I can retrieve from the cookies
-    this.props.history.push(this.props.location.pathname)
+      //turned this back on for when I can retrieve from the cookies
+      this.props.history.push(this.props.location.pathname)
+    }
   }
 
   render() {

@@ -7,7 +7,7 @@ import {
   CREATE_PLAN_REQUEST,
   CHOOSE_PLAN,
 } from 'constants/actionTypes'
-import $ from 'jquery'; //TODO...
+import { Input } from 'shared/components/elements'
 
 class Start extends Component {
   constructor() {
@@ -26,14 +26,14 @@ class Start extends Component {
   }
 
   componentWillReceiveProps(props) {
-    if (props.plans !== this.props.plans) {
-      //this.setState({status: 'updated'})
+    if (props.currentPlan !== this.props.currentPlan) {
+      this.props.switchTo("Channels")
+      this.reset()
     }
   }
 
   handleChoosePlan(e) {
     let value = e.target.value
-    this.props.switchTo("Channels")
     this.props.choosePlan(this.props.plans[value])
   }
 
@@ -51,14 +51,16 @@ class Start extends Component {
   handlePlanCreate (e){
     e.preventDefault()
     this.setState({status: "PENDING"});
-    let userId = this.props.user.uid
+    let userId = this.props.user.id
     //will have to set the some other way, in case someone else makes one that's later than them or something, and firebase updates it
     this.props.planCreateRequest({userId, name: this.state.name})
-    this.props.switchTo("Channels")
   }
 
   reset (e){
-    e.preventDefault()
+    if (e.preventDefault) {
+      e.preventDefault()
+    }
+
     this.setState({
       mode: 'CHOOSE_PLAN',
     })
@@ -91,15 +93,16 @@ class Start extends Component {
       <div>
 Make a new plan!!
           <form>
-            <label>plan Name:</label>
-              <Input
-                value={this.state.name}
-                data-key="name"
-                onChange={this.handleChangeName}
-              />
+            <Input
+              value={this.state.name}
+              data-key="name"
+              onChange={this.handleChangeName}
+              placeholder="Plan name"
+            />
             <button type="submit" onClick={this.handlePlanCreate}>Submit</button>
           </form>
       </div>
+
     )} else if (["CHOOSE_PLAN", "CONFIGURE_PLAN"].includes(this.state.mode)) {form = (
       <div>
         <div>
@@ -120,7 +123,7 @@ Make a new plan!!
 
           {this.state.mode === "CONFIGURE_PLAN" ? (
             <div>
-              <FirebaseInput
+              <Input
                 value={this.props.currentPlan.name}
                 name="planName"
                 keys={`plans.${this.props.currentPlan.id}.name`}

@@ -11,7 +11,6 @@ import { withRouter } from 'react-router-dom'
 
 class Authenticated extends Component {
   componentDidMount () {
-console.log(this.props.user.password);
     if (this.props.user && !this.props.user.password) {
       this.props.history.push("/SetCredentials")
     } else if (this.props.location.pathname === "/SetCredentials") {
@@ -19,10 +18,9 @@ console.log(this.props.user.password);
     }
   }
   componentWillReceiveProps (props) {
-console.log(props.user.password);
     if (props.user && !props.user.password) {
-      this.props.history.push("/SetCredentials")
-    } else if (this.props.location.pathname === "/SetCredentials") {
+      this.props.history.push("/SetCredentials") //maybe want to just use props.history?
+    } else if (props.location.pathname === "/SetCredentials") {
       this.props.history.push("/")
     }
   }

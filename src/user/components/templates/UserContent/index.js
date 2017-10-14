@@ -6,13 +6,11 @@ import {
   Switch,
 } from 'react-router-dom'
 import { Alert, Flexbox } from 'shared/components/elements'
-import { Home, PromoTool, SetCredentials } from 'user/components/templates'
+import { Home, PromoTool, SetCredentials, Plans, Posts } from 'user/components/templates'
 import requireAuthenticated from 'lib/requireAuthenticated'
 import forbidAuthenticated from 'lib/forbidAuthenticated'
 import { connect } from 'react-redux'
 import classes from './style.scss'
-
-console.log(SetCredentials);
 
 class UserContent extends Component {
   render() {
@@ -27,10 +25,10 @@ class UserContent extends Component {
           })}
 
           <Switch>
-            <Route exact path="/" component={PromoTool} />
+            <Route exact path="/" component={Home} />
             <Route path="/newPost" component={PromoTool} />
-            <Route path="/plans" component={PromoTool} />
-            <Route path="/posts" component={PromoTool} />
+            <Route path="/plans" component={Plans} />
+            <Route path="/posts" component={Posts} />
             <Route path="/SetCredentials" component={SetCredentials} />
           </Switch>
         </Flexbox>

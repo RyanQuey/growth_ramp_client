@@ -7,6 +7,30 @@
   color: $white;
   background-color: $nav-bg; //unless it's overridden in the component
   @include rems(14);
+
+  //I'm doing this kind of weird...but you kind of have to, because of the way that classes are hashed
+  & > ul {
+    list-style: none;
+    display: flex;
+    justify-content: space-evenly;
+    width: 100%;
+
+    & > li {
+      margin: 0 20px;
+    }
+  }
+  &.justifyContentSpaceEvenly > ul {
+    justify-content: space-evenly;
+  }
+  &.justifyContentSpaceBetween > ul {
+    justify-content: space-between;
+  }
+  &.justifyContentCenter > ul {
+    justify-content: center;
+  }
+  &.navTabs > ul {
+  }
+
   input {
     margin: 0 5px;
   }

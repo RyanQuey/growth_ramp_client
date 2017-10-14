@@ -32,6 +32,7 @@ const handleQuery = (rawQuery) => {
             return
           }
 
+          setupSession(user)
           store.dispatch({type: SET_CURRENT_USER, payload: user})
           break;
 

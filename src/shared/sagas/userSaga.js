@@ -19,7 +19,7 @@ import { USER_FIELDS_TO_PERSIST, PROVIDER_IDS_MAP } from 'constants'
 import { setupSession } from 'lib/socket'
 
 function* createUserWithEmail(data) {
-  const password = Math.random().toString(36).slice(-8)
+  /*const password = Math.random().toString(36).slice(-8)
 
   const createUserResult = yield firebase.auth()
     .createUserWithEmailAndPassword(data.email, password)
@@ -30,17 +30,13 @@ function* createUserWithEmail(data) {
       return userData
     })
 
-  return createUserResult
+  return createUserResult*/
 }
 
 function* signInWithEmail(data) {
-  const signInResult = yield firebase.auth().signInWithEmailAndPassword(data.email, data.password)
+  /*const signInResult = yield firebase.auth().signInWithEmailAndPassword(data.email, data.password)
 
-  return signInResult
-}
-
-function* signInWithProvider(providerName) {
-  //request the provider information,
+  return signInResult*/
 }
 
 function* signIn(action) {
@@ -53,27 +49,17 @@ console.log(pld);
 
     let signInResult
     switch (signInType) {
-      case 'CREATE_USER':
+      case 'SIGN_UP':
         signInResult = yield createUserWithEmail(credentials)
         break
       case 'EMAIL':
         signInResult = yield signInWithEmail(credentials)
-        break
-      case 'NEW_EMAIL':
-        signInResult = yield createUserWithEmail(credentials)
-        break
-      case 'PROVIDER':
-        signInResult = yield signInWithProvider(provider)
         break
     }
 
 console.log(signInResult);
     if (signInResult) {
       console.log(signInResult, pld);
-      let userProviders = []
-      signInResult.providerData && signInResult.providerData.forEach((provider) => {
-        userProviders.push(provider.providerId)
-      })
 
     } else {
       //no user found
@@ -91,37 +77,31 @@ console.log(signInResult);
   }
 }
 
-function* setCookieAndSession (action) {
-  const user = action.payload
-  Cookie.set('sessionUser', user)
-
-  setupSession(user)
-}
-
 function* fetchUser(action, options = {}) {
   try {
     const userData = action.payload
-console.log(userData);
     const res = yield axios.get(`/api/users/${userData.id}`)
-    //const result = yield api.put(`/api/users/`, userData)
-console.log(res);
+    //const res = yield api.put(`/api/users/`, userData)
     const returnedUser = res.data
 
-    if (options.currentUser) {
-      //no reason to restart the socket; this event should only occur is already retrieving the user data from the cookie, which means that API token and headers already are set correctly.
-      //for a new login, use SET_CURRENT_USER
-      Cookie.set('sessionUser', returnedUser)
-      yield put({type: FETCH_CURRENT_USER_SUCCESS, payload: returnedUser})
-    } else {
+    yield put({type: FETCH_USER_SUCCESS, payload: returnedUser})
 
-      yield put({type: FETCH_USER_SUCCESS, payload: returnedUser})
-    }
   } catch (e) {
     yield Helpers.notifyOfAPIError(e)
   }
 }
 function* fetchCurrentUser(action) {
-  yield call(fetchUser, action, {currentUser: true})
+  try {
+    const userData = action.payload
+    //TODO: also fetch the plans
+    const res = yield axios.get(`/api/users/${userData.id}`)
+    //no reason to restart the socket; this event should only occur is already retrieving the user data from the cookie, which means that API token and headers already are set correctly.
+    Cookie.set('sessionUser', returnedUser)
+    yield put({type: FETCH_CURRENT_USER_SUCCESS, payload: returnedUser})
+
+  } catch (e) {
+    yield Helpers.notifyOfAPIError(e)
+  }
 }
 
 function* signUserOut() {
@@ -157,6 +137,5 @@ export default function* userSaga() {
   yield takeLatest(FETCH_CURRENT_USER_REQUEST, fetchCurrentUser)
   yield takeLatest(SIGN_IN_REQUEST, signIn)
   yield takeLatest(SIGN_OUT_REQUEST, signUserOut)
-  yield takeLatest(SET_CURRENT_USER, setCookieAndSession)
   yield takeLatest(UPDATE_USER_REQUEST, updateUser)
 }

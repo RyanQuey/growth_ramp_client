@@ -101,7 +101,6 @@ app.get(`${Helpers.callbackPath}/:provider`, (req, res, next) => {
       //next ...I think sends this along to the next route that matches, which will just render the app anyway(?)
       return next(err);
     }
-console.log(raw);
     const data = JSON.parse(raw)
 console.log("data",data);
     const user = JSON.stringify(data.user)
@@ -126,8 +125,6 @@ app.use('/api/*', function(req, res) {
   //for some reason axios is using 'content-type': 'application/json;charset=UTF-8'
   //this might have something to do with it: https://github.com/axios/axios/issues/362
   delete req.headers["content-type"]
-console.log(req.headers);
-console.log(body);
   //only want to take these headers; for the rest, set them again automatically using request (though axios could probably do it too)
   const headers = {
     'x-user-token': req.headers['x-user-token'],
@@ -136,7 +133,6 @@ console.log(body);
 
 //NOTE: the headers also contain the cookies...perhaps could use that
   const url = `${apiUrl}${req.originalUrl.replace('/api', "")}`
-console.log(url);
   //can eventually combine with tradeTokenForUser? piping makes it harder; you cannot pipe on just any function
   request[method]({
     //remove the 'api' in front, so we can take advantage of the default sails routes

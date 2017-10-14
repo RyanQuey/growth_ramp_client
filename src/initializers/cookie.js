@@ -34,7 +34,7 @@ export default () => {
   Cookie.host = Cookie.host.join(".")
   Cookie.host = Cookie.host.split(":")[0]
 
-  //anything else I want to say to the browser, besides cookies?
+  //anything else I want to save to the browser, besides cookies?
   if(Cookie.get('sessionUser')){
     let cu = Cookie.get('sessionUser');
     setupSession(cu)

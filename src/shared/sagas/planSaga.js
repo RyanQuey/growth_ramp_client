@@ -7,7 +7,6 @@ function* create(action) {
   try {
     const pld = action.payload
 
-    const planId = helpers.uniqueId()
     const newPlan = {
       posts: [],
       channels: [],
@@ -16,18 +15,15 @@ function* create(action) {
       name: pld.name || "",
       utmOptions: {},
       userId: pld.userId,
-      id: planId,
     }
-    //database.ref(`plans/${planId}`).set(newPlan);
+console.log(newPlan);
+    const res = yield axios.post("/api/plans", newPlan) //eventually switch to socket
+    const newRecord = res.data
+    const planId = newRecord.id
 
-    let relationEntry = {}
-    relationEntry[planId] = true;
-    //yield database.ref(`users/${pld.userId}/plans`).set(relationEntry)
-
-    pld.plan = {[planId]: newPlan}
     yield all([
-      put({ type: CREATE_PLAN_SUCCESS, payload: {[planId]: newPlan }}),
-      put({ type: CHOOSE_PLAN, payload: newPlan }),
+      put({ type: CREATE_PLAN_SUCCESS, payload: {[planId]: newRecord }}),
+      put({ type: CHOOSE_PLAN, payload: newRecord }),
     ])
 
   } catch (err) {
@@ -43,7 +39,7 @@ function* getPlans(userId){
   /*yield database.ref(`plans`).orderByChild('userId').equalTo(userId).once("value", (snapshot) => {
     plans = snapshot.val() || []
   }, (err) => {
-    helpers.handleError(`The plans read failed: ${err.code}`)
+    Helpers.handleError(`The plans read failed: ${err.code}`)
     plans = []
   })*/
 
