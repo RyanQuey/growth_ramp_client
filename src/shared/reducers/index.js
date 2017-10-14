@@ -6,7 +6,7 @@ import userReducer from './user'
 import postsReducer from './posts'
 import plansReducer from './plans'
 import currentPlanReducer from './currentPlan'
-import tokensReducer from './tokens'
+import providersReducer from './providers'
 import errorReducer from './errors'
 import alertReducer from './alerts'
 import viewSettingsReducer from './viewSettings'
@@ -19,7 +19,7 @@ const rootReducer = combineReducers({
   //the plan that the user is currently working on
   currentPlan: currentPlanReducer,
   //will probably get rid of this in the future?
-  tokenInfo: tokensReducer,
+  providers: providersReducer,
   errors: errorReducer,
   alerts: alertReducer,
   viewSettings: viewSettingsReducer,

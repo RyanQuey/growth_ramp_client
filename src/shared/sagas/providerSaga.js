@@ -1,6 +1,6 @@
 import { call, put, takeLatest, takeEvery, all, fork, join } from 'redux-saga/effects'
 //import CodeBird from 'codebird' using twit, and in the backend
-import { UPDATE_TOKEN_REQUEST, UPDATE_TOKEN_FAILURE, UPDATE_TOKEN_SUCCESS } from 'constants/actionTypes'
+import { UPDATE_PROVIDER_REQUEST, UPDATE_PROVIDER_FAILURE, UPDATE_PROVIDER_SUCCESS } from 'constants/actionTypes'
 import { USER_FIELDS_TO_PERSIST, PROVIDER_IDS_MAP  } from 'constants'
 //import FB from 'fb'; do this in the backend
 import crypto from 'crypto'
@@ -8,10 +8,10 @@ import crypto from 'crypto'
 //disabling environment variables in the front-end; so remove this  ||  when this gets moved to the backend. I will want to throw an error at that point
 const hmac = crypto.createHmac('sha256', process.env.REACT_APP_FACEBOOK_SECRET_KEY || "abc")
 
-const tokenInfo = {}
+const providerInfo = {}
 
-//called when there is no token in the store (e.g., initial store load), or expired token in the store
-function* getTokens(providerId, credential) {
+//called when there is no provider in the store (e.g., initial store load), or expired provider in the store
+function* getProviders(providerId, credential) {
 /*console.log(providerId, credential);
   let provider, providerToken
   let providerName = PROVIDER_IDS_MAP[providerId]
@@ -62,7 +62,7 @@ console.log(providerToken, providerName);
 
 function* updateData(action) {
   try {
-    // action.payload is an object: {providerIds: ['facebook.com',], credential: {token: '...'}}
+    // action.payload is an object: {providerIds: ['facebook.com',], credential: {provider: '...'}}
     // only gets a credential if this action was called from the signInSaga
     const pld = action.payload
 
@@ -70,7 +70,7 @@ function* updateData(action) {
     if (pld.providerIds) {
       let tasks = []
       for (let providerId of pld.providerIds) {
-        let task = yield fork(getTokens, providerId, pld.credential)
+        //let task = yield fork(getproviders, providerId, pld.credential)
         tasks.push(task)
       }
       // wait for all of the tasks to finish
@@ -78,15 +78,15 @@ function* updateData(action) {
     }
 
 
-    const tokens = Object.assign({}, tokenInfo)
+    const providers = Object.assign({}, providerInfo)
 
-    yield put({type: UPDATE_TOKEN_SUCCESS, payload: tokens})
+    yield put({type: UPDATE_PROVIDER_SUCCESS, payload: providers})
   } catch (err) {
-    console.log('token update failed', err)
-    yield put({type: UPDATE_TOKEN_FAILURE, payload: err.message})
+    console.log('provider update failed', err)
+    yield put({type: UPDATE_PROVIDER_FAILURE, payload: err.message})
   }
 }
 
-export default function* updateTokenSaga() {
-  yield takeLatest(UPDATE_TOKEN_REQUEST, updateData)
+export default function* updateProviderSaga() {
+  yield takeLatest(UPDATE_PROVIDER_REQUEST, updateData)
 }

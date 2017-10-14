@@ -1,15 +1,18 @@
 import { take } from 'redux-saga/effects'
 import {
-  SET_CURRENT_USER,
+  FETCH_CURRENT_USER_SUCCESS,
   UPDATE_TOKEN_SUCCESS,
   HANDLE_QUERY,
+  FETCH_PLAN_SUCCESS,
 } from 'constants/actionTypes'
+import { setupSession } from 'lib/socket'
 
 const handleQuery = (rawQuery) => {
   //pulls a global variable from the HTML file, what was dynamically rendered via the front end server
   //TODO: if I ever set other variables, change the way that these variables get passed around , so I don't have to parse more than once
   if (rawQuery) {
     const variables = rawQuery.replace(/^\?/, "").split('&')
+console.log(variables);
     for (let i = 0; i < variables.length; i++) {
       const pair = variables[i].split('=')
       const key = decodeURIComponent(pair[0])
@@ -17,10 +20,10 @@ const handleQuery = (rawQuery) => {
 
       switch (key) {
         case "user":
-          const user = JSON.parse(value)
+          const userData = JSON.parse(value)
 
           if (
-            !user || !(typeof user === "object") || Object.keys(user).length === 0
+            !userData || !(typeof userData === "object") || Object.keys(userData).length === 0
           ) {
             Helpers.notifyOfAPIError({
               title: "Error logging in using provider:",
@@ -32,8 +35,16 @@ const handleQuery = (rawQuery) => {
             return
           }
 
+          const user = userData.user ? userData.user : userData
+          const userPlans = userData.plans ? userData.plans : null
+
+          //setup the session
           setupSession(user)
-          store.dispatch({type: SET_CURRENT_USER, payload: user})
+          store.dispatch({type: FETCH_CURRENT_USER_SUCCESS, payload: user})
+          if (userPlans) {
+            store.dispatch({type: FETCH_PLAN_SUCCESS, payload: userPlans})
+          }
+
           break;
 
         case "provider":

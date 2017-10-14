@@ -6,6 +6,7 @@ export default {
     accent1: 'rgb(155, 155, 155)',
     accent2: 'rgb(250, 175, 0)',
     accent3: 'rgb(176, 69, 69)',
+    text: '#333', //haven't tested this yet
     black: 'rgb(77, 77, 77)',
     white: 'rgb(255, 255, 255)',
     lightGray: '#FAFAFA',
@@ -13,5 +14,6 @@ export default {
     github: 'rgb(0, 0, 0)',
     google: 'rgb(221, 75, 57)',
     twitter: 'rgb(85, 172, 238)',
+    linkedin: 'rgb(0, 119, 181)',
   }
 }

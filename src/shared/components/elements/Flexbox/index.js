@@ -6,13 +6,13 @@ import theme from 'theme'
 const Flexbox = ({ align, background, className, direction, justify, flexWrap, children, name, color }) => {
   const styles = StyleSheet.create({
     flex: {
-      backgroundColor: theme.color[background],
+      backgroundColor: theme.color[background] || background,
       display: 'flex',
       flexDirection: direction,
       justifyContent: justify,
       alignItems: align,
       flexWrap: flexWrap,
-      color: color,
+      color: theme.color[color] || color,
     },
   })
   return (

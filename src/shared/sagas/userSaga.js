@@ -5,6 +5,8 @@ import {
   FETCH_USER_SUCCESS,
   FETCH_CURRENT_USER_SUCCESS,
   FETCH_POST_REQUEST,
+  FETCH_PLAN_SUCCESS,
+  FETCH_PROVIDER_SUCCESS,
   UPDATE_TOKEN_REQUEST,
   SIGN_IN_POPUP_CLOSED,
   SIGN_IN_REQUEST,
@@ -90,14 +92,19 @@ function* fetchUser(action, options = {}) {
     yield Helpers.notifyOfAPIError(e)
   }
 }
+//should only be called on initial login, or retreating from cookies, etc.
 function* fetchCurrentUser(action) {
   try {
     const userData = action.payload
     //TODO: also fetch the plans
-    const res = yield axios.get(`/api/users/${userData.id}`)
-    //no reason to restart the socket; this event should only occur is already retrieving the user data from the cookie, which means that API token and headers already are set correctly.
-    Cookie.set('sessionUser', returnedUser)
-    yield put({type: FETCH_CURRENT_USER_SUCCESS, payload: returnedUser})
+    const res = yield axios.get(`/api/users/${userData.id}/initialUserData`)
+    const result = res.data
+    //no reason to restart the socket here; this event should only occur is already retrieving the user data from the cookie, which means that API token and headers already are set correctly.
+
+    Cookie.set('sessionUser', result.user)
+    yield put({type: FETCH_CURRENT_USER_SUCCESS, payload: result.user})
+    yield put({type: FETCH_PROVIDER_SUCCESS, payload: result.providers})
+    yield put({type: FETCH_PLAN_SUCCESS, payload: result.plans})
 
   } catch (e) {
     yield Helpers.notifyOfAPIError(e)

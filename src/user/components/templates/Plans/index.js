@@ -7,9 +7,7 @@ import {
   Compose,
   PromoToolFooter
 } from 'user/components/partials'
-import { Navbar } from 'shared/components/elements'
 import { CREATE_POST_REQUEST } from 'constants/actionTypes'
-import theme from 'theme'
 
 const sections = {
   Start,
@@ -39,34 +37,16 @@ class PromoTool extends Component {
     this.setState({
       currentSection: next,
     })
+    //TODO: want to use refs
+    //might be able to use bind and the contentIndex ?
+    //$(ref)[0].firstElementChild.click();
   }
 
   render() {
     const c = this;
-    const Tag = sections[this.state.currentSection]
-
+    let tabIndex = 0, contentIndex = 0
     return (
-      <div>
-        <Navbar className="nav justifyContentCenter navFill" background="white" color={theme.color.text}>
-          <ul role="tablist">
-            {Object.keys(sections).map((section) => (
-              <li key={section} ref={section}>
-                {section}
-              </li>
-            ))}
-          </ul>
-        </Navbar>
-
-        <div>
-          <Tag
-            switchTo={this.switchTo}
-          />
-        </div>
-        <PromoToolFooter
-          switchTo={this.switchTo}
-          currentSection={this.state.currentSection}
-        />
-      </div>
+      <div></div>
     );
   }
 }

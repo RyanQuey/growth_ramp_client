@@ -35,18 +35,14 @@ export default () => {
   Cookie.host = Cookie.host.split(":")[0]
 
   //anything else I want to save to the browser, besides cookies?
-  if(Cookie.get('sessionUser')){
-    let cu = Cookie.get('sessionUser');
+  let cu = Cookie.get('sessionUser');
+  if (cu.id) {
+    //TODO: check it user info is up-to-date with the backend. Also, if they have an expired API token, don't want them working for a while thinking their loggedin, then a make request to the API and find out otherwise
     setupSession(cu)
-
-    if (cu.id) {
-      //TODO: check it user info is up-to-date with the backend. Also, if they have an expired API token, don't want them working for a while thinking their loggedin, then a make request to the API and find out otherwise
-      store.dispatch({type: FETCH_CURRENT_USER_REQUEST, payload: {id: cu.id, apiToken: cu.apiToken}});
-
-    } else {
-      //is no user, create socket without user headers
-      createSocket()
-    }
+    store.dispatch({type: FETCH_CURRENT_USER_REQUEST, payload: {id: cu.id, apiToken: cu.apiToken}});
+  } else {
+    //is no user, create socket without user headers
+    setupSession()
   }
 
 }

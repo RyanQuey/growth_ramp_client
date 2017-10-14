@@ -18,9 +18,9 @@ class Authenticated extends Component {
     }
   }
   componentWillReceiveProps (props) {
-    if (props.user && !props.user.password) {
+    if (!props.user.password && props.location.pathname !== "/SetCredentials") {
       this.props.history.push("/SetCredentials") //maybe want to just use props.history?
-    } else if (props.location.pathname === "/SetCredentials") {
+    } else if (props.user.password && props.location.pathname === "/SetCredentials") {
       this.props.history.push("/")
     }
   }

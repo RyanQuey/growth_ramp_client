@@ -5,8 +5,31 @@ import socketClient from 'socket.io-client'
 import sailsClient from 'sails.io.js'
 
 export const setupSession = (user) => {
+  //check if already connected, or connecting
+  //if already connecting, check if the headers are different, and if so, either aboart the previous connection and start a new one, or just wait for the previous connection to finish connecting, then disconnect it, then start a new one.
+  //if already connected,  check if the headers are different, and if so, either disconnect the previous connection and start a new one
+  //TODO: figure out what to do if a request comes through, and socket isn't connected
+  //actually, the best might be to just never disconnect and reconnect the socket
+  //maybe just manually send the headers every time, potentially based on the cookie
+  //or maybe the cookie is already sent every time?
+  //that way there is no socket downtime
+  //if the cookies are removed, want to disconnect the access anyway
+  //
+  //(what I have below is not going to work)
+  /*if (window.api && window.api.socket) {
+    let previousSocket = window.api.socket
+    if (previousSocket.headers) {}
+    if (previousSocket.isConnecting) {}
+    window.api.socket.isConnected()
+    console.log("now disconnecting socket");
+    window.api.socket.disconnect()
+  }
+console.log(window.api);*/
+
   if (!user) {
-    createSocket()
+    //createSocket()
+    axios.defaults.headers["x-id"] = ``
+    axios.defaults.headers["x-user-token"] = ""
   } else {
     //for any HTTP requests made in the future
     axios.defaults.headers["x-id"] = `user-${user.id}`
@@ -17,12 +40,11 @@ export const setupSession = (user) => {
       "x-id": `user-${user.id}`,
       "x-user-token": user.apiToken
     }
-    if (window.api && window.api.socket && window.api.socket.isConnected()) {
-      window.api.socket.disconnect()
-    }
 
-    createSocket(headers)
+    //createSocket(headers)
   }
+
+  Cookie.set('sessionUser', user)
 }
 
 //only run this if it hasn't been ran before
@@ -35,6 +57,7 @@ const createSocket = (headers) => {
 
   io.sails.autoConnect = false
   io.sails.url = process.env.API_URL
+  io.sails.timeout = 10000 //make shorter
   io.sails.environment = process.env.NODE_ENV && process.env.NODE_ENV.toLowerCase()
   if (headers) {
     io.sails.headers = headers
@@ -75,4 +98,4 @@ const createSocket = (headers) => {
 /*io.socket.on(`LOGIN_WITH_${providerName.toUpperCase()}`, (data) => {
   console.log(data);
 })*/
-export default createSocket;
+export default window.api;
