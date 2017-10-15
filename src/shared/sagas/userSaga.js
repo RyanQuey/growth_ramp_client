@@ -102,8 +102,9 @@ function* fetchCurrentUser(action) {
     //no reason to restart the socket here; this event should only occur is already retrieving the user data from the cookie, which means that API token and headers already are set correctly.
 
     Cookie.set('sessionUser', result.user)
+console.log(result);
     yield put({type: FETCH_CURRENT_USER_SUCCESS, payload: result.user})
-    yield put({type: FETCH_PROVIDER_SUCCESS, payload: result.providers})
+    yield put({type: FETCH_PROVIDER_SUCCESS, payload: result.providerAccounts})
     yield put({type: FETCH_PLAN_SUCCESS, payload: result.plans})
 
   } catch (e) {

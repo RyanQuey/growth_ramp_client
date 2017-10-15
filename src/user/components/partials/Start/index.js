@@ -57,7 +57,7 @@ class Start extends Component {
   }
 
   reset (e){
-    if (e.preventDefault) {
+    if (e && e.preventDefault) {
       e.preventDefault()
     }
 

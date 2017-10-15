@@ -18,8 +18,9 @@ const rootReducer = combineReducers({
   plans: plansReducer,
   //the plan that the user is currently working on
   currentPlan: currentPlanReducer,
-  //will probably get rid of this in the future?
-  providers: providersReducer,
+  //all of the provider accounts that user is the owner of, or has permission to use
+  providerAccounts: providersReducer,
+  //of these three are UI stuff
   errors: errorReducer,
   alerts: alertReducer,
   viewSettings: viewSettingsReducer,
@@ -37,14 +38,3 @@ window.store = createStore(
 sagaMiddleware.run(rootSaga)
 
 export default window.store
-
-/* SCHEMA
- provider
- channelConfiguration:
- messages
- plans
- posts
- users
-
- */
-

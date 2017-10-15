@@ -6,6 +6,8 @@ import {
   CREATE_PLAN_REQUEST,
   CHOOSE_PLAN,
 } from 'constants/actionTypes'
+import { Navbar } from 'shared/components/elements'
+import theme from 'theme'
 
 class Channels extends Component {
   constructor() {
@@ -16,23 +18,20 @@ class Channels extends Component {
       mode: 'CHOOSE_PLAN', //other modes include: 'ADD_PLAN', 'CONFIGURE_PLAN',
     }
 
-    this.handleProviderCreate = this.handleProviderCreate.bind(this)
     this.handleChooseProvider = this.handleChooseProvider.bind(this)
-    this.reset = this.reset.bind(this)
     this.handleAddProvider = this.handleAddProvider.bind(this)
     this.handleChangeName = this.handleChangeName.bind(this)
   }
 
   componentWillReceiveProps(props) {
-    if (props.plans !== this.props.plans) {
+    if (props.providerAccounts !== this.props.providerAccounts) {
       //this.setState({status: 'updated'})
     }
   }
 
   handleChooseProvider(e) {
     let value = e.target.value
-    this.props.switchTo("Channels")
-    this.props.chooseProvider(this.props.plans[value])
+    this.setState({currentProvider: value})
   }
 
   handleAddProvider (e){
@@ -47,7 +46,7 @@ class Channels extends Component {
   }
 
   handleRemoveProvider(planId, e) {
-    e.preventDefault()
+    e.preventDefault && e.preventDefault()
     //not yet removing the plan ID from that users plan list...
     //Not sure if I'll ever use that users plan list though
     //will probably either use a different action, or rename this one to just update any resource/update any plan
@@ -62,28 +61,36 @@ class Channels extends Component {
       return null
     }
     const c = this;
-
+    const accounts = this.props.providerAccounts || []
 
     return (
       <div>
         <h1 className="display-3">Channels</h1>
         <Navbar className="nav justifyContentSpaceAround" background="white" color={theme.color.text}>
           <ul role="tablist">
-            {Object.keys(sections).map((section) => (
-              <li key={section} ref={section}>
-                {this.state.currentSection === section ? (
-                  <strong>{section}</strong>
+            {Object.keys(accounts).map((provider) => (
+              <li key={provider} ref={provider} onClick={this.handleChooseProvider}>
+                {this.state.currentProvider === provider ? (
+                  <strong>{provider}</strong>
                 ) : (
-                  <span>{section}</span>
+                  <span>{provider}</span>
                 )}
               </li>
             ))}
           </ul>
         </Navbar>
-        <div>
 
+        <div>
+          {accounts.length === 0 ? (
+            <h3>No social network accounts configured yet; add one more accounts before continuing</h3>
+          ) : (
+            <div>
+
+            </div>
+          )}
+
+          <button>Add a social network account</button>
         </div>
-        {this.state.mode !== "CHOOSE_PLAN" && <button onClick={this.reset}>Back</button>}
       </div>
     );
   }
@@ -93,7 +100,7 @@ const mapStateToProps = state => {
   return {
     user: state.user,
     currentPlan: state.currentPlan,
-    providers: state.providers,
+    providerAccounts: state.providerAccounts,
   }
 }
 const mapDispatchToProps = (dispatch) => {

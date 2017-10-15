@@ -1,6 +1,7 @@
 import { take } from 'redux-saga/effects'
 import {
   FETCH_CURRENT_USER_SUCCESS,
+  FETCH_CURRENT_USER_REQUEST,
   UPDATE_TOKEN_SUCCESS,
   HANDLE_QUERY,
   FETCH_PLAN_SUCCESS,
@@ -12,7 +13,6 @@ const handleQuery = (rawQuery) => {
   //TODO: if I ever set other variables, change the way that these variables get passed around , so I don't have to parse more than once
   if (rawQuery) {
     const variables = rawQuery.replace(/^\?/, "").split('&')
-console.log(variables);
     for (let i = 0; i < variables.length; i++) {
       const pair = variables[i].split('=')
       const key = decodeURIComponent(pair[0])
@@ -40,14 +40,11 @@ console.log(variables);
 
           //setup the session
           setupSession(user)
-          store.dispatch({type: FETCH_CURRENT_USER_SUCCESS, payload: user})
-          if (userPlans) {
-            store.dispatch({type: FETCH_PLAN_SUCCESS, payload: userPlans})
-          }
+          store.dispatch({type: FETCH_CURRENT_USER_REQUEST, payload: user})
 
           break;
 
-        case "provider":
+        /*case "providers:
           const provider = JSON.parse(value)
 
           if (
@@ -64,7 +61,7 @@ console.log(variables);
           }
 
           store.dispatch({type: UPDATE_TOKEN_SUCCESS, payload: { [provider.name]: provider}})
-          break;
+          break;*/
 
       }
     }
