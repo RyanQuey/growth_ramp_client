@@ -47,11 +47,15 @@ class PromoTool extends Component {
 
     return (
       <div>
-        <Navbar className="nav justifyContentCenter navFill" background="white" color={theme.color.text}>
+        <Navbar className="nav justifyContentSpaceBetween navFill" background="white" color={theme.color.text}>
           <ul role="tablist">
             {Object.keys(sections).map((section) => (
               <li key={section} ref={section}>
-                {section}
+                {this.state.currentSection === section ? (
+                  <strong>{section}</strong>
+                ) : (
+                  <span>{section}</span>
+                )}
               </li>
             ))}
           </ul>
@@ -74,7 +78,6 @@ class PromoTool extends Component {
 const mapStateToProps = state => {
   return {
     user: state.user,
-    posts: state.posts,
   }
 }
 const mapDispatchToProps = (dispatch) => {

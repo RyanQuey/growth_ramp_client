@@ -23,19 +23,19 @@ module.exports = {
 
   // extracts the relevant passport profile data from the profile auth data received on login/request, and matches it to the database columns
   extractPassportData: (accessToken, refreshToken, passportProfile) => {
-    passportProfile.name = passportProfile.provider.toUpperCase()
-    if (passportProfile.name === "TWITTER") {
+    passportProfile.provider = passportProfile.provider.toUpperCase()
+    if (passportProfile.provider === "TWITTER") {
       passportProfile.userName = passportProfile.user_name
     }
 
-    if (passportProfile.name === "FACEBOOK") {
+    if (passportProfile.provider === "FACEBOOK") {
       passportProfile.userName = passportProfile.displayName
     }
 
     passportProfile.providerUserId = passportProfile.id
 
     let userData = _.pickBy(passportProfile, (value, key) => {
-      return ["providerUserId", "userName", "email", "name"].includes(key)
+      return ["providerUserId", "userName", "email", "provider"].includes(key)
     })
 
     userData.accessToken = accessToken

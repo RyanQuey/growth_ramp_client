@@ -16,10 +16,10 @@ class Channels extends Component {
       mode: 'CHOOSE_PLAN', //other modes include: 'ADD_PLAN', 'CONFIGURE_PLAN',
     }
 
-    this.handlePlanCreate = this.handlePlanCreate.bind(this)
-    this.handleChoosePlan = this.handleChoosePlan.bind(this)
+    this.handleProviderCreate = this.handleProviderCreate.bind(this)
+    this.handleChooseProvider = this.handleChooseProvider.bind(this)
     this.reset = this.reset.bind(this)
-    this.handleAddPlan = this.handleAddPlan.bind(this)
+    this.handleAddProvider = this.handleAddProvider.bind(this)
     this.handleChangeName = this.handleChangeName.bind(this)
   }
 
@@ -29,13 +29,13 @@ class Channels extends Component {
     }
   }
 
-  handleChoosePlan(e) {
+  handleChooseProvider(e) {
     let value = e.target.value
     this.props.switchTo("Channels")
-    this.props.choosePlan(this.props.plans[value])
+    this.props.chooseProvider(this.props.plans[value])
   }
 
-  handleAddPlan (e){
+  handleAddProvider (e){
     e.preventDefault()
     this.setState({
       mode: 'ADD_PLAN'
@@ -46,23 +46,7 @@ class Channels extends Component {
     Helpers.handleParam.bind(this, e, "name")()
   }
 
-  handlePlanCreate (e){
-    e.preventDefault()
-    this.setState({status: "PENDING"});
-    let userId = this.props.user.uid
-    //will have to set the some other way, in case someone else makes one that's later than them or something, and firebase updates it
-    this.props.planCreateRequest({userId, name: this.state.name})
-    this.props.switchTo("Channels")
-  }
-
-  reset (e){
-    e.preventDefault()
-    this.setState({
-      mode: 'CHOOSE_PLAN',
-    })
-  }
-
-  handleRemovePlan(planId, e) {
+  handleRemoveProvider(planId, e) {
     e.preventDefault()
     //not yet removing the plan ID from that users plan list...
     //Not sure if I'll ever use that users plan list though
@@ -78,13 +62,27 @@ class Channels extends Component {
       return null
     }
     const c = this;
-    const userId = this.props.user.uid
-    const plans = this.props.plans
-    const keys = plans && Object.keys(plans)
+
 
     return (
       <div>
         <h1 className="display-3">Channels</h1>
+        <Navbar className="nav justifyContentSpaceAround" background="white" color={theme.color.text}>
+          <ul role="tablist">
+            {Object.keys(sections).map((section) => (
+              <li key={section} ref={section}>
+                {this.state.currentSection === section ? (
+                  <strong>{section}</strong>
+                ) : (
+                  <span>{section}</span>
+                )}
+              </li>
+            ))}
+          </ul>
+        </Navbar>
+        <div>
+
+        </div>
         {this.state.mode !== "CHOOSE_PLAN" && <button onClick={this.reset}>Back</button>}
       </div>
     );
@@ -94,15 +92,12 @@ class Channels extends Component {
 const mapStateToProps = state => {
   return {
     user: state.user,
-    posts: state.posts,
-    plans: state.plans,
     currentPlan: state.currentPlan,
-    tokenInfo: state.tokenInfo,
+    providers: state.providers,
   }
 }
 const mapDispatchToProps = (dispatch) => {
   return {
-    choosePlan: (payload) => dispatch({type: CHOOSE_PLAN, payload}),
   }
 }
 

@@ -70,7 +70,7 @@ class UserCredentials extends Component {
     const view = this.props.view
     //TODO: set the title using props into the modal container
     return (
-      <form>
+      <form onSubmit={this.submit}>
         {!this.props.passwordOnly && (
           <Input
             color="primary"
@@ -94,7 +94,6 @@ class UserCredentials extends Component {
         )}
 
         <Button
-          onClick={this.submit}
           disabled={(!this.state.validEmail || !this.state.password || this.props.pending)}
           type="submit"
 
