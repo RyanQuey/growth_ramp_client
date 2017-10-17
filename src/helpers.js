@@ -57,6 +57,7 @@ export default {
     return uuid()
   },
 
+  //might do away with...but might be helpful if have lots of fields to iterate over
   handleParam: function (e, key) {
     const objKey = key || e.target.dataset.key
     const obj = {};

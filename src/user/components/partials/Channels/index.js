@@ -10,12 +10,20 @@ import { Navbar } from 'shared/components/elements'
 import theme from 'theme'
 
 class Channels extends Component {
-  constructor() {
-    super()
+  constructor(props) {
+    super(props)
+
+    let currentProvider
+    if (props.providerAccounts && Object.keys(props.providerAccounts).length > 0) {
+      currentProvider = Object.keys(props.providerAccounts)[0]
+    } else {
+      currentProvider = null
+    }
 
     this.state = {
       status: 'READY', //other statuses include: 'PENDING'
       mode: 'CHOOSE_PLAN', //other modes include: 'ADD_PLAN', 'CONFIGURE_PLAN',
+      currentProvider,
     }
 
     this.handleChooseProvider = this.handleChooseProvider.bind(this)
@@ -24,9 +32,9 @@ class Channels extends Component {
   }
 
   componentWillReceiveProps(props) {
-    if (props.providerAccounts !== this.props.providerAccounts) {
-      //this.setState({status: 'updated'})
-    }
+    /*if (props.providerAccounts !== this.props.providerAccounts) {
+
+    }*/
   }
 
   handleChooseProvider(e) {
@@ -62,11 +70,11 @@ class Channels extends Component {
     }
     const c = this;
     const accounts = this.props.providerAccounts || []
-
+console.log(this.state);
     return (
       <div>
         <h1 className="display-3">Channels</h1>
-        <Navbar className="nav justifyContentSpaceAround" background="white" color={theme.color.text}>
+        <Navbar className="nav navTabs justifyContentSpaceAround" background="white" color={theme.color.text}>
           <ul role="tablist">
             {Object.keys(accounts).map((provider) => (
               <li key={provider} ref={provider} onClick={this.handleChooseProvider}>
@@ -85,7 +93,10 @@ class Channels extends Component {
             <h3>No social network accounts configured yet; add one more accounts before continuing</h3>
           ) : (
             <div>
+              {accounts[this.state.currentProvider].map((account) => {
+                <h3>{account.userName}</h3>
 
+              })}
             </div>
           )}
 
@@ -99,7 +110,8 @@ class Channels extends Component {
 const mapStateToProps = state => {
   return {
     user: state.user,
-    currentPlan: state.currentPlan,
+    currentPlan: state.currentPlan.plan,
+    editingPlan: state.currentPlan.editingPlan,
     providerAccounts: state.providerAccounts,
   }
 }

@@ -36,7 +36,7 @@ export default () => {
 
   //anything else I want to save to the browser, besides cookies?
   let cu = Cookie.get('sessionUser');
-  if (cu.id) {
+  if (cu && cu.id) {
     //TODO: check it user info is up-to-date with the backend. Also, if they have an expired API token, don't want them working for a while thinking their loggedin, then a make request to the API and find out otherwise
     setupSession(cu)
     store.dispatch({type: FETCH_CURRENT_USER_REQUEST, payload: {id: cu.id, apiToken: cu.apiToken}});
