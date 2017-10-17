@@ -5,10 +5,10 @@ import {
   CREATE_PLAN_SUCCESS,
   SET_INPUT_VALUE,
   CREATE_PLAN_REQUEST,
-  CHOOSE_PLAN,
 } from 'constants/actionTypes'
 import { Input } from 'shared/components/elements'
 import { PlanPicker } from 'user/components/partials'
+console.log(PlanPicker);
 
 class Start extends Component {
   constructor() {
@@ -68,8 +68,8 @@ console.log(option);
 
         break
       case "COPY_AN_EXISTING_PLAN":
-        const planAttributes = _.pick(this.props.currentPlan, ["channelConfigurations", userId])
-        this.createPlan({
+        const planAttributes = _.pick(this.props.currentPlan, ["channelConfigurations", "userId"])
+        this.setState({
           newPlanType: option,
           mode: "CHOOSE_NAME",
           planAttributes,
@@ -179,13 +179,13 @@ console.log(option);
               </div>
             )}
 
-            {
+            {(
               this.state.mode === "USE_EXISTING_PLAN" ||
-              this.state.newPlanType === "COPY_AN_EXISTING_PLAN" &&
+              this.state.newPlanType === "COPY_AN_EXISTING_PLAN") &&
             (
-              <div>
-                <PlanPicker />
-              </div>
+              <PlanPicker
+                onPick={this.props.switchTo.bind("CHANNELS")}
+              />
             )}
 
             {this.state.mode === "CREATE_NEW_PLAN" && (
