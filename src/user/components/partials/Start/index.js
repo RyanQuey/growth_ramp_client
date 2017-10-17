@@ -28,10 +28,9 @@ class Start extends Component {
 
   componentWillReceiveProps(props) {
     //now switching after choosing a plan option
-    /*if (props.currentPlan !== this.props.currentPlan) {
+    if (props.currentPlan !== this.props.currentPlan) {
       this.props.switchTo("Channels")
-      this.goBack()
-    }*/
+    }
   }
 
   handleClickPlan(e) {
@@ -131,8 +130,6 @@ console.log(option);
     const plans = this.props.plans
     const keys = plans && Object.keys(plans)
 
-    //Configure the form
-
     const namePicker = (
       <form>
         Choose a name for your plan
@@ -155,19 +152,18 @@ console.log(option);
       <div>
         <h1 className="display-3">Start</h1>
 
-        {Object.keys(plans).length === 0 ? (
+        {this.state.mode === "CHOOSE_MODE" && (
           <div>
-            <h4>You don't have any plans yet. Make a new one instead!</h4>
-            {namePicker}
-          </div>
-        ) : (
-          <div>
-            <h4>
-                Select one of your plans to either use, or create a new one.
-            </h4>
-
-            {this.state.mode === "CHOOSE_MODE" && (
+            {Object.keys(plans).length === 0 ? (
               <div>
+                <h4>You don't have any plans yet. Make a new one instead!</h4>
+                {namePicker}
+              </div>
+            ) : (
+              <div>
+                <h4>
+                  Select one of your plans to use or create a new one.
+                </h4>
                 {["USE_EXISTING_PLAN", "CREATE_NEW_PLAN"].map((option) => (
                   <button
                     key={option}
@@ -178,39 +174,54 @@ console.log(option);
                 ))}
               </div>
             )}
-
-            {(
-              this.state.mode === "USE_EXISTING_PLAN" ||
-              this.state.newPlanType === "COPY_AN_EXISTING_PLAN") &&
-            (
-              <PlanPicker
-                onPick={this.props.switchTo.bind("CHANNELS")}
-              />
-            )}
-
-            {this.state.mode === "CREATE_NEW_PLAN" && (
-              ["START_FROM_SCRATCH", "COPY_AN_EXISTING_PLAN"].map((option) => (
-                <button
-                  key={option}
-                  onClick={this.handleChoose.bind(this, option)}
-                >
-                  {option.replace(/_/g, " ").titleCase()}
-                </button>
-              ))
-            )}
-
-            {this.state.mode === "CHOOSE_NAME" && (
-              <div>
-                {namePicker}
-              </div>
-            )}
-            <div>
-              {this.state.mode !== "CHOOSE_MODE" && (
-                <button onClick={this.goBack}>Back</button>
-              )}
-            </div>
           </div>
         )}
+
+        {this.state.mode === "USE_EXISTING_PLAN" && (
+          <div>
+            <h4>
+              Pick a plan to use. You will have a chance to edit your plan before sending your post.
+            </h4>
+            <PlanPicker />
+          </div>
+        )}
+
+        {this.state.mode === "CREATE_NEW_PLAN" && (
+          <div>
+            <h4>
+              Choose how you want to create this plan
+            </h4>
+            ["START_FROM_SCRATCH", "COPY_AN_EXISTING_PLAN"].map((option) => (
+              <button
+                key={option}
+                onClick={this.handleChoose.bind(this, option)}
+              >
+                {option.replace(/_/g, " ").titleCase()}
+              </button>
+            ))
+          </div>
+        )}
+
+        {this.state.newPlanType === "COPY_AN_EXISTING_PLAN" && (
+          <div>
+            <h4>
+              Pick a plan to make a copy from. You will have a chance to edit your new plan before sending your post
+            </h4>
+            <PlanPicker />
+          </div>
+        )}
+
+        {this.state.mode === "CHOOSE_NAME" && (
+          <div>
+            {namePicker}
+          </div>
+        )}
+
+        <div>
+          {this.state.mode !== "CHOOSE_MODE" && (
+            <button onClick={this.goBack}>Back</button>
+          )}
+        </div>
       </div>
     );
   }

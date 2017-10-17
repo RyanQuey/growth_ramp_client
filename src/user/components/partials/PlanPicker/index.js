@@ -15,9 +15,8 @@ class PlanPicker extends Component {
     this.handleClickPlan = this.handleClickPlan.bind(this)
   }
 
-  handleClickPlan (value) {
-    this.props.choosePlan(this.props.plans[value])
-    this.props.onPick()
+  handleClickPlan (plan) {
+    this.props.choosePlan(plan)
   }
 
   render() {
@@ -25,14 +24,13 @@ console.log("now picking");
     const plans = this.props.plans
     //TODO: set the title using props into the modal container
     return (
-      <select onChange={this.handleClickPlan}>
-        <option value="">Select a plan</option>
-        {plans && Object.keys(plans).map((planId) => {
-          return (
-            <option key={planId} value={planId}>{plans[planId].name}</option>
-          )
-        })}
-      </select>
+      <div>
+        {plans && Object.keys(plans).map((planId) => (
+          <button key={planId} onClick={this.handleClickPlan.bind(this, plans[planId])}>
+            {plans[planId].name}
+          </button>
+        ))}
+      </div>
     )
   }
 }

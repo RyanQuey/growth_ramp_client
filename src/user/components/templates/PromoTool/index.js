@@ -44,10 +44,10 @@ class PromoTool extends Component {
   render() {
     const c = this;
     const Tag = sections[this.state.currentSection]
-
+console.log(Tag);
     return (
       <div>
-        <Navbar className="nav justifyContentSpaceBetween navFill" background="white" color={theme.color.text}>
+        <Navbar className="nav justifyContentSpaceBetweeo navFill" background="white" color={theme.color.text}>
           <ul role="tablist">
             {Object.keys(sections).map((section) => (
               <li key={section} ref={section}>
