@@ -16,7 +16,7 @@ class PlanPicker extends Component {
   }
 
   handleClickPlan (plan) {
-    this.props.choosePlan(plan)
+    this.props.onPick(plan)
   }
 
   render() {
@@ -35,15 +35,10 @@ console.log("now picking");
   }
 }
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    choosePlan: (payload) => dispatch({type: CHOOSE_PLAN, payload}),
-  }
-}
 const mapStateToProps = (state) => {
   return {
     plans: state.plans,
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(PlanPicker)
+export default connect(mapStateToProps)(PlanPicker)

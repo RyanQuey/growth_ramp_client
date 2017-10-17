@@ -18,7 +18,6 @@ const sections = {
   Send,
 }
 
-console.log(sections);
 class PromoTool extends Component {
   constructor() {
     super()
@@ -44,7 +43,6 @@ class PromoTool extends Component {
   render() {
     const c = this;
     const Tag = sections[this.state.currentSection]
-console.log(Tag);
     return (
       <div>
         <Navbar className="nav justifyContentSpaceBetweeo navFill" background="white" color={theme.color.text}>

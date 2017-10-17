@@ -1,41 +1,28 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import {
-  Start,
-  Send,
-  Channels,
-  Compose,
-  PromoToolFooter
+  PlanPicker
 } from 'user/components/partials'
 import { CREATE_POST_REQUEST } from 'constants/actionTypes'
 
-const sections = {
-  Start,
-  Channels,
-  Compose,
-  Send,
-}
-
-console.log(sections);
-class PromoTool extends Component {
+class Plans extends Component {
   constructor() {
     super()
     this.state = {
       //will need to use a store, if this is ever used in subcomponents of the subcomponents
-      currentSection: "Start",
+      currentPlan: {},
     }
 
-    this.switchTo = this.switchTo.bind(this)
+    this.handleChoosePlan = this.handleChoosePlan.bind(this)
   }
 
   componentDidMount() {
 
   }
 
-  switchTo(next) {
-    const ref = this.refs[next]
+  handleChoosePlan(plan) {
     this.setState({
-      currentSection: next,
+      plan,
     })
     //TODO: want to use refs
     //might be able to use bind and the contentIndex ?
@@ -45,8 +32,26 @@ class PromoTool extends Component {
   render() {
     const c = this;
     let tabIndex = 0, contentIndex = 0
+    const plans = this.props.plans
+
     return (
-      <div></div>
+      <div>
+        <h1>Plans</h1>
+
+        {Object.keys(plans).length > 0 ? (
+          <div>
+            <PlanPicker
+              onPick={this.handleChoosePlan}
+            />
+            {/* <PlanDetails plan={this.state.plan}/>*/}
+          </div>
+        ) : (
+          <div>
+            <h3>There are currently no plans associated with this account</h3>
+            <div>Either create a new one or ask for permission from an associate</div>
+          </div>
+        )}
+      </div>
     );
   }
 }
@@ -54,7 +59,7 @@ class PromoTool extends Component {
 const mapStateToProps = state => {
   return {
     user: state.user,
-    posts: state.posts,
+    plans: state.plans,
   }
 }
 const mapDispatchToProps = (dispatch) => {
@@ -63,6 +68,6 @@ const mapDispatchToProps = (dispatch) => {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(PromoTool)
+export default connect(mapStateToProps, mapDispatchToProps)(Plans)
 
 

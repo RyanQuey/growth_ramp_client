@@ -4,7 +4,7 @@ import {
   SIGN_OUT,
 } from 'constants/actionTypes'
 
-const providersReducer = (state = null, action) => {
+const providersReducer = (state = {}, action) => {
 
   switch (action.type) {
 

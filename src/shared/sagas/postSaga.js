@@ -79,22 +79,20 @@ console.log(tokenInfo);
 
 function* newPost(action) {
   try {
-    /*const pld = action.payload
+    const pld = action.payload
 
     let blankPost = {
       title: "",
       content: "",
       userId: pld.userId,
-      id: Math.rand(16)
+      planId: pld.planId,
     }
-    let postId = database.ref("posts").push(blankPost).key;
 
-    let relationEntry = {}
-    relationEntry[postId] = true;
-    yield database.ref(`users/${pld.userId}/posts`).set(relationEntry)
+    const res = yield axios.post("/api/posts", blankPost) //eventually switch to socket
+    const newRecord = res.data
+    const postId = newRecord.id
 
-    pld.post = {[postId]: blankPost} */
-    yield put({ type: CREATE_POST_SUCCESS, payload: {[postId]: blankPost }})
+    yield put({ type: CREATE_POST_SUCCESS, payload: {[postId]: record}})
 
   } catch (err) {
     console.log(`Error in Create post Saga ${err}`)
@@ -103,28 +101,20 @@ function* newPost(action) {
 
 // need to make sure that the current user and the userId are identical for security reasons
 // may try using state.user.uid instead, just pulling from the store directly
-function* getPosts(userId){
-  //Only want to retrieve this user's posts once...for now
-  //TODO: set up a listener, so that all data the matter which browser etc. will be lively updated (?), Even if multiple people are working on it
-  let posts
-  //TODO: eventually they filter out posts that have already been sent
-  yield database.ref(`posts`).orderByChild('userId').equalTo(userId).once("value", (snapshot) => {
-    posts = snapshot.val() || []
-  }, (err) => {
-    helpers.handleError(`The posts read failed: ${err.code}`)
-    posts = []
-  })
-
-  return posts
-}
-
+//Only want to retrieve this user's posts once...for now
+//TODO: set up a listener, so that all data the matter which browser etc. will be lively updated (?), Even if multiple people are working on it
 function* fetchData(action) {
   try {
     const pld = action.payload
-    const userId = pld.uid
+    const userId = pld.userId
 
-    const postsData = yield call(getPosts, userId)
-    const posts = Object.assign({}, postsData)
+    //TODO: eventually they filter out posts that have already been sent
+    const res = yield axios.get(`/api/users/${userId}/posts`) //eventually switch to socket
+console.log(res);
+    //converting into object
+    const posts = res.data.reduce((acc, post) => {
+      return acc[post.id] = post
+    }, {})
 
     yield all([
       put({type: FETCH_POST_SUCCESS, payload: posts})

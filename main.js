@@ -92,9 +92,9 @@ app.get(`${Helpers.callbackPath}/:provider`, (req, res, next) => {
   if (!["facebook", "twitter", "google"].includes(providerName)) {next()}
 
   const providerCallback = function(err, raw, info) {
-    console.log(req.user, req.account);
+    /*console.log(req.user, req.account);
     console.log("********************************************");
-    console.log("user and provider", raw, "info",info);
+    console.log("user and provider", raw, "info",info);*/
     if (err || !raw) {
       console.log("error after authenticating into provider:");
       console.log(err);
@@ -102,7 +102,6 @@ app.get(`${Helpers.callbackPath}/:provider`, (req, res, next) => {
       return next(err);
     }
     const data = JSON.parse(raw)
-console.log("data",data);
     const user = JSON.stringify(data.user)
     const provider = JSON.stringify(data.provider)
     //NOTE: don't try changing this are making more simple, unless you have lots of free time...is just a time drain

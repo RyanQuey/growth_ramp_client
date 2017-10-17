@@ -23,7 +23,7 @@ export default {
     passportProfile.providerUserId = passportProfile.id
 
     let userData = _.pickBy(passportProfile, (value, key) => {
-      return ["providerUserId", "userName", "email", "name"].includes(key)
+      return ["providerUserId", "userName", "email", "name", "profileUrl"].includes(key)
     })
 
     userData.accessToken = accessToken

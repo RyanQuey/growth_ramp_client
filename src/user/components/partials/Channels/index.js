@@ -7,6 +7,7 @@ import {
   CHOOSE_PLAN,
 } from 'constants/actionTypes'
 import { Navbar } from 'shared/components/elements'
+import { ProviderAccountsDetails } from 'user/components/partials'
 import theme from 'theme'
 
 class Channels extends Component {
@@ -22,12 +23,12 @@ class Channels extends Component {
 
     this.state = {
       status: 'READY', //other statuses include: 'PENDING'
-      mode: 'CHOOSE_PLAN', //other modes include: 'ADD_PLAN', 'CONFIGURE_PLAN',
+      mode: 'VIEW', //other modes include: 'EDIT'
       currentProvider,
     }
 
     this.handleChooseProvider = this.handleChooseProvider.bind(this)
-    this.handleAddProvider = this.handleAddProvider.bind(this)
+    this.handleAddProviderToPlan = this.handleAddProviderToPlan.bind(this)
     this.handleChangeName = this.handleChangeName.bind(this)
   }
 
@@ -37,16 +38,18 @@ class Channels extends Component {
     }*/
   }
 
-  handleChooseProvider(e) {
-    let value = e.target.value
-    this.setState({currentProvider: value})
+  handleChooseProvider(provider) {
+    this.setState({currentProvider: provider})
   }
 
-  handleAddProvider (e){
-    e.preventDefault()
+  handleAddProviderToPlan (){
     this.setState({
-      mode: 'ADD_PLAN'
+      currentProvider: 'ADD_AN_ACCOUNT'
     })
+  }
+
+  handleChangeMode (mode) {
+    this.setState({mode})
   }
 
   handleChangeName (e, errors) {
@@ -69,15 +72,30 @@ class Channels extends Component {
       return null
     }
     const c = this;
-    const accounts = this.props.providerAccounts || []
-console.log(this.state);
+    const providerAccounts = this.props.providerAccounts || {}
+    //TODO: make a separate reducer that response to some of the actions that providerAccounts does, but only to users providers?
+    //avoids having to run this on every render, when it doesn't really change that often
+    let userProviders = []
+    Object.keys(providerAccounts).map((provider) => {
+      if (!userProviders.includes(provider)) {
+        userProviders.push(provider)
+      }
+    })
+
+    let planProviders = Object.keys(this.props.currentPlan.channelConfigurations || {})
+    let userProvidersNotOnPlan = userProviders.filter((userProvider) => {
+      return !planProviders.includes(userProvider)
+    })
+
+
+console.log(this.state.currentProvider);
     return (
       <div>
         <h1 className="display-3">Channels</h1>
-        <Navbar className="nav navTabs justifyContentSpaceAround" background="white" color={theme.color.text}>
+        <Navbar className="nav navTabs justifyContentCenter" background="white" color={theme.color.text}>
           <ul role="tablist">
-            {Object.keys(accounts).map((provider) => (
-              <li key={provider} ref={provider} onClick={this.handleChooseProvider}>
+            {planProviders.map((provider) => (
+              <li key={provider} onClick={this.handleChooseProvider}>
                 {this.state.currentProvider === provider ? (
                   <strong>{provider}</strong>
                 ) : (
@@ -85,22 +103,37 @@ console.log(this.state);
                 )}
               </li>
             ))}
+            <li onClick={this.handleAddProviderToPlan}>
+              <span>+</span>
+            </li>
           </ul>
         </Navbar>
 
         <div>
-          {accounts.length === 0 ? (
+          {providerAccounts.length === 0 ? (
             <h3>No social network accounts configured yet; add one more accounts before continuing</h3>
           ) : (
             <div>
-              {accounts[this.state.currentProvider].map((account) => {
-                <h3>{account.userName}</h3>
-
-              })}
             </div>
           )}
 
-          <button>Add a social network account</button>
+          {this.state.currentProvider === "ADD_AN_ACCOUNT" && (
+            <div>
+              <h3>Add one of your accounts</h3>
+              {userProvidersNotOnPlan? (
+                userProvidersNotOnPlan.map((provider) => {
+                  return <button key={provider} type="button" className="btn-outline-primary btn-lg" onClick={this.handleAddProviderToPlan.bind(this, provider)}>{provider}</button>
+                })
+              ) : (
+                <h3>You have no other social media accounts linked with GrowthRamp. Let's add some more to get started!</h3>
+              )}
+              <div>
+                <h3>Or link and you account to GrowthRamp</h3>
+                <SocialLogin />
+              </div>
+            </div>
+
+          )}
         </div>
       </div>
     );
@@ -110,8 +143,7 @@ console.log(this.state);
 const mapStateToProps = state => {
   return {
     user: state.user,
-    currentPlan: state.currentPlan.plan,
-    editingPlan: state.currentPlan.editingPlan,
+    currentPlan: state.currentPlan,
     providerAccounts: state.providerAccounts,
   }
 }

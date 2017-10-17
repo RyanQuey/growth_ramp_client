@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { Avatar, Button, MenuItem } from 'shared/components/elements'
-import { SIGN_OUT } from 'constants/actionTypes'
+import { SIGN_OUT_REQUEST } from 'constants/actionTypes'
 import theme from 'theme'
 import avatar from 'images/avatar.png'
 import classes from './style.scss'
@@ -33,7 +33,7 @@ class UserHeader extends Component {
     this.setState({ open: !this.state.open })
   }
   render() {
-    const { user } = this.props
+    const { user, signOut } = this.props
 
     return (
       <div className={classes.menuCtn} ref="wrapperRef">
@@ -49,7 +49,7 @@ class UserHeader extends Component {
           <ul className={`${classes.menuDropdown}}`}>
             <MenuItem link="/profile">Profile</MenuItem>
             <MenuItem link="/">
-              <div onClick={() => userActions.signOut()}>Sign Out</div>
+              <div onClick={signOut}>Sign Out</div>
             </MenuItem>
           </ul>
         ) : (
@@ -64,9 +64,15 @@ UserHeader.propTypes = {
   user: PropTypes.object,
 }
 
+const mapDispatchToProps = (dispatch) => {
+  return {
+    signOut: () => {dispatch({type: SIGN_OUT_REQUEST})}
+  }
+}
+
 const mapStateToProps = (state) => {
   return { user: state.user }
 }
 
-export default connect(mapStateToProps)(UserHeader)
+export default connect(mapStateToProps, mapDispatchToProps)(UserHeader)
 

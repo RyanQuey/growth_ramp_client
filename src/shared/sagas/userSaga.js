@@ -11,7 +11,7 @@ import {
   SIGN_IN_POPUP_CLOSED,
   SIGN_IN_REQUEST,
   SIGN_OUT_REQUEST,
-  SIGN_OUT,
+  SIGN_OUT_SUCCESS,
   SET_CURRENT_USER,
   UPDATE_USER_REQUEST,
   UPDATE_USER_SUCCESS,
@@ -117,7 +117,10 @@ function* signUserOut() {
     //actually call the signout
     //yield firebase.auth().signOut()
     //handle the successful signout
-    yield put({type: SIGN_OUT, payload: true})
+
+    Cookie.remove('sessionUser')
+    yield put({type: SIGN_OUT_SUCCESS, payload: true})
+    yield axios.get(`/api/users/signOut`)
 
   } catch (e) {
     console.log('There was an error in the signUserOut:', e.message)

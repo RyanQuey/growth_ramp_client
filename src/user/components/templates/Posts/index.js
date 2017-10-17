@@ -1,41 +1,34 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import {
-  Start,
-  Send,
-  Channels,
-  Compose,
-  PromoToolFooter
-} from 'user/components/partials'
+  PromoTool
+} from 'user/components/templates'
 import { CREATE_POST_REQUEST } from 'constants/actionTypes'
+import ViewPosts from './view'
+import {
+  withRouter,
+  Route,
+  Switch,
+} from 'react-router-dom'
 
-const sections = {
-  Start,
-  Channels,
-  Compose,
-  Send,
-}
-
-console.log(sections);
-class PromoTool extends Component {
+class Posts extends Component {
   constructor() {
     super()
     this.state = {
       //will need to use a store, if this is ever used in subcomponents of the subcomponents
-      currentSection: "Start",
+      currentPost: {},
     }
 
-    this.switchTo = this.switchTo.bind(this)
+    this.handleChoosePost = this.handleChoosePost.bind(this)
   }
 
   componentDidMount() {
 
   }
 
-  switchTo(next) {
-    const ref = this.refs[next]
+  handleChoosePost(post) {
     this.setState({
-      currentSection: next,
+      post,
     })
     //TODO: want to use refs
     //might be able to use bind and the contentIndex ?
@@ -43,58 +36,15 @@ class PromoTool extends Component {
   }
 
   render() {
-    const c = this;
-    let tabIndex = 0, contentIndex = 0
+    const posts = this.props.posts
+
     return (
-      <div id="content-container">
-
-        <ul id="content-tabs" className="nav nav-tabs justify-content-center nav-fill" role="tablist">
-          {Object.keys(sections).map((section) => {
-            tabIndex += 1
-            return (
-              <li key={section} className="nav-item" ref={section}>
-
-                <a
-                  className={`nav-link ${tabIndex > 1 ? "" : "active"}`}
-                  href={`#${section}`}
-                  data-toggle="tab"
-                  role="tab"
-                >{section}</a>
-              </li>
-            )
-          })}
-        </ul>
-
-        <div className="tab-conten">
-          {this.props.user ? (
-            Object.keys(sections).map((section) => {
-              contentIndex += 1
-              const Tag = sections[section]
-              return (
-                <div key={section}>
-                  {false && <div
-                    id={section}
-                    key={section}
-                    className={`tab-pane ${contentIndex > 1 ? "" : "show active"}`}
-                    role="tabpanel"
-                    aria-labelledby={`${section}-tab`}
-                  >this was when I was using Jquery to move the tabs round</div>}
-                  <Tag
-                    switchTo={this.switchTo}
-                    hide={section !== this.state.currentSection}
-                  />
-                </div>
-              )
-            })
-          ) : (
-            <div> Please login </div>
-          )}
-
-        </div>
-        <PromoToolFooter
-          switchTo={this.switchTo}
-          currentSection={this.state.currentSection}
-        />
+      <div>
+        <Switch>
+          <Route exact path="/posts" component={ViewPosts} />
+          <Route path="/posts/new" component={PromoTool} />
+          <Route path="/posts/edit" component={PromoTool} />
+        </Switch>
       </div>
     );
   }
@@ -112,6 +62,6 @@ const mapDispatchToProps = (dispatch) => {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(PromoTool)
+export default connect(mapStateToProps, mapDispatchToProps)(Posts)
 
 

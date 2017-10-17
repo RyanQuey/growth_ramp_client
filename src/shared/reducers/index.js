@@ -6,7 +6,7 @@ import userReducer from './user'
 import postsReducer from './posts'
 import plansReducer from './plans'
 import currentPlanReducer from './currentPlan'
-import providersReducer from './providers'
+import providerAccountsReducer from './providerAccounts'
 import errorReducer from './errors'
 import alertReducer from './alerts'
 import viewSettingsReducer from './viewSettings'
@@ -19,7 +19,7 @@ const rootReducer = combineReducers({
   //the plan that the user is currently working on
   currentPlan: currentPlanReducer,
   //all of the provider accounts that user is the owner of, or has permission to use
-  providerAccounts: providersReducer,
+  providerAccounts: providerAccountsReducer,
   //of these three are UI stuff
   errors: errorReducer,
   alerts: alertReducer,

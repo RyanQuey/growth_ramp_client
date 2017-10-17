@@ -22,14 +22,19 @@ class Sidebar extends Component {
 
         <div className={classes.nav}>
           <ul className={classes.sidebarNav}>
-            <MenuItem link="/newPost" nav={true}>
-              New Post
+            <MenuItem link="/posts" nav={true}>
+              My Posts
             </MenuItem>
             <MenuItem link="/plans" nav={true}>
-              Plans
+              My Plans
             </MenuItem>
-            <MenuItem link="/posts" nav={true}>
-              Previous Posts
+            <MenuItem link="/providerAccounts" nav={true}>
+              My Accounts
+            </MenuItem>
+
+            <hr />
+            <MenuItem link="/posts/new" >
+              New Post
             </MenuItem>
           </ul>
         </div>

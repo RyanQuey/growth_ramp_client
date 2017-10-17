@@ -2,13 +2,12 @@ import { Component } from 'react';
 import { connect } from 'react-redux'
 import { take } from 'redux-saga/effects'
 import {
-  CREATE_PLAN_SUCCESS,
-  SET_INPUT_VALUE,
   CREATE_PLAN_REQUEST,
+  CREATE_POST_REQUEST,
+  CHOOSE_PLAN,
 } from 'constants/actionTypes'
 import { Input } from 'shared/components/elements'
 import { PlanPicker } from 'user/components/partials'
-console.log(PlanPicker);
 
 class Start extends Component {
   constructor() {
@@ -28,7 +27,15 @@ class Start extends Component {
 
   componentWillReceiveProps(props) {
     //now switching after choosing a plan option
+    //these should run one right after the other
     if (props.currentPlan !== this.props.currentPlan) {
+      const newPost = {
+        planId: props.currentPlan.id,
+        userId: props.currentPlan.userId,
+      }
+      this.props.createPostRequest(newPost)
+
+    } else if (props.currentPost !== this.props.currentPost) {
       this.props.switchTo("Channels")
     }
   }
@@ -141,6 +148,7 @@ console.log(option);
         />
         <button
           onClick={this.createPlan}
+          disabled={!this.state.name && "disabled"}
           type="submit"
         >
           Create Plan
@@ -182,7 +190,9 @@ console.log(option);
             <h4>
               Pick a plan to use. You will have a chance to edit your plan before sending your post.
             </h4>
-            <PlanPicker />
+            <PlanPicker
+              onPick={this.props.choosePlan}
+            />
           </div>
         )}
 
@@ -191,14 +201,14 @@ console.log(option);
             <h4>
               Choose how you want to create this plan
             </h4>
-            ["START_FROM_SCRATCH", "COPY_AN_EXISTING_PLAN"].map((option) => (
+            {["START_FROM_SCRATCH", "COPY_AN_EXISTING_PLAN"].map((option) => (
               <button
                 key={option}
                 onClick={this.handleChoose.bind(this, option)}
               >
                 {option.replace(/_/g, " ").titleCase()}
               </button>
-            ))
+            ))}
           </div>
         )}
 
@@ -207,7 +217,9 @@ console.log(option);
             <h4>
               Pick a plan to make a copy from. You will have a chance to edit your new plan before sending your post
             </h4>
-            <PlanPicker />
+            <PlanPicker
+              onPick={this.props.choosePlan}
+            />
           </div>
         )}
 
@@ -240,6 +252,7 @@ const mapDispatchToProps = (dispatch) => {
   return {
     setInputValue: (payload) => dispatch({type: SET_INPUT_VALUE, payload}),
     createPlanRequest: (payload) => dispatch({type: CREATE_PLAN_REQUEST, payload}),
+    createPostRequest: (payload) => dispatch({type: CREATE_POST_REQUEST, payload}),
     choosePlan: (payload) => dispatch({type: CHOOSE_PLAN, payload}),
   }
 }

@@ -5,7 +5,7 @@ import { PROVIDERS, PROVIDER_IDS_MAP } from 'constants'
 
 //shows up as buttons in mobile, or sidebar in browser?
 //used in channels and send
-class ProviderChooser extends Component {
+class ProviderAccountsDetails extends Component {
   constructor() {
     super()
 
@@ -40,18 +40,14 @@ class ProviderChooser extends Component {
       return null
     }
 
-    const providers = this.props.currentPlan && this.props.currentPlan.providers
-
+    const providers = this.props.providers
+    const accounts = this.props.providerAccounts || {}
     return (
       <div>
-        {providers ? (
-          providers.map((provider) => {
-            return <button type="button" className="btn-outline-primary btn-lg" onClick={this.chooseProvider.bind(this, provider)}>{provider}</button>
-          })
-        ) : (
-          <h3>You have no providers yet, add some providers to this plan to get started</h3>
-        )}
-        <button type="button" className="btn-outline-primary btn-sm" onClick={this.clickAddProvider}>Add a provider</button>
+        <h3>Select a provider in the sidebar to see your accounts</h3>
+        <p>, at least for now, choose and add providers in the sidebar, you have a clear distinction from when adding accounts to a plan</p>
+        {false && <button type="button" className="btn-outline-primary btn-sm" onClick={this.clickAddProvider}>Add a provider</button>}
+
         {this.state.mode === 'ADD_PROVIDER' && (
           <div> <h3>Select a platform to add</h3>
             {Object.keys(PROVIDERS).map((provider) => {
@@ -61,6 +57,12 @@ class ProviderChooser extends Component {
             })}
           </div>
         )}
+
+
+              {accounts[this.state.currentProvider].map((account) => {
+                <h3>{account.userName}</h3>
+
+              })}
       </div>
     );
   }
@@ -79,6 +81,5 @@ const mapDispatchToProps = (dispatch) => {
   }
 }
 
-const ConnectedProviderChooser = connect(mapStateToProps, mapDispatchToProps)(ProviderChooser)
-export default ConnectedProviderChooser
-
+const ConnectedProviderAccountsDetails = connect(mapStateToProps, mapDispatchToProps)(ProviderAccountsDetails)
+export default ConnectedProviderAccountsDetails

@@ -6,7 +6,7 @@ import {
   Switch,
 } from 'react-router-dom'
 import { Alert, Flexbox } from 'shared/components/elements'
-import { Home, PromoTool, SetCredentials, Plans, Posts } from 'user/components/templates'
+import { Home, SetCredentials, Plans, Posts, ProviderAccounts } from 'user/components/templates'
 import requireAuthenticated from 'lib/requireAuthenticated'
 import forbidAuthenticated from 'lib/forbidAuthenticated'
 import { connect } from 'react-redux'
@@ -26,9 +26,9 @@ class UserContent extends Component {
 
           <Switch>
             <Route exact path="/" component={Home} />
-            <Route path="/newPost" component={PromoTool} />
-            <Route path="/plans" component={Plans} />
             <Route path="/posts" component={Posts} />
+            <Route path="/plans" component={Plans} />
+            <Route path="/providerAccounts" component={ProviderAccounts} />
             <Route path="/SetCredentials" component={SetCredentials} />
           </Switch>
         </Flexbox>
