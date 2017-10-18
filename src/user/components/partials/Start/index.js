@@ -25,17 +25,24 @@ class Start extends Component {
     this.goBack = this.goBack.bind(this)
   }
 
+  componentDidMount() {
+    if (this.props.currentPost) {
+      this.props.switchTo("Channels")
+    }
+
+  }
+
   componentWillReceiveProps(props) {
     //now switching after choosing a plan option
     //these should run one right after the other
-    if (props.currentPlan !== this.props.currentPlan) {
+    if (props.currentPlan && (props.currentPlan !== this.props.currentPlan)) {
       const newPost = {
         planId: props.currentPlan.id,
         userId: props.currentPlan.userId,
       }
       this.props.createPostRequest(newPost)
 
-    } else if (props.currentPost !== this.props.currentPost) {
+    } else if (props.currentPost) {
       this.props.switchTo("Channels")
     }
   }
@@ -245,7 +252,7 @@ const mapStateToProps = state => {
     posts: state.posts,
     plans: state.plans,
     currentPlan: state.currentPlan,
-    tokenInfo: state.tokenInfo,
+    currentPost: state.currentPost,
   }
 }
 const mapDispatchToProps = (dispatch) => {

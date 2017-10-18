@@ -19,20 +19,13 @@ class Posts extends Component {
       currentPost: {},
     }
 
-    this.handleChoosePost = this.handleChoosePost.bind(this)
   }
 
   componentDidMount() {
+    if (this.props.location.pathname === "/posts/edit" && !this.props.currentPost) {
+      this.props.history.push("/posts")
 
-  }
-
-  handleChoosePost(post) {
-    this.setState({
-      post,
-    })
-    //TODO: want to use refs
-    //might be able to use bind and the contentIndex ?
-    //$(ref)[0].firstElementChild.click();
+    }
   }
 
   render() {
@@ -54,6 +47,7 @@ const mapStateToProps = state => {
   return {
     user: state.user,
     posts: state.posts,
+    currentPost: state.currentPost,
   }
 }
 const mapDispatchToProps = (dispatch) => {

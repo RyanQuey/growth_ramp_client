@@ -51,7 +51,7 @@ function* checkForToken(providerName, index, logins) {
   return {tokenInfo, logins}
 }
 
-function* publish(action) {
+function* publishPost(action) {
   let logins = 0
   try {
     const pld = action.payload
@@ -77,13 +77,14 @@ console.log(tokenInfo);
   }
 }
 
-function* newPost(action) {
+function* createPost(action) {
   try {
     const pld = action.payload
 
     let blankPost = {
       title: "",
       content: "",
+      status: "DRAFT",
       userId: pld.userId,
       planId: pld.planId,
     }
@@ -92,7 +93,7 @@ function* newPost(action) {
     const newRecord = res.data
     const postId = newRecord.id
 
-    yield put({ type: CREATE_POST_SUCCESS, payload: {[postId]: record}})
+    yield put({ type: CREATE_POST_SUCCESS, payload: {[postId]: newRecord}})
 
   } catch (err) {
     console.log(`Error in Create post Saga ${err}`)
@@ -103,19 +104,19 @@ function* newPost(action) {
 // may try using state.user.uid instead, just pulling from the store directly
 //Only want to retrieve this user's posts once...for now
 //TODO: set up a listener, so that all data the matter which browser etc. will be lively updated (?), Even if multiple people are working on it
-function* fetchData(action) {
+function* fetchPost(action) {
   try {
     const pld = action.payload
     const userId = pld.userId
 
     //TODO: eventually they filter out posts that have already been sent
     const res = yield axios.get(`/api/users/${userId}/posts`) //eventually switch to socket
-console.log(res);
+
     //converting into object
     const posts = res.data.reduce((acc, post) => {
-      return acc[post.id] = post
+      acc[post.id] = post
+      return acc
     }, {})
-
     yield all([
       put({type: FETCH_POST_SUCCESS, payload: posts})
     ])
@@ -127,9 +128,9 @@ console.log(res);
 }
 
 export default function* postSaga() {
-  yield takeLatest(FETCH_POST_REQUEST, fetchData)
-  yield takeLatest(PUBLISH_POST_REQUEST, publish)
-  yield takeLatest(CREATE_POST_REQUEST, newPost)
+  yield takeLatest(FETCH_POST_REQUEST, fetchPost)
+  yield takeLatest(PUBLISH_POST_REQUEST, publishPost)
+  yield takeLatest(CREATE_POST_REQUEST, createPost)
 }
 
 

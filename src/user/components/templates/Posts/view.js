@@ -42,10 +42,7 @@ class viewPosts extends Component {
         <h1>Posts</h1>
         {Object.keys(this.props.posts).length > 0 ? (
           <div>
-            <PostPicker
-              onPick={this.handleChoosePost}
-            />
-            {/* <PostDetails post={this.state.post}/>*/}
+            <PostPicker />
           </div>
         ) : (
           <div>
