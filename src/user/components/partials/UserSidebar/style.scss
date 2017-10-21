@@ -1,0 +1,34 @@
+@import 'theme/_helpers';
+
+.sidebar {
+  min-height: 100vh;
+  min-width: 250px;
+  width: 250px;
+  box-sizing: border-box;
+  background: $sidebar;
+  color: $white;
+  padding: 40px 20px;
+}
+
+.sidebarNav {
+  list-style: none;
+  margin: 0 -20px;
+  padding: 0;
+  background: $nav-bg;
+
+  .badge {
+    display: block;
+    background: $primary;
+    color: $white;
+    float: right;
+    min-width: 10px;
+    padding: 3px 10px;
+    border-radius: 5px;
+    margin-top: -3px;
+    font-weight: bold;
+  }
+  a {
+    border: 1px solid $nav-border;
+  }
+}
+
