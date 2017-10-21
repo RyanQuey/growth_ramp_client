@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import {
-  ProviderAccountPicker
+  ProviderAccountDetails
 } from 'user/components/partials'
 import { SET_CURRENT_MODAL } from 'constants/actionTypes'
 
@@ -70,7 +70,7 @@ console.log(providers);
       return (
         <div>
           <h1>{currentProvider}</h1>
-          <ProviderAccountDetails providerAccount={this.state.providerAccount}/>
+          <ProviderAccountDetails currentProvider={currentProvider}/>
           <p>here are some cool details about your {currentProvider} account</p>
         </div>
       )

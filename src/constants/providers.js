@@ -72,7 +72,7 @@ module.exports = {
       providerId: 'TWITTER',
       channels: {
         PERSONAL_POST: [],//tweet. distinct from business post?
-        //PRIVATE_MESSAGE: [probably friends, ],
+        PRIVATE_MESSAGE: [],//probably friends, ],
       }
     },
   },

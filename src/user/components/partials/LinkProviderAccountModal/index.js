@@ -56,10 +56,10 @@ class LinkProviderAccount extends Component {
     const permittedScopes = Object.keys(scopes).filter((scope) => {
       return scope.status === 'granted'
     })
-console.log(permittedScopes);
+
     const permittedChannels = Object.keys(PROVIDERS[provider].channels).filter((channel) => {
-      let channelScopes = PROVIDERS[provider].channels[channel]
-      return channelScopes.every((scope) => (permittedScopes.includes(scope)))
+      const channelScopes = PROVIDERS[provider].channels[channel]
+      return channelScopes.every((scope) => (permittedScopes.includes(scope))) //also returns true when the channel requires no scopes at all (empty array)
     })
 
 console.log(permittedChannels);

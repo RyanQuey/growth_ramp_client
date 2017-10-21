@@ -21,10 +21,10 @@ class ProviderAccountsDetails extends Component {
     return (
       <div>
 
-        {accounts[this.state.currentProvider].map((account) => {
+        {accounts[this.props.currentProvider].map((account) => {
           <h3>{account.userName}</h3>
         })}
-    </div>
+      </div>
     );
   }
 }
@@ -32,13 +32,11 @@ class ProviderAccountsDetails extends Component {
 const mapStateToProps = state => {
   return {
     user: state.user,
-    tokenInfo: state.tokenInfo,
-    currentPlan: state.currentPlan,
+    providerAccounts: state.providerAccounts,
   }
 }
 const mapDispatchToProps = (dispatch) => {
   return {
-    setInputValue: (payload) => dispatch({type: SET_INPUT_VALUE, payload}),
   }
 }
 

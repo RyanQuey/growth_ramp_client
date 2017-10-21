@@ -53,6 +53,8 @@ passport.use(new TwitterStrategy(
     //passing in the token secret as the refresh token for twitter
     const providerData = Helpers.extractPassportData(accessToken, tokenSecret, profile)
     //need to set a timeout for this. maybe wrap in a promise?
+console.log("***profile***");
+console.log(profile);
     return Helpers.tradeTokenForUser(providerData, done)
   }
 ))
