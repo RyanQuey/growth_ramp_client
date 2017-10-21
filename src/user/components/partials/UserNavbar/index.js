@@ -11,7 +11,6 @@ import {
   Icon,
 } from 'shared/components/elements'
 import { AccountMenu } from 'shared/components/partials'
-import { viewSettingActions } from 'shared/actions'
 import theme from 'theme'
 import classes from './style.scss'
 
@@ -24,7 +23,7 @@ class UserNavbar extends Component {
 
   openLoginModal(e) {
     e.preventDefault()
-    viewSettingActions.openModal("UserLoginModal")
+    this.props.setCurrentModal("UserLoginModal")
   }
 
   render() {
@@ -59,9 +58,14 @@ UserNavbar.propTypes = {
   user: PropTypes.object,
 }
 
+const mapDispatchToProps = (dispatch) => {
+  return {
+    setCurrentModal: (payload) => dispatch({type: SET_CURRENT_MODAL, payloaeState})
+  }
+}
 const mapStateToProps = (state) => {
   return { user: state.user }
 }
 
-export default connect(mapStateToProps)(UserNavbar)
+export default connect(mapStateToProps, mapDispatchToProps)(UserNavbar)
 

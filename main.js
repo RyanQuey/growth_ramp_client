@@ -28,6 +28,8 @@ const FacebookStrategy = require('passport-facebook').Strategy
 const TwitterStrategy = require('passport-twitter').Strategy
 
 const Helpers = require('./nodeHelpers')
+const PROVIDERS = require('./src/constants/providers').PROVIDERS
+console.log(Object.keys(PROVIDERS));
 
 passport.use(new FacebookStrategy(
   Helpers.facebookOptions,
@@ -36,6 +38,8 @@ passport.use(new FacebookStrategy(
     if (!refreshToken) {
       refreshToken = req.query.code
     }
+console.log("***profile***");
+console.log(profile);
     const providerData = Helpers.extractPassportData(accessToken, refreshToken, profile)
 
     return Helpers.tradeTokenForUser(providerData, done)
@@ -77,15 +81,17 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.get('/login/twitter', ((req, res, next) => {
-console.log("logging in with twitter");
-  passport.authenticate('twitter')(req, res, next)
+app.get('/login/:provider', ((req, res, next) => {
+  const providerName = req.params.provider.toLowerCase()
+  //options will look like this for example: {scope: __, authType: 'rerequest'}
+  const options = req.query || {}
+  passport.authenticate(providerName, options)(req, res, next)
 }))
 
 //TODO: make this combine dynamically into the Twitter one, which works
-app.get('/login/facebook', (req, res, next) => {
+/*app.get('/login/facebook', (req, res, next) => {
   passport.authenticate('facebook')(req, res, next)
-})
+})*/
 
 app.get(`${Helpers.callbackPath}/:provider`, (req, res, next) => {
   const providerName = req.params.provider.toLowerCase()

@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import {
   ProviderAccountPicker
 } from 'user/components/partials'
-import { LINK_ACCOUNT_REQUEST } from 'constants/actionTypes'
+import { SET_CURRENT_MODAL } from 'constants/actionTypes'
 
 class ProviderAccounts extends Component {
   constructor() {
@@ -13,20 +13,18 @@ class ProviderAccounts extends Component {
       currentProviderAccount: {},
     }
 
-    this.handleChooseProviderAccount = this.handleChooseProviderAccount.bind(this)
+    this.state = {
+      mode: 'CHOOSE_PROVIDER', //you do this or 'ADD_PROVIDER'
+    }
+    this.clickAddProvider = this.clickAddProvider.bind(this)
   }
 
   componentDidMount() {
 
   }
 
-  handleChooseProviderAccount(providerAccount) {
-    this.setState({
-      providerAccount,
-    })
-    //TODO: want to use refs
-    //might be able to use bind and the contentIndex ?
-    //$(ref)[0].firstElementChild.click();
+  clickAddProvider() {
+    this.props.setCurrentModal("LinkProviderAccountModal")
   }
 
   render() {
@@ -55,14 +53,15 @@ console.log(providers);
 
           {Object.keys(providerAccounts).length > 0 ? (
             <div>
-              {/* <ProviderAccountDetails providerAccount={this.state.providerAccount}/>*/}
             </div>
           ) : (
             <div>
-              <h3>There are currently no providerAccounts associated with this account</h3>
+              <h3>There are currently no provider Accounts associated with this account</h3>
               <div>Either create a new one or ask for permission from an associate</div>
             </div>
           )}
+          <button type="button" className="btn-outline-primary btn-sm" onClick={this.clickAddProvider}>Add a provider</button>
+
         </div>
       );
 
@@ -71,6 +70,7 @@ console.log(providers);
       return (
         <div>
           <h1>{currentProvider}</h1>
+          <ProviderAccountDetails providerAccount={this.state.providerAccount}/>
           <p>here are some cool details about your {currentProvider} account</p>
         </div>
       )
@@ -86,7 +86,7 @@ const mapStateToProps = state => {
 }
 const mapDispatchToProps = (dispatch) => {
   return {
-    createProviderAccountRequest: (data) => dispatch({type: LINK_ACCOUNT_REQUEST, payload: data}),
+    setCurrentModal: (payload) => dispatch({type: SET_CURRENT_MODAL, payload})
   }
 }
 

@@ -18,32 +18,6 @@ const $ = require('jquery');
 const _ = require('lodash')
 
 module.exports = {
-  callbackPath: callbackPath,
-  //eventually will probably do more, but just this for now
-
-  // extracts the relevant passport profile data from the profile auth data received on login/request, and matches it to the database columns
-  extractPassportData: (accessToken, refreshToken, passportProfile) => {
-    passportProfile.provider = passportProfile.provider.toUpperCase()
-    if (passportProfile.provider === "TWITTER") {
-      passportProfile.userName = passportProfile.user_name
-    }
-
-    if (passportProfile.provider === "FACEBOOK") {
-      passportProfile.userName = passportProfile.displayName
-    }
-
-    passportProfile.providerUserId = passportProfile.id
-
-    let userData = _.pickBy(passportProfile, (value, key) => {
-      return ["providerUserId", "userName", "email", "provider"].includes(key)
-    })
-
-    userData.accessToken = accessToken
-    userData.refreshToken = refreshToken
-
-    return userData
-  },
-
   safeDataPath: function (object, keyString, def = null) {
     let keys = keyString.split('.');
     let returnValue = def;
@@ -90,6 +64,8 @@ module.exports = {
     })
   },
 
+  callbackPath: callbackPath,
+
   tradeTokenForUser: ((providerData, done) => {
     const url = "/users/login_with_provider"
 
@@ -111,11 +87,37 @@ module.exports = {
         //https://stackoverflow.com/questions/14168433/node-js-error-connect-econnrefused
 
       } else {
-        console.log("I made it", res);
         done(null, responseBody)
       }
     })
   }),
+
+  //eventually will probably do more, but just this for now
+
+  // extracts the relevant passport profile data from the profile auth data received on login/request, and matches it to the database columns
+  extractPassportData: (accessToken, refreshToken, passportProfile) => {
+    passportProfile.provider = passportProfile.provider.toUpperCase()
+    if (passportProfile.provider === "TWITTER") {
+      passportProfile.userName = passportProfile.user_name
+    }
+
+    if (passportProfile.provider === "FACEBOOK") {
+      passportProfile.userName = passportProfile.displayName
+      passportProfile.scope = passportProfile.permissions.data
+      passportProfile.email = passportProfile.emails[0].value
+    }
+
+    passportProfile.providerUserId = passportProfile.id
+
+    let userData = _.pickBy(passportProfile, (value, key) => {
+      return ["providerUserId", "userName", "email", "provider"].includes(key)
+    })
+
+    userData.accessToken = accessToken
+    userData.refreshToken = refreshToken
+
+    return userData
+  },
 
 
   twitterOptions: {
@@ -128,6 +130,18 @@ module.exports = {
     clientID: env.CLIENT_FACEBOOK_ID,
     clientSecret: env.CLIENT_FACEBOOK_SECRET,
     callbackURL: `${callbackUrl}/facebook`,
+    profileFields: [
+      'id',
+      'displayName',
+      'email',
+      //'link' for link to persons timeline;
+      //'accounts': Facebook pages this person administers
+      //conversations: Facebook messenger conversation. closely related to
+      //threads: and message conversation thread
+      //businesses: businesses associated with the user
+      //friends
+      'permissions', //this app 's current permissions
+    ],
     passReqToCallback: true,//to extract the code from the query...for some reason, passport doesn't get it by default
     //scope: 'email, '
   },

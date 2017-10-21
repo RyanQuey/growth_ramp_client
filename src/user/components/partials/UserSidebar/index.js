@@ -5,6 +5,7 @@ import { Flexbox } from 'shared/components/elements'
 import { Select } from 'shared/components/groups'
 import { withRouter } from 'react-router-dom'
 import { MenuChild, MenuItem } from 'shared/components/groups'
+import { SET_CURRENT_MODAL } from 'constants/actionTypes'
 
 import classes from './style.scss'
 
@@ -15,6 +16,8 @@ class UserSidebar extends Component {
     this.state = {
       providerAccounts: false
     }
+
+    this.openNewProviderModal = this.openNewProviderModal.bind(this)
   }
 
   handleClick(menuItem, e) {
@@ -28,6 +31,11 @@ class UserSidebar extends Component {
         break
     }
   }
+
+  openNewProviderModal() {
+    this.props.setCurrentModal("LinkProviderAccountModal")
+  }
+
   render() {
     return (
       <Flexbox className={classes.sidebar} direction="column" background="black">
@@ -42,7 +50,7 @@ class UserSidebar extends Component {
                   {Object.keys(this.props.providerAccounts).map((providerName) => (
                     <MenuChild key={providerName} text={providerName} link={`/providerAccounts/${providerName}`} nav={true}/>
                   ))}
-                  <MenuChild text="New Provider" link={`/providerAccounts/new`} nav={true} badge="+"/>
+                  <MenuChild text="New Provider" onClick={this.openNewProviderModal} link={`/providerAccounts/link`} nav={true} badge="+"/>
                 </ul>
               )}
             </MenuItem>
@@ -59,6 +67,11 @@ class UserSidebar extends Component {
 UserSidebar.propTypes = {
 }
 
+const mapDispatchToProps = (dispatch) => {
+  return {
+    setCurrentModal: (payload) => dispatch({type: SET_CURRENT_MODAL, payload})
+  }
+}
 const mapStateToProps = (state) => {
   return {
     user: state.user,
@@ -66,4 +79,4 @@ const mapStateToProps = (state) => {
   }
 }
 
-export default withRouter(connect(mapStateToProps)(UserSidebar))
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(UserSidebar))

@@ -30,6 +30,7 @@ class PromoTool extends Component {
   }
 
   componentDidMount() {
+
   }
 
   switchTo(next) {
@@ -44,7 +45,7 @@ class PromoTool extends Component {
     const Tag = sections[this.state.currentSection]
     return (
       <div>
-        <Navbar className="nav justifyContentSpaceBetweeo navFill" background="white" color={theme.color.text}>
+        <Navbar className="nav justifyContentSpaceBetween navFill" background="white" color={theme.color.text}>
           <ul role="tablist">
             {Object.keys(sections).map((section) => (
               <li key={section} ref={section}>

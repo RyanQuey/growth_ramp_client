@@ -1,4 +1,5 @@
 import { Component } from 'react';
+import querystring from 'querystring'
 import { connect } from 'react-redux'
 import {
   SIGN_IN_REQUEST,
@@ -14,6 +15,8 @@ class SocialLogin extends Component {
   }
   //need to enable with e-mail
   providerLogin(providerName) {
+    //TODO: eventually have pop-up logic etc. here
+
     /*const c = this;
     const user = helpers.safeDataPath(c.props, `user`, false)
     const userProviders = user && c.props.user.providerData || []
@@ -48,10 +51,14 @@ class SocialLogin extends Component {
   render() {
     const user = this.props.user;
     const preposition = user ? "to" : "with";
+    const providers = this.props.providers || PROVIDERS
+    const scopeQuery = this.props.scopes ? `?${querystring.stringify({scope: this.props.scopes})}` : "" //take this.props.scopes and convert the object into a query string that will be interpreted by the front end server
+    //TODO: this button should really make a post...especially when wrapped within a form
+
     return (
       <div>
-        {Object.keys(PROVIDERS).map((key) => {
-          const providerName = PROVIDERS[key].name
+        {Object.keys(providers).map((key) => {
+          const providerName = providers[key].name
 
             return (
               <Button
@@ -60,7 +67,7 @@ class SocialLogin extends Component {
                 key={providerName}
               >
                 <a
-                  href={`/login/${providerName}`}
+                  href={`/login/${providerName}${scopeQuery}`}
                   onClick={this.providerLogin.bind(this, providerName)}
                 >
                   {`Login ${preposition} ${providerName}`}

@@ -3,8 +3,8 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { UserContent } from 'user/components/templates'
 import { Flexbox, Alert } from 'shared/components/elements'
-import { UserNavbar, UserSidebar } from 'user/components/partials'
-import { FETCH_POST_REQUEST, FETCH_PLAN_REQUEST, FETCH_USER_REQUEST, UPDATE_TOKEN_REQUEST, IS_PRELOADING_STORE, OPEN_MODAL } from 'constants/actionTypes'
+import { UserNavbar, UserSidebar, LinkProviderAccountModal } from 'user/components/partials'
+import { } from 'constants/actionTypes'
 import { viewSettingActions } from 'shared/actions'
 import classes from './Authenticated.scss'
 import { withRouter } from 'react-router-dom'
@@ -29,12 +29,14 @@ class Authenticated extends Component {
       <div>
         <Flexbox direction="column">
           <UserNavbar />
+
           <Flexbox>
             <UserSidebar />
             <UserContent />
           </Flexbox>
         </Flexbox>
 
+        <LinkProviderAccountModal />
       </div>
     )
   }

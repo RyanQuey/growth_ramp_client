@@ -7,7 +7,7 @@ import {
   ModalFooter,
 } from 'shared/components/partials/Modal'
 import { Login } from 'shared/components/partials'
-import { viewSettingActions } from 'shared/actions'
+import { CLOSE_MODAL } from 'constants/actionTypes'
 
 class UserLogin extends Component {
   constructor() {
@@ -16,7 +16,7 @@ class UserLogin extends Component {
     this.handleClose = this.handleClose.bind(this)
   }
   handleClose (){
-    viewSettingActions.closeModal()
+    this.props.closeModal()
   }
 
   onSuccess () {
@@ -41,8 +41,14 @@ class UserLogin extends Component {
   }
 }
 
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    closeModal: (payload) => dispatch({type: CLOSE_MODAL, payload})
+  }
+}
 const mapStateToProps = (state) => {
   return { currentModal: state.viewSettings.currentModal }
 }
 
-export default connect(mapStateToProps)(UserLogin)
+export default connect(mapStateToProps, mapDispatchToProps)(UserLogin)
