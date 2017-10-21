@@ -21,4 +21,15 @@
     }
   }
 
+  .badge {
+    display: block;
+    background: $primary;
+    color: $white;
+    float: right;
+    min-width: 10px;
+    padding: 3px 10px;
+    border-radius: 5px;
+    margin-top: -3px;
+    font-weight: bold;
+  }
 }

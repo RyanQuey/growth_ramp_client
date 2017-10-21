@@ -2,7 +2,7 @@ import PropTypes from 'prop-types'
 import { Link, NavLink, withRouter } from 'react-router-dom'
 import classes from './style.scss'
 
-const MenuChild = ({ text, children, link, nav }) => (
+const MenuChild = ({ text, children, link, nav, badge }) => (
   <li className={classes.menuChild}>
     {link && nav &&
       <NavLink to={link} activeClassName={classes.navActive}>
@@ -19,6 +19,7 @@ const MenuChild = ({ text, children, link, nav }) => (
         {text}
       </span>
     }
+    {badge && <span className={classes.badge}>{badge}</span>}
   </li>
 )
 
