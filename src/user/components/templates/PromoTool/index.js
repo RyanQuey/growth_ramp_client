@@ -30,7 +30,6 @@ class PromoTool extends Component {
   }
 
   componentDidMount() {
-
   }
 
   switchTo(next) {

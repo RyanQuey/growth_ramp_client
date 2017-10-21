@@ -1,41 +1,54 @@
 import { Component } from 'react'
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
-import { Flexbox, MenuItem } from 'shared/components/elements'
+import { Flexbox } from 'shared/components/elements'
 import { Select } from 'shared/components/groups'
 import { withRouter } from 'react-router-dom'
+import { MenuChild, MenuItem } from 'shared/components/groups'
 
-import { firebaseActions } from 'shared/actions'
-import classes from './Sidebar.scss'
+import classes from './style.scss'
 
-class Sidebar extends Component {
+class UserSidebar extends Component {
   constructor(props) {
     super(props)
 
     this.state = {
+      providerAccounts: false
     }
   }
 
+  handleClick(menuItem, e) {
+    e.preventDefault()
+    switch(menuItem) {
+      case "providerAccounts":
+        if (Object.keys(this.props.providerAccounts).length) {
+
+          this.setState({providerAccounts: true})
+        }
+        break
+    }
+  }
   render() {
     return (
       <Flexbox className={classes.sidebar} direction="column" background="black">
 
         <div className={classes.nav}>
           <ul className={classes.sidebarNav}>
-            <MenuItem link="/posts" nav={true}>
-              My Posts
-            </MenuItem>
-            <MenuItem link="/plans" nav={true}>
-              My Plans
-            </MenuItem>
-            <MenuItem link="/providerAccounts" nav={true}>
-              My Accounts
+            <MenuItem link="/posts" text="My Posts" nav={true} />
+            <MenuItem link="/plans" text="My Plans" nav={true} />
+            <MenuItem link="/providerAccounts" text="My Accounts" nav={true} onClick={this.handleClick.bind(this, "providerAccounts")}>
+              {(true || this.state.providerAccounts) && (
+                <ul>
+                  {Object.keys(this.props.providerAccounts).map((providerName) => (
+                    <MenuChild key={providerName} text={providerName} link={`/providerAccounts/${providerName}`} nav={true}/>
+                  ))}
+                  <MenuChild text="Link another provider" link={`/providerAccounts/new`} nav={true}/>
+                </ul>
+              )}
             </MenuItem>
 
             <hr />
-            <MenuItem link="/posts/new" >
-              New Post
-            </MenuItem>
+            <MenuItem link="/posts/new" text="New Post" />
           </ul>
         </div>
       </Flexbox>
@@ -43,13 +56,14 @@ class Sidebar extends Component {
   }
 }
 
-Sidebar.propTypes = {
-  status: PropTypes.string,
+UserSidebar.propTypes = {
 }
 
 const mapStateToProps = (state) => {
   return {
-    user: state.user }
+    user: state.user,
+    providerAccounts: state.providerAccounts,
+  }
 }
 
-export default withRouter(connect(mapStateToProps)(Sidebar))
+export default withRouter(connect(mapStateToProps)(UserSidebar))

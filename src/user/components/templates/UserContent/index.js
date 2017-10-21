@@ -28,7 +28,7 @@ class UserContent extends Component {
             <Route exact path="/" component={Home} />
             <Route path="/posts" component={Posts} />
             <Route path="/plans" component={Plans} />
-            <Route path="/providerAccounts" component={ProviderAccounts} />
+            <Route path="/providerAccounts/:provider" component={ProviderAccounts} />
             <Route path="/SetCredentials" component={SetCredentials} />
           </Switch>
         </Flexbox>

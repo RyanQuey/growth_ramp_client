@@ -1,12 +1,13 @@
 import { Component } from 'react';
 import { connect } from 'react-redux'
-import { take } from 'redux-saga/effects'
 import {
-  CREATE_PLAN_SUCCESS,
   CREATE_PLAN_REQUEST,
   CHOOSE_PLAN,
+  UPDATE_POST_REQUEST,
+  UPDATE_PLAN_REQUEST,
 } from 'constants/actionTypes'
-import { Navbar } from 'shared/components/elements'
+import { Navbar, Icon } from 'shared/components/elements'
+import { SocialLogin } from 'shared/components/partials'
 import { ProviderAccountsDetails } from 'user/components/partials'
 import theme from 'theme'
 
@@ -44,8 +45,13 @@ class Channels extends Component {
 
   handleAddProviderToPlan (){
     this.setState({
-      currentProvider: 'ADD_AN_ACCOUNT'
+      status: "PENDING"
     })
+
+    const providerAccounts = this.props.currentPlan.providerAccounts
+
+    //or have a separate function for adding a provider account?
+    this.props.updatePlanRequest({providerAccounts})
   }
 
   handleChangeMode (mode) {
@@ -92,6 +98,8 @@ console.log(this.state.currentProvider);
     return (
       <div>
         <h1 className="display-3">Channels</h1>
+        {this.state.status === "PENDING" && <Icon name="spinner"/>}
+
         <Navbar className="nav navTabs justifyContentCenter" background="white" color={theme.color.text}>
           <ul role="tablist">
             {planProviders.map((provider) => (
@@ -103,6 +111,11 @@ console.log(this.state.currentProvider);
                 )}
               </li>
             ))}
+            {this.state.currentProvider === "ADD_AN_ACCOUNT" && (
+              <li onClick={this.handleAddProviderToPlan}>
+                <span>NEW ACCOUNT!!</span>
+              </li>
+            )}
             <li onClick={this.handleAddProviderToPlan}>
               <span>+</span>
             </li>
@@ -128,7 +141,7 @@ console.log(this.state.currentProvider);
                 <h3>You have no other social media accounts linked with GrowthRamp. Let's add some more to get started!</h3>
               )}
               <div>
-                <h3>Or link and you account to GrowthRamp</h3>
+                <h3>Or link a new account to GrowthRamp</h3>
                 <SocialLogin />
               </div>
             </div>
@@ -149,6 +162,8 @@ const mapStateToProps = state => {
 }
 const mapDispatchToProps = (dispatch) => {
   return {
+    updatePostRequest: (payload) => {dispatch({type: UPDATE_POST_REQUEST, payload})},
+    updatePlanRequest: (payload) => {dispatch({type: UPDATE_PLAN_REQUEST, payload})},
   }
 }
 
