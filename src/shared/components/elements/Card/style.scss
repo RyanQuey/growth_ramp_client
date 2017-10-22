@@ -1,0 +1,25 @@
+@import 'theme/_helpers';
+
+.card {
+  @include mq(xs) {
+    @include cols(12)
+  }
+  @include mq(sm) {
+    @include cols(6)
+  }
+  @include mq(md) {
+    @include cols(4)
+  }
+  text-align: left;
+  border-radius: 10px;
+  border: black solid 1px;
+  overflow: auto;
+
+  &.selected {
+    @include box-shadow(5px 5px 5px rgba(0,0,0,0.25))
+  }
+
+  label {
+    font-weight: bold;
+  }
+}

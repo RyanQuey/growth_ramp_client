@@ -1,6 +1,5 @@
 import { Component } from 'react'
 import { connect } from 'react-redux'
-import { viewSettingActions } from 'shared/actions'
 import { Alert } from 'shared/components/elements'
 import classes from './style.scss'
 
@@ -22,11 +21,6 @@ class ModalContainer extends Component {
   componentWillUnmount (){
     document.querySelector("html").style.overflowY = "auto"
     document.querySelector("body").style.overflowY = "auto"
-  }
-
-  close() {
-    viewSettingActions.closeModal()
-    this.props.onClose()
   }
 
   render (){
@@ -58,7 +52,7 @@ class ModalContainer extends Component {
     //if (!this.props.bare) {
       innerContent.push(
         <div key="header" className={modalHeader}>
-          {!this.props.disableClose && <button type="button" className={closeButton} data-dismiss="modal" aria-label="Close" onClick={this.close}>
+          {!this.props.disableClose && <button type="button" className={closeButton} data-dismiss="modal" aria-label="Close" onClick={this.props.onClose}>
             <span aria-hidden="true">×</span>
           </button>}
 

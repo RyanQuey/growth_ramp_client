@@ -26,7 +26,7 @@ class App extends Component {
 
   render() {
     return (
-      <div className="App">
+      <div className="App desktop">
         {this.props.preloadingStore ? ( //currently , not implemented...I might not ever
           <div>
             <img src={logo} className="App-logo" alt="logo" />

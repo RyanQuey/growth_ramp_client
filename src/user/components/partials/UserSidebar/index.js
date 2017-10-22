@@ -50,7 +50,7 @@ class UserSidebar extends Component {
                   {Object.keys(this.props.providerAccounts).map((providerName) => (
                     <MenuChild key={providerName} text={providerName} link={`/providerAccounts/${providerName}`} nav={true}/>
                   ))}
-                  <MenuChild text="New Provider" onClick={this.openNewProviderModal} link={`/providerAccounts/link`} nav={true} badge="+"/>
+                  <MenuChild text="New Provider" onClick={this.openNewProviderModal} link={`/providerAccounts`} badge="+"/>
                 </ul>
               )}
             </MenuItem>

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { Avatar, Button } from 'shared/components/elements'
-import { MenuItem } from 'shared/components/elements'
+import { MenuItem } from 'shared/components/groups'
 import { SIGN_OUT_REQUEST } from 'constants/actionTypes'
 import theme from 'theme'
 import avatar from 'images/avatar.png'
@@ -48,10 +48,8 @@ class AccountMenu extends Component {
 
         {this.state.open ? (
           <ul className={`${classes.menuDropdown}}`}>
-            <MenuItem link="/profile">Profile</MenuItem>
-            <MenuItem link="/">
-              <div onClick={signOut}>Sign Out</div>
-            </MenuItem>
+            <MenuItem link="/profile" text="Profile" />
+            <MenuItem link="/" onClick={signOut} text="Sign Out" />
           </ul>
         ) : (
           <ul></ul>

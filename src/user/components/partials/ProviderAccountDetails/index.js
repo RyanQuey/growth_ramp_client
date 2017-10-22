@@ -18,14 +18,21 @@ class ProviderAccountsDetails extends Component {
 
     const providers = this.props.providers
     const accounts = this.props.providerAccounts || {}
+
     return (
       <div>
+        <div>
+          <h1>{this.props.currentProvider}</h1>
 
-        {accounts[this.props.currentProvider].map((account) => {
-          <h3>{account.userName}</h3>
-        })}
+          {accounts[this.props.currentProvider].map((account) => (
+            <div>
+              <h3>Username: {account.userName}</h3>
+              <p>Will have general summary, permissions per account, buttons to share permissions, and everything that is in the add provider modal</p>
+            </div>
+          ))}
+        </div>
       </div>
-    );
+    )
   }
 }
 

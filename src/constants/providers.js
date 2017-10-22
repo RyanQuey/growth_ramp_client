@@ -52,11 +52,11 @@ module.exports = {
       //appsecret is automatically set (?)
     },
     //GITHUB: 'github',
-    GOOGLE: {
+    /*GOOGLE: {
       name: 'Google',
       providerId: 'GOOGLE',
       channels: []
-    },
+    },*/
     LINKEDIN: {
       name: 'LinkedIn',
       providerId: 'LINKEDIN',

@@ -63,7 +63,7 @@ class SocialLogin extends Component {
             return (
               <Button
                 background={providerName.toLowerCase()}
-                disabled={(this.props.loginPending)}
+                disabled={(this.props.loginPending || this.props.disabled)}
                 key={providerName}
               >
                 <a

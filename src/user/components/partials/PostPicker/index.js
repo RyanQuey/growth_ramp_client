@@ -46,7 +46,7 @@ class PostPicker extends Component {
                 {post.status}
               </td>
               <td>
-                {this.props.plans[post.planId].name}
+                {post.planId || "will probably do a joins for this information later"}
               </td>
               <td>
                 {post.publishedAt || "unpublished"}

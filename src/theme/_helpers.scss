@@ -20,16 +20,16 @@
 	@else if $breakpoint == xl {
 		@media (min-width: 71.25em) { @content ; } //1140
 	}
-	@else if $breakpoint == l {
+	@else if $breakpoint == lg {
 		@media (min-width: 60em) { @content ; } //960
 	}
-	@else if $breakpoint == m {
+	@else if $breakpoint == md {
 		@media (min-width: 48em) { @content ; } //768
 	}
-	@else if $breakpoint == s-2 {
+	@else if $breakpoint == sm-2 {
 		@media (min-width: 40em) { @content ; } //640
 	}
-	@else if $breakpoint == s {
+	@else if $breakpoint == sm {
 		@media (min-width: 35.5em) { @content ; } //568
 	}
 	@else if $breakpoint == xs-plus {
@@ -38,7 +38,7 @@
 	@else if $breakpoint == xs {
 		@media (min-width: 23.4375em) { @content ; } //375
 	}
-  @else if $breakpoint == 2x {
+  @else if $breakpoint == 2xs {
     @media
     only screen and (min-device-pixel-ratio: 2),
     only screen and (min-resolution: 192dpi),
@@ -63,11 +63,11 @@
   box-shadow: $shadow;
 }
 
-@mixin inner-shadow-lt($x: 0, $y: 1px, $blur: 2px, $spread: 0, $alpha: 0.5) {
+@mixin inner-shadow-light($x: 0, $y: 1px, $blur: 2px, $spread: 0, $alpha: 0.5) {
   box-shadow: inset $x $y $blur $spread rgba(255, 255, 255, $alpha);
 }
 
-@mixin inner-shadow-drk($x: 0, $y: 1px, $blur: 2px, $spread: 0, $alpha: 0.5) {
+@mixin inner-shadow-dark($x: 0, $y: 1px, $blur: 2px, $spread: 0, $alpha: 0.5) {
   box-shadow: inset $x $y $blur $spread rgba(0, 0, 0, $alpha);
 }
 

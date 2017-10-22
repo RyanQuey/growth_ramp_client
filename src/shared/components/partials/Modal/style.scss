@@ -6,6 +6,7 @@
   display: block !important;
   overflow: hidden;
   position: fixed;
+  height: 100%;
   top: 0;
   right: 0;
   bottom: 0;
@@ -19,6 +20,7 @@
   box-sizing: border-box;
   position: relative;
   width: auto;
+  height: 100%;
   margin: 10px;
 }
 .modalContent {
@@ -28,7 +30,7 @@
 
   border-radius: 5px;
   overflow: auto;
-  max-height: 80%;
+  max-height: 100%;
   -webkit-box-shadow: 0 2px 3px rgba(0, 0, 0, 0.125);
   box-shadow: 0 2px 3px rgba(0, 0, 0, 0.125);
   border: 0;
@@ -63,7 +65,7 @@
   cursor: pointer;
   background: transparent;
   border: 0;
-  -webkit-appearance: none; 
+  -webkit-appearance: none;
 
   float: right;
   font-size: 21px;
@@ -71,5 +73,5 @@
   line-height: 1;
   color: #000;
   text-shadow: 0 1px 0 #fff;
-  opacity: 0.2; 
+  opacity: 0.2;
 }

@@ -1,0 +1,6 @@
+@import 'theme/_helpers';
+
+.col-xs-12 {
+  @include mq(xs)
+  @include cols(12)
+}

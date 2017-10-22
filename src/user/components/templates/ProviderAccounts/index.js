@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux'
+import { Link } from 'react-router-dom'
 import {
   ProviderAccountDetails
 } from 'user/components/partials'
@@ -31,8 +32,7 @@ class ProviderAccounts extends Component {
     const c = this;
     const providerAccounts = this.props.providerAccounts
     let providers = []
-    const currentProvider = Helpers.safeDataPath(this.props, "match.params.provider", "")
-console.log(currentProvider);
+    const currentProvider = Helpers.safeDataPath(this.props, "match.params.provider", "").toUpperCase()
 
     //not sure what I'm doing here...why not just do providers = Object.keys(providerAccounts)?
     Object.keys(providerAccounts).map((provider) => {
@@ -40,19 +40,22 @@ console.log(currentProvider);
         providers.push(provider)
       }
     })
-console.log(providers);
-    if (!providers.map((p) => p.toLowerCase()).includes(currentProvider.toLowerCase())) {
+    //don't just render ProviderAccountDetails from the router, unless handling bad match there, and redirecting here somehow
+    if (!providers.includes(currentProvider)) {
       return (
         <div>
           <h1>Provider Accounts</h1>
-          <h3>Select a provider in the sidebar to see your accounts</h3>
           <p>At least for now, choose and add providers in the sidebar, you have a clear distinction from when adding accounts to a plan</p>
           <p>details about the selected provider will appear here in the main view</p>
   <hr/>
           <p>However, use the same modal for actually linking a new account</p>
 
-          {Object.keys(providerAccounts).length > 0 ? (
+          {providers.length > 0 ? (
             <div>
+              <h3>Accounts Summary:</h3>
+              {providers.map((provider) => (
+                <Link key={provider} to={`/providerAccounts/${provider}`}>{provider}</Link>
+              ))}
             </div>
           ) : (
             <div>
@@ -66,13 +69,8 @@ console.log(providers);
       );
 
     } else {
-//will pass in the currentProvider into the props of some component
       return (
-        <div>
-          <h1>{currentProvider}</h1>
-          <ProviderAccountDetails currentProvider={currentProvider}/>
-          <p>here are some cool details about your {currentProvider} account</p>
-        </div>
+        <ProviderAccountDetails currentProvider={currentProvider}/>
       )
     }
   }
