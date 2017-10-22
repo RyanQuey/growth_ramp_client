@@ -9,7 +9,7 @@ import {
 import { CLOSE_MODAL, LINK_ACCOUNT_REQUEST } from 'constants/actionTypes'
 import { SocialLogin } from 'shared/components/partials'
 import { AccountStatus } from 'user/components/partials'
-import { Button, Form, Card, Row } from 'shared/components/elements'
+import { Button, Form, Card, Flexbox } from 'shared/components/elements'
 import { PROVIDERS } from 'constants/providers'
 
 class LinkProviderAccount extends Component {
@@ -21,16 +21,20 @@ class LinkProviderAccount extends Component {
       mode: 'CHOOSE_PROVIDER', //you do this or 'CHOOSE_SCOPE'
       currentProvider: 'FACEBOOK',
       currentAccount: Helpers.safeDataPath(props, "providerAccounts.FACEBOOK.0", false),
-      scopes: []
+      channels: [],
     }
 
     this.onSuccess = this.onSuccess.bind(this)
     this.handleClose = this.handleClose.bind(this)
     this.setPending = this.setPending.bind(this)
     this.chooseProvider = this.chooseProvider.bind(this)
+    this.chosenScopes = this.chosenScopes.bind(this)
+    this.chooseAccount = this.chooseAccount.bind(this)
     this.chooseAccount = this.chooseAccount.bind(this)
     this.brandNewAccount = this.brandNewAccount.bind(this)
+    this.chooseChannel = this.chooseChannel.bind(this)
   }
+
   handleClose (){
     this.props.closeModal()
   }
@@ -39,12 +43,17 @@ class LinkProviderAccount extends Component {
     this.setState({
       mode: 'CHOOSE_SCOPE',
       currentProvider: provider,
-      scopes: [],
+      channels: [],
     })
   }
 
   chooseAccount(account) {
     this.setState({currentAccount: account})
+  }
+
+  chooseChannel(channel) {
+    const channels = this.state.channels.concat(channel)
+    this.setState({channels})
   }
 
   brandNewAccount() {
@@ -63,7 +72,9 @@ class LinkProviderAccount extends Component {
   }
 
   //takes a list of scopes for an account and returns the list of available channels for that account
-  permittedChannels(account) {
+  //might make a helper function if I needed anywhere else
+  permittedChannels() {
+    const account = this.state.currentAccount
     if (!account || typeof account !== "object") {
       return []
     }
@@ -79,11 +90,25 @@ class LinkProviderAccount extends Component {
     return permittedChannels
   }
 
+  chosenScopes() {
+    //might make a helper function if I needed anywhere else
+    //takes channels and provider and returns the scopes needed for that channel
+    const scopes = []
+    const provider = this.state.currentProvider
+
+    this.state.channels.forEach((channel) => {
+      const newScopes = PROVIDERS[provider].channels[channel]
+      scopes.concat(newScopes)
+    })
+
+    return scopes
+  }
+
   render (){
     const currentProvider = this.state.currentProvider
     const currentAccounts = Object.keys(this.props.providerAccounts).includes(currentProvider) ? this.props.providerAccounts[currentProvider] : null
 
-    const permittedChannels = this.permittedChannels(this.state.currentAccount)
+    const permittedChannels = this.permittedChannels()
 
     return (
       <ModalContainer
@@ -109,8 +134,8 @@ class LinkProviderAccount extends Component {
           {currentProvider &&
             <Form>
               <h1>{PROVIDERS[currentProvider].name}</h1>
-              <Row>
-                <h3>Current Status</h3>
+              <h3>Current Accounts</h3>
+              <Flexbox>
                 {currentAccounts ? (
                   <div>
                     {currentAccounts.map((account) => (
@@ -122,21 +147,34 @@ class LinkProviderAccount extends Component {
                         selected={this.state.currentAccount && this.state.currentAccount.id === account.id}/>
                     ))}
                     <Card onClick={this.brandNewAccount} selected={this.state.currentAccount === "new"}>
-                      <p><strong>Want to add another {currentProvider} account?</strong>&nbsp;Make sure you are signed into {currentProvider} with the account you want to add to GrowthRamp, choose the services you want to allow here, and then click the login button below</p>
+                      <h5>Want to add another {currentProvider} account?</h5>
+                      <p>Make sure you either logged out of {currentProvider} or are signed into {currentProvider} with the account you want to add to GrowthRamp, choose the services you want to allow here, and then click the login button below</p>
                     </Card>
                   </div>
                 ) : (
                   <p>You don't have any {currentProvider} accounts linked to your GrowthRamp account yet.</p>
                 )}
 
-              </Row>
+              </Flexbox>
+
               <h3>Possible Channels to add:</h3>
-              {Object.keys(PROVIDERS[this.state.currentProvider].channels).filter((channel) => !permittedChannels.includes(channel)).map((channel) => <div>{channel}</div>)}
+              <Flexbox justify="center">
+                {Object.keys(PROVIDERS[this.state.currentProvider].channels).filter((channel) => !permittedChannels.includes(channel)).map((channel) =>
+                  <Button
+                    onClick={this.chooseChannel.bind(this, channel)}
+                    background={this.state.channels.includes(channel) ? "primary" : "black"}
+                    key={channel}
+                  >
+                    {channel.titleCase()}
+                  </Button>
+                )}
+              </Flexbox>
               <SocialLogin
                 loginPending={this.state.loginPending}
                 setPending={this.setPending}
                 providers={{[currentProvider]: PROVIDERS[currentProvider]}}
-                scopes={this.state.scopes}
+                scopes={this.chosenScopes()}
+                disabled={this.state.currentAccount !== "new" || this.state.channels.length === 0}
               />
             </Form>
           }

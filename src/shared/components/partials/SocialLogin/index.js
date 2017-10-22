@@ -14,8 +14,9 @@ class SocialLogin extends Component {
     super()
   }
   //need to enable with e-mail
-  providerLogin(providerName) {
+  providerLogin(providerName, e) {
     //TODO: eventually have pop-up logic etc. here
+    e.preventDefault()
 
     /*const c = this;
     const user = helpers.safeDataPath(c.props, `user`, false)
@@ -53,6 +54,7 @@ class SocialLogin extends Component {
     const preposition = user ? "to" : "with";
     const providers = this.props.providers || PROVIDERS
     const scopeQuery = this.props.scopes ? `?${querystring.stringify({scope: this.props.scopes})}` : "" //take this.props.scopes and convert the object into a query string that will be interpreted by the front end server
+    const disabled = this.props.loginPending || this.props.disabled
     //TODO: this button should really make a post...especially when wrapped within a form
 
     return (
@@ -63,11 +65,11 @@ class SocialLogin extends Component {
             return (
               <Button
                 background={providerName.toLowerCase()}
-                disabled={(this.props.loginPending || this.props.disabled)}
+                disabled={disabled}
                 key={providerName}
               >
                 <a
-                  href={`/login/${providerName}${scopeQuery}`}
+                  href={disabled ? "" : `/login/${providerName}${scopeQuery}`}
                   onClick={this.providerLogin.bind(this, providerName)}
                 >
                   {`Login ${preposition} ${providerName}`}

@@ -6,7 +6,7 @@ String.prototype.capitalize = function () {
 
 String.prototype.titleCase = function () {
   var i, j, str, lowers, uppers;
-  str = this.replace(/([^\W_]+[^\s-]*) */g, function(txt) {
+  str = this.replace("_", " ").replace(/([^\W_]+[^\s-]*) */g, function(txt) {
     return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
   });
 
@@ -34,4 +34,4 @@ String.prototype.camelCase = function (str) {
     if (+match === 0) return ""; // or if (/\s+/.test(match)) for white spaces
     return index == 0 ? match.toLowerCase() : match.toUpperCase();
   });
-} 
+}
