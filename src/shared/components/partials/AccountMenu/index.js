@@ -2,14 +2,15 @@ import { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
-import { Avatar, Button, MenuItem } from 'shared/components/elements'
+import { Avatar, Button } from 'shared/components/elements'
+import { MenuItem } from 'shared/components/elements'
 import { SIGN_OUT_REQUEST } from 'constants/actionTypes'
 import theme from 'theme'
 import avatar from 'images/avatar.png'
 import classes from './style.scss'
 import { userActions } from 'shared/actions'
 
-class UserHeader extends Component {
+class AccountMenu extends Component {
   constructor(props) {
     super(props)
 
@@ -60,7 +61,7 @@ class UserHeader extends Component {
   }
 }
 
-UserHeader.propTypes = {
+AccountMenu.propTypes = {
   user: PropTypes.object,
 }
 
@@ -74,5 +75,5 @@ const mapStateToProps = (state) => {
   return { user: state.user }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(UserHeader)
+export default connect(mapStateToProps, mapDispatchToProps)(AccountMenu)
 

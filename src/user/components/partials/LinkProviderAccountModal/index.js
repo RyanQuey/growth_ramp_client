@@ -52,7 +52,7 @@ class LinkProviderAccount extends Component {
     this.setState({loginPending: true})
   }
   //takes a list of scopes for an account and returns the list of available channels for that account
-  convertScopesToChannels(provider, scopes) {
+  convertScopesToChannels(provider, scopes = []) {
     const permittedScopes = Object.keys(scopes).filter((scope) => {
       return scope.status === 'granted'
     })

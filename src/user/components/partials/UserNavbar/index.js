@@ -11,6 +11,7 @@ import {
   Icon,
 } from 'shared/components/elements'
 import { AccountMenu } from 'shared/components/partials'
+import {SET_CURRENT_MODAL} from 'constants/actionTypes'
 import theme from 'theme'
 import classes from './style.scss'
 
@@ -60,7 +61,7 @@ UserNavbar.propTypes = {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    setCurrentModal: (payload) => dispatch({type: SET_CURRENT_MODAL, payloaeState})
+    setCurrentModal: (payload) => dispatch({type: SET_CURRENT_MODAL, payload})
   }
 }
 const mapStateToProps = (state) => {

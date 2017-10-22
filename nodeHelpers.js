@@ -78,7 +78,7 @@ module.exports = {
       url: `${apiUrl}${url}`,
       headers: headers,
       form: body,
-      timeout: 3000
+      timeout: 9000
     }, function (err, res, responseBody) {
       if(err) {
         console.error("***error:***")
@@ -96,23 +96,22 @@ module.exports = {
 
   // extracts the relevant passport profile data from the profile auth data received on login/request, and matches it to the database columns
   extractPassportData: (accessToken, refreshToken, passportProfile) => {
-    passportProfile.provider = passportProfile.provider.toUpperCase()
-    if (passportProfile.provider === "TWITTER") {
-      passportProfile.userName = passportProfile.user_name
-    }
-
-    if (passportProfile.provider === "FACEBOOK") {
-      passportProfile.userName = passportProfile.displayName
-      passportProfile.scope = passportProfile.permissions.data
-      passportProfile.email = passportProfile.emails[0].value
-    }
-
-    passportProfile.providerUserId = passportProfile.id
-
     let userData = _.pickBy(passportProfile, (value, key) => {
-      return ["providerUserId", "userName", "email", "provider"].includes(key)
+      return ["providerUserId", "email"].includes(key)
     })
 
+    userData.provider = passportProfile.provider.toUpperCase()
+    if (userData.provider === "TWITTER") {
+      userData.userName = passportProfile.user_name
+    } else if (userData.provider === "FACEBOOK") {
+      userData.userName = passportProfile.displayName
+      //not sure why permissions are sent differently, but whatever
+      userData.scopes = passportProfile._json.permissions.data
+      //only persisting one email
+      userData.email = passportProfile.emails[0].value
+    }
+
+    userData.providerUserId = passportProfile.id
     userData.accessToken = accessToken
     userData.refreshToken = refreshToken
 
