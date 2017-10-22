@@ -16,7 +16,8 @@ class SocialLogin extends Component {
   //need to enable with e-mail
   providerLogin(providerName, e) {
     //TODO: eventually have pop-up logic etc. here
-    e.preventDefault()
+    //don't refresh page when button is disabled
+    this.props.disabled && e.preventDefault()
 
     /*const c = this;
     const user = helpers.safeDataPath(c.props, `user`, false)
@@ -53,6 +54,7 @@ class SocialLogin extends Component {
     const user = this.props.user;
     const preposition = user ? "to" : "with";
     const providers = this.props.providers || PROVIDERS
+console.log(this.props.scopes);
     const scopeQuery = this.props.scopes ? `?${querystring.stringify({scope: this.props.scopes})}` : "" //take this.props.scopes and convert the object into a query string that will be interpreted by the front end server
     const disabled = this.props.loginPending || this.props.disabled
     //TODO: this button should really make a post...especially when wrapped within a form

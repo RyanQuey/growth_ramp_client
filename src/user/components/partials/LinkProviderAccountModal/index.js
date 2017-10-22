@@ -97,10 +97,11 @@ class LinkProviderAccount extends Component {
     const provider = this.state.currentProvider
 
     this.state.channels.forEach((channel) => {
-      const newScopes = PROVIDERS[provider].channels[channel]
-      scopes.concat(newScopes)
+      const newScopes = PROVIDERS[provider].channels[channel].filter((scope) => !scopes.includes(scope))
+      scopes.push(...newScopes)
     })
 
+    //removing duplicates
     return scopes
   }
 
@@ -114,7 +115,7 @@ class LinkProviderAccount extends Component {
       <ModalContainer
         visible={this.props.currentModal === "LinkProviderAccountModal"}
         onClose={this.handleClose}
-        title="Add an Account"
+        title={PROVIDERS[currentProvider].name}
       >
         <ModalBody>
           <div>
@@ -133,7 +134,6 @@ class LinkProviderAccount extends Component {
 
           {currentProvider &&
             <Form>
-              <h1>{PROVIDERS[currentProvider].name}</h1>
               <h3>Current Accounts</h3>
               <Flexbox>
                 {currentAccounts ? (
@@ -174,7 +174,7 @@ class LinkProviderAccount extends Component {
                 setPending={this.setPending}
                 providers={{[currentProvider]: PROVIDERS[currentProvider]}}
                 scopes={this.chosenScopes()}
-                disabled={this.state.currentAccount !== "new" || this.state.channels.length === 0}
+                disabled={this.state.currentAccount !== "new" && this.state.channels.length === 0}
               />
             </Form>
           }

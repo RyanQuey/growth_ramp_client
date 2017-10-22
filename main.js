@@ -87,6 +87,7 @@ app.get('/login/:provider', ((req, res, next) => {
   const providerName = req.params.provider.toLowerCase()
   //options will look like this for example: {scope: __, authType: 'rerequest'}
   const options = req.query || {}
+console.log("options",options);
   passport.authenticate(providerName, options)(req, res, next)
 }))
 
