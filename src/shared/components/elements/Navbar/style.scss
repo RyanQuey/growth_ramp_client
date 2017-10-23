@@ -1,0 +1,51 @@
+@import 'theme/_helpers';
+
+.navbar {
+  width: 100%;
+  height: 50px;
+  z-index: 2;
+  color: $white;
+  background-color: $nav-bg; //unless it's overridden in the component
+  @include rems(14);
+
+  //I'm doing this kind of weird...but you kind of have to, because of the way that classes are hashed
+  & > ul {
+    list-style: none;
+    display: flex;
+    justify-content: space-evenly;
+    width: 100%;
+    padding: 0;
+
+    & > li {
+      margin: 0 20px;
+    }
+  }
+  &.justifyContentSpaceEvenly > ul {
+    justify-content: space-evenly;
+  }
+  &.justifyContentSpaceBetween > ul {
+    justify-content: space-between;
+  }
+  &.justifyContentCenter > ul {
+    justify-content: center;
+  }
+  &.navTabs > ul > li {
+    padding: 10px;
+    border: 1px black solid;
+    border-bottom: none;
+    border-radius: 15px 15px 0 0;
+    &:hover {
+      cursor: pointer;
+    }
+  }
+
+  input {
+    margin: 0 5px;
+  }
+  a {
+    color: $white;
+    padding: 5px;
+    margin: 0 5px;
+  }
+}
+
