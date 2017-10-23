@@ -1,11 +1,20 @@
+console.log("*");
+console.log("*");
+console.log("*");
+console.log("using the right file");
+console.log(process.env);
+console.log("*");
+console.log("*");
+console.log("*");
+console.log("*");
 const path = require('path')
 //is constantly reloading the browser...just turned it offf
 //const HtmlWebpackPlugin = require('html-webpack-plugin')
 
 //might get rid of this eventually, if I switch to a node server
-const devServer = require('@webpack-blocks/dev-server2')
+//const devServer = require('@webpack-blocks/dev-server2')
 
-const splitVendor = require('webpack-blocks-split-vendor')
+//const splitVendor = require('webpack-blocks-split-vendor')
 const {
   addPlugins, createConfig, entryPoint, env, setOutput,
   sourceMaps, defineConstants, webpack,
@@ -123,7 +132,7 @@ const config = createConfig([
   ]),
 
   env('production', [
-    splitVendor(),
+    //splitVendor(),
     /*addPlugins([
       new webpack.optimize.UglifyJsPlugin({ compress: { warnings: false } }),
     ]),*/
