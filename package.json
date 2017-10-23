@@ -60,8 +60,8 @@
     "watch": "webpack --watch webpack.config.js",
 
     "start": "npm run copy && npm run build && node main.js",
-    "clean": "rimraf dist/*",
-    "copy": "copyfiles -f ./public/* ./dist",
+    "clean": "rm -rf dist/*",
+    "copy": "cp -rf ./public ./dist",
     "build": "webpack --define process.env.NODE_ENV=\"'production'\""
   },
   "main": "index.js",
