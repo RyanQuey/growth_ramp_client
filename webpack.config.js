@@ -6,13 +6,12 @@ const path = require('path')
 const devServer = require('@webpack-blocks/dev-server2')
 
 const splitVendor = require('webpack-blocks-split-vendor')
-//const happypack = require('webpack-blocks-happypack')
 const {
   addPlugins, createConfig, entryPoint, env, setOutput,
   sourceMaps, defineConstants, webpack,
 } = require('@webpack-blocks/webpack2')
 
-const sourceDir = process.env.SOURCE || 'src'
+const sourceDir = 'src'//process.env.SOURCE || 'src'
 const apiUrl = process.env.API_URL || 'http://localhost:1337'
 
 //this is how client-side assets will be accessible in a browser
