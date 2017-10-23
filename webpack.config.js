@@ -108,7 +108,7 @@ const config = {
   ],
   resolve: {
     modules: [path.resolve(__dirname, 'src'), 'node_modules'],
-    extensions: [".js", ".png", ".jpg", ".jpeg", ".gif"],
+    extensions: [".js"],
     mainFiles: ["index"],
   },
   node: {

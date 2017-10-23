@@ -41,5 +41,5 @@ public/*hot-update.json
 **/yarn-error.log*
 
 **/.tmp
-**/log*
+**/log
 **/*.bak
