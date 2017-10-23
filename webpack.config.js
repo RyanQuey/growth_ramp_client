@@ -111,12 +111,12 @@ const config = {
   },
 }
 
-if (process.env.NODE_ENV === 'production') {
-  config.plugins.push(new Uglify());
-} else { //development
+//if (process.env.NODE_ENV === 'production') {
+  //config.plugins.push(new Uglify());
+//} else { //development
   config.plugins.push(new webpack.NamedModulesPlugin());
   config.devtool = "source-map"
-}
+//}
 
 
 module.exports = config
