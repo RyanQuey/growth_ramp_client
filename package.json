@@ -65,7 +65,7 @@
     "watch": "webpack --watch webpack.config.js",
     "deploy": "npm run copy && git push heroku master",
     "copy": "cp -rf ./public ./dist",
-    "zzzheroku-postbuild": "npm run build",
+    "heroku-postbuild": "npm run build",
     "build": "webpack --display-error-details --define process.env.NODE_ENV=\"'production'\"",
     "start": "node main.js",
     "clean": "rm -rf dist/*"

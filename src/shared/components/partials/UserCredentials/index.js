@@ -1,7 +1,7 @@
 import { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-import { userActions, errorActions } from 'shared/actions'
+import { errorActions } from 'shared/actions'
 import { Button, Flexbox, Input } from 'shared/components/elements'
 import { UPDATE_USER_REQUEST } from 'constants/actionTypes'
 
@@ -55,14 +55,14 @@ class UserCredentials extends Component {
       } else {
         type = EMAIL
       }
-      userActions.signIn(
+      /*userActions.signIn(
         type,
         {
           email: this.state.email,
           password: this.state.password,
           history: this.props.history,
         },
-      )
+      )*/
     }
   }
 

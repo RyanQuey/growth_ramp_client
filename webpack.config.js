@@ -77,16 +77,25 @@ const config = {
         ],
       },
       {
-        include: /\.json$/,
-        loaders: ['json-loader']
+        test: /\.json$/,
+        loaders: ['json-loader'],
+        options: {
+          includePaths: [sourcePath],
+        },
       },
       {
         test: /\.(png|jpg|gif)$/,
-        loader: 'url-loader?limit=100000'
+        loader: 'url-loader?limit=100000',
+        options: {
+          includePaths: [sourcePath],
+        },
       },
       {
         test: /\.(woff2|woff|ttf|eot|svg)(\?v=[a-z0-9]\.[a-z0-9]\.[a-z0-9])?$/,
-        loader: 'url-loader?limit=100000'
+        loader: 'url-loader?limit=100000',
+        options: {
+          includePaths: [sourcePath],
+        },
       },
     ],
   },
