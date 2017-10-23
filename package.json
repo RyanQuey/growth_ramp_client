@@ -60,13 +60,15 @@
     "dev": "node main.js",
     "watch": "webpack --watch webpack.config.js",
 
-    "start": "node main.js",
-    "heroku-postbuild": "npm run copy && npm run build",
-    "clean": "rm -rf dist/*",
+    "deploy": "npm run copy && git push heroku master",
     "copy": "cp -rf ./public ./dist",
-    "build": "webpack --define process.env.NODE_ENV=\"'production'\""
+    "heroku-postbuild": "npm run build",
+    "build": "webpack --define process.env.NODE_ENV=\"'production'\"",
+    "start": "node main.js",
+
+    "clean": "rm -rf dist/*"
   },
-  "main": "index.js",
+  "main": "main.js",
   "repository": {
     "type": "git",
     "url": "git://github.com/ryan/growth_ramp_client.git"

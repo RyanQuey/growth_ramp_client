@@ -11,7 +11,12 @@ coverage
 
 # production/build
 build
-dist
+# getting rid of most of dist except what gets copied from public (index.html, favicon, manifest.json)
+dist/app*
+dist/hot
+dist/*.png
+dist/*.js
+
 .happypack
 public/main.js
 public/main.js.map
