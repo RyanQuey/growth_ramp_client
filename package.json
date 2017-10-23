@@ -3,6 +3,9 @@
   "private": true,
   "version": "0.0.1",
   "description": "a react application",
+  "engines": {
+    "node": "8.4.0"
+  },
   "keywords": [],
   "dependencies": {
     "@webpack-blocks/dev-server2": "^0.4.0",
