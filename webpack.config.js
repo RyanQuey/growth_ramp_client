@@ -124,9 +124,9 @@ const config = createConfig([
 
   env('production', [
     splitVendor(),
-    addPlugins([
+    /*addPlugins([
       new webpack.optimize.UglifyJsPlugin({ compress: { warnings: false } }),
-    ]),
+    ]),*/
   ]),
   node,
 ])
