@@ -12,8 +12,6 @@ const {
   sourceMaps, defineConstants, webpack,
 } = require('@webpack-blocks/webpack2')
 
-const host = process.env.HOST || 'localhost'
-const port = process.env.PORT || 3000
 const sourceDir = process.env.SOURCE || 'src'
 const apiUrl = process.env.API_URL || 'http://localhost:1337'
 
@@ -118,15 +116,7 @@ const config = createConfig([
   sass(),
   css(),
   resolveModules(sourceDir),
-  env('development', [ //probably thewebpack dev server; so can probably remove
-    devServer({
-      contentBase: 'public',
-      stats: 'errors-only',
-      historyApiFallback: { index: publicPath },
-      headers: { 'Access-Control-Allow-Origin': '*' },
-      host,
-      port,
-    }),
+  env('development', [
     sourceMaps(),
     addPlugins([
       new webpack.NamedModulesPlugin(),
