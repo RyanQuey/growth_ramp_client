@@ -59,7 +59,9 @@
   "scripts": {
     "dev": "node main.js",
     "watch": "webpack --watch webpack.config.js",
-    "start": "npm run copy && npm run build && node main.js",
+
+    "start": "node main.js",
+    "heroku-postinstall": "npm run copy && npm run build",
     "clean": "rm -rf dist/*",
     "copy": "cp -rf ./public ./dist",
     "build": "webpack --define process.env.NODE_ENV=\"'production'\""
