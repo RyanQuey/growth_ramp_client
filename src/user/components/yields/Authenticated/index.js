@@ -6,7 +6,7 @@ import { Flexbox, Alert } from 'shared/components/elements'
 import { UserNavbar, UserSidebar, LinkProviderAccountModal } from 'user/components/partials'
 import { } from 'constants/actionTypes'
 import { viewSettingActions } from 'shared/actions'
-import classes from './Authenticated.scss'
+import classes from './style.scss'
 import { withRouter } from 'react-router-dom'
 
 class Authenticated extends Component {

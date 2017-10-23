@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import theme from 'theme'
 import PropTypes from 'prop-types'
-import classes from './Input.scss'
+import classes from './style.scss'
 
 // validations for react-validation
 const rules = {

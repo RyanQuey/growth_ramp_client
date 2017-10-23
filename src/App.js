@@ -2,7 +2,7 @@ import { Component } from 'react';
 import logo from 'images/logo.png';
 import User from 'user/components'
 import { connect } from 'react-redux'
-import 'App.css';
+import 'App.scss';
 import {
   withRouter,
 } from 'react-router-dom'

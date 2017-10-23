@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import Dropzone from 'react-dropzone'
 import { setImage } from 'shared/actions'
 import { Flexbox, Icon } from 'shared/components/elements'
-import classes from './DropImage.scss'
+import classes from './style.scss'
 
 class DropImage extends Component {
   constructor(props) {

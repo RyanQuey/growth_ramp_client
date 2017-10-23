@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
 import theme from 'theme'
-import classes from './Icon.scss'
+import classes from './style.scss'
 
 const Icon = ({ border, className, color, name, onClick, size, ...props }) => {
   let borderStyle = {}

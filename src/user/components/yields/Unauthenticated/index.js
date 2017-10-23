@@ -1,7 +1,7 @@
 import { Component } from 'react'
 import PropTypes from 'prop-types'
 import { Flexbox, Navbar } from 'shared/components/elements'
-import classes from './Unauthenticated.scss'
+import classes from './style.scss'
 import { UserLoginModal, UserNavbar, UserSidebar, UserContent } from 'user/components/partials'
 import { UnauthenticatedContent } from 'user/components/templates'
 

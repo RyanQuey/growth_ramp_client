@@ -1,6 +1,5 @@
-import React from 'react'
 import PropTypes from 'prop-types'
-import classes from './Button.scss'
+import classes from './style.scss'
 import { StyleSheet, css } from 'aphrodite'
 import theme from 'theme'
 
@@ -39,7 +38,7 @@ Button.defaultProps = {
 Button.propTypes = {
   background: PropTypes.string,
   children: PropTypes.oneOfType([
-    PropTypes.string, 
+    PropTypes.string,
     PropTypes.node
   ]),
   color: PropTypes.string,

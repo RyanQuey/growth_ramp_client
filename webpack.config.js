@@ -1,12 +1,3 @@
-console.log("*");
-console.log("*");
-console.log("*");
-console.log("using the right file");
-console.log(process.env);
-console.log("*");
-console.log("*");
-console.log("*");
-console.log("*");
 const path = require('path')
 //is constantly reloading the browser...just turned it offf
 //const HtmlWebpackPlugin = require('html-webpack-plugin')
@@ -15,130 +6,118 @@ const path = require('path')
 //const devServer = require('@webpack-blocks/dev-server2')
 
 //const splitVendor = require('webpack-blocks-split-vendor')
-const {
-  addPlugins, createConfig, entryPoint, env, setOutput,
-  sourceMaps, defineConstants, webpack,
-} = require('@webpack-blocks/webpack2')
+const Uglify = require("uglifyjs-webpack-plugin");
+const webpack = require('webpack')
 
-const sourceDir = 'src'//process.env.SOURCE || 'src'
-const apiUrl = process.env.API_URL || 'http://localhost:1337'
-
-//this is how client-side assets will be accessible in a browser
-//path starts with a '/', so the path will be a path relative to the server, and the outputPath, not the index.html
-const publicPath = `/${process.env.PUBLIC_PATH || ''}/`.replace('//', '/')
+const sourceDir = process.env.SOURCE || 'src'
 const sourcePath = path.join(process.cwd(), sourceDir)
-const nodeModulesPath = path.join(process.cwd(), 'node_modules')
-
-//note that this sets point of reference eg for the public path
+/*const componentPaths = ['user', 'shared', 'admin'].map((s) => (
+  path.join(sourcePath, s)
+))
+console.log(componentPaths);*/
+//const baseSassPath = path.join(sourcePath, 'theme')
 const outputPath = path.join(process.cwd(), 'dist')
 
-const babel = () => () => ({
-  module: {
-    rules: [
-      { test: /\.jsx?$/, exclude: /node_modules/, loader: 'babel-loader' },
-    ],
+// currently only using in client
+const config = {
+  entry: `${sourcePath}/index.js`,
+  output: {
+    filename: 'app.js',
+    path: outputPath,
+    hotUpdateChunkFilename: 'hot/hot-update.js',
+    hotUpdateMainFilename: 'hot/hot-update.json'
   },
-})
-
-const sass = () => () => ({
   module: {
     rules: [
       {
+        test: /\.js$/,
+        exclude: /node_modules/,
+        loader: 'babel-loader',
+      },
+      {
         test: /\.scss$/,
-        use: [{
-          loader: 'style-loader',
-        }, {
-          loader: 'css-loader',
-          options: {
-            modules: true,
-            localIdentName: '[local]-[hash:base64:5]',
+        use: [
+          {
+            loader: 'style-loader',
           },
-        }, {
-          loader: 'sass-loader',
-          options: {
-            includePaths: [sourcePath, nodeModulesPath],
+          {
+            loader: 'css-loader',
+            options: {
+              modules: true,
+              localIdentName: '[local]-[hash:base64:5]',
+            },
           },
-        }],
+          {
+            loader: 'sass-loader',
+            options: {
+              includePaths: [sourcePath],
+            },
+          },
+        ],
+      },
+      {
+        //test: /^(?!style)+.*\.scss$/, //don't hash classes for everything else besides style.scss. doesn't seem to work though, potentially using getLocalIdent could work, but it seems like using multiple tests that use .scss just causes trouble
+        test: /\.css$/,
+        use: [
+          {
+            loader: 'style-loader',
+          },
+          {
+            loader: 'css-loader',
+            options: {
+              modules: true,
+            },
+          },
+          {
+            loader: 'sass-loader',
+            options: {
+              includePaths: [sourcePath],
+            },
+          },
+        ],
+      },
+      {
+        include: /\.json$/,
+        loaders: ['json-loader']
+      },
+      {
+        test: /\.(png|jpg|gif)$/,
+        loader: 'url-loader?limit=100000'
+      },
+      {
+        test: /\.(woff2|woff|ttf|eot|svg)(\?v=[a-z0-9]\.[a-z0-9]\.[a-z0-9])?$/,
+        loader: 'url-loader?limit=100000'
       },
     ],
   },
-})
-
-const css = () => () => ({
-  module: {
-    rules: [
-      { test: /\.css$/, exclude: /node_modules\/normalize.css/, loader: 'style-loader!css-loader' },
-    ],
-  },
-})
-
-const assets = () => () => ({
-  module: {
-    rules: [
-      { test: /\.(png|jpe?g|svg|woff2?|ttf|eot)$/, loader: 'url-loader?limit=8000' },
-    ],
-  },
-})
-
-const resolveModules = modules => () => ({
+  plugins: [
+    new webpack.ProgressPlugin(),
+    new webpack.DefinePlugin({
+      'process.env.NODE_ENV': process.env.NODE_ENV,
+      'process.env.API_URL': process.env.API_URL,
+    }),
+  ],
   resolve: {
-    modules: [].concat(modules, ['node_modules']),
+    modules: [path.resolve(__dirname, 'src'), 'node_modules'],
+    extensions: [".js"],
+    mainFiles: ["index"],
   },
-})
-
-const node = () => ({
   node: {
     fs: 'empty',
     net: 'empty',
     tls: 'empty',
     child_process: 'empty',
     module: 'empty',
-  }
-})
+  },
+}
 
-// currently only using an client
-const config = createConfig([
-  //default target is web, which is the case here
-  entryPoint({
-    app: sourcePath,
-  }),
-  setOutput({
-    filename: '[name].js',
-    path: outputPath,
-    publicPath,
-    hotUpdateChunkFilename: 'hot/hot-update.js',
-    hotUpdateMainFilename: 'hot/hot-update.json'
-  }),
-  defineConstants({
-    'process.env.NODE_ENV': process.env.NODE_ENV,
-    'process.env.PUBLIC_PATH': publicPath.replace(/\/$/, ''),
-    'process.env.API_URL': apiUrl,
-  }),
-  addPlugins([
-    new webpack.ProgressPlugin(),
-  ]),
-  //happypack([
-    babel(),
-  //]),
-  assets(),
-  sass(),
-  css(),
-  resolveModules(sourceDir),
-  env('development', [
-    sourceMaps(),
-    addPlugins([
-      new webpack.NamedModulesPlugin(),
-    ]),
-  ]),
+if (process.env.NODE_ENV === 'production') {
+  config.plugins.push(new Uglify());
+} else { //development
+  config.plugins.push(new webpack.NamedModulesPlugin());
+  config.devtool = "source-map"
+}
 
-  env('production', [
-    //splitVendor(),
-    /*addPlugins([
-      new webpack.optimize.UglifyJsPlugin({ compress: { warnings: false } }),
-    ]),*/
-  ]),
-  node,
-])
 
 module.exports = config
 
