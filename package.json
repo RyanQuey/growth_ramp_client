@@ -60,7 +60,7 @@
     "dev": "node main.js",
     "watch": "webpack --watch webpack.config.js",
     "clean": "rimraf dist/*",
-    "copy": "copyfiles -f ./public/assets/* ./public/favicon.ico ./dist",
+    "copy": "copyfiles -f ./public/* ./dist",
 
     "build": "webpack",
     "heroku-postinstall": "webpack --define process.env.NODE_ENV=\"'production'\""
