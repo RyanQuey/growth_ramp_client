@@ -1,13 +1,18 @@
 //TODO for helpers that overlap with the JavaScript helpers in the front and,, can just import from there. DRY things up
 const request = require('request')
-const result = require('dotenv').config()
+let env
+if (!process.env.NODE_ENV === 'production') {
+  const result = require('dotenv').config()
 
-if (result.error) {
-  throw result.error
+  if (result.error) {
+    throw result.error
+  }
+
+  console.log(result.parsed)
+  env = result.parsed // this should === process.env
+} else {
+  env = process.env
 }
-
-console.log(result.parsed)
-const env = result.parsed // this should === process.env
 const domain = env.CLIENT_URL || 'http://www.local.dev:5000'
 const callbackPath = env.PROVIDER_CALLBACK_PATH || '/provider_redirect'
 const callbackUrl = domain + callbackPath
