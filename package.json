@@ -56,7 +56,7 @@
     "dotenv": "^4.0.0"
   },
   "scripts": {
-    "start": "npm run clean && npm run copy && node main.js",
+    "start": "npm run copy && npm run build node main.js",
     "dev": "node main.js",
     "watch": "webpack --watch webpack.config.js",
     "clean": "rimraf dist/*",
