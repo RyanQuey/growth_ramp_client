@@ -6,7 +6,7 @@ const path = require('path')
 const devServer = require('@webpack-blocks/dev-server2')
 
 const splitVendor = require('webpack-blocks-split-vendor')
-const happypack = require('webpack-blocks-happypack')
+//const happypack = require('webpack-blocks-happypack')
 const {
   addPlugins, createConfig, entryPoint, env, setOutput,
   sourceMaps, defineConstants, webpack,
@@ -109,9 +109,9 @@ const config = createConfig([
   addPlugins([
     new webpack.ProgressPlugin(),
   ]),
-  happypack([
+  //happypack([
     babel(),
-  ]),
+  //]),
   assets(),
   sass(),
   css(),
