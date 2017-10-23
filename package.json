@@ -9,6 +9,7 @@
     "@webpack-blocks/webpack2": "^0.4.0",
     "aphrodite": "^1.2.4",
     "axios": "^0.16.2",
+    "babel-cli": "^6.26.0",
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.2",
     "babel-plugin-transform-es2015-modules-commonjs": "^6.26.0",
@@ -53,7 +54,6 @@
     "webpack-blocks-split-vendor": "^0.2.1"
   },
   "devDependencies": {
-    "babel-cli": "^6.26.0",
     "dotenv": "^4.0.0"
   },
   "scripts": {
