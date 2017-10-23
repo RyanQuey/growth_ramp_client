@@ -78,7 +78,7 @@ const config = {
       },
       {
         test: /\.json$/,
-        loaders: ['json-loader'],
+        loaders: 'json-loader',
         options: {
           includePaths: [sourcePath],
         },
