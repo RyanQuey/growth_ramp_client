@@ -11,6 +11,7 @@ import { PROVIDERS } from 'constants/providers'
 
 export default {
   // extracts the relevant passport profile data from the profile auth data received on login/request, and matches it to the database columns
+  // don't think I ever use this...only in nodeHelpers.js
   extractPassportData: (accessToken, refreshToken, passportProfile) => {
     passportProfile.name = passportProfile.provider.toUpperCase()
     if (passportProfile.name === "TWITTER") {
@@ -151,8 +152,8 @@ console.log(templateName, errors, options.alert);
     if (!account || typeof account !== "object") {
       return []
     }
-    const permittedScopes = Object.keys(account.scopes).filter((scope) => {
-      return scope.status === 'granted'
+    const permittedScopes = Object.keys(account.scopes).filter((scopeType) => {
+      return account.scopes[scopeType].status === 'granted'
     })
 
     const permittedChannels = Object.keys(PROVIDERS[account.provider].channels).filter((channel) => {

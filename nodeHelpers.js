@@ -142,8 +142,14 @@ module.exports = {
 
     } else if (userData.provider === "FACEBOOK") {
       userData.userName = passportProfile.displayName
-      //not sure why permissions are sent differently, but whatever
-      userData.scopes = passportProfile._json.permissions.data
+      //not sure why permissions are sent in this _json property only, but whatever
+      //mapping to an object, with keys being the scope
+      userData.scopes = {}
+      let scopes = passportProfile._json.permissions.data
+      for (let i = 0; i < scopes.length; i++) {
+        let scope = scopes[i]
+        userData.scopes[scope.permission] = {status: scope.status}
+      }
       //only persisting one email
       userData.email = passportProfile.emails[0].value
     }
