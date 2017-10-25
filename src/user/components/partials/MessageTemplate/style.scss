@@ -1,0 +1,9 @@
+@import 'theme/_helpers';
+
+.messageTemplate {
+  @include mq(xs) {
+  }
+  @include mq(sm) {
+  }
+}
+
