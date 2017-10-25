@@ -7,6 +7,7 @@ import {
 import {
   newAlert
 } from 'shared/actions/alerts'
+import { PROVIDERS } from 'constants/providers'
 
 export default {
   // extracts the relevant passport profile data from the profile auth data received on login/request, and matches it to the database columns

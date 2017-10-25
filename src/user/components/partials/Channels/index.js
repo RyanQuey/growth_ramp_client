@@ -112,7 +112,7 @@ console.log(this.state.currentProvider);
         <h1 className="display-3">Channels</h1>
         {this.state.status === "PENDING" && <Icon name="spinner" className="fa-spin" />}
 
-        <Navbar className="nav navTabs justifyContentCenter" background="white" color={theme.color.text}>
+        <Navbar className="nav navTabs justifyContentStart" background="white" color={theme.color.text}>
           <ul role="tablist">
             {providers.map((provider) => (
               <li key={provider} onClick={this.handleChooseProvider.bind(this, provider)}>
@@ -134,13 +134,13 @@ console.log(this.state.currentProvider);
             <h3>No social network accounts configured yet; add one more accounts before continuing</h3>
           ) : (
             <div>
-              {accountsForProvider.map((account) => {
-                <div onClick={this.setAccount.bind(this, account)}>
+              {accountsForProvider.map((account) => (
+                <div key={account.id} onClick={this.setAccount.bind(this, account)}>
                   <img alt="your face" />
                   <h5>{account.email || "no email..."}</h5>
                 </div>
+              ))}
 
-              })}
               {this.state.currentAccount ? (
                 <PlanAccountConfiguration account={this.state.currentAccount}/>
               ) : (

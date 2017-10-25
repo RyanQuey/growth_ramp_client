@@ -20,6 +20,12 @@
       margin: 0 20px;
     }
   }
+  &.justifyContentStart > ul {
+    justify-content: flex-start;
+  }
+  &.justifyContentEnd > ul {
+    justify-content: flex-end;
+  }
   &.justifyContentSpaceEvenly > ul {
     justify-content: space-evenly;
   }
@@ -31,6 +37,7 @@
   }
   &.navTabs > ul > li {
     padding: 10px;
+    margin: 0px;
     border: 1px black solid;
     border-bottom: none;
     border-radius: 15px 15px 0 0;
