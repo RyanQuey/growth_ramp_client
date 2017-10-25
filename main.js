@@ -39,24 +39,26 @@ passport.use(new FacebookStrategy(
     if (!refreshToken) {
       refreshToken = req.query.code
     }
-console.log("***profile***");
-console.log(profile);
+//console.log("***profile***");
+//console.log(profile);
     const providerData = Helpers.extractPassportData(accessToken, refreshToken, profile)
+    const cookie = Helpers.extractCookie(req.headers.cookie)
 
-    return Helpers.tradeTokenForUser(providerData, done)
+    return Helpers.tradeTokenForUser(providerData, cookie, done)
   }
 ))
 //appsecret is automatically set (?)
 
 passport.use(new TwitterStrategy(
   Helpers.twitterOptions,
-  function(accessToken, tokenSecret, profile, done) {
+  function(req, accessToken, tokenSecret, profile, done) {
     //passing in the token secret as the refresh token for twitter
     const providerData = Helpers.extractPassportData(accessToken, tokenSecret, profile)
+    const cookie = Helpers.extractCookie(req.headers.cookie)
     //need to set a timeout for this. maybe wrap in a promise?
 console.log("***profile***");
 console.log(profile);
-    return Helpers.tradeTokenForUser(providerData, done)
+    return Helpers.tradeTokenForUser(providerData, cookie, done)
   }
 ))
 
@@ -99,7 +101,7 @@ console.log("options",options);
 
 app.get(`${Helpers.callbackPath}/:provider`, (req, res, next) => {
   const providerName = req.params.provider.toLowerCase()
-  if (!["facebook", "twitter", "google"].includes(providerName)) {next()}
+  if (!["facebook", "twitter", "linkedin"].includes(providerName)) {next()}
 
   const providerCallback = function(err, raw, info) {
     /*console.log(req.user, req.account);

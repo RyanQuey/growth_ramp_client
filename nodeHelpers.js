@@ -1,5 +1,6 @@
 //TODO for helpers that overlap with the JavaScript helpers in the front and,, can just import from there. DRY things up
 const request = require('request')
+const cookieParser = require('cookie-parser');
 let env
 if (!process.env.NODE_ENV === 'production') {
   const result = require('dotenv').config()
@@ -71,11 +72,15 @@ module.exports = {
 
   callbackPath: callbackPath,
 
-  tradeTokenForUser: ((providerData, done) => {
+  tradeTokenForUser: ((providerData, cookie, done) => {
     const url = "/users/login_with_provider"
 
     const body = providerData
-    const headers = {}
+    //at this point, the cookie is the user
+    const headers = {
+      "x-user-token": cookie.apiToken,
+      "x-id": `user-${cookie.id}`
+    }
 
     let timeout
     request.post({
@@ -97,6 +102,33 @@ module.exports = {
     })
   }),
 
+  extractCookie: (allCookies) => {
+    const splitCookies = allCookies.split("; ")
+    //don't need all of this, only need the sessionUser!
+    /*const cookiesObject = splitCookies.reduce((acc, cookie) => {
+      let keyAndValue = cookie.split("=")
+      let key =  keyAndValue[0]
+      let value = keyAndValue[1]
+
+      acc[key] = value
+
+      return acc
+    }, {})*/
+    let ret
+    const cookiesObject = splitCookies.forEach((cookie) => {
+      let keyAndValue = cookie.split("=")
+      let key = keyAndValue[0]
+      let value = keyAndValue[1]
+
+      if (key === "sessionUser") {
+        ret = JSON.parse(unescape(value))
+      }
+
+      return
+    })
+
+    return ret
+  },
   //eventually will probably do more, but just this for now
 
   // extracts the relevant passport profile data from the profile auth data received on login/request, and matches it to the database columns
@@ -104,10 +136,11 @@ module.exports = {
     let userData = _.pickBy(passportProfile, (value, key) => {
       return ["providerUserId", "email"].includes(key)
     })
-
     userData.provider = passportProfile.provider.toUpperCase()
     if (userData.provider === "TWITTER") {
       userData.userName = passportProfile.user_name
+      userData.profilePictureUrl = passportProfile.profile_image_url_https
+
     } else if (userData.provider === "FACEBOOK") {
       userData.userName = passportProfile.displayName
       //not sure why permissions are sent differently, but whatever
@@ -127,7 +160,8 @@ module.exports = {
   twitterOptions: {
     consumerKey: env.TWITTER_CONSUMER_KEY,
     consumerSecret: env.TWITTER_CONSUMER_SECRET,
-    callbackUrl: `${callbackUrl}/twitter`
+    callbackUrl: `${callbackUrl}/twitter`,
+    passReqToCallback: true,//to extract the code from the query...for some reason, passport doesn't get it by default. also to get cookies
   },
 
   facebookOptions: {
@@ -146,7 +180,7 @@ module.exports = {
       //friends
       'permissions', //this app 's current permissions
     ],
-    passReqToCallback: true,//to extract the code from the query...for some reason, passport doesn't get it by default
+    passReqToCallback: true,//to extract the code from the query...for some reason, passport doesn't get it by default. also to get cookies
     //scope: 'email, '
   },
 
