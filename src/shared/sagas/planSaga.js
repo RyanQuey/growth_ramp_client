@@ -75,7 +75,7 @@ function* update(action) {
     const res = yield axios.put(`/api/plans/${planData.id}`, planData) //eventually switch to socket
 
     yield all([
-      put({ type: UPDATE_PLAN_SUCCESS, payload: {[planData.id]: planData }}),
+      put({ type: UPDATE_PLAN_SUCCESS, payload: planData}),
     ])
 
   } catch (err) {

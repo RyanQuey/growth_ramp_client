@@ -1,12 +1,13 @@
 import {
   CREATE_PLAN_SUCCESS,
+  UPDATE_PLAN_SUCCESS,
   FETCH_PLAN_SUCCESS,
   INPUT_UPDATE_SUCCESS,
   SIGN_OUT,
 } from 'constants/actionTypes'
 
 const plansReducer = (state = {}, action) => {
-
+  let plan
   switch (action.type) {
 
     case INPUT_UPDATE_SUCCESS:
@@ -28,7 +29,13 @@ const plansReducer = (state = {}, action) => {
       }
 
     case CREATE_PLAN_SUCCESS:
-      return Object.assign({}, state, action.payload)
+      plan = action.payload
+      return Object.assign({}, state, {[plan.id]: plan})
+
+    case UPDATE_PLAN_SUCCESS:
+      plan = action.payload
+console.log(plan);
+      return Object.assign({}, state, {[plan.id]: plan})
 
     case FETCH_PLAN_SUCCESS:
       return Object.assign({}, state, action.payload)

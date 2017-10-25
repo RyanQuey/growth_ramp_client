@@ -1,6 +1,7 @@
 import {
   CREATE_PLAN_SUCCESS,
   FETCH_PLAN_SUCCESS,
+  UPDATE_PLAN_SUCCESS,
   INPUT_UPDATE_SUCCESS,
   SIGN_OUT,
   CHOOSE_PLAN, //probably eventually call this SET_PLAN
@@ -10,6 +11,10 @@ import {
 const currentPlanReducer = (state = null, action) => {
 
   switch (action.type) {
+
+    case UPDATE_PLAN_SUCCESS:
+      //payload should be the updated plan
+      return Object.assign({}, action.payload)
 
     case CREATE_PLAN_SUCCESS:
       //payload should be the new plan

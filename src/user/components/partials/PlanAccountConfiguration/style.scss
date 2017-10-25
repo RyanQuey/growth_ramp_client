@@ -9,7 +9,7 @@
   }
 }
 
-.messageForm {
+.messageTemplate {
   @include mq(xs) {
     @include cols(12)
   }
