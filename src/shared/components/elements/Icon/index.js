@@ -11,7 +11,7 @@ const Icon = ({ border, className, color, name, onClick, size, ...props }) => {
       boxShadow: '0 1px 10px rgba(0, 0, 0, 0.46)',
     }
   }
-  const style = extend(borderStyle, { color: theme.color[color] })
+  const style = _.extend(borderStyle, { color: theme.color[color] })
 
   return (
     <i

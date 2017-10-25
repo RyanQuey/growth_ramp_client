@@ -143,5 +143,24 @@ console.log(templateName, errors, options.alert);
       payload
     })
   },
+
+  //takes a list of scopes for an account and returns the list of available channels for that account
+  //might make a helper function if I needed anywhere else
+  permittedChannels: (account) => {
+    if (!account || typeof account !== "object") {
+      return []
+    }
+    const permittedScopes = Object.keys(account.scopes).filter((scope) => {
+      return scope.status === 'granted'
+    })
+
+    const permittedChannels = Object.keys(PROVIDERS[account.provider].channels).filter((channel) => {
+      const channelScopes = PROVIDERS[account.provider].channels[channel]
+      return channelScopes.every((scope) => (permittedScopes.includes(scope))) //also returns true when the channel requires no scopes at all (empty array)
+    })
+
+    return permittedChannels
+  }
+
 }
 

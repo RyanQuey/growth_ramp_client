@@ -18,6 +18,7 @@ class PostPicker extends Component {
 
   editPost (post, e) {
     this.props.setPost(post)
+
     this.props.history.push(`/posts/edit`)
   }
 

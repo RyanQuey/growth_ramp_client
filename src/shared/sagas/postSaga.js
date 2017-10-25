@@ -1,6 +1,15 @@
 import { put, select, take, takeLatest, call, all } from 'redux-saga/effects'
 import { delay } from 'redux-saga'
-import { PUBLISH_POST_REQUEST, SIGN_IN_POPUP_CLOSED, PUBLISH_POST_SUCCESS, SIGN_IN_REQUEST, CREATE_POST_SUCCESS, CREATE_POST_REQUEST,  FETCH_POST_REQUEST, FETCH_POST_SUCCESS   } from 'constants/actionTypes'
+import { PUBLISH_POST_REQUEST,
+  SIGN_IN_POPUP_CLOSED,
+  PUBLISH_POST_SUCCESS,
+  SIGN_IN_REQUEST,
+  CREATE_POST_SUCCESS,
+  CREATE_POST_REQUEST,
+  FETCH_POST_REQUEST,
+  FETCH_POST_SUCCESS,
+  SET_POST,
+} from 'constants/actionTypes'
 
 function* sendToProvider(providerName, pld, tokenInfo) {
   const publishFunctions = {
@@ -104,7 +113,7 @@ function* createPost(action) {
 // may try using state.user.uid instead, just pulling from the store directly
 //Only want to retrieve this user's posts once...for now
 //TODO: set up a listener, so that all data the matter which browser etc. will be lively updated (?), Even if multiple people are working on it
-function* fetchPost(action) {
+function* fetchPosts(action) {
   try {
     const pld = action.payload
     const userId = pld.userId
@@ -127,10 +136,37 @@ function* fetchPost(action) {
   }
 }
 
+//actually don't need this for now...but might later, so whatever
+function* populatePost(action) {
+  try {
+    const post = action.payload
+    const userId = pld.userId
+
+    //TODO: eventually they filter out posts that have already been sent
+    const res = yield axios.get(`/api/posts/${post.id}?populate=planId`) //eventually switch to socket
+
+    //converting into object
+    const posts = res.data.reduce((acc, post) => {
+      acc[post.id] = post
+      return acc
+    }, {})
+    yield all([
+      //put({type: FETCH_POST_SUCCESS, payload: posts})
+    ])
+
+  } catch (err) {
+    console.log('posts fetch failed', err)
+    // yield put(userFetchFailed(err.message))
+  }
+}
+
+
 export default function* postSaga() {
-  yield takeLatest(FETCH_POST_REQUEST, fetchPost)
+  yield takeLatest(FETCH_POST_REQUEST, fetchPosts)
   yield takeLatest(PUBLISH_POST_REQUEST, publishPost)
   yield takeLatest(CREATE_POST_REQUEST, createPost)
+  //when setting as the current post, will want to populate several of the associations
+  //yield takeLatest(SET_POST, populatePost)
 }
 
 

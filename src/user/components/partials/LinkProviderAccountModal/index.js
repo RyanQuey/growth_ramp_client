@@ -71,25 +71,6 @@ class LinkProviderAccount extends Component {
     this.setState({loginPending: true})
   }
 
-  //takes a list of scopes for an account and returns the list of available channels for that account
-  //might make a helper function if I needed anywhere else
-  permittedChannels() {
-    const account = this.state.currentAccount
-    if (!account || typeof account !== "object") {
-      return []
-    }
-    const permittedScopes = Object.keys(account.scopes).filter((scope) => {
-      return scope.status === 'granted'
-    })
-
-    const permittedChannels = Object.keys(PROVIDERS[account.provider].channels).filter((channel) => {
-      const channelScopes = PROVIDERS[account.provider].channels[channel]
-      return channelScopes.every((scope) => (permittedScopes.includes(scope))) //also returns true when the channel requires no scopes at all (empty array)
-    })
-
-    return permittedChannels
-  }
-
   chosenScopes() {
     //might make a helper function if I needed anywhere else
     //takes channels and provider and returns the scopes needed for that channel
@@ -109,7 +90,7 @@ class LinkProviderAccount extends Component {
     const currentProvider = this.state.currentProvider
     const currentAccounts = Object.keys(this.props.providerAccounts).includes(currentProvider) ? this.props.providerAccounts[currentProvider] : null
 
-    const permittedChannels = this.permittedChannels()
+    const permittedChannels = Helpers.permittedChannels(this.state.currentAccount)
 
     return (
       <ModalContainer

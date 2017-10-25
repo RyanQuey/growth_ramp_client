@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import { Component } from 'react'
 import theme from 'theme'
 import PropTypes from 'prop-types'
 import classes from './style.scss'

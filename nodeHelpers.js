@@ -1,6 +1,5 @@
 //TODO for helpers that overlap with the JavaScript helpers in the front and,, can just import from there. DRY things up
 const request = require('request')
-const cookieParser = require('cookie-parser');
 let env
 if (!process.env.NODE_ENV === 'production') {
   const result = require('dotenv').config()
