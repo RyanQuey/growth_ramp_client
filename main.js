@@ -27,6 +27,7 @@ const Transform = require('stream').Transform
 const passport = require('passport')
 const FacebookStrategy = require('passport-facebook').Strategy
 const TwitterStrategy = require('passport-twitter').Strategy
+const LinkedInStrategy = require('passport-linkedin-oauth2').Strategy;
 
 const Helpers = require('./nodeHelpers')
 const PROVIDERS = require('./src/constants/providers').PROVIDERS
@@ -53,6 +54,7 @@ passport.use(new TwitterStrategy(
   Helpers.twitterOptions,
   function(req, accessToken, tokenSecret, profile, done) {
     //passing in the token secret as the refresh token for twitter
+    //oauth1 is reason why, I think
     const providerData = Helpers.extractPassportData(accessToken, tokenSecret, profile)
     const cookie = Helpers.extractCookie(req.headers.cookie)
     //need to set a timeout for this. maybe wrap in a promise?
@@ -61,6 +63,22 @@ console.log(profile);
     return Helpers.tradeTokenForUser(providerData, cookie, done)
   }
 ))
+
+passport.use(new LinkedInStrategy(
+  Helpers.linkedinOptions,
+  function(req, accessToken, refreshToken, profile, done) {
+    if (!refreshToken) {
+      refreshToken = req.query.code//not sure if this is really the refreshtoken...might just be a temporary code that passport will use.
+    }
+//console.log("***profile***");
+console.log(profile);
+    const providerData = Helpers.extractPassportData(accessToken, refreshToken, profile)
+    const cookie = Helpers.extractCookie(req.headers.cookie)
+
+    return Helpers.tradeTokenForUser(providerData, cookie, done)
+  }
+))
+//appsecret is automatically set (?)
 
 const app = express();
 const apiUrl = process.env.API_URL || 'http://localhost:1337';
@@ -91,6 +109,13 @@ app.get('/login/:provider', ((req, res, next) => {
   //options will look like this for example: {scope: __, authType: 'rerequest'}
   const options = req.query || {}
 console.log("options",options);
+  //make sure to get the defaults again, just in case they don't already have them... Also, linkedin doesn't send the id by default, which I need to verify if it's the same account or a new account :)
+  //so far this only does anything for linkedIn
+  if (options.scope) {
+    let scope = Array.isArray(options.scope) ? options.scope : [options.scope]
+console.log(scope);
+    options.scope = options.scope.concat(Helpers[`${providerName}Options`].scope || [])
+  }
   passport.authenticate(providerName, options)(req, res, next)
 }))
 
@@ -107,6 +132,7 @@ app.get(`${Helpers.callbackPath}/:provider`, (req, res, next) => {
     /*console.log(req.user, req.account);
     console.log("********************************************");
     console.log("user and provider", raw, "info",info);*/
+console.log(err, raw, info);
     if (err || !raw) {
       console.log("error after authenticating into provider:");
       console.log(err);

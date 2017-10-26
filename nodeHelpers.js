@@ -14,7 +14,7 @@ if (!process.env.NODE_ENV === 'production') {
   env = process.env
 }
 const domain = env.CLIENT_URL || 'http://www.local.dev:5000'
-const callbackPath = env.PROVIDER_CALLBACK_PATH || '/provider_redirect'
+const callbackPath = '/provider_redirect'
 const callbackUrl = domain + callbackPath
 const apiUrl = process.env.API_URL || 'http://localhost:1337';
 
@@ -152,6 +152,13 @@ module.exports = {
       }
       //only persisting one email
       userData.email = passportProfile.emails[0].value
+
+    } else if (userData.provider === "LINKEDIN") {
+      userData.userName = passportProfile.displayName
+      userData.profileUrl = passportProfile._json.publicProfileUrl
+      userData.photoUrl = passportProfile.photos[0].value
+      userData.email = passportProfile.emails[0].value
+
     }
 
     userData.providerUserId = passportProfile.id
@@ -189,5 +196,13 @@ module.exports = {
     //scope: 'email, '
   },
 
-
+  linkedinOptions: {
+    clientID: env.CLIENT_LINKEDIN_ID,
+    clientSecret: env.CLIENT_LINKEDIN_SECRET,
+    callbackURL: `${callbackUrl}/linkedin`,
+    //gets read access for these two
+    scope: ['r_emailaddress', 'r_basicprofile'],
+    passReqToCallback: true,//to extract the code from the query...for some reason, passport doesn't get it by default. also to get cookies
+    state: true, //a security thing
+  },
 }

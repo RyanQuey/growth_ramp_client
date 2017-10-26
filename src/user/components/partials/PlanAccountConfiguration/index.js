@@ -79,10 +79,10 @@ class PlanAccountConfiguration extends Component {
 
     const account = this.props.account
     const availableChannels = PROVIDERS[account.provider].channels
+console.log(PROVIDERS, account.provider);
     const messageTemplates = Helpers.safeDataPath(this.props, `currentPlan.channelConfigurations.${account.provider}.messageTemplates`, [])
 
     const sorted = this.sortConfigurationsByChannel(messageTemplates)
-console.log(sorted);
 
     return (
       <Flexbox>
@@ -97,6 +97,7 @@ console.log(sorted);
             </div>
           ))}
         </div>
+
         <div className={classes.messageTemplate}>
           {this.state.currentMessage ? (
             <MessageTemplate message={this.state.currentMessage}/>

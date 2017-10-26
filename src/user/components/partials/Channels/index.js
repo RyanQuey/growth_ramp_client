@@ -104,9 +104,6 @@ class Channels extends Component {
     const accountsForProvider = this.props.providerAccounts[this.state.currentProvider]
     //let accountsNotOnPlan = accountsForProvider //when implementing, make array of indices in reverse; remove starting from back to not mess up indicies while removing.
 
-
-
-console.log(this.state.currentProvider);
     return (
       <div>
         <h1 className="display-3">Channels</h1>

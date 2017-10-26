@@ -61,10 +61,10 @@ module.exports = {
       name: 'LinkedIn',
       providerId: 'LINKEDIN',
       channels: {
-        PERSONAL_POST: [],
+        PERSONAL_POST: ['w_share'],
         //PRIVATE_MESSAGE: [probably friends, ],
-        GROUP_POST: [],
-        PAGE_POST: [], //mostly for businesses
+        //GROUP_POST: ['w_share'], discontinued: https://www.linkedin.com/help/linkedin/answer/81635/groups-api-no-longer-available?lang=en
+        PAGE_POST: ['rw_company_admin'], //mostly for businesses https://developer.linkedin.com/docs/company-pages. Watch out, will want to check page settings to see if they have permitted it in their linkedIn accoutn
       }
     },
     TWITTER: {
