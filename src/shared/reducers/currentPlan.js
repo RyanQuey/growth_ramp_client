@@ -23,6 +23,7 @@ const currentPlanReducer = (state = null, action) => {
     case SET_CURRENT_PLAN:
       return Object.assign({}, action.payload)
 
+    //when setting post, set the current plan to the plan for that post
     case SET_POST:
       let plans = store.getState().plans
       let post = action.payload

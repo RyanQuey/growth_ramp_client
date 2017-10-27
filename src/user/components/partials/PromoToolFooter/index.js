@@ -1,6 +1,7 @@
 import { Component } from 'react';
 import { connect } from 'react-redux'
-import { PROVIDERS, PROVIDER_IDS_MAP } from 'constants'
+import { PROVIDERS, PROVIDER_IDS_MAP } from 'constants/providers'
+import { Button } from 'shared/components/elements'
 
 const sections = [
   "Start",
@@ -18,7 +19,7 @@ class PromoToolFooter extends Component {
       placeInFlow: "Start"
     }
 
-    this.goBack = this.goBack.bind(this)
+    this.go = this.go.bind(this)
   }
 
   componentWillReceiveProps(props) {
@@ -28,23 +29,18 @@ class PromoToolFooter extends Component {
     }
   }
 
-  goBack(newIndex) {
-    this.props.switchTo(sections[newIndex])
-  }
-
-  goForward(newIndex) {
+  go(newIndex, e) {
     this.props.switchTo(sections[newIndex])
   }
 
   render() {
-    console.log( this.props );
     const sectionIndex = sections.indexOf(this.props.currentSection)
     const canGoForward = sections.indexOf(this.state.placeInFlow) > sectionIndex && this.props.currentSection !== "Send"
 
     return (
       <div>
-        {this.props.currentSection !== "Start" && <button onClick={this.goBack.bind(sectionIndex-1)}>Back</button>}
-        {canGoForward && <button onClick={this.goBack.bind(sectionIndex+1)}>Next</button>}
+        {this.props.currentSection !== "Start" && <Button onClick={this.go.bind(this, sectionIndex-1)}>Back</Button>}
+        {canGoForward && <Button onClick={this.go.bind(this, sectionIndex+1)}>Next</Button>}
       </div>
     );
   }

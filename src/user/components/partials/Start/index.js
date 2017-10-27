@@ -26,8 +26,9 @@ class Start extends Component {
   }
 
   componentDidMount() {
-    if (this.props.currentPost) {
-      this.props.switchTo("Channels")
+    //so, if back button is pressed in future, won't continually bounce you to "Channels"
+    if (this.props.currentPost && this.props.initialOpening) {
+      this.props.switchTo("Channels", true)
     }
 
   }
@@ -42,7 +43,7 @@ class Start extends Component {
       }
       this.props.createPostRequest(newPost)
 
-    } else if (props.currentPost) {
+    } else if (props.currentPost && props.initialOpening) {
       this.props.switchTo("Channels")
     }
   }

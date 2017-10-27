@@ -2,7 +2,7 @@ import { Component } from 'react';
 import classes from './style.scss'
 
 class Checkbox extends Component {
-  handleChange (e, value) {
+  handleChange (value, e) {
     if (typeof this.props.onChange !== 'undefined') {
       this.props.onChange(!value, e);
     }

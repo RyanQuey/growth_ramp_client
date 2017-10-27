@@ -32,6 +32,7 @@ console.log(messageTemplate, this.props.message);
     this.updatePlan(messageTemplate)
   }
   disableUtm(utmType, checked, e) {
+console.log(checked);
     let messageTemplate = Object.assign({}, this.props.message)
     messageTemplate[utmType].active = checked
 
@@ -42,7 +43,7 @@ console.log(messageTemplate, this.props.message);
 console.log(checked);
     let messageTemplate = Object.assign({}, this.props.message)
     messageTemplate.active = checked
-
+console.log(messageTemplate);
     this.updatePlan(messageTemplate)
   }
 
@@ -52,8 +53,11 @@ console.log(checked);
 
     //targetting just the path to this messageTemplate
     const updatedPlan = Object.assign({}, this.props.currentPlan)
-    _.set(updatedPlan, `channelConfigurations.${this.props.account.provider}.${this.props.message.index}`, updatedTemplate)
+    _.set(updatedPlan, `channelConfigurations.${this.props.account.provider}.messageTemplates.${this.props.message.index}`, updatedTemplate)
+    console.log(`channelConfigurations.${this.props.account.provider}.messageTemplates.${this.props.message.index}`)
 
+console.log(updatedPlan);
+console.log(this.props.currentPlan);
     //update the store
     this.props.setCurrentPlan(updatedPlan)
 

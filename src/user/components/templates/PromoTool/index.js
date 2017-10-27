@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux'
 import {
   Start,
@@ -24,6 +24,7 @@ class PromoTool extends Component {
     this.state = {
       //will need to use a store, if this is ever used in subcomponents of the subcomponents
       currentSection: "Start",
+      initialOpening: true
     }
 
     this.switchTo = this.switchTo.bind(this)
@@ -33,10 +34,14 @@ class PromoTool extends Component {
 
   }
 
-  switchTo(next) {
-    const ref = this.refs[next]
+  //can be called from the promoToolFooter or each of the 4 sections
+  //initial opening should only be called from the section's componentWillReceiveProps/componentDidMount
+  switchTo(next, initialOpening) {
+    //const ref = this.refs[next]
+console.log(next);
     this.setState({
       currentSection: next,
+      initialOpening,
     })
   }
 
@@ -62,6 +67,7 @@ class PromoTool extends Component {
         <div>
           <Tag
             switchTo={this.switchTo}
+            initialOpening={this.state.initialOpening}
           />
         </div>
         <PromoToolFooter
