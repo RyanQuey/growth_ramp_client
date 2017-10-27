@@ -129,7 +129,7 @@ class LinkProviderAccount extends Component {
                     ))}
                     <Card onClick={this.brandNewAccount} selected={this.state.currentAccount === "new"}>
                       <h5>Want to add another {currentProvider} account?</h5>
-                      <p>Make sure you either logged out of {currentProvider} or are signed into {currentProvider} with the account you want to add to GrowthRamp, choose the services you want to allow here, and then click the login button below</p>
+                      {currentProvider === "FACEBOOK" && <p>Make sure you either logged out of {currentProvider} or are signed into {currentProvider} with the account you want to add to GrowthRamp, choose the services you want to allow here, and then click the login button below</p>}
                     </Card>
                   </div>
                 ) : (

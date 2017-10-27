@@ -17,6 +17,7 @@ const bodyParser = require('body-parser');
 const request = require('request')
 //const axios = require('axios') don't use for now; is unnecessary, and request works, whereas this one gets blocked (maybe because sending to port eighty?)
 const url = require('url')
+const querystring = require('querystring')
 const uuid = require('uuid/v5')
 const fs = require('fs-extra')
 
@@ -31,18 +32,14 @@ const LinkedInStrategy = require('passport-linkedin-oauth2').Strategy;
 
 const Helpers = require('./nodeHelpers')
 const PROVIDERS = require('./src/constants/providers').PROVIDERS
-console.log(Object.keys(PROVIDERS));
 
 passport.use(new FacebookStrategy(
   Helpers.facebookOptions,
   function(req, accessToken, refreshToken, profile, done) {
     //console.log(accessToken, refreshToken, profile);
-    if (!refreshToken) {
-      refreshToken = req.query.code
-    }
-//console.log("***profile***");
-//console.log(profile);
-    const providerData = Helpers.extractPassportData(accessToken, refreshToken, profile)
+    //console.log("***profile***");
+    //console.log(profile);
+    const providerData = Helpers.extractPassportData(accessToken, refreshToken, profile, req)
     const cookie = Helpers.extractCookie(req.headers.cookie)
 
     return Helpers.tradeTokenForUser(providerData, cookie, done)
@@ -55,11 +52,10 @@ passport.use(new TwitterStrategy(
   function(req, accessToken, tokenSecret, profile, done) {
     //passing in the token secret as the refresh token for twitter
     //oauth1 is reason why, I think
-    const providerData = Helpers.extractPassportData(accessToken, tokenSecret, profile)
+    const providerData = Helpers.extractPassportData(accessToken, tokenSecret, profile, req)
     const cookie = Helpers.extractCookie(req.headers.cookie)
-    //need to set a timeout for this. maybe wrap in a promise?
-console.log("***profile***");
-console.log(profile);
+    console.log("***profile***");
+    console.log(profile);
     return Helpers.tradeTokenForUser(providerData, cookie, done)
   }
 ))
@@ -70,10 +66,14 @@ passport.use(new LinkedInStrategy(
     if (!refreshToken) {
       refreshToken = req.query.code//not sure if this is really the refreshtoken...might just be a temporary code that passport will use.
     }
-//console.log("***profile***");
-console.log(profile);
-    const providerData = Helpers.extractPassportData(accessToken, refreshToken, profile)
+    //console.log("***profile***");
+//    console.log(profile);
+console.log("headers");
+console.log(req.headers);
+
+    const providerData = Helpers.extractPassportData(accessToken, refreshToken, profile, req)
     const cookie = Helpers.extractCookie(req.headers.cookie)
+//console.log(req.body, req.params, req.query);
 
     return Helpers.tradeTokenForUser(providerData, cookie, done)
   }
@@ -108,14 +108,22 @@ app.get('/login/:provider', ((req, res, next) => {
   const providerName = req.params.provider.toLowerCase()
   //options will look like this for example: {scope: __, authType: 'rerequest'}
   const options = req.query || {}
-console.log("options",options);
+  if (providerName === 'linkedin' && options.scope) {
+    //hacky but whatever
+    //linkedIn should just send the scopes back!
+    //only need the extra scopes, not the defaults
+    options.callbackUrl = `${Helpers.callbackUrl}/${providerName}/${options.scope.join("+")}`
+  }
+
   //make sure to get the defaults again, just in case they don't already have them... Also, linkedin doesn't send the id by default, which I need to verify if it's the same account or a new account :)
   //so far this only does anything for linkedIn
   if (options.scope) {
     let scope = Array.isArray(options.scope) ? options.scope : [options.scope]
-console.log(scope);
-    options.scope = options.scope.concat(Helpers[`${providerName}Options`].scope || [])
+    options.scope = scope.concat(Helpers[`${providerName}Options`].scope || [])
   }
+
+console.log("callback path");
+console.log(options.callbackUrl);
   passport.authenticate(providerName, options)(req, res, next)
 }))
 
@@ -128,20 +136,44 @@ app.get(`${Helpers.callbackPath}/:provider`, (req, res, next) => {
   const providerName = req.params.provider.toLowerCase()
   if (!["facebook", "twitter", "linkedin"].includes(providerName)) {next()}
 
+  console.log("scope");
+  console.log(req.params.scopes);
+  const cookie = Helpers.extractCookie(req.headers.cookie)
+
   const providerCallback = function(err, raw, info) {
     /*console.log(req.user, req.account);
     console.log("********************************************");
     console.log("user and provider", raw, "info",info);*/
-console.log(err, raw, info);
+    console.log(err, raw, info);
     if (err || !raw) {
       console.log("error after authenticating into provider:");
       console.log(err);
-      //next ...I think sends this along to the next route that matches, which will just render the app anyway(?)
-      return next(err);
+
+      if (providerName === 'linkedin') {
+        //if the user rejected the permissions they just asked to give...
+        if (err.code === 'user_cancelled_authorize') {
+console.log("should redirect");
+          //revoking all right permissions (at least, our record of their write permissions
+          //unfortunately, LI doesn't seem to return data on all the scopes that the user has given...so this is all necessary
+          const user = cookie.user
+          //then, redirect back to app
+          return res.redirect(`/?alert=cancelledAuthorization&providerName=${providerName}`)
+        }
+
+        console.log("should never get here");
+        //next ... breaks the app, puts node err message on screen
+        return next(err);
+
+      } else {
+        console.log("should never get here");
+        return next(err);
+      }
     }
+//man...could have just taken the cookie from the req.header  and returned that as the user. Oh well
     const data = JSON.parse(raw)
     const user = JSON.stringify(data.user)
     const provider = JSON.stringify(data.provider)
+console.log("should now redirect");
     //NOTE: don't try changing this are making more simple, unless you have lots of free time...is just a time drain
     //it appears that you cannot change the URL in the browser without doing res.redirect, even if you change the req.query, or res.locals
     //and another approach would be to set res.locals, then transform the html file before sending...but that seems potentially dangerous and hacky.(?). this saves a step.

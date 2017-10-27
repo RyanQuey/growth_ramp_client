@@ -19,36 +19,13 @@ class SocialLogin extends Component {
     //don't refresh page when button is disabled
     this.props.disabled && e.preventDefault()
 
-    /*const c = this;
-    const user = helpers.safeDataPath(c.props, `user`, false)
-    const userProviders = user && c.props.user.providerData || []
-    let alreadyLinked = false
-    if (userProviders.some((p) => {
-      console.log(p, PROVIDER_IDS_MAP[p.providerId])
-      return PROVIDER_IDS_MAP[p.providerId] === providerName.toLowerCase()
-    })) {
-      alreadyLinked = true
+    //works because this runs before the link is followed
+    //so I can retrieve it upon return
+    if (providerName.toUpperCase() === "LINKEDIN") {
+      const scopes = ['r_emailaddress', 'r_basicprofile'].concat(this.props.scopes || [])
+      Cookie.set("requestedScopes", scopes)
     }
-    const data = {
-      signInType: 'PROVIDER',
-      provider: providerName,
-    }
-    //if already logged in but not yet linked
-    if (user && !alreadyLinked) {
-      return this.props.linkAccountRequest(data)
-
-    } else if (user) {
-      data.wantTokenOnly = true
-    }
-
-    return this.props.signInRequest(data)*/
   }
-
-  /*handleSignOut(e) {
-    e.preventDefault()
-    console.log(" logout click");
-    this.props.signOutRequest()
-  }*/
 
   render() {
     const user = this.props.user;

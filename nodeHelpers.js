@@ -22,7 +22,37 @@ const uuid = require('uuid/v1');
 const $ = require('jquery');
 const _ = require('lodash')
 
+const extractCookie = (allCookies) => {
+  const splitCookies = allCookies.split("; ")
+  //don't need all of this, only need the sessionUser!
+  /*const cookiesObject = splitCookies.reduce((acc, cookie) => {
+    let keyAndValue = cookie.split("=")
+    let key =  keyAndValue[0]
+    let value = keyAndValue[1]
+    acc[key] = value
+    return acc
+  }, {})*/
+  const ret = {}
+  const cookiesObject = splitCookies.forEach((cookie) => {
+    let keyAndValue = cookie.split("=")
+    let key = keyAndValue[0]
+    let value = keyAndValue[1]
+    if (key === "requestedScopes") {
+      ret.scopes = JSON.parse(unescape(value))
+console.log("in the cookie");
+console.log(ret.scopes, value)
+    }
+    if (key === "sessionUser") {
+      ret.user = JSON.parse(unescape(value))
+    }
+    return
+  })
+  return ret
+}
+
 module.exports = {
+  extractCookie: extractCookie,
+
   safeDataPath: function (object, keyString, def = null) {
     let keys = keyString.split('.');
     let returnValue = def;
@@ -70,15 +100,17 @@ module.exports = {
   },
 
   callbackPath: callbackPath,
+  callbackUrl: callbackUrl,
 
+  //also persists the new provider data
   tradeTokenForUser: ((providerData, cookie, done) => {
     const url = "/users/login_with_provider"
-
+    const user = cookie.user
     const body = providerData
     //at this point, the cookie is the user
     const headers = {
-      "x-user-token": cookie.apiToken,
-      "x-id": `user-${cookie.id}`
+      "x-user-token": user.apiToken,
+      "x-id": `user-${user.id}`
     }
 
     let timeout
@@ -101,46 +133,23 @@ module.exports = {
     })
   }),
 
-  extractCookie: (allCookies) => {
-    const splitCookies = allCookies.split("; ")
-    //don't need all of this, only need the sessionUser!
-    /*const cookiesObject = splitCookies.reduce((acc, cookie) => {
-      let keyAndValue = cookie.split("=")
-      let key =  keyAndValue[0]
-      let value = keyAndValue[1]
-
-      acc[key] = value
-
-      return acc
-    }, {})*/
-    let ret
-    const cookiesObject = splitCookies.forEach((cookie) => {
-      let keyAndValue = cookie.split("=")
-      let key = keyAndValue[0]
-      let value = keyAndValue[1]
-
-      if (key === "sessionUser") {
-        ret = JSON.parse(unescape(value))
-      }
-
-      return
-    })
-
-    return ret
-  },
   //eventually will probably do more, but just this for now
 
   // extracts the relevant passport profile data from the profile auth data received on login/request, and matches it to the database columns
-  extractPassportData: (accessToken, refreshToken, passportProfile) => {
+  extractPassportData: (accessToken, refreshToken, passportProfile, req) => {
     let userData = _.pickBy(passportProfile, (value, key) => {
       return ["providerUserId", "email"].includes(key)
     })
     userData.provider = passportProfile.provider.toUpperCase()
+
     if (userData.provider === "TWITTER") {
       userData.userName = passportProfile.user_name
       userData.profilePictureUrl = passportProfile.profile_image_url_https
 
     } else if (userData.provider === "FACEBOOK") {
+      if (!refreshToken) {
+        refreshToken = req.query.code//not sure if this is really the refreshtoken...might just be a temporary code that passport will use.
+      }
       userData.userName = passportProfile.displayName
       //not sure why permissions are sent in this _json property only, but whatever
       //mapping to an object, with keys being the scope
@@ -154,11 +163,27 @@ module.exports = {
       userData.email = passportProfile.emails[0].value
 
     } else if (userData.provider === "LINKEDIN") {
+      if (!refreshToken) {
+        refreshToken = req.query.code//not sure if this is really the refreshtoken...might just be a temporary code that passport will use.
+      }
       userData.userName = passportProfile.displayName
       userData.profileUrl = passportProfile._json.publicProfileUrl
       userData.photoUrl = passportProfile.photos[0].value
       userData.email = passportProfile.emails[0].value
+      //mapping to an object, with keys being the scope
+      userData.scopes = {}
 
+      const cookie = extractCookie(req.headers.cookie)
+      const scopes = cookie.scopes
+console.log("while extracting");
+console.log(scopes);
+
+      if (scopes) {
+        for (let i = 0; i < scopes.length; i++) {
+          let scope = scopes[i]
+          userData.scopes[scope] = {status: 'granted'}  //not recording it at all if they reject :)
+        }
+      }
     }
 
     userData.providerUserId = passportProfile.id
@@ -205,4 +230,5 @@ module.exports = {
     passReqToCallback: true,//to extract the code from the query...for some reason, passport doesn't get it by default. also to get cookies
     state: true, //a security thing
   },
+
 }
