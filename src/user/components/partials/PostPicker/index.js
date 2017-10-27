@@ -4,7 +4,10 @@ import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 import { userActions, errorActions } from 'shared/actions'
 import { Button, Flexbox, Input } from 'shared/components/elements'
-import { SET_POST } from 'constants/actionTypes'
+import {
+  SET_POST,
+  DESTROY_POST_REQUEST,
+} from 'constants/actionTypes'
 
 
 import classes from './style.scss'
@@ -14,12 +17,23 @@ class PostPicker extends Component {
     super(props)
 
     this.editPost = this.editPost.bind(this)
+
+    this.removePost = this.removePost.bind(this)
   }
 
   editPost (post, e) {
     this.props.setPost(post)
 
     this.props.history.push(`/posts/edit`)
+  }
+
+  removePost (post, e) {
+    if (this.props.currentPost && this.state.currentPost.id === post.id) {
+      this.props.setPost()
+    }
+
+    //might just archive, but leaving that to the api to figure out :)
+    this.props.destroyPostRequest(post)
   }
 
   render() {
@@ -54,6 +68,7 @@ class PostPicker extends Component {
               </td>
               <td>
                 <button onClick={this.editPost.bind(this, post)}>Edit</button>
+                <button onClick={this.removePost.bind(this, post)}>Delete</button>
                 <button disabled="disabled">View Details</button>
               </td>
             </tr>
@@ -68,12 +83,14 @@ class PostPicker extends Component {
 const mapDispatchToProps = (dispatch) => {
   return {
     setPost: (post) => dispatch({type: SET_POST, payload: post}),
+    destroyPostRequest: (post) => dispatch({type: DESTROY_POST_REQUEST, payload: post}),
   }
 }
 
 const mapStateToProps = (state) => {
   return {
     posts: state.posts,
+    currentPost: state.currentPost,
     plans: state.plans,
   }
 }

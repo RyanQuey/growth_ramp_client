@@ -50,6 +50,7 @@ class Start extends Component {
 
   handleClickPlan(e) {
     let value = e.target.value
+console.log(value, e);
     this.setState({
       mode: "SET_CURRENT_PLAN_OPTIONS",
       plan: this.props.plans[value]
@@ -107,9 +108,8 @@ console.log(option);
     this.props.createPlanRequest(payload)
   }
 
-  handleChangeName (e, errors) {
-    //seems a little unnecessary...
-    Helpers.handleParam.bind(this, e, "name")()
+  handleChangeName (value, e, errors) {
+    this.setState({name: value})
   }
 
   goBack (){
