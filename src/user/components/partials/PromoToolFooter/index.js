@@ -4,10 +4,11 @@ import { PROVIDERS, PROVIDER_IDS_MAP } from 'constants/providers'
 import { Button } from 'shared/components/elements'
 
 const sections = [
-  "Start",
-  "Channels",
-  "Compose",
-  "Send"
+  "Start", //pick plan
+  "Channels", //edit plan
+  "Compose", //edit post
+  "Send"  //send post (and choose to save plan or not
+
 ]
 
 class PromoToolFooter extends Component {
@@ -35,7 +36,9 @@ class PromoToolFooter extends Component {
 
   render() {
     const sectionIndex = sections.indexOf(this.props.currentSection)
-    const canGoForward = sections.indexOf(this.state.placeInFlow) > sectionIndex && this.props.currentSection !== "Send"
+    const canGoForward = sections.indexOf(this.state.placeInFlow) > sectionIndex &&
+      this.props.currentSection !== "Send" ||
+      this.props.currentSection === "Channels"
 
     return (
       <div>

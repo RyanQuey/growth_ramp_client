@@ -26,13 +26,11 @@ class MessageTemplate extends Component {
 
   updateUtm(utmType, value, e) {
     let messageTemplate = Object.assign({}, this.props.message)
-console.log(messageTemplate, this.props.message);
     messageTemplate[utmType].value = value
 
     this.updatePlan(messageTemplate)
   }
   disableUtm(utmType, checked, e) {
-console.log(checked);
     let messageTemplate = Object.assign({}, this.props.message)
     messageTemplate[utmType].active = checked
 
@@ -40,24 +38,16 @@ console.log(checked);
   }
 
   disableMessage(checked) {
-console.log(checked);
     let messageTemplate = Object.assign({}, this.props.message)
     messageTemplate.active = checked
-console.log(messageTemplate);
     this.updatePlan(messageTemplate)
   }
 
   updatePlan(updatedTemplate) {
-    //since it's not originally on the message record attribute...
-    delete updatedTemplate.index
-
     //targetting just the path to this messageTemplate
     const updatedPlan = Object.assign({}, this.props.currentPlan)
-    _.set(updatedPlan, `channelConfigurations.${this.props.account.provider}.messageTemplates.${this.props.message.index}`, updatedTemplate)
-    console.log(`channelConfigurations.${this.props.account.provider}.messageTemplates.${this.props.message.index}`)
+    _.set(updatedPlan, `channelConfigurations.${this.props.account.provider}.messageTemplates.${this.props.messageIndex}`, updatedTemplate)
 
-console.log(updatedPlan);
-console.log(this.props.currentPlan);
     //update the store
     this.props.setCurrentPlan(updatedPlan)
 
@@ -72,7 +62,7 @@ console.log(this.props.currentPlan);
 
     return (
       <Flexbox direction="column">
-        <h2>{message.type.titleCase()} {message.index}</h2>
+        <h2>{message.type.titleCase()} {this.props.messageIndex}</h2>
         <div className={classes.disableMessage}>
           <Checkbox
             value={message.active}

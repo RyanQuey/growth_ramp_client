@@ -50,7 +50,6 @@ class Start extends Component {
 
   handleClickPlan(e) {
     let value = e.target.value
-console.log(value, e);
     this.setState({
       mode: "SET_CURRENT_PLAN_OPTIONS",
       plan: this.props.plans[value]
@@ -58,7 +57,6 @@ console.log(value, e);
   }
 
   handleChoose(option) {
-console.log(option);
     switch(option) {
       case "CHOOSE_MODE":
         this.setState({mode: option})

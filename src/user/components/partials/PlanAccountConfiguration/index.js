@@ -14,7 +14,7 @@ class PlanAccountConfiguration extends Component {
     super()
 
     this.state = {
-      currentMessage: null,
+      currentMessage: null, //will be an index
     }
 
     this.newMessage = this.newMessage.bind(this)
@@ -24,7 +24,7 @@ class PlanAccountConfiguration extends Component {
   }
 
   removeMessage(message, index) {
-    if (this.state.currentMessage && this.state.currentMessage.index === index) {
+    if (this.state.currentMessage === index) {
       this.setState({currentMessage: null})
     }
 
@@ -36,8 +36,7 @@ class PlanAccountConfiguration extends Component {
   }
 
   chooseMessage(message, index) {
-    const m = Object.assign({}, message, {index: index})
-    this.setState({currentMessage: m})
+    this.setState({currentMessage: index})
   }
 
   newMessage (channelName) {
@@ -98,10 +97,13 @@ class PlanAccountConfiguration extends Component {
 
     const account = this.props.account
     const availableChannels = PROVIDERS[account.provider].channels
-    const messageTemplates = Helpers.safeDataPath(this.props, `currentPlan.channelConfigurations.${account.provider}.messageTemplates`, [])
+    const channelTemplates = Helpers.safeDataPath(this.props, `currentPlan.channelConfigurations.${account.provider}.messageTemplates`, [])
 
-    const sorted = this.sortConfigurationsByChannel(messageTemplates)
-
+    const sorted = this.sortConfigurationsByChannel(channelTemplates)
+console.log(channelTemplates[this.state.currentMessage]);
+console.log(channelTemplates);
+    const message = channelTemplates[this.state.currentMessage]
+    const messageIndex = this.state.currentMessage
     return (
       <Flexbox>
         <div className={classes.messageMenu}>
@@ -120,9 +122,10 @@ class PlanAccountConfiguration extends Component {
         </div>
 
         <div className={classes.messageTemplate}>
-          {this.state.currentMessage ? (
+          {this.state.currentMessage || this.state.currentMessage === 0 ? (
             <MessageTemplate
-              message={this.state.currentMessage}
+              message={message}
+              messageIndex={messageIndex}
               account={account}
             />
           ) : (
