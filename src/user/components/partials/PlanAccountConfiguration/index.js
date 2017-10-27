@@ -1,9 +1,10 @@
 import { Component } from 'react';
 import { connect } from 'react-redux'
-import { Flexbox, Button } from 'shared/components/elements'
+import { Flexbox, Button, Icon } from 'shared/components/elements'
 import { MessageTemplate } from 'user/components/partials'
 import { SET_INPUT_VALUE, SET_CURRENT_MODAL, UPDATE_PLAN_REQUEST  } from 'constants/actionTypes'
 import { PROVIDERS } from 'constants/providers'
+import {UTM_TYPES} from 'constants/plans'
 import classes from './style.scss'
 
 //shows up as buttons in mobile, or sidebar in browser?
@@ -18,11 +19,25 @@ class PlanAccountConfiguration extends Component {
 
     this.newMessage = this.newMessage.bind(this)
     this.chooseMessage = this.chooseMessage.bind(this)
+    this.removeMessage = this.removeMessage.bind(this)
     this.sortConfigurationsByChannel = this.sortConfigurationsByChannel.bind(this)
   }
 
-  chooseMessage(message) {
-    this.setState({currentMessage: message})
+  removeMessage(message, index) {
+    if (this.state.currentMessage && this.state.currentMessage.index === index) {
+      this.setState({currentMessage: null})
+    }
+
+    const plan = Object.assign({}, this.props.currentPlan)
+    const channelTemplates = Helpers.safeDataPath(plan, `channelConfigurations.${this.props.account.provider}.messageTemplates`, [])
+    channelTemplates.splice(index, 1)
+
+    this.props.updatePlanRequest(plan)
+  }
+
+  chooseMessage(message, index) {
+    const m = Object.assign({}, message, {index: index})
+    this.setState({currentMessage: m})
   }
 
   newMessage (channelName) {
@@ -34,6 +49,10 @@ class PlanAccountConfiguration extends Component {
         providerAccountId: this.props.account.id,
         type: channelName,
         active: true,
+      }
+      const utmDefaults = UTM_TYPES.map((t) => t.value)
+      for (let i = 0; i < utmDefaults.length; i++) {
+        messageTemplate[utmDefaults[i]] = {active: true, value: ''}
       }
 
       const channelTemplates = Helpers.safeDataPath(plan, `channelConfigurations.${this.props.account.provider}.messageTemplates`, false)
@@ -79,7 +98,6 @@ class PlanAccountConfiguration extends Component {
 
     const account = this.props.account
     const availableChannels = PROVIDERS[account.provider].channels
-console.log(PROVIDERS, account.provider);
     const messageTemplates = Helpers.safeDataPath(this.props, `currentPlan.channelConfigurations.${account.provider}.messageTemplates`, [])
 
     const sorted = this.sortConfigurationsByChannel(messageTemplates)
@@ -91,7 +109,10 @@ console.log(PROVIDERS, account.provider);
             <div key={channelName}>
               <h3>{channelName.titleCase()}s</h3>
               {sorted[channelName] && sorted[channelName].map((message, index) => (
-                <Button key={index} onClick={this.chooseMessage.bind(this, message)}>{index}</Button>
+                <div key={"need something unique here, not " + index}>
+                  <Icon name="times-circle" onClick={this.removeMessage} />
+                  <Button key={index} onClick={this.chooseMessage.bind(this, message, index)}>{index}</Button>
+                </div>
               ))}
               <Button onClick={this.newMessage.bind(this, channelName)}>Add {channelName.titleCase()}</Button>
             </div>
@@ -100,7 +121,10 @@ console.log(PROVIDERS, account.provider);
 
         <div className={classes.messageTemplate}>
           {this.state.currentMessage ? (
-            <MessageTemplate message={this.state.currentMessage}/>
+            <MessageTemplate
+              message={this.state.currentMessage}
+              account={account}
+            />
           ) : (
             <h3>Choose a message</h3>
           )}

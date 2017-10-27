@@ -1,8 +1,15 @@
-import { call, put, select, takeLatest, all } from 'redux-saga/effects'
+import { call, put, select, takeLatest, all, throttle } from 'redux-saga/effects'
 import {
-  CREATE_PLAN_SUCCESS, CREATE_PLAN_REQUEST, CHOOSE_PLAN, FETCH_PLAN_REQUEST, FETCH_PLAN_SUCCESS,
+  CREATE_PLAN_SUCCESS,
+  CREATE_PLAN_REQUEST,
+  SET_CURRENT_PLAN,
+  FETCH_PLAN_REQUEST,
+  FETCH_PLAN_SUCCESS,
   UPDATE_PLAN_REQUEST,
   UPDATE_PLAN_SUCCESS,
+  LIVE_UPDATE_PLAN_REQUEST,
+  LIVE_UPDATE_PLAN_SUCCESS,
+  LIVE_UPDATE_PLAN_FAILURE,
 } from 'constants/actionTypes'
 
 // need to make sure that the current user and the userId are identical for security reasons
@@ -60,7 +67,7 @@ console.log(newPlan);
 
     yield all([
       put({ type: CREATE_PLAN_SUCCESS, payload: {[planId]: newRecord }}),
-      put({ type: CHOOSE_PLAN, payload: newRecord }),
+      put({ type: SET_CURRENT_PLAN, payload: newRecord }),
     ])
 
   } catch (err) {
@@ -82,9 +89,29 @@ function* update(action) {
     console.log(`Error in update plan Saga ${err}`)
   }
 }
+function* liveUpdate(action) {
+  try {
+    const planData = action.payload
+
+    const res = yield axios.put(`/api/plans/${planData.id}`, planData) //eventually switch to socket
+
+    yield all([
+      //NOTE: will not update the plan reducer; leave that to the form itself, will mess things up b/c async
+      put({ type: LIVE_UPDATE_PLAN_SUCCESS, payload: planData}),
+    ])
+
+  } catch (err) {
+    console.log(`Error in update plan Saga ${err}`)
+    yield all([
+      put({ type: LIVE_UPDATE_PLAN_FAILURE, payload: planData}),
+    ])
+  }
+}
 export default function* planSagas() {
   yield takeLatest(FETCH_PLAN_REQUEST, find)
   yield takeLatest(CREATE_PLAN_REQUEST, create)
   yield takeLatest(UPDATE_PLAN_REQUEST, update)
+  yield throttle(500, LIVE_UPDATE_PLAN_REQUEST, liveUpdate)
+
 }
 

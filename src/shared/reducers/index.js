@@ -5,6 +5,7 @@ import rootSaga from 'shared/sagas'
 import userReducer from './user'
 import postsReducer from './posts'
 import plansReducer from './plans'
+import paramsReducer from './params'
 import currentPlanReducer from './currentPlan'
 import currentPostReducer from './currentPost'
 import providerAccountsReducer from './providerAccounts'
@@ -13,19 +14,19 @@ import alertReducer from './alerts'
 import viewSettingsReducer from './viewSettings'
 
 const rootReducer = combineReducers({
-  // the current user
-  user: userReducer,
-  posts: postsReducer,
-  plans: plansReducer,
+  alerts: alertReducer,
   //the plan that the user is currently working on
   currentPlan: currentPlanReducer,
   //the post that the user is currently working on
   currentPost: currentPostReducer,
+  errors: errorReducer,
+  posts: postsReducer,
+  params: paramsReducer,
+  plans: plansReducer,
   //all of the provider accounts that user is the owner of, or has permission to use
   providerAccounts: providerAccountsReducer,
-  //of these three are UI stuff
-  errors: errorReducer,
-  alerts: alertReducer,
+  // the current user
+  user: userReducer,
   viewSettings: viewSettingsReducer,
 })
 

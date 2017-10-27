@@ -47,8 +47,10 @@ class Input extends Component {
   }
 
   handleChange(e) {
+    const value = e.target.value
     const errors = this.validate(e)
-    this.props.onChange(e, errors, this.props.index)
+    //index in case this is a series of inputs...probably don't want that functionality
+    this.props.onChange(value, e, errors, this.props.index)
   }
 
   validate(e) {

@@ -120,9 +120,6 @@ class Channels extends Component {
                 )}
               </li>
             ))}
-            <li onClick={this.handleLinkProvider}>
-              <span>+</span>
-            </li>
           </ul>
         </Navbar>
 
@@ -133,7 +130,7 @@ class Channels extends Component {
             <div>
               {accountsForProvider.map((account) => (
                 <div key={account.id} onClick={this.setAccount.bind(this, account)}>
-                  <img alt="your face" />
+                  <img alt="your face" src={account.photoUrl}/>
                   <h5>{account.email || "no email..."}</h5>
                 </div>
               ))}

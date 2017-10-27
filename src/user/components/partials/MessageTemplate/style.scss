@@ -1,6 +1,9 @@
 @import 'theme/_helpers';
 
 .messageTemplate {
+  .utmHeader {
+    margin: .5rem;
+  }
   @include mq(xs) {
   }
   @include mq(sm) {

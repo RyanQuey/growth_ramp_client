@@ -175,8 +175,6 @@ module.exports = {
 
       const cookie = extractCookie(req.headers.cookie)
       const scopes = cookie.scopes
-console.log("while extracting");
-console.log(scopes);
 
       if (scopes) {
         for (let i = 0; i < scopes.length; i++) {

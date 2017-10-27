@@ -4,7 +4,7 @@ import { take } from 'redux-saga/effects'
 import {
   CREATE_PLAN_REQUEST,
   CREATE_POST_REQUEST,
-  CHOOSE_PLAN,
+  SET_CURRENT_PLAN,
 } from 'constants/actionTypes'
 import { Input } from 'shared/components/elements'
 import { PlanPicker } from 'user/components/partials'
@@ -50,7 +50,7 @@ class Start extends Component {
   handleClickPlan(e) {
     let value = e.target.value
     this.setState({
-      mode: "CHOOSE_PLAN_OPTIONS",
+      mode: "SET_CURRENT_PLAN_OPTIONS",
       plan: this.props.plans[value]
     })
   }
@@ -257,10 +257,9 @@ const mapStateToProps = state => {
 }
 const mapDispatchToProps = (dispatch) => {
   return {
-    setInputValue: (payload) => dispatch({type: SET_INPUT_VALUE, payload}),
     createPlanRequest: (payload) => dispatch({type: CREATE_PLAN_REQUEST, payload}),
     createPostRequest: (payload) => dispatch({type: CREATE_POST_REQUEST, payload}),
-    choosePlan: (payload) => dispatch({type: CHOOSE_PLAN, payload}),
+    choosePlan: (payload) => dispatch({type: SET_CURRENT_PLAN, payload}),
   }
 }
 

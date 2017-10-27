@@ -4,7 +4,7 @@ import {
   UPDATE_PLAN_SUCCESS,
   INPUT_UPDATE_SUCCESS,
   SIGN_OUT,
-  CHOOSE_PLAN, //probably eventually call this SET_PLAN
+  SET_CURRENT_PLAN, //probably eventually call this SET_PLAN
   SET_POST,
 } from 'constants/actionTypes'
 
@@ -20,7 +20,7 @@ const currentPlanReducer = (state = null, action) => {
       //payload should be the new plan
       return Object.assign({}, action.payload)
 
-    case CHOOSE_PLAN:
+    case SET_CURRENT_PLAN:
       return Object.assign({}, action.payload)
 
     case SET_POST:
