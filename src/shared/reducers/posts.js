@@ -9,7 +9,7 @@ const postsReducer = (state = {}, action) => {
   switch (action.type) {
 
     case FETCH_POST_SUCCESS:
-      return Object.assign({}, state, action.payload)
+      return Object.assign({}, action.payload)
 
     case CREATE_POST_SUCCESS:
       return Object.assign({}, state, action.payload)

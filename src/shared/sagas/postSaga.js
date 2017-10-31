@@ -6,9 +6,12 @@ import { PUBLISH_POST_REQUEST,
   SIGN_IN_REQUEST,
   CREATE_POST_SUCCESS,
   CREATE_POST_REQUEST,
+  DESTROY_POST_REQUEST,
+  DESTROY_POST_SUCCESS,
   FETCH_POST_REQUEST,
   FETCH_POST_SUCCESS,
   SET_POST,
+  USER_POSTS_OUTDATED,
 } from 'constants/actionTypes'
 
 function* sendToProvider(providerName, pld, tokenInfo) {
@@ -71,7 +74,6 @@ function* publishPost(action) {
 
       let result = yield call(checkForToken, providerName, i, logins)
       let tokenInfo = result.tokenInfo
-console.log(tokenInfo);
       logins = result.logins
       //make sync; can only have one pop up at a time
       //yield all, or promise all
@@ -115,8 +117,8 @@ function* createPost(action) {
 //TODO: set up a listener, so that all data the matter which browser etc. will be lively updated (?), Even if multiple people are working on it
 function* fetchPosts(action) {
   try {
-    const pld = action.payload
-    const userId = pld.userId
+    const pld = action.payload || {}
+    const userId = pld.userId || store.getState().user.id//making it so no reason to actually attach a payload...
 
     //TODO: eventually they filter out posts that have already been sent
     const res = yield axios.get(`/api/users/${userId}/posts`) //eventually switch to socket
@@ -135,6 +137,24 @@ function* fetchPosts(action) {
     // yield put(userFetchFailed(err.message))
   }
 }
+
+function* destroyPost(action) {
+  try {
+    const pld = action.payload
+
+    //TODO: eventually they filter out posts that have already been sent
+    const res = yield axios.delete(`/api/posts/${pld.id}`) //eventually switch to socket
+console.log(res);
+    yield all([
+      put({type: DESTROY_POST_SUCCESS, payload: res}),
+      put({type: USER_POSTS_OUTDATED}),
+    ])
+
+  } catch (err) {
+    console.log('posts destroy failed', err)
+  }
+}
+
 
 //actually don't need this for now...but might later, so whatever
 function* populatePost(action) {
@@ -165,6 +185,7 @@ export default function* postSaga() {
   yield takeLatest(FETCH_POST_REQUEST, fetchPosts)
   yield takeLatest(PUBLISH_POST_REQUEST, publishPost)
   yield takeLatest(CREATE_POST_REQUEST, createPost)
+  yield takeLatest(DESTROY_POST_REQUEST, destroyPost)
   //when setting as the current post, will want to populate several of the associations
   //yield takeLatest(SET_POST, populatePost)
 }
