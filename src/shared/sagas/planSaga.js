@@ -1,5 +1,7 @@
 import { call, put, select, takeLatest, all, throttle } from 'redux-saga/effects'
 import {
+  ARCHIVE_PLAN_REQUEST,
+  ARCHIVE_PLAN_SUCCESS,
   CREATE_PLAN_SUCCESS,
   CREATE_PLAN_REQUEST,
   SET_CURRENT_PLAN,
@@ -18,13 +20,6 @@ function* _getPlans(userId){
   //Only want to retrieve this user's plans once...for now
   //TODO: set up a listener, so that all data the matter which browser etc. will be lively updated (?), Even if multiple people are working on it
   let plans
-  //TODO: eventually they filter out plans that have already been sent
-  /*yield database.ref(`plans`).orderByChild('userId').equalTo(userId).once("value", (snapshot) => {
-    plans = snapshot.val() || []
-  }, (err) => {
-    Helpers.handleError(`The plans read failed: ${err.code}`)
-    plans = []
-  })*/
 
   return plans
 }
@@ -89,6 +84,22 @@ function* update(action) {
     console.log(`Error in update plan Saga ${err}`)
   }
 }
+
+function* archive(action) {
+  try {
+    const planData = action.payload
+
+    const res = yield axios.put(`/api/plans/${planData.id}`, {userId: planData.userId, status: "ARCHIVED"}) //eventually switch to socket
+
+    yield all([
+      put({ type: ARCHIVE_PLAN_SUCCESS, payload: planData}),
+    ])
+
+  } catch (err) {
+    console.log(`Error in archive plan Saga ${err}`)
+  }
+}
+
 function* liveUpdate(action) {
   try {
     const planData = action.payload
@@ -111,6 +122,7 @@ export default function* planSagas() {
   yield takeLatest(FETCH_PLAN_REQUEST, find)
   yield takeLatest(CREATE_PLAN_REQUEST, create)
   yield takeLatest(UPDATE_PLAN_REQUEST, update)
+  yield takeLatest(ARCHIVE_PLAN_REQUEST, archive)
   yield throttle(500, LIVE_UPDATE_PLAN_REQUEST, liveUpdate)
 
 }

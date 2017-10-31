@@ -131,10 +131,8 @@ function* updateUser(action) {
 console.log("now updating user");
   try {
     const userData = action.payload
-console.log(userData);
     const res = yield axios.put(`/api/users/${userData.id}`, userData)
     //const res = yield api.put(`/api/users/${userData.id}`, userData)
-console.log(res);
     const returnedUser = res.data
     yield put({type: UPDATE_USER_SUCCESS, payload: returnedUser})
   } catch (e) {

@@ -7,22 +7,21 @@ import {
   CREATE_PLAN_REQUEST,
   CHOOSE_PLAN,
 } from 'constants/actionTypes'
+import { Flexbox, Button, Input, Checkbox } from 'shared/components/elements'
 import $ from 'jquery'; //TODO...
 
-class Start extends Component {
+class Compose extends Component {
   constructor() {
     super()
 
     this.state = {
-      status: 'READY', //other statuses include: 'PENDING'
-      mode: 'CHOOSE_PLAN', //other modes include: 'ADD_PLAN', 'CONFIGURE_PLAN',
+      FACEBOOK: {},
+      TWITTER: {},
+      LINKEDIN: {}
     }
 
-    this.handlePlanCreate = this.handlePlanCreate.bind(this)
-    this.handleChoosePlan = this.handleChoosePlan.bind(this)
-    this.reset = this.reset.bind(this)
-    this.handleAddPlan = this.handleAddPlan.bind(this)
-    this.handleChangeName = this.handleChangeName.bind(this)
+    this.changeMessage = this.changeMessage.bind(this)
+    this.submit = this.submit.bind(this)
   }
 
   componentWillReceiveProps(props) {
@@ -31,117 +30,51 @@ class Start extends Component {
     }
   }
 
-  handleChoosePlan(e) {
-    let value = e.target.value
-    this.props.switchTo("Channels")
+  submit(e) {
     this.props.choosePlan(this.props.plans[value])
   }
 
-  handleAddPlan (e){
-    e.preventDefault()
-    this.setState({
-      mode: 'ADD_PLAN'
-    })
+  changeMessage (provider, index, value) {
+    providerMessages = this.state[provider]
+    providerMessages[`message${index}`] = value
+
+    this.setState({[provider]: providerMessages})
   }
 
-  handleChangeName (e, errors) {
-    Helpers.handleParam.bind(this, e, "name")()
-  }
-
-  handlePlanCreate (e){
-    e.preventDefault()
-    this.setState({status: "PENDING"});
-    let userId = this.props.user.uid
-    //will have to set the some other way, in case someone else makes one that's later than them or something, and firebase updates it
-    this.props.planCreateRequest({userId, name: this.state.name})
-    this.props.switchTo("Channels")
-  }
-
-  reset (e){
-    e.preventDefault()
-    this.setState({
-      mode: 'CHOOSE_PLAN',
-    })
-  }
-
-  handleRemovePlan(planId, e) {
-    e.preventDefault()
-    //not yet removing the plan ID from that users plan list...
-    //Not sure if I'll ever use that users plan list though
-    //will probably either use a different action, or rename this one to just update any resource/update any plan
-    this.props.setInputValue({
-      path: `plans/${planId}`,
-      value: null
-    })
-  }
 
   render() {
     if (this.props.hide) {
       return null
     }
-    const c = this;
-    const userId = this.props.user.uid
-    const plans = this.props.plans
-    const keys = plans && Object.keys(plans)
-    const newestPlan = this.props.plans && this.props.plans[keys[keys.length -1]]
 
     //Configure the form
     let form
-    if (this.state.mode === "ADD_PLAN") {form = (
-      <div>
-Make a new plan!!
-          <form>
-            <label>plan Name:</label>
-              <Input
-                value={this.state.name}
-                data-key="name"
-                onChange={this.handleChangeName}
-              />
-            <button type="submit" onClick={this.handlePlanCreate}>Submit</button>
-          </form>
-      </div>
-    )} else if (["CHOOSE_PLAN", "CONFIGURE_PLAN"].includes(this.state.mode)) {form = (
-      <div>
+    return   <div>
         <div>
-          {Object.keys(plans).length > 0 ? (
-            <div> Select one of your previous plans
-              <select onChange={this.handleChoosePlan}>
-                <option value="">Select a plan</option>
-                {plans && Object.keys(plans).map((planId) => {
-                  return (
-                    <option key={planId} value={planId}>{plans[planId].name}</option>
-                  )
-                })}
-              </select>
-            </div>
-          ) : (
-            <div> You don't have any plans yet. Make a new one instead!</div>
-          )}
+          {Object.keys(this.props.currentPlan.channelConfigurations).map((provider) => {
+console.log(provider);
+            const messages = this.props.currentPlan.channelConfigurations[provider]
+            if (!messages.messageTemplates) {return <div></div>}
+//technically, only do the active ones
+            return messages.messageTemplates.map((message, index) => {
+console.log(message, index);
+const key = `message${index}`
+              return (
+                <div key={index}>
+                  <Input
+                    label={"message" + index}
+                    placeholder={`Your message`}
+                    onChange={this.changeMessage.bind(this, provider, index)}
+                    value={this.state[provider][key]}
+                  />
+                </div>
+              )
+            })
 
-          {this.state.mode === "CONFIGURE_PLAN" ? (
-            <div>
-              <FirebaseInput
-                value={this.props.currentPlan.name}
-                name="planName"
-                keys={`plans.${this.props.currentPlan.id}.name`}
-              />
-            </div>
-          ) : (
-            <div className="new-plan-container">
-              <a href="#" onClick={this.handleAddPlan}>Add a new plan</a>
-            </div>
-          )}
+          } )}
+<button onClick={this.submit}>send them all</button>
         </div>
       </div>
-    )}
-
-    return (
-      <div>
-        <h1 className="display-3">Start</h1>
-        {form}
-        {this.state.mode !== "CHOOSE_PLAN" && <button onClick={this.reset}>Back</button>}
-      </div>
-    );
   }
 }
 
@@ -162,5 +95,5 @@ const mapDispatchToProps = (dispatch) => {
   }
 }
 
-const ConnectedStart = connect(mapStateToProps, mapDispatchToProps)(Start)
-export default ConnectedStart
+const ConnectedCompose = connect(mapStateToProps, mapDispatchToProps)(Compose)
+export default ConnectedCompose

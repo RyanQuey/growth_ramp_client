@@ -72,22 +72,38 @@ class MessageTemplate extends Component {
         <div>These are the defaults for the plan, but can be changed when composing an individual message</div>
         <div className={classes.messageTemplate}>
           {message.active ? (
-            UTM_TYPES.map((utmType) => {
-              return <div key={utmType.value}>
-                <Checkbox
-                  value={message[utmType.value].active}
-                  onChange={this.disableUtm.bind(this, utmType.value)}
-                />&nbsp;Disable utm
+            <div>
+              {UTM_TYPES.map((utmType) => (
+                <div key={utmType.value}>
+                  <Checkbox
+                    value={message[utmType.value].active}
+                    onChange={this.disableUtm.bind(this, utmType.value)}
+                  />&nbsp;Disable utm
 
-                <label className={classes.utmHeader}>{utmType.label.titleCase()}</label>
-                {message[utmType.value].active && <Input
-                  placeholder={`set the default ${utmType.label.titleCase()} utm for this ${message.type.titleCase()}`}
-                  onChange={this.updateUtm.bind(this, utmType.value)}
-                  value={message[utmType.value].value}
+                  <label className={classes.utmHeader}>{utmType.label.titleCase()}</label>
+                  {message[utmType.value].active && <Input
+                    placeholder={`set the default ${utmType.label.titleCase()} utm for this ${message.type.titleCase()}`}
+                    onChange={this.updateUtm.bind(this, utmType.value)}
+                    value={message[utmType.value].value}
 
+                  />}
+                  {message[utmType.value].active && <Input
+                    placeholder={`set the default ${utmType.label.titleCase()} utm for this ${message.type.titleCase()}`}
+                    onChange={this.updateUtm.bind(this, utmType.value)}
+                    value={message[utmType.value].value}
+
+                  />}
+                </div>
+              ))}
+
+              <div>
+                {false && <Input
+                  placeholder={`Your message`}
+                  onChange={this.changeStuff}
+                  value={message.value}
                 />}
               </div>
-            })
+            </div>
           ) : (
             <div>This template will be saved but not used</div>
           )}
@@ -100,6 +116,7 @@ class MessageTemplate extends Component {
 const mapStateToProps = state => {
   return {
     currentPlan: state.currentPlan,
+    currentPost: state.currentPost,
   }
 }
 const mapDispatchToProps = (dispatch) => {

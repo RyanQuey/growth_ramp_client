@@ -5,6 +5,8 @@ import {
   CHOOSE_PLAN,
   UPDATE_POST_REQUEST,
   UPDATE_PLAN_REQUEST,
+  LIVE_UPDATE_PLAN_SUCCESS,
+  LIVE_UPDATE_PLAN_FAILURE,
 } from 'constants/actionTypes'
 import { Navbar, Icon } from 'shared/components/elements'
 import { SocialLogin } from 'shared/components/partials'

@@ -68,7 +68,7 @@ class PostPicker extends Component {
               </td>
               <td>
                 <button onClick={this.editPost.bind(this, post)}>Edit</button>
-                <button onClick={this.removePost.bind(this, post)}>Delete</button>
+                {post.status === "DRAFT" && <button onClick={this.removePost.bind(this, post)}>Delete</button>}
                 <button disabled="disabled">View Details</button>
               </td>
             </tr>
