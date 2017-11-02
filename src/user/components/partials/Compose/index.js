@@ -53,6 +53,7 @@ class Compose extends Component {
         <div>
           {Object.keys(this.props.currentPlan.channelConfigurations).map((provider) => {
 console.log(provider);
+console.log("watch out, twitter has a limit of 25 tweets per day per user account");
             const messages = this.props.currentPlan.channelConfigurations[provider]
             if (!messages.messageTemplates) {return <div></div>}
 //technically, only do the active ones

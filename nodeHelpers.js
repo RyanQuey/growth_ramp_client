@@ -37,15 +37,21 @@ const extractCookie = (allCookies) => {
     let keyAndValue = cookie.split("=")
     let key = keyAndValue[0]
     let value = keyAndValue[1]
-    if (key === "requestedScopes") {
-      ret.scopes = JSON.parse(unescape(value))
-console.log("in the cookie");
-console.log(ret.scopes, value)
+    try {
+      if (key === "requestedScopes") {
+        ret.scopes = JSON.parse(unescape(value))
+        //TODO erase this cookie; won't need it again
+
+      }
+      if (key === "sessionUser") {
+        console.log("");
+        ret.user = JSON.parse(unescape(value))
+      }
+    } catch (err) {
+      console.log("BROKEN KEY AND VALUE:", key, value);
+      console.log(err);
+      return
     }
-    if (key === "sessionUser") {
-      ret.user = JSON.parse(unescape(value))
-    }
-    return
   })
   return ret
 }
@@ -106,12 +112,15 @@ module.exports = {
   tradeTokenForUser: ((providerData, cookie, done) => {
     const url = "/users/login_with_provider"
     const user = cookie.user
+    let headers
+    if (user) {
+      headers = {
+        "x-user-token": user.apiToken,
+        "x-id": `user-${user.id}`
+      }
+    }
     const body = providerData
     //at this point, the cookie is the user
-    const headers = {
-      "x-user-token": user.apiToken,
-      "x-id": `user-${user.id}`
-    }
 
     let timeout
     request.post({

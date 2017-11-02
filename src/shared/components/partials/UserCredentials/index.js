@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { errorActions } from 'shared/actions'
 import { Button, Flexbox, Input } from 'shared/components/elements'
-import { UPDATE_USER_REQUEST } from 'constants/actionTypes'
+import { SIGN_IN_REQUEST, UPDATE_USER_REQUEST } from 'constants/actionTypes'
 
 import classes from './style.scss'
 
@@ -22,14 +22,14 @@ class UserCredentials extends Component {
     this.handlePassword = this.handlePassword.bind(this)
   }
 
-  handlePassword(e, errors) {
+  handlePassword(value, e, errors) {
     this.setState({
-      password: e.target.value,
+      password: value,
     })
   }
-  handleEmail(e, errors) {
+  handleEmail(value, e, errors) {
     this.setState({
-      email: e.target.value,
+      email: value,
       validEmail: (errors.length === 0),
     })
   }
@@ -40,29 +40,26 @@ class UserCredentials extends Component {
   submit(e) {
     e.preventDefault()
     this.props.setPending(true);
+    let password = this.state.password
+    let email = this.state.email
 
     if (this.props.view === "SET_CREDENTIALS") {
       this.props.updateUser({
         id: this.props.user.id,
-        password: this.state.password,
-        email: this.state.email
+        password,
+        email,
       })
 
     } else {
-      let type
+      let signInType
       if (this.props.view === 'SIGN_UP') {
-        type = CREATE_WITH_EMAIL
+        signInType = 'CREATE_WITH_EMAIL'
       } else {
-        type = EMAIL
+        signInType = 'SIGN_IN_WITH_EMAIL'
       }
-      /*userActions.signIn(
-        type,
-        {
-          email: this.state.email,
-          password: this.state.password,
-          history: this.props.history,
-        },
-      )*/
+
+      const credentials = {email, password}
+      this.props.signInRequest(signInType, credentials)
     }
   }
 
@@ -74,7 +71,7 @@ class UserCredentials extends Component {
         {!this.props.passwordOnly && (
           <Input
             color="primary"
-            onChange={(e, errors) => this.handleEmail(e, errors)}
+            onChange={this.handleEmail}
             placeholder="your-email@gmail.com"
             type="email"
             value={this.state.email}
@@ -82,16 +79,14 @@ class UserCredentials extends Component {
           />
         )}
 
-        {["LOGIN", "SET_CREDENTIALS"].includes(view) && (
           <Input
             color="primary"
-            onChange={(e, errors) => this.handlePassword(e, errors)}
+            onChange={this.handlePassword}
             placeholder="password"
             type="password"
             value={this.state.password}
             validations={['required']}
           />
-        )}
 
         <Button
           disabled={(!this.state.validEmail || !this.state.password || this.props.pending)}
@@ -107,7 +102,8 @@ class UserCredentials extends Component {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    updateUser: (userData) => store.dispatch({type: UPDATE_USER_REQUEST, payload: userData})
+    updateUser: (userData) => store.dispatch({type: UPDATE_USER_REQUEST, payload: userData}),
+    signInRequest: (signInType, credentials) => store.dispatch({type: SIGN_IN_REQUEST, payload: {signInType, credentials}})
   }
 }
 const mapStateToProps = (state) => {

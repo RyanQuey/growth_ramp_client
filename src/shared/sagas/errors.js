@@ -18,7 +18,7 @@ export const clearErrors = (templateName, templatePart) => {
 }
 
 export const handleErrors = (errors, templateName, templatePart, options = {})  => {
-  console.log(errors);
+  console.error(errors);
 
   //as a shortcut, allow passing in an error obj with all the arguments as properties
   if (typeof errors === "object") {
@@ -34,15 +34,15 @@ export const handleErrors = (errors, templateName, templatePart, options = {})  
       }
 
       errors = [errors]
-    } 
+    }
   }
 
   if (!templateName) {
-    console.log("we are handling this, but pass in a template name");
+    //console.log("we are handling this, but pass in a template name");
     templateName = "Generic"
   }
   if (!templatePart) {
-    console.log("we are handling this, but pass in template part");
+    //console.log("we are handling this, but pass in template part");
     templateName = "generic"
   }
 
@@ -52,7 +52,7 @@ export const handleErrors = (errors, templateName, templatePart, options = {})  
     errors = store.getState().errors[templateName].concat(errors)
   }
   if (options.alert && errors.length > 0) {
-    if (options.combineAlerts) { 
+    if (options.combineAlerts) {
       newAlert({
         title: options.combinedTitle || "Several errors occurred",
         message: options.combinedMessage || "Please check the fields below and try again",

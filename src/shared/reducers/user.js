@@ -6,6 +6,8 @@ import {
   SET_CURRENT_USER,
   SET_IMAGE,
   SIGN_OUT,
+  SIGN_IN_SUCCESS,
+  SIGN_IN_FAILURE,
   FETCH_CURRENT_USER_SUCCESS,
   FETCH_USER_SUCCESS,
   UPDATE_USER_SUCCESS,
@@ -43,6 +45,9 @@ const userReducer = (state = null, action) => {
       return false
 
     case FETCH_CURRENT_USER_SUCCESS:
+      return Object.assign({}, state, action.payload)
+
+    case SIGN_IN_SUCCESS:
       return Object.assign({}, state, action.payload)
 
     default:

@@ -9,6 +9,8 @@ import {
   UPDATE_TOKEN_REQUEST,
   SIGN_IN_POPUP_CLOSED,
   SIGN_IN_REQUEST,
+  SIGN_IN_SUCCESS,
+  SIGN_IN_FAILURE,
   SIGN_OUT_REQUEST,
   SIGN_OUT_SUCCESS,
   SET_CURRENT_USER,
@@ -19,62 +21,45 @@ import {
 import { USER_FIELDS_TO_PERSIST, PROVIDER_IDS_MAP } from 'constants'
 import { setupSession } from 'lib/socket'
 
-function* createUserWithEmail(data) {
-  /*const password = Math.random().toString(36).slice(-8)
-
-  const createUserResult = yield firebase.auth()
-    .createUserWithEmailAndPassword(data.email, password)
-    .then((user) => {
-      const userData = user
-      userData.redirect = true
-      userData.history = data.history
-      return userData
-    })
-
-  return createUserResult*/
-}
-
-function* signInWithEmail(data) {
-  /*const signInResult = yield firebase.auth().signInWithEmailAndPassword(data.email, data.password)
-
-  return signInResult*/
-}
-
 function* signIn(action) {
   const pld = action.payload
   try {
     const signInType = pld.signInType
     const credentials = pld.credentials
-console.log(pld);
-    const provider = pld.provider
 
-    let signInResult
+    let user
     switch (signInType) {
-      case 'SIGN_UP':
-        signInResult = yield createUserWithEmail(credentials)
+      case 'SIGN_UP_WITH_EMAIL':
+        user = yield axios.post("/api/users", {
+          email: credentials.email,
+          password: credentials.password
+        })
+
         break
-      case 'EMAIL':
-        signInResult = yield signInWithEmail(credentials)
+      case 'SIGN_IN_WITH_EMAIL':
+        user = yield axios.post("/api/users/authenticate", {
+          email: credentials.email,
+          password: credentials.password
+        })
         break
     }
 
-console.log(signInResult);
     if (signInResult) {
-      console.log(signInResult, pld);
+      console.log(signInResult);
+      //might make an alert here
+      yield put({type: SIGN_IN_SUCCESS, payload: user})
+
+
 
     } else {
       //no user found
       //TODO: make a separate action for the error
-      //yield put(userFetchRequest(null))
+      yield put({type: SIGN_IN_FAILURE})
     }
      return " all done"
   } catch (err) {
     console.log('Error in Sign In Saga', err)
-
-  } finally {
-    //this action is necessary to signal that it is finished, to consider that there are never 2 pop-ups open at the same time
-    console.log("finished");
-    yield put({type: SIGN_IN_POPUP_CLOSED, payload: undefined})
+    yield put({type: SIGN_IN_FAILURE})
   }
 }
 
