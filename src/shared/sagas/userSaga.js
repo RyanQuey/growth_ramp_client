@@ -29,7 +29,7 @@ function* signIn(action) {
     const credentials = pld.credentials
     //optional token, in case their login is also needed for the token to work
     const token = pld.token
-
+console.log(token);
     let result
     switch (signInType) {
       case 'SIGN_UP_WITH_EMAIL':
@@ -40,6 +40,7 @@ function* signIn(action) {
 
         break
       case 'SIGN_IN_WITH_EMAIL':
+console.log("sending token");
         result = yield axios.post("/api/users/authenticate", {
           email: credentials.email,
           password: credentials.password,

@@ -64,7 +64,8 @@ class UserCredentials extends Component {
       }
 
       const credentials = {email, password}
-      this.props.signInRequest(signInType, credentials)
+      //not a login token, but any other token that needs a logged in user for it to operate
+      this.props.signInRequest(signInType, credentials, token)
     }
   }
 
