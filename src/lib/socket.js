@@ -43,6 +43,11 @@ console.log(window.api);*/
 
     //createSocket(headers)
   }
+  /*axios.interceptors.response.use((response) => {
+    console.log("getting res"); return response
+  }, (error) => {
+    console.log("getting error",); return Promise.reject(error)
+  })*/
 
   Cookie.set('sessionUser', user)
 }

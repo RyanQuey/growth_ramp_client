@@ -5,6 +5,7 @@ import {
   UPDATE_TOKEN_SUCCESS,
   HANDLE_QUERY,
   FETCH_PLAN_SUCCESS,
+  SET_CURRENT_MODAL,
 } from 'constants/actionTypes'
 import { setupSession } from 'lib/socket'
 
@@ -14,55 +15,90 @@ const handleQuery = (rawQuery) => {
   if (rawQuery) {
     const variables = rawQuery.replace(/^\?/, "").split('&')
     for (let i = 0; i < variables.length; i++) {
-      const pair = variables[i].split('=')
-      const key = decodeURIComponent(pair[0])
-      const value = decodeURIComponent(pair[1])
+      try {
+        const pair = variables[i].split('=')
+        const key = decodeURIComponent(pair[0])
+        const value = decodeURIComponent(pair[1])
+console.log(key);
+        switch (key) {
+          case "user":
+            const userData = JSON.parse(value)
 
-      switch (key) {
-        case "user":
-          const userData = JSON.parse(value)
+            if (
+              !userData || !(typeof userData === "object") || Object.keys(userData).length === 0
+            ) {
+              Helpers.notifyOfAPIError({
+                title: "Error logging in using provider:",
+                message: "Please try again",
+                templateName: "Home",
+                templatePart: "noUser",
+                alert: true
+              })
+              return
+            }
 
-          if (
-            !userData || !(typeof userData === "object") || Object.keys(userData).length === 0
-          ) {
-            Helpers.notifyOfAPIError({
-              title: "Error logging in using provider:",
-              message: "Please try again",
-              templateName: "Home",
-              templatePart: "noUser",
-              alert: true
+            const user = userData.user ? userData.user : userData
+            const userPlans = userData.plans ? userData.plans : null
+
+            //setup the session
+            setupSession(user)
+            store.dispatch({type: FETCH_CURRENT_USER_REQUEST, payload: user})
+
+            break;
+
+          /*case "providers:
+            const provider = JSON.parse(value)
+
+            if (
+              !provider || !(typeof provider === "object") || Object.keys(provider).length === 0
+            ) {
+              Helpers.notifyOfAPIError({
+                title: "Error logging in using provider:",
+                message: "Please try again",
+                templateName: "Home",
+                templatePart: "noProvider",
+                alert: true
+              })
+              return
+            }
+
+            store.dispatch({type: UPDATE_TOKEN_SUCCESS, payload: { [provider.name]: provider}})
+            break;*/
+
+          case "token":
+            const token = value
+
+            //retrieve the token data and handle
+console.log("about to post");
+            axios.post(`/api/tokens/${token}/useToken`)
+            .then((result) => {
+console.log("result of token");
+              console.log(result);
+              if (result.data.result.code === "promptLogin") {
+                store.dispatch({type: SET_CURRENT_MODAL, payload: "UserLoginModal", token: result.data.token, options: {credentialsOnly: true}})
+              }
             })
-            return
-          }
-
-          const user = userData.user ? userData.user : userData
-          const userPlans = userData.plans ? userData.plans : null
-
-          //setup the session
-          setupSession(user)
-          store.dispatch({type: FETCH_CURRENT_USER_REQUEST, payload: user})
-
-          break;
-
-        /*case "providers:
-          const provider = JSON.parse(value)
-
-          if (
-            !provider || !(typeof provider === "object") || Object.keys(provider).length === 0
-          ) {
-            Helpers.notifyOfAPIError({
-              title: "Error logging in using provider:",
-              message: "Please try again",
-              templateName: "Home",
-              templatePart: "noProvider",
-              alert: true
+            .catch((err) => {
+              console.error(err);
+              //need to test this. would be if user is not logged in while trying to use token
+              if (err.code === 400) {
+                console.log("for better");
+                //prompt login
+              }
             })
-            return
-          }
 
-          store.dispatch({type: UPDATE_TOKEN_SUCCESS, payload: { [provider.name]: provider}})
-          break;*/
-
+            break;
+        }
+      } catch (err) {
+        //TODO make an alert
+        Helpers.notifyOfAPIError({
+          title: "Error logging in using provider:",
+          message: "Please try again",
+          templateName: "Home",
+          templatePart: "noUser",
+          alert: true
+        })
+        console.log(err);
       }
     }
   }

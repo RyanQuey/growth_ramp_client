@@ -5,7 +5,7 @@ import {
   LOG_IN_WITH_PROVIDER,
   SET_CURRENT_USER,
   SET_IMAGE,
-  SIGN_OUT,
+  SIGN_OUT_SUCCESS,
   SIGN_IN_SUCCESS,
   SIGN_IN_FAILURE,
   FETCH_CURRENT_USER_SUCCESS,
@@ -41,7 +41,7 @@ const userReducer = (state = null, action) => {
         return state
       }
 
-    case SIGN_OUT:
+    case SIGN_OUT_SUCCESS:
       return false
 
     case FETCH_CURRENT_USER_SUCCESS:

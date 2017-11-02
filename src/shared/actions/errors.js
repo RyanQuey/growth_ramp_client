@@ -18,7 +18,7 @@ export const clearErrors = (templateName, templatePart) => {
 }
 
 export const handleErrors = (errors, templateName, templatePart, options = {})  => {
-  console.error(errors);
+  console.log("ERROR", errors);
 
   //as a shortcut, allow passing in an error obj with all the arguments as properties
   if (typeof errors === "object") {

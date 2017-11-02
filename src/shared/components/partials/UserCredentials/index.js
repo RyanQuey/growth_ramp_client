@@ -14,12 +14,16 @@ class UserCredentials extends Component {
       email: '',
       validEmail: false,
       view: props.initialView || 'LOGIN',
-      loginPending: false
     }
 
     this.submit = this.submit.bind(this)
     this.handleEmail = this.handleEmail.bind(this)
     this.handlePassword = this.handlePassword.bind(this)
+  }
+  componentWillReceiveProps(props) {
+    if (props.errors && props.errors !== this.props.errors) {
+      this.props.setPending(false);
+    }
   }
 
   handlePassword(value, e, errors) {
@@ -34,7 +38,7 @@ class UserCredentials extends Component {
     })
   }
   setPending() {
-    this.setState({loginPending: true})
+    this.props.setPending(true);
   }
 
   submit(e) {
@@ -42,6 +46,7 @@ class UserCredentials extends Component {
     this.props.setPending(true);
     let password = this.state.password
     let email = this.state.email
+    let token = this.props.viewSettings.modalToken
 
     if (this.props.view === "SET_CREDENTIALS") {
       this.props.updateUser({
@@ -53,7 +58,7 @@ class UserCredentials extends Component {
     } else {
       let signInType
       if (this.props.view === 'SIGN_UP') {
-        signInType = 'CREATE_WITH_EMAIL'
+        signInType = 'SIGN_UP_WITH_EMAIL'
       } else {
         signInType = 'SIGN_IN_WITH_EMAIL'
       }
@@ -103,13 +108,14 @@ class UserCredentials extends Component {
 const mapDispatchToProps = (dispatch) => {
   return {
     updateUser: (userData) => store.dispatch({type: UPDATE_USER_REQUEST, payload: userData}),
-    signInRequest: (signInType, credentials) => store.dispatch({type: SIGN_IN_REQUEST, payload: {signInType, credentials}})
+    signInRequest: (signInType, credentials, token) => store.dispatch({type: SIGN_IN_REQUEST, payload: {signInType, credentials, token}}),
   }
 }
 const mapStateToProps = (state) => {
   return {
     user: state.user,
-    errors: state.errors,
+    errors: Helpers.safeDataPath(state, "errors.Login.credentials", false),
+    viewSettings: state.viewSettings,
   }
 }
 

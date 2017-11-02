@@ -8,8 +8,9 @@ import {
 
 export default (state = {}, action) => {
   switch (action.type) {
+    //can also store a token if need to use the token when logging or whatever
     case SET_CURRENT_MODAL:
-      return Object.assign({}, state, {currentModal: action.payload})
+      return Object.assign({}, state, {currentModal: action.payload, modalToken: action.token, modalOptions: action.options})
 
     case CLOSE_MODAL:
       return Object.assign({}, state, {currentModal: false})

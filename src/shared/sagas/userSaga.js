@@ -20,49 +20,78 @@ import {
 }  from 'constants/actionTypes'
 import { USER_FIELDS_TO_PERSIST, PROVIDER_IDS_MAP } from 'constants'
 import { setupSession } from 'lib/socket'
+import {errorActions} from 'shared/actions'
 
 function* signIn(action) {
   const pld = action.payload
   try {
     const signInType = pld.signInType
     const credentials = pld.credentials
+    //optional token, in case their login is also needed for the token to work
+    const token = pld.token
 
-    let user
+    let result
     switch (signInType) {
       case 'SIGN_UP_WITH_EMAIL':
-        user = yield axios.post("/api/users", {
+        result = yield axios.post("/api/users", {
           email: credentials.email,
           password: credentials.password
         })
 
         break
       case 'SIGN_IN_WITH_EMAIL':
-        user = yield axios.post("/api/users/authenticate", {
+        result = yield axios.post("/api/users/authenticate", {
           email: credentials.email,
-          password: credentials.password
+          password: credentials.password,
+          token,
+        })
+        break
+      case 'SIGN_IN_WITH_TOKEN':
+        result = yield axios.post("/api/users/authenticate", {
+          loginToken: pld.loginToken,
         })
         break
     }
+console.log(result);
+    let user = result.data.userData
+    let userPlans = result.data.plans
+    let providerAccounts = result.data.providerAccounts
 
-    if (signInResult) {
-      console.log(signInResult);
+    if (user) {
+      console.log(user);
+      Cookie.set('sessionUser', result.user)
       //might make an alert here
       yield put({type: SIGN_IN_SUCCESS, payload: user})
 
-
+      yield put({type: FETCH_PLAN_SUCCESS, payload: userPlans})
+      yield put({type: FETCH_PROVIDER_SUCCESS, payload: providerAccounts})
 
     } else {
       //no user found
       //TODO: make a separate action for the error
+console.log("no user or error returned...");
       yield put({type: SIGN_IN_FAILURE})
+      errorActions.handleErrors({
+        templateName: "Login",
+        templatePart: "credentials",
+        title: "Error signing in with credentials",
+      })
     }
-     return " all done"
+
+
+    return " all done"
   } catch (err) {
     console.log('Error in Sign In Saga', err)
     yield put({type: SIGN_IN_FAILURE})
+    errorActions.handleErrors({
+      templateName: "Login",
+      templatePart: "credentials",
+      title: "Error signing in with credentials",
+    })
   }
 }
 
+//for fetching other users
 function* fetchUser(action, options = {}) {
   try {
     const userData = action.payload
@@ -86,7 +115,6 @@ function* fetchCurrentUser(action) {
     //no reason to restart the socket here; this event should only occur is already retrieving the user data from the cookie, which means that API token and headers already are set correctly.
 
     Cookie.set('sessionUser', result.user)
-console.log(result);
     yield put({type: FETCH_CURRENT_USER_SUCCESS, payload: result.user})
     yield put({type: FETCH_PROVIDER_SUCCESS, payload: result.providerAccounts})
     yield put({type: FETCH_PLAN_SUCCESS, payload: result.plans})
@@ -103,11 +131,17 @@ function* signUserOut() {
     //handle the successful signout
 
     Cookie.remove('sessionUser')
+    Cookie.remove('requestedScopes')
     yield put({type: SIGN_OUT_SUCCESS, payload: true})
     yield axios.get(`/api/users/signOut`)
 
   } catch (e) {
     console.log('There was an error in the signUserOut:', e.message)
+    errorActions.handleErrors({
+      templateName: "Login",
+      templatePart: "signout",
+      title: "Error signing out",
+    })
     //yield put(signOut('err'))
   }
 }
@@ -121,7 +155,11 @@ console.log("now updating user");
     const returnedUser = res.data
     yield put({type: UPDATE_USER_SUCCESS, payload: returnedUser})
   } catch (e) {
-    yield put({type: HANDLE_ERRORS, payload: e})
+    errorActions.handleErrors({
+      templateName: "User",
+      templatePart: "update",
+      title: "Error updating",
+    })
   }
 }
 

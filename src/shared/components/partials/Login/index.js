@@ -44,8 +44,8 @@ class Login extends Component {
       }
     })
   }
-  setPending() {
-    this.setState({loginPending: true})
+  setPending(pending) {
+    this.setState({loginPending: pending})
   }
 
   toggleView(e) {
@@ -62,6 +62,7 @@ class Login extends Component {
     const view = this.state.view
     const generalText = view === "LOGIN" ? "Login" : "Sign Up"
     const socialText = view === "LOGIN" ? "Login" : "Create account"
+    const credentialsOnly = Helpers.safeDataPath(this.props, "viewSettings.modalOptions.credentialsOnly", false);
     //TODO: set the title using props into the modal container
 
     return (
@@ -71,15 +72,18 @@ class Login extends Component {
           view={view}
           buttonText={generalText}
           pending={this.state.loginPending}
+          token={this.props.viewSettings.modalToken}
           setPending={this.setPending}
         />
         <br />
-        <h3>Or {socialText.toLowerCase()} through one of your social networks:</h3>
-        <br/>
-        <SocialLogin
-          loginPending={this.state.loginPending}
-          setPending={this.setPending}
-        />
+        {!credentialsOnly && <div>
+          <h3>Or {socialText.toLowerCase()} through one of your social networks:</h3>
+          <br/>
+          <SocialLogin
+            loginPending={this.state.loginPending}
+            setPending={this.setPending}
+          />
+        </div>}
         <a
           onClick={this.toggleView}
           href="#"
@@ -103,6 +107,7 @@ const mapStateToProps = (state) => {
   return {
     user: state.user,
     errors: state.errors,
+    viewSettings: state.viewSettings,
   }
 }
 
