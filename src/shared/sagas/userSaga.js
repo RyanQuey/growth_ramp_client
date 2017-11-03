@@ -6,7 +6,9 @@ import {
   FETCH_CURRENT_USER_SUCCESS,
   FETCH_PLAN_SUCCESS,
   FETCH_PROVIDER_SUCCESS,
-  UPDATE_TOKEN_REQUEST,
+  HANDLE_ERRORS,
+  RESET_PASSWORD_REQUEST,
+  RESET_PASSWORD_SUCCESS,
   SIGN_IN_POPUP_CLOSED,
   SIGN_IN_REQUEST,
   SIGN_IN_SUCCESS,
@@ -16,7 +18,6 @@ import {
   SET_CURRENT_USER,
   UPDATE_USER_REQUEST,
   UPDATE_USER_SUCCESS,
-  HANDLE_ERRORS,
 }  from 'constants/actionTypes'
 import { USER_FIELDS_TO_PERSIST, PROVIDER_IDS_MAP } from 'constants'
 import { setupSession } from 'lib/socket'
@@ -148,7 +149,6 @@ function* signUserOut() {
 }
 
 function* updateUser(action) {
-console.log("now updating user");
   try {
     const userData = action.payload
     const res = yield axios.put(`/api/users/${userData.id}`, userData)
@@ -164,10 +164,28 @@ console.log("now updating user");
   }
 }
 
+function* resetPassword(action) {
+console.log("now updating user");
+  try {
+    const email = action.payload
+    const res = yield axios.post(`/api/users/resetPassword`, {email})
+    yield put({type: RESET_PASSWORD_SUCCESS, payload: email})
+
+  } catch (e) {
+    errorActions.handleErrors({
+      templateName: "User",
+      templatePart: "update",
+      title: "Error resetting password",
+      errorObject: e,
+    })
+  }
+}
+
 export default function* userSaga() {
   yield takeLatest(FETCH_USER_REQUEST, fetchUser)
   yield takeLatest(FETCH_CURRENT_USER_REQUEST, fetchCurrentUser)
   yield takeLatest(SIGN_IN_REQUEST, signIn)
   yield takeLatest(SIGN_OUT_REQUEST, signUserOut)
   yield takeLatest(UPDATE_USER_REQUEST, updateUser)
+  yield takeLatest(RESET_PASSWORD_REQUEST, resetPassword)
 }

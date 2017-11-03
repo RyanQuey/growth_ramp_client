@@ -14,11 +14,12 @@ class Login extends Component {
     super(props)
     this.state = {
       view: props.initialView || 'LOGIN',
-      loginPending: false
+      loginPending: false,
     }
 
     this.toggleView = this.toggleView.bind(this)
     this.setPending = this.setPending.bind(this)
+    this.toggleResetPassword = this.toggleResetPassword.bind(this)
   }
   componentWillReceiveProps (props) {
     const user = props.user
@@ -48,21 +49,42 @@ class Login extends Component {
     this.setState({loginPending: pending})
   }
 
+  toggleResetPassword(e) {
+    e.preventDefault()
+    this.setState({
+      view: "RESETTING_PASSWORD",
+    })
+  }
   toggleView(e) {
     e.preventDefault()
 
-    if (this.state.view === "SIGN_UP") {
-      this.setState({view: "LOGIN"})
-    } else {
+    if (this.state.view === "LOGIN") {
       this.setState({view: "SIGN_UP"})
+    } else {
+      this.setState({view: "LOGIN"})
     }
   }
 
   render() {
     const view = this.state.view
-    const generalText = view === "LOGIN" ? "Login" : "Sign Up"
+    let generalText
+    switch (view) {
+      case "SIGN_UP":
+        generalText = "Signup"
+        break
+
+      case "LOGIN":
+        generalText = "Login"
+        break
+
+      case "RESETTING_PASSWORD":
+        generalText = "Reset Password"
+        break
+    }
+
     const socialText = view === "LOGIN" ? "Login" : "Create account"
     const credentialsOnly = Helpers.safeDataPath(this.props, "viewSettings.modalOptions.credentialsOnly", false);
+    const resettingPassword = view === "RESETTING_PASSWORD"
     //TODO: set the title using props into the modal container
 
     return (
@@ -76,7 +98,9 @@ class Login extends Component {
           setPending={this.setPending}
         />
         <br />
-        {!credentialsOnly && <div>
+        <a onClick={this.toggleResetPassword}>{this.state.resettingPassword ? "Login or signup" : "Forget your password?"}</a>
+
+        {!credentialsOnly && !resettingPassword && <div>
           <h3>Or {socialText.toLowerCase()} through one of your social networks:</h3>
           <br/>
           <SocialLogin

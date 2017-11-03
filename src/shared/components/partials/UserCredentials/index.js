@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { errorActions } from 'shared/actions'
 import { Button, Flexbox, Input } from 'shared/components/elements'
-import { SIGN_IN_REQUEST, UPDATE_USER_REQUEST } from 'constants/actionTypes'
+import { SIGN_IN_REQUEST, UPDATE_USER_REQUEST, RESET_PASSWORD_REQUEST } from 'constants/actionTypes'
 
 import classes from './style.scss'
 
@@ -55,6 +55,9 @@ class UserCredentials extends Component {
         email,
       })
 
+    } else if (this.props.view === "RESETTING_PASSWORD") {
+      this.props.resetPasswordRequest(email)
+
     } else {
       let signInType
       if (this.props.view === 'SIGN_UP') {
@@ -85,6 +88,7 @@ class UserCredentials extends Component {
           />
         )}
 
+        {view !== "RESETTING_PASSWORD" &&
           <Input
             color="primary"
             onChange={this.handlePassword}
@@ -93,6 +97,7 @@ class UserCredentials extends Component {
             value={this.state.password}
             validations={['required']}
           />
+        }
 
         <Button
           disabled={(!this.state.validEmail || !this.state.password || this.props.pending)}
@@ -110,6 +115,7 @@ const mapDispatchToProps = (dispatch) => {
   return {
     updateUser: (userData) => store.dispatch({type: UPDATE_USER_REQUEST, payload: userData}),
     signInRequest: (signInType, credentials, token) => store.dispatch({type: SIGN_IN_REQUEST, payload: {signInType, credentials, token}}),
+    resetPasswordRequest: (email) => store.dispatch({type: RESET_PASSWORD_REQUEST, payload: email}),
   }
 }
 const mapStateToProps = (state) => {

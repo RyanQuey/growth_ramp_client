@@ -18,7 +18,6 @@ export const clearErrors = (templateName, templatePart) => {
 }
 
 export const handleErrors = (errors, templateName, templatePart, options = {})  => {
-  console.log("ERROR", errors);
 
   //as a shortcut, allow passing in an error obj with all the arguments as properties
   if (typeof errors === "object") {
@@ -33,8 +32,11 @@ export const handleErrors = (errors, templateName, templatePart, options = {})  
         options.alert = errors.alert
       }
 
+      console.error(errors.errorObject)
       errors = [errors]
     }
+  } else {
+    console.log("ERROR", errors);
   }
 
   if (!templateName) {
@@ -51,7 +53,7 @@ export const handleErrors = (errors, templateName, templatePart, options = {})  
   if (options.method === "addToExisting") {
     errors = store.getState().errors[templateName].concat(errors)
   }
-  if (options.alert && errors.length > 0) {
+  if (!options.noAlert && errors.length > 0) {
     if (options.combineAlerts) {
       newAlert({
         title: options.combinedTitle || "Several errors occurred",
