@@ -61,7 +61,7 @@ console.log(result);
 
     if (user) {
       console.log(user);
-      Cookie.set('sessionUser', result.user)
+      Cookie.set('sessionUser', user)
       //might make an alert here
       yield put({type: SIGN_IN_SUCCESS, payload: user})
 
