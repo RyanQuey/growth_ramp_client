@@ -57,6 +57,8 @@ console.log(window.api);*/
 //TODO: move to initializer 's; unless this should be ran multiple times
 //unless is the first time being ran, will override the window.api
 const createSocket = (headers) => {
+  //disabling for now
+  /*
   let api
   const io = sailsClient(socketClient)
 
@@ -98,6 +100,7 @@ const createSocket = (headers) => {
   })
 
   window.api = api
+  */
 }
 //handle provider redirects
 /*io.socket.on(`LOGIN_WITH_${providerName.toUpperCase()}`, (data) => {
