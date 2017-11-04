@@ -103,7 +103,7 @@ class Channels extends Component {
       return null
     }
     let providers = Object.keys(this.props.providerAccounts || {})
-    const accountsForProvider = this.props.providerAccounts[this.state.currentProvider]
+    const accountsForProvider = this.props.providerAccounts[this.state.currentProvider] || []
     //let accountsNotOnPlan = accountsForProvider //when implementing, make array of indices in reverse; remove starting from back to not mess up indicies while removing.
 
     return (

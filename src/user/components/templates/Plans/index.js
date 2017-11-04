@@ -14,10 +14,15 @@ class Plans extends Component {
     }
 
     this.handleChoosePlan = this.handleChoosePlan.bind(this)
+    this.destroyPlan = this.destroyPlan.bind(this)
   }
 
   componentDidMount() {
 
+  }
+
+  destroyPlan (plan) {
+    this.props.archivePlanRequest(plan)
   }
 
   handleChoosePlan(plan) {
@@ -33,6 +38,7 @@ class Plans extends Component {
     const c = this;
     let tabIndex = 0, contentIndex = 0
     const plans = this.props.plans
+    const selectedPlan = this.state.plan
 
     return (
       <div>
@@ -51,6 +57,16 @@ class Plans extends Component {
             <div>Either create a new one or ask for permission from an associate</div>
           </div>
         )}
+        {selectedPlan &&
+          <div>
+            <h3>{selectedPlan.name}</h3>
+              <div>
+                <button onClick={this.destroyPlan.bind(this, selectedPlan)}>
+                  Delete Plan ***DANGER***
+                </button>
+              </div>
+          </div>
+        }
       </div>
     );
   }
@@ -64,6 +80,7 @@ const mapStateToProps = state => {
 }
 const mapDispatchToProps = (dispatch) => {
   return {
+    archivePlanRequest: (plan) => dispatch({type: ARCHIVE_PLAN_REQUEST, payload: plan}),
     createPostRequest: (data) => dispatch({type: CREATE_POST_REQUEST, payload: data}),
   }
 }

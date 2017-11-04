@@ -17,7 +17,6 @@ class PostPicker extends Component {
     super(props)
 
     this.editPost = this.editPost.bind(this)
-
     this.removePost = this.removePost.bind(this)
   }
 
@@ -28,7 +27,7 @@ class PostPicker extends Component {
   }
 
   removePost (post, e) {
-    if (this.props.currentPost && this.state.currentPost.id === post.id) {
+    if (this.props.currentPost && this.props.currentPost.id === post.id) {
       this.props.setPost()
     }
 
@@ -67,9 +66,9 @@ class PostPicker extends Component {
                 {post.publishedAt || "unpublished"}
               </td>
               <td>
-                <button onClick={this.editPost.bind(this, post)}>Edit</button>
-                {post.status === "DRAFT" && <button onClick={this.removePost.bind(this, post)}>Delete</button>}
-                <button disabled="disabled">View Details</button>
+                <Button onClick={this.editPost.bind(this, post)}>Edit</Button>
+                {post.status === "DRAFT" && <Button style="inverted" onClick={this.removePost.bind(this, post)}>Delete</Button>}
+                <Button disabled="disabled">View Details</Button>
               </td>
             </tr>
           )

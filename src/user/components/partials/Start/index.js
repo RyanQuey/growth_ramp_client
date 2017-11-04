@@ -3,10 +3,10 @@ import { connect } from 'react-redux'
 import { take } from 'redux-saga/effects'
 import {
   CREATE_PLAN_REQUEST,
-  CREATE_POST_REQUEST,
+  UPDATE_POST_REQUEST,
   SET_CURRENT_PLAN,
 } from 'constants/actionTypes'
-import { Input } from 'shared/components/elements'
+import { Input, Button } from 'shared/components/elements'
 import { PlanPicker } from 'user/components/partials'
 
 class Start extends Component {
@@ -19,6 +19,7 @@ class Start extends Component {
       newPlanType: "", //type of plan creation
     }
 
+    this.handleClickPlan = this.handleClickPlan.bind(this)
     this.handleChoose = this.handleChoose.bind(this)
     this.handleChangeName = this.handleChangeName.bind(this)
     this.createPlan = this.createPlan.bind(this)
@@ -27,7 +28,7 @@ class Start extends Component {
 
   componentDidMount() {
     //so, if back button is pressed in future, won't continually bounce you to "Channels"
-    if (this.props.currentPost && this.props.initialOpening) {
+    if (this.props.currentPost && this.props.currentPost.planId && this.props.initialOpening) {
       this.props.switchTo("Channels", true)
     }
 
@@ -35,28 +36,29 @@ class Start extends Component {
 
   componentWillReceiveProps(props) {
     //now switching after choosing a plan option
-    //these should run one right after the other
     if (props.currentPlan && (props.currentPlan !== this.props.currentPlan)) {
-      const newPost = {
-        planId: props.currentPlan.id,
-        userId: props.currentPlan.userId,
-      }
-      this.props.createPostRequest(newPost)
 
-    } else if (props.currentPost && props.initialOpening) {
+    } else if (props.currentPost && props.currentPost.planId && props.initialOpening) {
       this.props.switchTo("Channels")
     }
   }
 
-  handleClickPlan(e) {
-    let value = e.target.value
+  handleClickPlan(plan) {
+console.log(plan);
+    this.props.updatePostRequest({
+      id: this.props.currentPost.id,
+      planId: plan.id,
+      userId: this.props.user.id,
+    })
     this.setState({
       mode: "SET_CURRENT_PLAN_OPTIONS",
-      plan: this.props.plans[value]
+      plan: plan,
     })
+    this.props.switchTo("Channels")
+    this.props.choosePlan(plan)
   }
 
-  handleChoose(option) {
+  handleChoose(option, e) {
     switch(option) {
       case "CHOOSE_MODE":
         this.setState({mode: option})
@@ -152,13 +154,13 @@ class Start extends Component {
           onChange={this.handleChangeName}
           placeholder="Plan name"
         />
-        <button
+        <Button
           onClick={this.createPlan}
           disabled={!this.state.name && "disabled"}
           type="submit"
         >
           Create Plan
-        </button>
+        </Button>
       </form>
     )
 
@@ -179,12 +181,12 @@ class Start extends Component {
                   Select one of your plans to use or create a new one.
                 </h4>
                 {["USE_EXISTING_PLAN", "CREATE_NEW_PLAN"].map((option) => (
-                  <button
+                  <Button
                     key={option}
                     onClick={this.handleChoose.bind(this, option)}
                   >
                     {option.replace(/_/g, " ").titleCase()}
-                  </button>
+                  </Button>
                 ))}
               </div>
             )}
@@ -197,7 +199,7 @@ class Start extends Component {
               Pick a plan to use. You will have a chance to edit your plan before sending your post.
             </h4>
             <PlanPicker
-              onPick={this.props.choosePlan}
+              onPick={this.handleClickPlan}
             />
           </div>
         )}
@@ -257,8 +259,10 @@ const mapStateToProps = state => {
 const mapDispatchToProps = (dispatch) => {
   return {
     createPlanRequest: (payload) => dispatch({type: CREATE_PLAN_REQUEST, payload}),
-    createPostRequest: (payload) => dispatch({type: CREATE_POST_REQUEST, payload}),
-    choosePlan: (payload) => dispatch({type: SET_CURRENT_PLAN, payload}),
+    updatePostRequest: (payload) => dispatch({type: UPDATE_POST_REQUEST, payload}),
+    choosePlan: (payload) => {
+      dispatch({type: SET_CURRENT_PLAN, payload})
+    },
   }
 }
 

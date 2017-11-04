@@ -38,7 +38,7 @@ class UserSidebar extends Component {
 
   render() {
     return (
-      <Flexbox className={classes.sidebar} direction="column" background="black">
+      <Flexbox className={classes.sidebar} direction="column" background="">
 
         <div className={classes.nav}>
           <ul className={classes.sidebarNav}>
@@ -50,13 +50,11 @@ class UserSidebar extends Component {
                   {Object.keys(this.props.providerAccounts).map((providerName) => (
                     <MenuChild key={providerName} text={providerName} link={`/providerAccounts/${providerName}`} nav={true}/>
                   ))}
-                  <MenuChild text="New Provider" onClick={this.openNewProviderModal} link={`/providerAccounts`} badge="+"/>
+                  <MenuChild text="New Account" onClick={this.openNewProviderModal} link={`/providerAccounts`} badge="+"/>
                 </ul>
               )}
             </MenuItem>
 
-            <hr />
-            <MenuItem link="/posts/new" text="New Post" />
           </ul>
         </div>
       </Flexbox>

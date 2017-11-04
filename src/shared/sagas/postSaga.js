@@ -11,8 +11,11 @@ import { PUBLISH_POST_REQUEST,
   FETCH_POST_REQUEST,
   FETCH_POST_SUCCESS,
   SET_POST,
+  UPDATE_POST_REQUEST,
+  UPDATE_POST_SUCCESS,
   USER_POSTS_OUTDATED,
 } from 'constants/actionTypes'
+import {errorActions} from 'shared/actions'
 
 function* sendToProvider(providerName, pld, tokenInfo) {
   const publishFunctions = {
@@ -97,17 +100,26 @@ function* createPost(action) {
       content: "",
       status: "DRAFT",
       userId: pld.userId,
-      planId: pld.planId,
+      planId: pld.planId, //might be undefined
     }
 
     const res = yield axios.post("/api/posts", blankPost) //eventually switch to socket
     const newRecord = res.data
     const postId = newRecord.id
 
-    yield put({ type: CREATE_POST_SUCCESS, payload: {[postId]: newRecord}})
+    yield all([
+      put({ type: CREATE_POST_SUCCESS, payload: {[postId]: newRecord}}),
+      put({type: USER_POSTS_OUTDATED}),
+    ])
 
   } catch (err) {
     console.log(`Error in Create post Saga ${err}`)
+    errorActions.handleErrors({
+      templateName: "Post",
+      templatePart: "create",
+      title: "Error creating post",
+      errorObject: err,
+    })
   }
 }
 
@@ -138,13 +150,29 @@ function* fetchPosts(action) {
   }
 }
 
+//NOTE: make sure to always attach the userId to the payload, for all updates. Saves a roundtrip for the api  :)
+function* updatePost(action) {
+  try {
+    const postData = action.payload
+console.log(postData);
+
+    const res = yield axios.put(`/api/posts/${postData.id}`, postData) //eventually switch to socket
+
+    yield all([
+      put({ type: UPDATE_POST_SUCCESS, payload: res.data}),
+    ])
+
+  } catch (err) {
+    console.log(`Error in update post Saga ${err}`)
+  }
+}
+
 function* destroyPost(action) {
   try {
     const pld = action.payload
 
     //TODO: eventually they filter out posts that have already been sent
     const res = yield axios.delete(`/api/posts/${pld.id}`) //eventually switch to socket
-console.log(res);
     yield all([
       put({type: DESTROY_POST_SUCCESS, payload: res}),
       put({type: USER_POSTS_OUTDATED}),
@@ -183,9 +211,10 @@ function* populatePost(action) {
 
 export default function* postSaga() {
   yield takeLatest(FETCH_POST_REQUEST, fetchPosts)
-  yield takeLatest(PUBLISH_POST_REQUEST, publishPost)
   yield takeLatest(CREATE_POST_REQUEST, createPost)
+  yield takeLatest(UPDATE_POST_REQUEST, updatePost)
   yield takeLatest(DESTROY_POST_REQUEST, destroyPost)
+  yield takeLatest(PUBLISH_POST_REQUEST, publishPost)
   //when setting as the current post, will want to populate several of the associations
   //yield takeLatest(SET_POST, populatePost)
 }

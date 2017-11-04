@@ -55,7 +55,7 @@ function* create(action) {
       utmOptions: {},
       userId: pld.userId,
     }
-console.log(newPlan);
+
     const res = yield axios.post("/api/plans", newPlan) //eventually switch to socket
     const newRecord = res.data
     const planId = newRecord.id
@@ -70,6 +70,7 @@ console.log(newPlan);
   }
 }
 
+//NOTE: make sure to always attach the userId to the payload, for all updates. Saves a roundtrip for the api  :)
 function* update(action) {
   try {
     const planData = action.payload

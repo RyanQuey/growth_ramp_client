@@ -121,8 +121,13 @@ function* fetchCurrentUser(action) {
     yield put({type: FETCH_PROVIDER_SUCCESS, payload: result.providerAccounts})
     yield put({type: FETCH_PLAN_SUCCESS, payload: result.plans})
 
-  } catch (e) {
-    yield Helpers.notifyOfAPIError(e)
+  } catch (err) {
+    errorActions.handleErrors({
+      templateName: "Login",
+      templatePart: "fetch",
+      title: "Error fetching user",
+      errorObject: err,
+    })
   }
 }
 
@@ -137,12 +142,13 @@ function* signUserOut() {
     yield put({type: SIGN_OUT_SUCCESS, payload: true})
     yield axios.get(`/api/users/signOut`)
 
-  } catch (e) {
+  } catch (err) {
     console.log('There was an error in the signUserOut:', e.message)
     errorActions.handleErrors({
       templateName: "Login",
       templatePart: "signout",
       title: "Error signing out",
+      errorObject: err,
     })
     //yield put(signOut('err'))
   }
@@ -160,6 +166,7 @@ function* updateUser(action) {
       templateName: "User",
       templatePart: "update",
       title: "Error updating",
+      errorObject: err,
     })
   }
 }
@@ -171,12 +178,12 @@ console.log("now updating user");
     const res = yield axios.post(`/api/users/resetPassword`, {email})
     yield put({type: RESET_PASSWORD_SUCCESS, payload: email})
 
-  } catch (e) {
+  } catch (err) {
     errorActions.handleErrors({
       templateName: "User",
       templatePart: "update",
       title: "Error resetting password",
-      errorObject: e,
+      errorObject: err,
     })
   }
 }

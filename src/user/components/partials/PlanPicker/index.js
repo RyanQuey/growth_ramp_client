@@ -15,11 +15,6 @@ class PlanPicker extends Component {
   constructor(props) {
     super(props)
 
-    this.destroyPlan = this.destroyPlan.bind(this)
-  }
-
-  destroyPlan (plan) {
-    this.props.archivePlanRequest(plan)
   }
 
   render() {
@@ -28,16 +23,11 @@ class PlanPicker extends Component {
     return (
       <Flexbox direction="column">
         {plans && Object.keys(plans).map((planId) => (
-          <Card>
+          <Card key={planId} onClick={this.props.onPick.bind(this, plans[planId])}>
             <h3>
               {plans[planId].name}
             </h3>
 
-            <div>
-              <button key={planId} onClick={this.destroyPlan.bind(this, plans[planId])}>
-                Delete Plan ***DANGER***
-              </button>
-            </div>
           </Card>
         ))}
       </Flexbox>

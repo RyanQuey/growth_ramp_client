@@ -1,6 +1,7 @@
 import { Component } from 'react';
 import { connect } from 'react-redux'
 import { FETCH_POST_REQUEST } from 'constants/actionTypes'
+import { Button } from 'shared/components/elements'
 import {
   PostPicker
 } from 'user/components/partials'

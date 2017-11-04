@@ -1,5 +1,7 @@
 @import 'theme/_helpers';
 
+@import 'theme/_helpers';
+
 .menuChild {
   text-decoration: none;
   cursor: pointer;
@@ -8,16 +10,17 @@
     display: block;
     padding: 10px 20px;
     background: $nav-bg;
-    color: $white;
+    color: $text;
     &:hover {
-      color: $primary;
-      background: $nav-hover;
+      color: $nav-hover-font;
+      background: $nav-hover-bg;
     }
   }
   & > a.navActive {
-    background: purple;
+    background: $nav-hover-bg;
+    color: $nav-hover-font;
     &:hover {
-      color: $white;
+      color: $nav-hover-font;
     }
   }
 

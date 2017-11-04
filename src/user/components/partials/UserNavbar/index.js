@@ -11,7 +11,8 @@ import {
   Icon,
 } from 'shared/components/elements'
 import { AccountMenu } from 'shared/components/partials'
-import {SET_CURRENT_MODAL} from 'constants/actionTypes'
+import { Logo } from 'shared/components/elements'
+import {SET_CURRENT_MODAL, CREATE_POST_REQUEST} from 'constants/actionTypes'
 import theme from 'theme'
 import classes from './style.scss'
 
@@ -31,14 +32,22 @@ class UserNavbar extends Component {
     const { user } = this.props
 
     return (
-      <Navbar>
-        <Flexbox justify="space-between">
+      <Navbar className={classes.header}>
+        {false && <Flexbox justify="space-between">
           <NavbarBrand/>
-        </Flexbox>
+        </Flexbox>}
 
         <Flexbox className={classes.mainNav} justify="space-between">
-          <Flexbox className={classes.leftNav} align="center" justify="space-between">
-            <div></div>
+          <Flexbox className={classes.leftNav} align="center" justify="space-around">
+            <Link to="/">
+              <Logo />
+            </Link>
+
+            <Button onClick={this.props.createPostRequest}>
+              <Link to="/posts/new">
+                New post
+              </Link>
+            </Button>
           </Flexbox>
 
           <Flexbox className={classes.rightNav} align="center" justify="space-between">
@@ -61,7 +70,14 @@ UserNavbar.propTypes = {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    setCurrentModal: (payload) => dispatch({type: SET_CURRENT_MODAL, payload})
+    setCurrentModal: (payload) => dispatch({type: SET_CURRENT_MODAL, payload}),
+    createPostRequest: (currentUser) => {
+      const newPost = {
+        userId: store.getState().user.id,
+      }
+
+      return dispatch({type: CREATE_POST_REQUEST, payload: newPost})
+    },
   }
 }
 const mapStateToProps = (state) => {

@@ -12,18 +12,19 @@ const Card = ({
   color = 'text',
   border,
   hover,
-  height = '300px',
+  height = '200px',
   width,
   margin = '10px',
 }) => {
 
   const styles = StyleSheet.create({
-    button: {
+    card: {
       background: theme.color[background],
       color: theme.color[color],
       width,
       height,
       margin,
+      cursor: onClick ? "pointer" : "default",
       border: border,
       ':hover': {
         background: theme.color[hover],
@@ -32,7 +33,7 @@ const Card = ({
   })
   return (
     <div
-      className={`${className} ${css(styles.button)} ${classes.card} ${selected ? classes.selected : ""}`}
+      className={`${className} ${css(styles.card)} ${classes.card} ${selected ? classes.selected : ""}`}
       onClick={onClick}
     >
       {children}
