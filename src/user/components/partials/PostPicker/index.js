@@ -61,7 +61,7 @@ class PostPicker extends Component {
                 {post.status}
               </td>
               <td>
-                {post.planId || "will probably do a joins for this information later"}
+                {(post.planId && this.props.plans[post.planId].name) || "No plan"}
               </td>
               <td>
                 {post.publishedAt || "unpublished"}
@@ -69,7 +69,7 @@ class PostPicker extends Component {
               <td>
                 <ButtonGroup>
                   <Button onClick={this.editPost.bind(this, post)}>Edit</Button>
-                  {post.status === "DRAFT" && <Button style="inverted" onClick={this.removePost.bind(this, post)}>Delete</Button>}
+                  {post.status === "DRAFT" && <Button onClick={this.removePost.bind(this, post)}>Delete</Button>}
                   <Button disabled={true}>View Details</Button>
                 </ButtonGroup>
               </td>

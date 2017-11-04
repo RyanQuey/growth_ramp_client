@@ -87,12 +87,6 @@ class MessageTemplate extends Component {
                     value={message[utmType.value].value}
 
                   />}
-                  {message[utmType.value].active && <Input
-                    placeholder={`set the default ${utmType.label.titleCase()} utm for this ${message.type.titleCase()}`}
-                    onChange={this.updateUtm.bind(this, utmType.value)}
-                    value={message[utmType.value].value}
-
-                  />}
                 </div>
               ))}
 

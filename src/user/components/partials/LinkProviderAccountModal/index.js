@@ -122,26 +122,23 @@ class LinkProviderAccount extends Component {
               <h3>Current Accounts</h3>
               <Flexbox>
                 {currentAccounts ? (
-                  <div>
-                    {currentAccounts.map((account) => (
-                      <AccountStatus
-                        account={account}
-                        key={account.providerUserId}
-                      />
-                    ))}
-
-                    <h5>Want to add another {currentProvider} account?</h5>
-                    {currentProvider === "FACEBOOK" && <p>Make sure you either logged out of {currentProvider} or are signed into {currentProvider} with the account you want to add to GrowthRamp, choose the services you want to allow here, and then click the login button below</p>}
-                  </div>
+                  currentAccounts.map((account) => (
+                    <AccountStatus
+                      account={account}
+                      key={account.providerUserId}
+                    />
+                  ))
                 ) : (
                   <p>You don't have any {currentProvider} accounts linked to your GrowthRamp account yet.</p>
                 )}
-
               </Flexbox>
+              <h5>Want to add another {currentProvider} account?</h5>
+              {["FACEBOOK", "LINKEDIN"].includes(currentProvider) && <p>Make sure you either logged out of {currentProvider} or are signed into {currentProvider} with the account you want to add to GrowthRamp, choose the services you want to allow here, and then click the login button below</p>}
+
 
               <h3>Choose Channels to add:</h3>
               <Flexbox justify="center">
-                {Object.keys(PROVIDERS[this.state.currentProvider].channels).map((channel) =>
+                {Object.keys(PROVIDERS[currentProvider].channels).map((channel) =>
                   <Button
                     key={channel}
                     style="inverted"
