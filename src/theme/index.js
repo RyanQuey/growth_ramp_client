@@ -3,6 +3,11 @@ export default {
     primary: '#4f4081',
     active: 'rgb(23, 195, 169)',
     secondary: '#95669c',
+    lightPurpleGray: "#ada4cd",
+    darkPurpleGray: "#7e7796",
+    lightPurpleComplement: "#7e66cd",
+    darkPurpleComplement: "#30274e",
+
     accent1: 'rgb(155, 155, 155)',
     accent2: 'rgb(250, 175, 0)',
     accent3: 'rgb(176, 69, 69)',

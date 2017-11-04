@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 import { userActions, errorActions } from 'shared/actions'
 import { Button, Flexbox, Input } from 'shared/components/elements'
+import { ButtonGroup } from 'shared/components/groups'
 import {
   SET_POST,
   DESTROY_POST_REQUEST,
@@ -66,9 +67,11 @@ class PostPicker extends Component {
                 {post.publishedAt || "unpublished"}
               </td>
               <td>
-                <Button onClick={this.editPost.bind(this, post)}>Edit</Button>
-                {post.status === "DRAFT" && <Button style="inverted" onClick={this.removePost.bind(this, post)}>Delete</Button>}
-                <Button disabled="disabled">View Details</Button>
+                <ButtonGroup>
+                  <Button onClick={this.editPost.bind(this, post)}>Edit</Button>
+                  {post.status === "DRAFT" && <Button style="inverted" onClick={this.removePost.bind(this, post)}>Delete</Button>}
+                  <Button disabled={true}>View Details</Button>
+                </ButtonGroup>
               </td>
             </tr>
           )

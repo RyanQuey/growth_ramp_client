@@ -44,7 +44,6 @@ class Start extends Component {
   }
 
   handleClickPlan(plan) {
-console.log(plan);
     this.props.updatePostRequest({
       id: this.props.currentPost.id,
       planId: plan.id,

@@ -34,7 +34,6 @@ const plansReducer = (state = {}, action) => {
 
     case UPDATE_PLAN_SUCCESS:
       plan = action.payload
-console.log(plan);
       return Object.assign({}, state, {[plan.id]: plan})
 
     case FETCH_PLAN_SUCCESS:

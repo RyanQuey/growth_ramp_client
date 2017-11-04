@@ -19,19 +19,19 @@
       margin: 0 20px;
     }
   }
-  &.justifyContentStart > ul {
+  &.flex-start > ul {
     justify-content: flex-start;
   }
-  &.justifyContentEnd > ul {
+  &.flex-end > ul {
     justify-content: flex-end;
   }
-  &.justifyContentSpaceEvenly > ul {
+  &.space-evenly > ul {
     justify-content: space-evenly;
   }
-  &.justifyContentSpaceBetween > ul {
+  &.space-between > ul {
     justify-content: space-between;
   }
-  &.justifyContentCenter > ul {
+  &.center > ul {
     justify-content: center;
   }
   &.navTabs > ul > li {

@@ -7,22 +7,23 @@ import {
   UPDATE_PLAN_REQUEST,
   LIVE_UPDATE_PLAN_SUCCESS,
   LIVE_UPDATE_PLAN_FAILURE,
+  SET_CURRENT_MODAL,
 } from 'constants/actionTypes'
-import { Navbar, Icon } from 'shared/components/elements'
+import { Navbar, Icon, Button } from 'shared/components/elements'
 import { SocialLogin } from 'shared/components/partials'
 import { ProviderAccountsDetails, PlanAccountConfiguration } from 'user/components/partials'
+import {PROVIDERS} from 'constants/providers'
 import theme from 'theme'
 
 class Channels extends Component {
   constructor(props) {
     super(props)
 
-    let currentProvider, currentAccount
+    let currentProvider = "FACEBOOK"
+    let currentAccount
     if (props.providerAccounts && Object.keys(props.providerAccounts).length > 0) {
-      currentProvider = Object.keys(props.providerAccounts)[0]
       currentAccount = props.providerAccounts[currentProvider][0]
     } else {
-      currentProvider = ""
       currentAccount = null
     }
 
@@ -37,6 +38,7 @@ class Channels extends Component {
     this.addAccountToPlan = this.addAccountToPlan.bind(this)
     this.handleChangeName = this.handleChangeName.bind(this)
     this.handleLinkProvider = this.handleLinkProvider.bind(this)
+    this.openNewProviderModal = this.openNewProviderModal.bind(this)
   }
 
   componentWillReceiveProps(props) {
@@ -45,10 +47,16 @@ class Channels extends Component {
     }*/
   }
 
+  openNewProviderModal(provider) {
+    //provider will be the only provider they add an account for
+    this.props.setCurrentModal("LinkProviderAccountModal", {provider})
+  }
+
   handleChooseProvider(provider) {
+console.log(provider);
     this.setState({
       currentProvider: provider,
-      currentAccount: this.props.providerAccounts[provider][0],
+      currentAccount: Helpers.safeDataPath(this.props, `providerAccounts.${provider}.0`, false),
     })
   }
 
@@ -102,7 +110,7 @@ class Channels extends Component {
     if (this.props.hide) {
       return null
     }
-    let providers = Object.keys(this.props.providerAccounts || {})
+    let providers = Object.keys(PROVIDERS)
     const accountsForProvider = this.props.providerAccounts[this.state.currentProvider] || []
     //let accountsNotOnPlan = accountsForProvider //when implementing, make array of indices in reverse; remove starting from back to not mess up indicies while removing.
 
@@ -111,7 +119,7 @@ class Channels extends Component {
         <h1 className="display-3">Channels</h1>
         {this.state.status === "PENDING" && <Icon name="spinner" className="fa-spin" />}
 
-        <Navbar className="nav navTabs justifyContentStart" background="white" color={theme.color.text}>
+        <Navbar tabs={true} justifyTabs="flex-start" background="white" color={theme.color.text}>
           <ul role="tablist">
             {providers.map((provider) => (
               <li key={provider} onClick={this.handleChooseProvider.bind(this, provider)}>
@@ -144,13 +152,12 @@ class Channels extends Component {
               )}
             </div>
           )}
-
           {this.state.currentProvider === "ADD_AN_ACCOUNT" && (
             <div>
               <h3>Add one of your platforms</h3>
               {accountsNotOnPlan? (
                 accountsNotOnPlan.map((provider) => {
-                  return <button key={provider} type="button" className="btn-outline-primary btn-lg" onClick={this.handleAddProviderToPlan.bind(this, provider)}>{provider}</button>
+                  return <Button key={provider} type="button" className="btn-outline-primary btn-lg" onClick={this.handleAddProviderToPlan.bind(this, provider)}>{provider}</Button>
                 })
               ) : (
                 <h3>You have no other social media accounts linked with GrowthRamp. Let's add some more to get started!</h3>
@@ -158,11 +165,11 @@ class Channels extends Component {
               <div>
                 <h3>Or link a new platform to GrowthRamp</h3>
 
-                <button>Add new platform</button>
               </div>
             </div>
 
           )}
+          <Button onClick={this.openNewProviderModal.bind(this, this.state.currentProvider)}>Add new {this.state.currentProvider} account</Button>
         </div>
       </div>
     );
@@ -180,7 +187,7 @@ const mapDispatchToProps = (dispatch) => {
   return {
     updatePostRequest: (payload) => {dispatch({type: UPDATE_POST_REQUEST, payload})},
     updatePlanRequest: (payload) => {dispatch({type: UPDATE_PLAN_REQUEST, payload})},
-    setCurrentModal: (payload) => dispatch({type: SET_CURRENT_MODAL, payload})
+    setCurrentModal: (payload, modalOptions) => dispatch({type: SET_CURRENT_MODAL, payload, options: modalOptions})
   }
 }
 

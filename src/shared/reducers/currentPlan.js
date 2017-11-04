@@ -14,7 +14,11 @@ const currentPlanReducer = (state = null, action) => {
 
     case UPDATE_PLAN_SUCCESS:
       //payload should be the updated plan
-      return Object.assign({}, action.payload)
+      if (store.getState().currentPlan.id === action.payload.id) {
+        return Object.assign({}, action.payload)
+      } else {
+        return state
+      }
 
     case CREATE_PLAN_SUCCESS:
       //payload should be the new plan

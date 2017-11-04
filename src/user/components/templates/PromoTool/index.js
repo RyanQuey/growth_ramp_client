@@ -50,18 +50,16 @@ console.log(next);
     const Tag = sections[this.state.currentSection]
     return (
       <div>
-        <Navbar className="nav justifyContentSpaceBetween navFill" background="white" color={theme.color.text}>
-          <ul role="tablist">
-            {Object.keys(sections).map((section) => (
-              <li key={section} ref={section}>
-                {this.state.currentSection === section ? (
-                  <strong>{section}</strong>
-                ) : (
-                  <span>{section}</span>
-                )}
-              </li>
-            ))}
-          </ul>
+        <Navbar className="" justify="space-around" background="white" color={theme.color.text}>
+          {Object.keys(sections).map((section) => (
+            <div key={section} ref={section}>
+              {this.state.currentSection === section ? (
+                <strong>{section}</strong>
+              ) : (
+                <span>{section}</span>
+              )}
+            </div>
+          ))}
         </Navbar>
 
         <div>

@@ -10,6 +10,7 @@ import { CLOSE_MODAL, LINK_ACCOUNT_REQUEST } from 'constants/actionTypes'
 import { SocialLogin } from 'shared/components/partials'
 import { AccountStatus } from 'user/components/partials'
 import { Button, Form, Card, Flexbox } from 'shared/components/elements'
+import { ButtonGroup } from 'shared/components/groups'
 import { PROVIDERS } from 'constants/providers'
 
 class LinkProviderAccount extends Component {
@@ -87,10 +88,10 @@ class LinkProviderAccount extends Component {
   }
 
   render (){
-    const currentProvider = this.state.currentProvider
+    const oneProviderOnly = this.props.options.provider  //mostly use as a Boolean
+    const currentProvider = oneProviderOnly || this.state.currentProvider
     const currentAccounts = Object.keys(this.props.providerAccounts).includes(currentProvider) ? this.props.providerAccounts[currentProvider] : null
 
-    const permittedChannels = Helpers.permittedChannels(this.state.currentAccount)
 
     return (
       <ModalContainer
@@ -99,19 +100,22 @@ class LinkProviderAccount extends Component {
         title={PROVIDERS[currentProvider].name}
       >
         <ModalBody>
-          <div>
-            {Object.keys(PROVIDERS).map((provider) => {
+          <ButtonGroup>
+            {!oneProviderOnly && Object.keys(PROVIDERS).map((provider) => {
               return (
                 <Button
                   key={provider}
                   type="button"
                   className="btn-info btn-sm"
                   background="black"
-                  onClick={this.chooseProvider.bind(this, provider)}>{provider.titleCase()}
+                  selected={provider === currentProvider}
+                  onClick={this.chooseProvider.bind(this, provider)}
+                >
+                  {provider.titleCase()}
                 </Button>
               )
             })}
-          </div>
+          </ButtonGroup>
 
           {currentProvider &&
             <Form>
@@ -121,16 +125,13 @@ class LinkProviderAccount extends Component {
                   <div>
                     {currentAccounts.map((account) => (
                       <AccountStatus
-                        onClick={this.chooseAccount.bind(this, account)}
                         account={account}
-                        permittedChannels={permittedChannels}
                         key={account.providerUserId}
-                        selected={this.state.currentAccount && this.state.currentAccount.id === account.id}/>
+                      />
                     ))}
-                    <Card onClick={this.brandNewAccount} selected={this.state.currentAccount === "new"}>
-                      <h5>Want to add another {currentProvider} account?</h5>
-                      {currentProvider === "FACEBOOK" && <p>Make sure you either logged out of {currentProvider} or are signed into {currentProvider} with the account you want to add to GrowthRamp, choose the services you want to allow here, and then click the login button below</p>}
-                    </Card>
+
+                    <h5>Want to add another {currentProvider} account?</h5>
+                    {currentProvider === "FACEBOOK" && <p>Make sure you either logged out of {currentProvider} or are signed into {currentProvider} with the account you want to add to GrowthRamp, choose the services you want to allow here, and then click the login button below</p>}
                   </div>
                 ) : (
                   <p>You don't have any {currentProvider} accounts linked to your GrowthRamp account yet.</p>
@@ -138,13 +139,14 @@ class LinkProviderAccount extends Component {
 
               </Flexbox>
 
-              <h3>Possible Channels to add:</h3>
+              <h3>Choose Channels to add:</h3>
               <Flexbox justify="center">
-                {Object.keys(PROVIDERS[this.state.currentProvider].channels).filter((channel) => !permittedChannels.includes(channel)).map((channel) =>
+                {Object.keys(PROVIDERS[this.state.currentProvider].channels).map((channel) =>
                   <Button
-                    onClick={this.chooseChannel.bind(this, channel)}
-                    background={this.state.channels.includes(channel) ? "primary" : "black"}
                     key={channel}
+                    style="inverted"
+                    onClick={this.chooseChannel.bind(this, channel)}
+                    selected={this.state.channels.includes(channel)}
                   >
                     {channel.titleCase()}
                   </Button>
@@ -174,6 +176,7 @@ const mapDispatchToProps = (dispatch) => {
 const mapStateToProps = (state) => {
   return {
     currentModal: state.viewSettings.currentModal,
+    options: state.viewSettings.modalOptions || {},
     providerAccounts: state.providerAccounts,
   }
 }

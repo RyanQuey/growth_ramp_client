@@ -12,11 +12,16 @@ const styles = {
       hover: "#706497",
     },
     disabled: {
-      background: theme.color.secondary,
+      background: theme.color.darkPurpleGray,
       color: theme.color.white,
       border: "",
       hover: theme.color.secondary,
-      cursor: "not-allowed",
+    },
+    selected: {
+      background: theme.color.lightPurpleGray,
+      color: theme.color.white,
+      border: "",
+      hover: theme.color.secondary,
     },
   },
   inverted: {
@@ -31,13 +36,27 @@ const styles = {
       color: theme.color.primary,
       border: `${theme.color.primary} solid 2px}`,
       hover: theme.color.secondary,
-      cursor: "not-allowed",
+    },
+    selected: {
+      background: theme.color.lightPurpleComplement,
+      color: theme.color.white,
+      border: `${theme.color.primary} solid 2px}`,
+      hover: theme.color.moduleGrayOne,
     },
   },
 }
 //takes the style prop and outputs preset button types
-const STYLES = (style, disabled) => {
-  const buttonStyle = styles[style][disabled ? "disabled" : "regular"]
+const STYLES = (style, disabled, selected) => {
+  let status
+  if (selected) {
+    status = "selected"
+  } else if (disabled) {
+    status = "disabled"
+  } else {
+    status = "regular"
+  }
+
+  const buttonStyle = styles[style][status]
 
   return StyleSheet.create({
     button: {
@@ -52,12 +71,12 @@ const STYLES = (style, disabled) => {
 
 }
 
-const Button = ({ style = 'primary', children, onClick, disabled, type }) => {
+const Button = ({ style = 'primary', children, onClick, disabled, selected, type }) => {
   disabled = disabled || disabled == 'disabled' ? true : false
 
   return (
     <button
-      className={`${css(STYLES(style, disabled).button)} ${classes.button}`}
+      className={`${css(STYLES(style, disabled, selected).button)} ${classes.button} ${disabled ? classes.disabled : ""}`}
       onClick={onClick}
       disabled={disabled}
       type={type || "button"}

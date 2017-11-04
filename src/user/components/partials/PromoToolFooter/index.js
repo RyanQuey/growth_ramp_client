@@ -38,7 +38,7 @@ class PromoToolFooter extends Component {
     const sectionIndex = sections.indexOf(this.props.currentSection)
     const canGoForward = sections.indexOf(this.state.placeInFlow) > sectionIndex &&
       this.props.currentSection !== "Send" ||
-      this.props.currentSection === "Channels"
+      (this.props.currentSection === "Channels" && Object.keys(providerAccounts))
 
     return (
       <div>
@@ -51,6 +51,7 @@ class PromoToolFooter extends Component {
 
 const mapStateToProps = state => {
   return {
+    providerAccounts: state.providerAccounts
   }
 }
 const mapDispatchToProps = (dispatch) => {

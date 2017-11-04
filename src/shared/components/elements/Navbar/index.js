@@ -4,10 +4,10 @@ import { connect } from 'react-redux'
 import { Flexbox } from 'shared/components/elements'
 import classes from './style.scss'
 
-const Navbar = ({ children, background = "white", color = "text", justify, className = ""}) => {
-
+const Navbar = ({ children, background = "white", color = "text", justify = "space-between", className = "", tabs = false, justifyTabs = "flex-start"}) => {
+console.log(justify);
   return (
-    <Flexbox align="center" className={`${classes.navbar} ${className}`} background={background} color={color} justify={justify || "space-between"} >
+    <Flexbox align="center" className={`${classes.navbar} ${className} ${tabs ? classes.navTabs : ""} ${classes[justifyTabs]}`} background={background} color={color} justify={justify} >
       {children}
     </Flexbox>
   )

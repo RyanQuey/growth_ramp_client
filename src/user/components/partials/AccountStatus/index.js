@@ -2,8 +2,10 @@ import { PROVIDERS } from 'constants/providers'
 import { Card } from 'shared/components/elements'
 import classes from './style.scss'
 
-const AccountStatus = ({account, permittedChannels, selected, onClick}) => {
-console.log(selected);
+const AccountStatus = ({account, selected, onClick}) => {
+
+  const permittedChannels = Helpers.permittedChannels(account)
+
   return (
     <Card selected={selected} onClick={onClick}>
       <label>UserID:</label> <span>{account.providerUserId}</span>

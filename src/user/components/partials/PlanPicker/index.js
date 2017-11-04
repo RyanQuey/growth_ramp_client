@@ -37,7 +37,6 @@ class PlanPicker extends Component {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    archivePlanRequest: (plan) => dispatch({type: ARCHIVE_PLAN_REQUEST, payload: plan}),
   }
 }
 
