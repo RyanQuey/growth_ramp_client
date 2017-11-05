@@ -53,7 +53,14 @@ class LinkProviderAccount extends Component {
   }
 
   chooseChannel(channel) {
-    const channels = this.state.channels.concat(channel)
+    let channels = this.state.channels
+
+    if (channels.includes(channel)) {
+      _.remove(channels, (c) => channel === c)
+    } else {
+      channels = channels.concat(channel)
+    }
+
     this.setState({channels})
   }
 
@@ -91,13 +98,13 @@ class LinkProviderAccount extends Component {
     const oneProviderOnly = this.props.options.provider  //mostly use as a Boolean
     const currentProvider = oneProviderOnly || this.state.currentProvider
     const currentAccounts = Object.keys(this.props.providerAccounts).includes(currentProvider) ? this.props.providerAccounts[currentProvider] : null
-
+    const currentProviderName = PROVIDERS[currentProvider].name
 
     return (
       <ModalContainer
         visible={this.props.currentModal === "LinkProviderAccountModal"}
         onClose={this.handleClose}
-        title={PROVIDERS[currentProvider].name}
+        title={currentProviderName}
       >
         <ModalBody>
           <ButtonGroup>
@@ -111,7 +118,7 @@ class LinkProviderAccount extends Component {
                   selected={provider === currentProvider}
                   onClick={this.chooseProvider.bind(this, provider)}
                 >
-                  {provider.titleCase()}
+                  {PROVIDERS[provider].name}
                 </Button>
               )
             })}
@@ -119,22 +126,20 @@ class LinkProviderAccount extends Component {
 
           {currentProvider &&
             <Form>
-              <h3>Current Accounts</h3>
+              <h3>{currentProviderName} Accounts ({currentAccounts ? currentAccounts.length : 0})</h3>
               <Flexbox>
                 {currentAccounts ? (
                   currentAccounts.map((account) => (
                     <AccountStatus
                       account={account}
                       key={account.providerUserId}
+                      height="200px"
                     />
                   ))
                 ) : (
-                  <p>You don't have any {currentProvider} accounts linked to your GrowthRamp account yet.</p>
+                  <p>You don't have any {currentProviderName} accounts linked to your Growth Ramp account yet.</p>
                 )}
               </Flexbox>
-              <h5>Want to add another {currentProvider} account?</h5>
-              {["FACEBOOK", "LINKEDIN"].includes(currentProvider) && <p>Make sure you either logged out of {currentProvider} or are signed into {currentProvider} with the account you want to add to GrowthRamp, choose the services you want to allow here, and then click the login button below</p>}
-
 
               <h3>Choose Channels to add:</h3>
               <Flexbox justify="center">
@@ -154,8 +159,11 @@ class LinkProviderAccount extends Component {
                 setPending={this.setPending}
                 providers={{[currentProvider]: PROVIDERS[currentProvider]}}
                 scopes={this.chosenScopes()}
-                disabled={this.state.currentAccount !== "new" && this.state.channels.length === 0}
+                disabled={false}
               />
+
+              <h5>Want to add another {currentProviderName} account?</h5>
+              {["FACEBOOK", "LINKEDIN"].includes(currentProvider) && <p>Make sure you either logged out of {currentProviderName} or are signed into {currentProviderName} with the account you want to add to Growth Ramp, choose the services you want to allow here, and then click the login button below</p>}
             </Form>
           }
         </ModalBody>

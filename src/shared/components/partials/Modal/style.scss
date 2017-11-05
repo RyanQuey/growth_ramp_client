@@ -19,9 +19,12 @@
   padding-bottom: 30px;
   box-sizing: border-box;
   position: relative;
-  width: auto;
-  height: 100%;
-  margin: 10px;
+  max-height: 90%;
+  height: 90%;
+  max-width: 650px;
+  margin-left: auto;
+  margin-right: auto;
+  @include vertical-align
 }
 .modalContent {
   position: relative;

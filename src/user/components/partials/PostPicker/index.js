@@ -39,7 +39,8 @@ class PostPicker extends Component {
   render() {
     const posts = this.props.posts
 
-    //TODO: set the title using props into the modal container
+    //TODO: set the title using props into the modal container (will do a modal...or just a show view?? for each post)
+    //use flexbox. Assign consistent column lengths to still achieve tablelike look, but with control over spacing etc.
     return (
       <table>
         <tbody>

@@ -1,20 +1,18 @@
 @import 'theme/_helpers';
 
 .sidebar {
-  min-height: 100vh;
+  min-height: calc(100vh - #{$header-height});
   min-width: $sidebar-width;
   width: $sidebar-width;
   box-sizing: border-box;
   background: $sidebar;
-  color: $white;
-  padding: 40px 20px;
+  padding: 0 20px;
 }
 
 .sidebarNav {
   list-style: none;
   margin: 0 -20px;
   padding: 0;
-  background: $nav-bg;
 
   a {
     //border: 1px solid $nav-border;

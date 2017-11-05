@@ -4,22 +4,43 @@
   @include mq(xs) {
     @include cols(12)
   }
-  @include mq(sm) {
+  @include mq(md) {
     @include cols(6)
   }
-  @include mq(md) {
+  @include mq(lg) {
     @include cols(4)
   }
   text-align: left;
-  border-radius: 10px;
-  border: black solid 1px;
+  box-sizing: border-box;
+  border-radius: 3px;
+  border-top: $primary solid 3px; //might make the color dynamic
   overflow: auto;
+  padding: 10px;
+  margin: 0 15px 20px 15px;
+  width: 100%;
+  @include box-shadow(0 1px 1px rgba(0,0,0,0.1))
 
   &.selected {
     @include box-shadow(5px 5px 5px rgba(0,0,0,0.25))
   }
 
+  //border-bottom: 1px solid $module_gray-1;
+
+  .card-body {
+
+  }
+  h3 {
+    display: inline-block;
+    margin: 0;
+    @include rems(18)
+    line-height: 1;
+  }
   label {
     font-weight: bold;
+  }
+  img.headerImg {
+    border-radius: 15px;
+    width: 50px;
+    float: right;
   }
 }

@@ -8,8 +8,8 @@
     transition: background .5s;
   }
 
-  a, a:visited, a:hover {
-    color: #fff;
+  a, a:visited, a:hover, a:active {
+    color: inherit;
   }
 
   &.disabled {

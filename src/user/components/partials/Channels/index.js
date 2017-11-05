@@ -140,8 +140,8 @@ console.log(provider);
             <div>
               {accountsForProvider.map((account) => (
                 <div key={account.id} onClick={this.setAccount.bind(this, account)}>
-                  <img alt="your face" src={account.photoUrl}/>
-                  <h5>{account.email || "no email..."}</h5>
+                  <img alt="No profile picture on file" src={account.photoUrl}/>
+                  <h5>{account.email || "No email on file"}</h5>
                 </div>
               ))}
 

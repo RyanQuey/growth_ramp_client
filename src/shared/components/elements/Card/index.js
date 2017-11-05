@@ -8,24 +8,18 @@ const Card = ({
   onClick,
   selected,
   background = 'white',
-  children,
   color = 'text',
-  border,
+  children,
   hover,
-  height = '200px',
-  width,
-  margin = '10px',
+  height = '300px', //defaults to 300px;
 }) => {
 
   const styles = StyleSheet.create({
     card: {
       background: theme.color[background],
       color: theme.color[color],
-      width,
       height,
-      margin,
       cursor: onClick ? "pointer" : "default",
-      border: border,
       ':hover': {
         background: theme.color[hover],
       },

@@ -47,10 +47,15 @@ class AccountMenu extends Component {
         />
 
         {this.state.open ? (
-          <ul className={`${classes.menuDropdown}}`}>
-            <MenuItem link="/profile" text="Profile" />
-            <MenuItem link="/" onClick={signOut} text="Sign Out" />
-          </ul>
+          <div>
+            <div className={classes.scrim}>
+              <span className={classes.caret}/>
+            </div>
+            <ul className={`${classes.menuDropdown}`}>
+              <MenuItem link="/profile" text="Profile" hoverType="textOnly" />
+              <MenuItem link="/" onClick={signOut} text="Sign Out" hoverType="textOnly"/>
+            </ul>
+          </div>
         ) : (
           <ul></ul>
         )}

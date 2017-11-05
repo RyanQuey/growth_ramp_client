@@ -23,7 +23,7 @@
 	@else if $breakpoint == lg {
 		@media (min-width: 60em) { @content ; } //960
 	}
-	@else if $breakpoint == md {
+	@else if $breakpoint == md { //bootstrap sm
 		@media (min-width: 48em) { @content ; } //768
 	}
 	@else if $breakpoint == sm-2 {
@@ -89,7 +89,7 @@
 /*     Grid components     */
 @mixin cols($i: 12, $total: 12) {
   float: left;
-  padding: 0 $gutter/2;
+  //padding: 0 $gutter/2;
   width: ($i / $total) * 100%;
 }
 @mixin push($i: 12, $total: 12) {

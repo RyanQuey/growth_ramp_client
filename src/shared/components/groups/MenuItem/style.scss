@@ -14,11 +14,30 @@
       background: $nav-hover-bg;
     }
   }
+
   & > a.navActive {
     background: $nav-hover-bg;
     color: $nav-hover-font;
     &:hover {
       color: $nav-hover-font;
+    }
+  }
+
+  & > a.noHover,
+  & > a.noHover:visited,
+  & > a.navActive.noHover {
+    &:hover {
+      color: inherit;
+      background: inherit;
+    }
+  }
+  & > a.textOnly,
+  & > a.textOnly:visited,
+  & > a.navActive.textOnly {
+    &:hover {
+      background: inherit;
+      color: $alt-nav-hover-font; //might be set to identical as nav-hover-font, but allows option to change this
+      text-decoration: underline;
     }
   }
 

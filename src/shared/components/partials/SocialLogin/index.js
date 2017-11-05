@@ -46,6 +46,7 @@ console.log(this.props.scopes);
                 background={providerName.toLowerCase()}
                 disabled={disabled}
                 key={providerName}
+                style={Object.keys(providers).length > 1 ? "inverted" : "primary"}
               >
                 <a
                   href={disabled ? "" : `/login/${providerName}${scopeQuery}`}

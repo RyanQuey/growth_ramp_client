@@ -3,7 +3,7 @@ import classes from './style.scss'
 import { StyleSheet, css } from 'aphrodite'
 import theme from 'theme'
 
-const styles = {
+const STYLES = {
   primary: {
     regular: {
       background: theme.color.primary,
@@ -14,14 +14,13 @@ const styles = {
     disabled: {
       background: theme.color.darkPurpleGray,
       color: theme.color.white,
-      border: "",
-      hover: theme.color.secondary,
+      border: "none",
     },
     selected: {
-      background: theme.color.lightPurpleGray,
+      background: "#706497",
       color: theme.color.white,
-      border: "",
-      hover: theme.color.secondary,
+      border: "none",
+      hover: "#706497",
     },
   },
   inverted: {
@@ -29,13 +28,12 @@ const styles = {
       background: theme.color.white,
       color: theme.color.primary,
       border: `${theme.color.primary} solid 2px}`,
-      hover: theme.color.moduleGrayOne,
+      hover: theme.color.lightPurpleComplement,
     },
     disabled: {
-      background: theme.color.white,
+      background: theme.color.moduleGrayOne,
       color: theme.color.primary,
-      border: `${theme.color.primary} solid 2px}`,
-      hover: theme.color.secondary,
+      border: `${theme.color.primary} solid 0px}`,
     },
     selected: {
       background: theme.color.lightPurpleComplement,
@@ -46,7 +44,7 @@ const styles = {
   },
 }
 //takes the style prop and outputs preset button types
-const STYLES = (style, disabled, selected) => {
+const styles = (style, disabled, selected) => {
   let status
   if (selected) {
     status = "selected"
@@ -56,7 +54,7 @@ const STYLES = (style, disabled, selected) => {
     status = "regular"
   }
 
-  const buttonStyle = styles[style][status]
+  const buttonStyle = STYLES[style][status]
 
   return StyleSheet.create({
     button: {
@@ -76,7 +74,7 @@ const Button = ({ style = 'primary', children, onClick, disabled, selected, type
 
   return (
     <button
-      className={`${css(STYLES(style, disabled, selected).button)} ${classes.button} ${disabled ? classes.disabled : ""}`}
+      className={`${css(styles(style, disabled, selected).button)} ${classes.button} ${disabled ? classes.disabled : ""}`}
       onClick={onClick}
       disabled={disabled}
       type={type || "button"}

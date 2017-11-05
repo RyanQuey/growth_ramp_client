@@ -3,16 +3,19 @@ import { Link, NavLink, withRouter, Switch, Route } from 'react-router-dom'
 //TODO: move MenuItem into groups as well
 import classes from './style.scss'
 
-const MenuItem = ({ text, children, link, nav, onClick, location, badge }) => (
-  <li className={classes.menuItem} onClick={onClick}>
+//hoverType:
+//  noHover turns off changes on hover altogether
+//  textOnly only changes the font color on hover
+const MenuItem = ({ text, children, link, nav, onClick, location, badge, hoverType }) => (
+  <li className={`${classes.menuItem} `} onClick={onClick}>
     {link && nav &&
-      <NavLink to={link} activeClassName={classes.navActive}>
+      <NavLink to={link} activeClassName={`${classes.navActive} ${hoverType ? classes[hoverType] : ""}`}>
         {badge && <span className={classes.badge}>{badge}</span>}
         {text}
       </NavLink>
     }
     {link && !nav &&
-      <Link to={link}>
+      <Link to={link} className={`${hoverType ? classes[hoverType] : ""}`}>
         {badge && <span className={classes.badge}>{badge}</span>}
         {text}
       </Link>

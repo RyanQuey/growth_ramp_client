@@ -1,7 +1,8 @@
 import { Component } from 'react';
 import { connect } from 'react-redux'
-import { SET_INPUT_VALUE  } from 'constants/actionTypes'
-import { PROVIDERS, PROVIDER_IDS_MAP } from 'constants'
+import { Button, Flexbox } from 'shared/components/elements'
+import { PROVIDERS } from 'constants'
+import { AccountStatus } from 'user/components/partials'
 
 //shows up as buttons in mobile, or sidebar in browser?
 //used in channels and send
@@ -16,20 +17,25 @@ class ProviderAccountsDetails extends Component {
       return null
     }
 
+    const currentProvider = this.props.currentProvider
     const providers = this.props.providers
-    const accounts = this.props.providerAccounts || {}
+    const currentAccounts = this.props.providerAccounts[currentProvider] || []
 
     return (
       <div>
         <div>
           <h1>{this.props.currentProvider}</h1>
 
-          {accounts[this.props.currentProvider].map((account) => (
-            <div>
-              <h3>Username: {account.userName}</h3>
-              <p>Will have general summary, permissions per account, buttons to share permissions, and everything that is in the add provider modal</p>
-            </div>
-          ))}
+          <Flexbox>
+            {currentAccounts.map((account) => (
+              <div key={account.providerUserId}>
+                <p>Will have general summary, permissions per account, buttons to share permissions, and everything that is in the add provider modal</p>
+                  <AccountStatus
+                    account={account}
+                  />
+              </div>
+            ))}
+          </Flexbox>
         </div>
       </div>
     )

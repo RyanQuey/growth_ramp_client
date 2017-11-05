@@ -1,12 +1,14 @@
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
+import { Button } from 'shared/components/elements'
+import { PROVIDERS } from 'constants/providers'
 import {
-  ProviderAccountDetails
+  AccountsForProvider
 } from 'user/components/partials'
 import { SET_CURRENT_MODAL } from 'constants/actionTypes'
 
-class ProviderAccounts extends Component {
+class Providers extends Component {
   constructor() {
     super()
     this.state = {
@@ -31,7 +33,8 @@ class ProviderAccounts extends Component {
   render() {
     const c = this;
     const providerAccounts = this.props.providerAccounts
-    let providers = []
+console.log(providerAccounts);
+    const providers = Object.keys(providerAccounts)
     const currentProvider = Helpers.safeDataPath(this.props, "match.params.provider", "").toUpperCase()
 
     //not sure what I'm doing here...why not just do providers = Object.keys(providerAccounts)?
@@ -40,8 +43,8 @@ class ProviderAccounts extends Component {
         providers.push(provider)
       }
     })
-    //don't just render ProviderAccountDetails from the router, unless handling bad match there, and redirecting here somehow
-    if (!providers.includes(currentProvider)) {
+    //just rendering general info
+    if (!currentProvider) {
       return (
         <div>
           <h1>Provider Accounts</h1>
@@ -52,25 +55,30 @@ class ProviderAccounts extends Component {
 
           {providers.length > 0 ? (
             <div>
-              <h3>Accounts Summary:</h3>
+              <h3>Your Platforms:</h3>
               {providers.map((provider) => (
-                <Link key={provider} to={`/providerAccounts/${provider}`}>{provider}</Link>
+                <Link key={provider} to={`/providerAccounts/${provider}`}>
+                  <Button style="inverted">
+                    {PROVIDERS[provider].name}
+                  </Button>
+                </Link>
+
               ))}
             </div>
           ) : (
             <div>
-              <h3>There are currently no provider Accounts associated with this account</h3>
+              <h3>You currently don't have any platform accounts set up for Growth Ramp</h3>
               <div>Either create a new one or ask for permission from an associate</div>
             </div>
           )}
-          <button type="button" className="btn-outline-primary btn-sm" onClick={this.clickAddProvider}>Add a provider</button>
+          <Button type="button" onClick={this.clickAddProvider}>Add a provider</Button>
 
         </div>
       );
 
     } else {
       return (
-        <ProviderAccountDetails currentProvider={currentProvider}/>
+        <AccountsForProvider currentProvider={currentProvider}/>
       )
     }
   }
@@ -88,6 +96,7 @@ const mapDispatchToProps = (dispatch) => {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ProviderAccounts)
+export default connect(mapStateToProps, mapDispatchToProps)(Providers)
+
 
 

@@ -60,6 +60,7 @@ $light-gray-bg: #FAFAFA; //this is really light, almost white
 //this is for nav buttons
 $nav-hover-bg: $light-purple-gray;
 $nav-hover-font: $white;
+$alt-nav-hover-font: $ghost-blue;
 $active: $nav-hover-bg;
 
 $nav-border: #474747;
@@ -67,17 +68,21 @@ $nav-border: #474747;
 $text: #333;
 $msg: #A3A3A3;
 
-$nav-bg: $module_gray-1;
+//these are the menu items in sidebar and header dropdown
+$nav-bg: $white;
 
 // sidebar
-$sidebar: $module_gray-1;
+$sidebar: $white;
 $sidebar-width: 250px;
 $nav-menu-item-bg: $module_gray-2;
 
 
 // header and footer
 $header-bg: $white;
+$header-height: 50px;
 $footer: $navy;
+
+$user-content-bg: $module_gray-1;
 
 $clients-bg: $white;
 $features-bg: $blue-bg;

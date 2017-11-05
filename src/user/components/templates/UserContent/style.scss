@@ -3,8 +3,9 @@
 
 main {
   width: 960px;
-  background: $white;
+  background: $user-content-bg;
   text-align: center;
+  padding: 0 10px;
   h1 {
     @include rems(45);
   }

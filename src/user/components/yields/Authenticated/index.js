@@ -27,7 +27,7 @@ class Authenticated extends Component {
   render() {
     return (
       <div>
-        <Flexbox direction="column">
+        <Flexbox direction="column" >
           <UserNavbar />
 
           <Flexbox>

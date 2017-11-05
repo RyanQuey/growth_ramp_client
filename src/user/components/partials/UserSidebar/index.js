@@ -6,6 +6,7 @@ import { Select } from 'shared/components/groups'
 import { withRouter } from 'react-router-dom'
 import { MenuChild, MenuItem } from 'shared/components/groups'
 import { SET_CURRENT_MODAL } from 'constants/actionTypes'
+import { PROVIDERS } from 'constants/providers'
 
 import classes from './style.scss'
 
@@ -48,7 +49,7 @@ class UserSidebar extends Component {
               {(true || this.state.providerAccounts) && (
                 <ul>
                   {Object.keys(this.props.providerAccounts).map((providerName) => (
-                    <MenuChild key={providerName} text={providerName} link={`/providerAccounts/${providerName}`} nav={true}/>
+                    <MenuChild key={providerName} text={PROVIDERS[providerName].name} link={`/providerAccounts/${providerName}`} nav={true}/>
                   ))}
                   <MenuChild text="New Account" onClick={this.openNewProviderModal} link={`/providerAccounts`} badge="+"/>
                 </ul>

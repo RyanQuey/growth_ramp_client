@@ -38,16 +38,16 @@ class UserNavbar extends Component {
         </Flexbox>}
 
         <Flexbox className={classes.mainNav} justify="space-between">
-          <Flexbox className={classes.leftNav} align="center" justify="space-around">
+          <Flexbox className={classes.leftNav} align="center" justify={user ? "space-around" : "flex-start" }>
             <Link to="/">
               <Logo />
             </Link>
 
-            <Button onClick={this.props.createPostRequest}>
+            {user && <Button onClick={this.props.createPostRequest}>
               <Link to="/posts/new">
                 New post
               </Link>
-            </Button>
+            </Button>}
           </Flexbox>
 
           <Flexbox className={classes.rightNav} align="center" justify="space-between">
