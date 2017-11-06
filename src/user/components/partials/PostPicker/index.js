@@ -22,16 +22,10 @@ class PostPicker extends Component {
   }
 
   editPost (post, e) {
-    this.props.setPost(post)
-
-    this.props.history.push(`/posts/edit`)
+    this.props.history.push(`/posts/${post.id}/edit`)
   }
 
   removePost (post, e) {
-    if (this.props.currentPost && this.props.currentPost.id === post.id) {
-      this.props.setPost()
-    }
-
     //might just archive, but leaving that to the api to figure out :)
     this.props.destroyPostRequest(post)
   }

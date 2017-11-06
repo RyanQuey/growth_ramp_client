@@ -7,7 +7,7 @@ import {
   Redirect,
 } from 'react-router-dom'
 import { Alert, Flexbox } from 'shared/components/elements'
-import { Home, SetCredentials, Plans, Posts, Providers } from 'user/components/templates'
+import { Home, SetCredentials, Plans, EditPost, Posts, Providers, ShowProvider } from 'user/components/templates'
 import requireAuthenticated from 'lib/requireAuthenticated'
 import forbidAuthenticated from 'lib/forbidAuthenticated'
 import { connect } from 'react-redux'
@@ -19,16 +19,18 @@ class UserContent extends Component {
     const modalOpen = this.props.currentModal
 
     return (
-      <main>
+      <main className={classes.userContent}>
         <Flexbox className={classes.rightColumn} direction="column">
           {alerts && !modalOpen && alerts.map((alert) => {
             return <Alert key={alert.id} alert={alert} />
           })}
 
           <Switch>
-            <Route exact path="/" render={() => (this.props.user ? <Redirect to="/posts"/> : <Home />)} />
+            <Route exact path="/" render={() => (<Redirect to="/posts"/>)} />
+            <Route path="/posts/:postId/edit" component={EditPost} />
             <Route path="/posts" component={Posts} />
             <Route path="/plans" component={Plans} />
+            <Route path="/providerAccounts/:provider" component={ShowProvider} />
             <Route path="/providerAccounts/:provider?" component={Providers} />
             <Route path="/SetCredentials" component={SetCredentials} />
           </Switch>

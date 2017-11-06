@@ -1,5 +1,8 @@
+@import 'theme/_helpers';
+
 .App {
   text-align: center;
+  background-color: $user-content-bg;
 }
 
 .App-logo {

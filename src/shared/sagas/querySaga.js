@@ -19,7 +19,6 @@ const handleQuery = (rawQuery) => {
         const pair = variables[i].split('=')
         const key = decodeURIComponent(pair[0])
         const value = decodeURIComponent(pair[1])
-console.log(key);
         switch (key) {
           case "user":
             const userData = JSON.parse(value)

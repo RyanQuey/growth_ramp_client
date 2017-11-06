@@ -252,7 +252,6 @@ const mapStateToProps = state => {
     posts: state.posts,
     plans: state.plans,
     currentPlan: state.currentPlan,
-    currentPost: state.currentPost,
   }
 }
 const mapDispatchToProps = (dispatch) => {

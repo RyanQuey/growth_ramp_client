@@ -50,7 +50,7 @@ console.log(next);
     const Tag = sections[this.state.currentSection]
     return (
       <div>
-        <Navbar className="" justify="space-around" background="white" color={theme.color.text}>
+        <Navbar className="" justify="space-around" background={theme.color.moduleGrayOne} color={theme.color.text}>
           {Object.keys(sections).map((section) => (
             <div key={section} ref={section}>
               {this.state.currentSection === section ? (
@@ -66,6 +66,7 @@ console.log(next);
           <Tag
             switchTo={this.switchTo}
             initialOpening={this.state.initialOpening}
+            currentPost={this.props.posts[this.props.match.params.postId]}
           />
         </div>
         <PromoToolFooter
@@ -80,6 +81,7 @@ console.log(next);
 const mapStateToProps = state => {
   return {
     user: state.user,
+    posts: state.posts,
   }
 }
 const mapDispatchToProps = (dispatch) => {

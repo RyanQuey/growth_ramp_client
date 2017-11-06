@@ -1,5 +1,4 @@
-import React from 'react'
-import logo from 'images/growth-ramp-logos/GR_logo-only.png'
+import logo from 'images/growth-ramp-logos/GR_logo_only.png'
 
 const Logo = () => (
   <img alt="logo" src={logo} />

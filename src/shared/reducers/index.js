@@ -5,9 +5,9 @@ import rootSaga from 'shared/sagas'
 import userReducer from './user'
 import postsReducer from './posts'
 import plansReducer from './plans'
-import paramsReducer from './params'
+import formsReducer from './forms'
 import currentPlanReducer from './currentPlan'
-import currentPostReducer from './currentPost'
+//import currentPostReducer from './currentPost'
 import providerAccountsReducer from './providerAccounts'
 import errorReducer from './errors'
 import alertReducer from './alerts'
@@ -18,10 +18,11 @@ const rootReducer = combineReducers({
   //the plan that the user is currently working on
   currentPlan: currentPlanReducer,
   //the post that the user is currently working on
-  currentPost: currentPostReducer,
+  //NOTE just using route params
+  //currentPost: currentPostReducer,
   errors: errorReducer,
   posts: postsReducer,
-  params: paramsReducer,
+  forms: formsReducer,
   plans: plansReducer,
   //all of the provider accounts that user is the owner of, or has permission to use
   providerAccounts: providerAccountsReducer,

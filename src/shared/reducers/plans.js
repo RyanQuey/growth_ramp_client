@@ -3,7 +3,7 @@ import {
   UPDATE_PLAN_SUCCESS,
   FETCH_PLAN_SUCCESS,
   INPUT_UPDATE_SUCCESS,
-  SIGN_OUT,
+  SIGN_OUT_SUCCESS,
 } from 'constants/actionTypes'
 
 const plansReducer = (state = {}, action) => {
@@ -39,9 +39,8 @@ const plansReducer = (state = {}, action) => {
     case FETCH_PLAN_SUCCESS:
       return Object.assign({}, state, action.payload)
 
-    case SIGN_OUT:
-      return false
-
+    case SIGN_OUT_SUCCESS:
+      return {}
     default:
       return state
   }

@@ -6,10 +6,10 @@ import classes from './style.scss'
 //hoverType:
 //  noHover turns off changes on hover altogether
 //  textOnly only changes the font color on hover
-const MenuItem = ({ text, children, link, nav, onClick, location, badge, hoverType }) => (
+const MenuItem = ({ text, children, link, nav, onClick, location, badge, hoverType, exact = false }) => (
   <li className={`${classes.menuItem} `} onClick={onClick}>
     {link && nav &&
-      <NavLink to={link} activeClassName={`${classes.navActive} ${hoverType ? classes[hoverType] : ""}`}>
+      <NavLink to={link} exact={exact} activeClassName={`${classes.navActive} ${hoverType ? classes[hoverType] : ""}`}>
         {badge && <span className={classes.badge}>{badge}</span>}
         {text}
       </NavLink>

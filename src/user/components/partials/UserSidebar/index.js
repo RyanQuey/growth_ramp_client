@@ -43,13 +43,13 @@ class UserSidebar extends Component {
 
         <div className={classes.nav}>
           <ul className={classes.sidebarNav}>
-            <MenuItem link="/posts" text="My Posts" nav={true} />
+            <MenuItem link="/posts" text="My Posts" nav={true} exact={true}/>
             <MenuItem link="/plans" text="My Plans" nav={true} />
             <MenuItem link="/providerAccounts" text="My Accounts" nav={true} onClick={this.handleClick.bind(this, "providerAccounts")}>
               {(true || this.state.providerAccounts) && (
                 <ul>
                   {Object.keys(this.props.providerAccounts).map((providerName) => (
-                    <MenuChild key={providerName} text={PROVIDERS[providerName].name} link={`/providerAccounts/${providerName}`} nav={true}/>
+                    <MenuChild key={providerName} text={PROVIDERS[providerName].name} link={`/providerAccounts/${providerName.toLowerCase()}`} nav={true}/>
                   ))}
                   <MenuChild text="New Account" onClick={this.openNewProviderModal} link={`/providerAccounts`} badge="+"/>
                 </ul>

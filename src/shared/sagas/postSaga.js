@@ -107,6 +107,9 @@ function* createPost(action) {
     const newRecord = res.data
     const postId = newRecord.id
 
+    if (action.cb) {
+      action.cb(newRecord)
+    }
     yield all([
       put({ type: CREATE_POST_SUCCESS, payload: {[postId]: newRecord}}),
       put({type: USER_POSTS_OUTDATED}),

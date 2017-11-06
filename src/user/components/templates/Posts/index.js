@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import {
-  PromoTool
+ EditPost
 } from 'user/components/templates'
 import { CREATE_POST_REQUEST } from 'constants/actionTypes'
 import ViewPosts from './view'
@@ -16,28 +16,23 @@ class Posts extends Component {
     super()
     this.state = {
       //will need to use a store, if this is ever used in subcomponents of the subcomponents
-      currentPost: {},
+      //currentPost: {},
     }
 
   }
 
   componentDidMount() {
-    if (this.props.location.pathname === "/posts/edit" && !this.props.currentPost) {
-      this.props.history.push("/posts")
-
-    }
+    //if (this.props.location.pathname === "/posts/edit" && !this.props.currentPost) {
+    //  this.props.history.push("/posts")
+    //}
   }
 
   render() {
-    const posts = this.props.posts
+    //const posts = this.props.posts
 
     return (
       <div>
-        <Switch>
-          <Route exact path="/posts" component={ViewPosts} />
-          <Route path="/posts/new" component={PromoTool} />
-          <Route path="/posts/edit" component={PromoTool} />
-        </Switch>
+        <ViewPosts />
       </div>
     );
   }

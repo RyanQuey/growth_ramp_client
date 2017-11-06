@@ -6,7 +6,7 @@ import {
   Switch,
 } from 'react-router-dom'
 import { Alert, Flexbox } from 'shared/components/elements'
-import { Home} from 'user/components/templates'
+import { LandingPage } from 'user/components/templates'
 import requireAuthenticated from 'lib/requireAuthenticated'
 import forbidAuthenticated from 'lib/forbidAuthenticated'
 import { connect } from 'react-redux'
@@ -18,14 +18,14 @@ class UnauthenticatedContent extends Component {
     const modalOpen = this.props.currentModal
 
     return (
-      <main>
+      <main className={classes.unauthenticatedContent}>
         <Flexbox className={classes.rightColumn} direction="column">
           {alerts && !modalOpen && alerts.map((alert) => {
             return <Alert key={alert.id} alert={alert} />
           })}
 
           <Switch>
-            <Route exact path="/" component={Home} />
+            <Route exact path="/" component={LandingPage} />
           </Switch>
         </Flexbox>
       </main>

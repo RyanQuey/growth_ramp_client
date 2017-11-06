@@ -1,10 +1,10 @@
 @import 'theme/_helpers';
 
 
-main {
-  width: 960px;
-  background: $white;
+main.unauthenticatedContent {
+  width: 100%;
   text-align: center;
+
   h1 {
     @include rems(45);
   }

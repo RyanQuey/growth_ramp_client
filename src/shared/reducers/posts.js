@@ -2,7 +2,7 @@ import {
   CREATE_POST_SUCCESS,
   UPDATE_POST_SUCCESS,
   FETCH_POST_SUCCESS,
-  SIGN_OUT,
+  SIGN_OUT_SUCCESS,
 } from 'constants/actionTypes'
 
 const postsReducer = (state = {}, action) => {
@@ -20,8 +20,8 @@ const postsReducer = (state = {}, action) => {
       post = action.payload
       return Object.assign({}, state, {[post.id]: post})
 
-    case SIGN_OUT:
-      return false
+    case SIGN_OUT_SUCCESS:
+      return {}
 
     default:
       return state

@@ -41,7 +41,6 @@ console.log(token);
 
         break
       case 'SIGN_IN_WITH_EMAIL':
-console.log("sending token");
         result = yield axios.post("/api/users/authenticate", {
           email: credentials.email,
           password: credentials.password,
@@ -54,14 +53,12 @@ console.log("sending token");
         })
         break
     }
-console.log(result);
     let user = result.data.userData
     let userPlans = result.data.plans
     let providerAccounts = result.data.providerAccounts
 
     if (user) {
-      console.log(user);
-      Cookie.set('sessionUser', user)
+      setupSession(user)
       //might make an alert here
       yield put({type: SIGN_IN_SUCCESS, payload: user})
 

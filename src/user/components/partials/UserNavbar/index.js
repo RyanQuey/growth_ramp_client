@@ -21,6 +21,17 @@ class UserNavbar extends Component {
     super(props)
 
     this.openLoginModal = this.openLoginModal.bind(this)
+    this.createPost = this.createPost.bind(this)
+  }
+
+  createPost() {
+    //to run on success
+    const cb = (newPost) => {
+console.log("in the callback");
+      this.props.history.push(`/posts/${newPost.id}/edit`)
+    }
+
+    this.props.createPostRequest(cb)
   }
 
   openLoginModal(e) {
@@ -43,10 +54,8 @@ class UserNavbar extends Component {
               <Logo />
             </Link>
 
-            {user && <Button onClick={this.props.createPostRequest}>
-              <Link to="/posts/new">
-                New post
-              </Link>
+            {user && <Button onClick={this.createPost}>
+              New post
             </Button>}
           </Flexbox>
 
@@ -71,18 +80,21 @@ UserNavbar.propTypes = {
 const mapDispatchToProps = (dispatch) => {
   return {
     setCurrentModal: (payload) => dispatch({type: SET_CURRENT_MODAL, payload}),
-    createPostRequest: (currentUser) => {
+    createPostRequest: (cb) => {
       const newPost = {
         userId: store.getState().user.id,
       }
 
-      return dispatch({type: CREATE_POST_REQUEST, payload: newPost})
+      return dispatch({type: CREATE_POST_REQUEST, payload: newPost, cb})
     },
   }
 }
 const mapStateToProps = (state) => {
-  return { user: state.user }
+  return {
+    user: state.user,
+    form: state.form,
+  }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(UserNavbar)
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(UserNavbar))
 

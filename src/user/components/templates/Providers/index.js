@@ -33,9 +33,7 @@ class Providers extends Component {
   render() {
     const c = this;
     const providerAccounts = this.props.providerAccounts
-console.log(providerAccounts);
     const providers = Object.keys(providerAccounts)
-    const currentProvider = Helpers.safeDataPath(this.props, "match.params.provider", "").toUpperCase()
 
     //not sure what I'm doing here...why not just do providers = Object.keys(providerAccounts)?
     Object.keys(providerAccounts).map((provider) => {
@@ -44,43 +42,34 @@ console.log(providerAccounts);
       }
     })
     //just rendering general info
-    if (!currentProvider) {
-      return (
-        <div>
-          <h1>Provider Accounts</h1>
-          <p>At least for now, choose and add providers in the sidebar, you have a clear distinction from when adding accounts to a plan</p>
-          <p>details about the selected provider will appear here in the main view</p>
-  <hr/>
-          <p>However, use the same modal for actually linking a new account</p>
-
-          {providers.length > 0 ? (
-            <div>
-              <h3>Your Platforms:</h3>
-              {providers.map((provider) => (
-                <Link key={provider} to={`/providerAccounts/${provider}`}>
-                  <Button style="inverted">
-                    {PROVIDERS[provider].name}
-                  </Button>
-                </Link>
-
-              ))}
-            </div>
-          ) : (
-            <div>
-              <h3>You currently don't have any platform accounts set up for Growth Ramp</h3>
-              <div>Either create a new one or ask for permission from an associate</div>
-            </div>
-          )}
-          <Button type="button" onClick={this.clickAddProvider}>Add a provider</Button>
-
-        </div>
+    return (
+      <div>
+        <h1>Provider Accounts</h1>
+        <p>At least for now, choose and add providers in the sidebar, you have a clear distinction from when adding accounts to a plan</p>
+        <p>details about the selected provider will appear here in the main view</p>
+<hr/>
+        <p>However, use the same modal for actually linking a new account</p>
+        {providers.length > 0 ? (
+          <div>
+            <h3>Your Platforms:</h3>
+            {providers.map((provider) => (
+              <Link key={provider} to={`/providerAccounts/${provider.toLowerCase()}`}>
+                <Button style="inverted">
+                  {PROVIDERS[provider].name}
+                </Button>
+              </Link>
+            ))}
+          </div>
+        ) : (
+          <div>
+            <h3>You currently don't have any platform accounts set up for Growth Ramp</h3>
+            <div>Either create a new one or ask for permission from an associate</div>
+          </div>
+        )}
+        <Button type="button" onClick={this.clickAddProvider}>Add a provider</Button>
+      </div>
       );
 
-    } else {
-      return (
-        <AccountsForProvider currentProvider={currentProvider}/>
-      )
-    }
   }
 }
 

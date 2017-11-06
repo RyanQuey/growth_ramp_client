@@ -2,7 +2,7 @@ import { Component } from 'react';
 import logo from 'images/logo.png';
 import User from 'user/components'
 import { connect } from 'react-redux'
-import 'App.scss';
+import classes from 'App.scss';
 import {
   withRouter,
 } from 'react-router-dom'
@@ -26,7 +26,7 @@ class App extends Component {
 
   render() {
     return (
-      <div className="App desktop">
+      <div className={`${classes.App} desktop`}>
         {this.props.preloadingStore ? ( //currently , not implemented...I might not ever
           <div>
             <img src={logo} className="App-logo" alt="logo" />
