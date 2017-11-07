@@ -201,6 +201,10 @@ app.use('/api/*', function(req, res) {
 //NOTE: the headers also contain the cookies...perhaps could use that
   const url = `${apiUrl}${req.originalUrl.replace('/api', "")}`
   //can eventually combine with tradeTokenForUser? piping makes it harder; you cannot pipe on just any function
+console.log("******************************");
+
+  console.log(url);
+console.log("this is where I went");
   request[method]({
     //remove the 'api' in front, so we can take advantage of the default sails routes
     url: url,
