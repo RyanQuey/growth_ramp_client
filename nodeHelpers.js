@@ -13,6 +13,7 @@ if (!process.env.NODE_ENV === 'production') {
 } else {
   env = process.env
 }
+//TODO use path.resolve or whatever...these extra slashes are killing me
 const domain = env.CLIENT_URL || 'http://www.local.dev:5000'
 const callbackPath = '/provider_redirect'
 const callbackUrl = domain + callbackPath
