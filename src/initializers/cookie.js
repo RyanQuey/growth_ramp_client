@@ -34,6 +34,10 @@ export default () => {
   Cookie.host = Cookie.host.join(".")
   Cookie.host = Cookie.host.split(":")[0]
 
+  if (Cookie.host === "herokuapp.com") { //hacky way of working on it while using heroku...
+    Cookie.host = "growth-ramp.herokuapp.com"
+  }
+
   //anything else I want to save to the browser, besides cookies?
   let cu = Cookie.get('sessionUser');
   if (cu && cu.id) {
