@@ -102,8 +102,8 @@ const config = {
   plugins: [
     new webpack.ProgressPlugin(),
     new webpack.DefinePlugin({
-      'process.env.NODE_ENV': process.env.NODE_ENV,
-      'process.env.API_URL': process.env.API_URL,
+      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV), //converts to string instead of var in production (which would return "production" is not defined")
+      'process.env.API_URL': JSON.stringify(process.env.API_URL),
     }),
   ],
   resolve: {
