@@ -1,13 +1,7 @@
 import { call, put, takeLatest, takeEvery, all, fork, join } from 'redux-saga/effects'
-//import CodeBird from 'codebird' using twit, and in the backend
 import { UPDATE_PROVIDER_REQUEST, UPDATE_PROVIDER_FAILURE, UPDATE_PROVIDER_SUCCESS } from 'constants/actionTypes'
 import { USER_FIELDS_TO_PERSIST, PROVIDER_IDS_MAP  } from 'constants'
-//import FB from 'fb'; do this in the backend
-import crypto from 'crypto'
-
 //disabling environment variables in the front-end; so remove this  ||  when this gets moved to the backend. I will want to throw an error at that point
-const hmac = crypto.createHmac('sha256', process.env.REACT_APP_FACEBOOK_SECRET_KEY || "abc")
-
 const providerInfo = {}
 
 //called when there is no provider in the store (e.g., initial store load), or expired provider in the store

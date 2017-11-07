@@ -63,9 +63,9 @@ const createSocket = (headers) => {
   const io = sailsClient(socketClient)
 
   io.sails.autoConnect = false
-  io.sails.url = process.env.API_URL
+  io.sails.url = process.env.API_URL || "https://growth-ramp-api.herokuapp.com/" **NOTE*** in browser, won't have access to process.env in production
   io.sails.timeout = 10000 //make shorter
-  io.sails.environment = process.env.NODE_ENV && process.env.NODE_ENV.toLowerCase()
+  io.sails.environment = "production" ***NOTE*** in browser, won't have access to process.env in production
   if (headers) {
     io.sails.headers = headers
   }
