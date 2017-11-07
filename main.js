@@ -80,6 +80,12 @@ passport.use(new LinkedInStrategy(
 
 const app = express();
 const apiUrl = process.env.API_URL || 'http://localhost:1337';
+console.log("***********************************");
+console.log("***********************************");
+console.log("***********************************");
+console.log(apiUrl);
+console.log("***********************************");
+console.log("***********************************");
 const secretString = uuid("beware_lest_you_get_caught_sleeping", process.env.CLIENT_FACEBOOK_SECRET)
 
 // uncomment after placing your favicon in /public
