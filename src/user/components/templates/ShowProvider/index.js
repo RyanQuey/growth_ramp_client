@@ -32,6 +32,7 @@ class ShowProvider extends Component {
                 <p>Will have general summary, permissions per account, buttons to share permissions, and everything that is in the add provider modal</p>
                   <AccountCard
                     account={account}
+                    showPermissions={true}
                   />
               </div>
             ))}

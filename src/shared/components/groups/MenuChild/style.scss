@@ -1,11 +1,10 @@
 @import 'theme/_helpers';
 
-@import 'theme/_helpers';
-
 .menuChild {
   text-decoration: none;
   cursor: pointer;
   list-style: none;
+  text-align: left;
   & > a, & > a:visited {
     display: block;
     padding: 10px 20px;

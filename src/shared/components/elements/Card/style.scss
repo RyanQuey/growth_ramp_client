@@ -1,7 +1,7 @@
 @import 'theme/_helpers';
 
 .card {
-  @include mq(xs) {
+  @include mq(2xs) {
     @include cols(12)
   }
   @include mq(md) {
@@ -14,7 +14,8 @@
   box-sizing: border-box;
   border-radius: 3px;
   border-top: $primary solid 3px; //might make the color dynamic
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: none;
   padding: 10px;
   margin: 0 15px 20px 15px;
   width: 100%;
@@ -24,16 +25,22 @@
     @include box-shadow(5px 5px 5px rgba(0,0,0,0.25))
   }
 
-  //border-bottom: 1px solid $module_gray-1;
-
-  .card-body {
-
-  }
-  h3 {
+  h2, h3, h4, h5 {
     display: inline-block;
     margin: 0;
-    @include rems(18)
     line-height: 1;
+  }
+  h3 {
+    @include rems(18)
+  }
+  h3 {
+    @include rems(18)
+  }
+  h4 {
+    @include rems(16)
+  }
+  h5 {
+    @include rems(14)
   }
   label {
     font-weight: bold;

@@ -1,27 +1,67 @@
+import { Component } from 'react';
+import { connect } from 'react-redux'
 import { PROVIDERS } from 'constants/providers'
-import { Card, CardHeader, Flexbox } from 'shared/components/elements'
+import { SET_CURRENT_MODAL } from 'constants/actionTypes'
+import {
+  withRouter,
+} from 'react-router-dom'
+import { Card, CardHeader, Flexbox, Button } from 'shared/components/elements'
 import classes from './style.scss'
 
-const AccountStatus = ({account, selected, onClick, height}) => {
+class AccountCard extends Component {
+  constructor() {
+    super()
 
-  const permittedChannels = Helpers.permittedChannels(account)
+    this.viewPermissionModal = this.viewPermissionModal.bind(this)
+  }
 
-  return (
-    <Card selected={selected} onClick={onClick} height={height}>
-      <CardHeader title={account.userName} subtitle={account.email} headerImgUrl={account.photoUrl}/>
+  viewPermissionModal() {
+    const cb = () => this.props.setCurrentModal("AccountPermissionsModal", {currentAccount: this.props.account})
+    this.props.fetchPermissionsRequest(this.props.account, cb)
+  }
 
-      <label>Current Channel Types:</label>
+  render () {
+    const { account, selected, onClick, height, showPermissions } = this.props
+    const permittedChannels = Helpers.permittedChannels(account)
 
-      {permittedChannels.length ? (
+    return (
+      <Card selected={selected} onClick={onClick} height={height}>
+        <CardHeader title={account.userName} subtitle={account.email} headerImgUrl={account.photoUrl}/>
+
         <div>
-          {permittedChannels.map((channel) => (
-            <div key={channel}>{channel.titleCase()}</div>
-          ))}
+          <h4>Current Channel Types:</h4>
+          {permittedChannels.length ? (
+            <div>
+              {permittedChannels.map((channel) => (
+                <div key={channel}>{channel.titleCase()}</div>
+              ))}
+            </div>
+          ) : (
+            <div>No permitted channels yet</div>
+          )}
         </div>
-      ) : (
-        <div>No permitted channels yet</div>
-      )}
-    </Card>
-  )
+
+        {showPermissions &&
+          <div>
+            <Button onClick={this.viewPermissionModal}>View permissions</Button>
+          </div>
+        }
+      </Card>
+    )
+  }
 }
-export default AccountStatus
+
+const mapStateToProps = state => {
+  return {
+    user: state.user,
+    providerAccounts: state.providerAccounts,
+  }
+}
+const mapDispatchToProps = (dispatch) => {
+  return {
+    setCurrentModal: (payload, options) => dispatch({type: SET_CURRENT_MODAL, payload, options}),
+    fetchPermissionsRequest: (account, cb) => dispatch({type: FETCH_PERMISSIONS_REQUEST, payload: {accountId: account.id}, cb}),
+  }
+}
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(AccountCard))

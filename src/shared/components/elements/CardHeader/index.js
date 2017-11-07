@@ -15,7 +15,7 @@ const CardHeader = ({
       className={`${className} ${classes.cardHeader}`}
     >
       {headerImgUrl && <img className={classes.headerImg} src={headerImgUrl} />}
-      <h3>{title}</h3>
+      <h2>{title}</h2>
       <div>{subtitle}</div>
     </div>
   )

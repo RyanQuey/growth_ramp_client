@@ -9,7 +9,7 @@ const STYLES = {
       background: theme.color.primary,
       color: theme.color.white,
       border: "none",
-      hover: "#706497",
+      hover: theme.color.lightPurpleGray,
     },
     disabled: {
       background: theme.color.darkPurpleGray,
@@ -17,29 +17,29 @@ const STYLES = {
       border: "none",
     },
     selected: {
-      background: "#706497",
+      background: theme.color.lightPurpleGray,
       color: theme.color.white,
       border: "none",
-      hover: "#706497",
+      hover: theme.color.lightPurpleGray,
     },
   },
   inverted: {
     regular: {
       background: theme.color.white,
       color: theme.color.primary,
-      border: `${theme.color.primary} solid 2px}`,
-      hover: theme.color.lightPurpleComplement,
+      border: `${theme.color.primary} solid 2px`,
+      hover: theme.color.lightPurpleGray,
     },
     disabled: {
       background: theme.color.moduleGrayOne,
       color: theme.color.primary,
-      border: `${theme.color.primary} solid 0px}`,
+      border: `${theme.color.primary} solid 0px`,
     },
     selected: {
-      background: theme.color.lightPurpleComplement,
+      background: theme.color.lightPurpleGray,
       color: theme.color.white,
-      border: `${theme.color.primary} solid 2px}`,
-      hover: theme.color.moduleGrayOne,
+      border: `${theme.color.primary} solid 2px`,
+      hover: theme.color.lightPurpleGray,
     },
   },
 }

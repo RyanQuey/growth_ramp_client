@@ -53,7 +53,7 @@ console.log(token);
         })
         break
     }
-    let user = result.data.userData
+    let user = result.data.user
     let userPlans = result.data.plans
     let providerAccounts = result.data.providerAccounts
 

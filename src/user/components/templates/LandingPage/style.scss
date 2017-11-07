@@ -21,7 +21,6 @@
     overflow: hidden;
 
     img {
-      float: left;
       height: 250px;
     }
   }
@@ -38,10 +37,10 @@
 .middleCtn {
   background-color: $light-gray-bg;
 }
-.leftCtn {
+.leftSection {
   @include cols(6);
 }
-.rightCtn {
+.rightSection {
   @include cols(6);
   img {
     float: right;
@@ -61,12 +60,13 @@
   }
 }
 .bottomCtn {
-  padding-top: 320px;
+  //padding-top: 320px;
   background-color: $primary;
+  color: $white;
   p {
     @include rems(24);
   }
   button {
-    margin: 0;
+    margin: 0 auto;
   }
 }

@@ -27,7 +27,6 @@ class UserNavbar extends Component {
   createPost() {
     //to run on success
     const cb = (newPost) => {
-console.log("in the callback");
       this.props.history.push(`/posts/${newPost.id}/edit`)
     }
 

@@ -2,16 +2,18 @@ import { combineReducers, createStore, applyMiddleware } from 'redux'
 import { composeWithDevTools } from 'redux-devtools-extension'
 import createSagaMiddleware from 'redux-saga'
 import rootSaga from 'shared/sagas'
-import userReducer from './user'
+
+import alertReducer from './alerts'
+import errorReducer from './errors'
+import formsReducer from './forms'
 import postsReducer from './posts'
 import plansReducer from './plans'
-import formsReducer from './forms'
 import currentPlanReducer from './currentPlan'
 //import currentPostReducer from './currentPost'
 import providerAccountsReducer from './providerAccounts'
-import errorReducer from './errors'
-import alertReducer from './alerts'
+import userReducer from './user'
 import viewSettingsReducer from './viewSettings'
+import workgroupsReducer from './workgroups'
 
 const rootReducer = combineReducers({
   alerts: alertReducer,
@@ -24,6 +26,7 @@ const rootReducer = combineReducers({
   posts: postsReducer,
   forms: formsReducer,
   plans: plansReducer,
+  workgroups: workgroupsReducer,
   //all of the provider accounts that user is the owner of, or has permission to use
   providerAccounts: providerAccountsReducer,
   // the current user

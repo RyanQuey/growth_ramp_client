@@ -62,7 +62,7 @@ class PostPicker extends Component {
                 {post.publishedAt || "unpublished"}
               </td>
               <td>
-                <ButtonGroup>
+                <ButtonGroup vertical={true}>
                   <Button onClick={this.editPost.bind(this, post)}>Edit</Button>
                   {post.status === "DRAFT" && <Button onClick={this.removePost.bind(this, post)}>Delete</Button>}
                   <Button disabled={true}>View Details</Button>

@@ -1,0 +1,16 @@
+@import 'theme/_helpers';
+
+.tableHeader {
+  font-weight: bold;
+}
+.columnOne {
+  @include cols(4)
+}
+.columnTwo {
+  @include cols(4)
+
+}
+.columnThree {
+  @include cols(4)
+
+}

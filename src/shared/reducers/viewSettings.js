@@ -8,7 +8,7 @@ import {
 
 export default (state = {}, action) => {
   switch (action.type) {
-    //can also store a token if need to use the token when logging or whatever
+    //can also store a token if need to use the token when logging in, reseting password or whatever
     case SET_CURRENT_MODAL:
       return Object.assign({}, state, {currentModal: action.payload, modalToken: action.token, modalOptions: action.options})
 

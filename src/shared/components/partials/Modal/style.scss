@@ -47,6 +47,12 @@
 .modalHeader {
   border-bottom: 1px solid #f4f4f4;
   padding: 15px;
+
+  .modalTitle {
+  }
+  .modalSubtitle {
+    margin: 0;
+  }
 }
 .modalBody {
   position: relative;

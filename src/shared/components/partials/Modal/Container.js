@@ -49,38 +49,35 @@ class ModalContainer extends Component {
       })
     }
 
-    //if (!this.props.bare) {
+    if (this.props.title || this.props.subtitle) {
       innerContent.push(
         <div key="header" className={modalHeader}>
           {!this.props.disableClose && <button type="button" className={closeButton} data-dismiss="modal" aria-label="Close" onClick={this.props.onClose}>
             <span aria-hidden="true">×</span>
           </button>}
 
-          <h1 className={modalTitle}>{this.props.title}</h1>
+          {this.props.title && <h1 className={modalTitle}>{this.props.title}</h1>}
+          {this.props.subtitle && <h2 className={modalsubtitle}>{this.props.subtitle}</h2>}
         </div>
       )
-    //}
+    }
 
     innerContent.push(this.props.children)
 
     if (this.props.visible) {
       return (
         <div className={[modal || ""].join(" ")}>
-          {this.props.bare ? (
-            innerContent
-          ) : (
-            <div className={modalDialog}>
-              <div className={modalContent}>
-                {handleSubmit ? (
-                  <form onSubmit={handleSubmit}>
-                    {innerContent}
-                  </form>
-                ) : (
-                  innerContent
-                )}
-              </div>
+          <div className={modalDialog}>
+            <div className={modalContent}>
+              {handleSubmit ? (
+                <form onSubmit={handleSubmit}>
+                  {innerContent}
+                </form>
+              ) : (
+                innerContent
+              )}
             </div>
-          )}
+          </div>
         </div>
       )
     } else {

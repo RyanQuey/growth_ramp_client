@@ -26,7 +26,6 @@ class UserSidebar extends Component {
     switch(menuItem) {
       case "providerAccounts":
         if (Object.keys(this.props.providerAccounts).length) {
-
           this.setState({providerAccounts: true})
         }
         break
@@ -55,6 +54,8 @@ class UserSidebar extends Component {
                 </ul>
               )}
             </MenuItem>
+            <hr/>
+            <MenuItem link="/workgroups" text="My Workgroups" nav={true} />
 
           </ul>
         </div>

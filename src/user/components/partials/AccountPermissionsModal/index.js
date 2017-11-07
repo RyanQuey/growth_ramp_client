@@ -8,41 +8,33 @@ import {
 } from 'shared/components/partials/Modal'
 import { CLOSE_MODAL, LINK_ACCOUNT_REQUEST } from 'constants/actionTypes'
 import { SocialLogin } from 'shared/components/partials'
+import { PermissionRow } from 'user/components/groups'
 import { AccountCard } from 'user/components/partials'
 import { Button, Form, Card, Flexbox } from 'shared/components/elements'
 import { ButtonGroup } from 'shared/components/groups'
 import { PROVIDERS } from 'constants/providers'
+import classes from './style.scss'
 
-class LinkProviderAccount extends Component {
+
+class AccountPermissions extends Component {
   constructor(props) {
     super(props)
 
     this.state = {
       loginPending: false,
       mode: 'CHOOSE_PROVIDER', //you do this or 'CHOOSE_SCOPE'
-      currentProvider: 'FACEBOOK',
-      currentAccount: Helpers.safeDataPath(props, "providerAccounts.FACEBOOK.0", false),
       channels: [],
     }
 
     this.onSuccess = this.onSuccess.bind(this)
     this.handleClose = this.handleClose.bind(this)
     this.setPending = this.setPending.bind(this)
-    this.chooseProvider = this.chooseProvider.bind(this)
     this.chosenScopes = this.chosenScopes.bind(this)
     this.chooseChannel = this.chooseChannel.bind(this)
   }
 
   handleClose (){
     this.props.closeModal()
-  }
-
-  chooseProvider(provider) {
-    this.setState({
-      mode: 'CHOOSE_SCOPE',
-      currentProvider: provider,
-      channels: [],
-    })
   }
 
   chooseChannel(channel) {
@@ -84,52 +76,66 @@ class LinkProviderAccount extends Component {
   }
 
   render (){
-    const oneProviderOnly = this.props.options.provider  //mostly use as a Boolean
-    const currentProvider = oneProviderOnly || this.state.currentProvider
-    const currentAccounts = Object.keys(this.props.providerAccounts).includes(currentProvider) ? this.props.providerAccounts[currentProvider] : null
-    const currentProviderName = PROVIDERS[currentProvider].name
+    const account = this.props.currentAccount
+    const provider = account.provider
+console.log(provider, account);
+    const visible = this.props.currentModal === "AccountPermissionsModal"
+    const permissions = account.permissions || []
+    const groupPermissions = []
+    const userPermissions = []
+    for (let i = 0; i < permissions.length; i++) {
+      let permission = permissions[i]
+      if (permission.userId) {
+        userPermissions.push(permission)
+      } else if (permission.userId) {
+        groupPermissions.push(permission)
+      }
+    }
+
+    if (!visible) {
+      return null
+    }
 
     return (
       <ModalContainer
-        visible={this.props.currentModal === "LinkProviderAccountModal"}
+        visible={visible}
         onClose={this.handleClose}
-        title={currentProviderName}
+        title={`Permissions`}
+        subtitle={`${account.userName || account.email}'s ${PROVIDERS[provider].name} account`}
       >
         <ModalBody>
-          <ButtonGroup>
-            {!oneProviderOnly && Object.keys(PROVIDERS).map((provider) => {
-              return (
-                <Button
-                  key={provider}
-                  selected={provider === currentProvider}
-                  onClick={this.chooseProvider.bind(this, provider)}
-                >
-                  {PROVIDERS[provider].name}
-                </Button>
-              )
-            })}
-          </ButtonGroup>
 
-          {currentProvider &&
             <Form>
-              <h3>{currentProviderName} Accounts ({currentAccounts ? currentAccounts.length : 0})</h3>
-              <Flexbox>
-                {currentAccounts ? (
-                  currentAccounts.map((account) => (
-                    <AccountCard
-                      account={account}
-                      key={account.providerUserId}
-                      height="200px"
-                    />
-                  ))
+              <h3>Current Permissions</h3>
+              <Flexbox direction="column">
+                <Flexbox >
+                  <div className={`${classes.tableHeader} ${classes.columnOne}`}>User</div>
+                  <div className={`${classes.tableHeader} ${classes.columnTwo}`}>Access</div>
+                  <div className={`${classes.tableHeader} ${classes.columnThree}`}></div>
+                </Flexbox>
+                {userPermissions.length > 0 ? (
+                  userPermissions.map((permission) =>
+                    <PermissionRow permission={permission}/>
+                  )
                 ) : (
-                  <p>You don't have any {currentProviderName} accounts linked to your Growth Ramp account yet.</p>
+                  <div>None so far</div>
+                )}
+                <Flexbox >
+                  <div className={`${classes.tableHeader} ${classes.columnOne}`}>Workgroup</div>
+                  <div className={`${classes.tableHeader} ${classes.columnTwo}`}>Access</div>
+                  <div className={`${classes.tableHeader} ${classes.columnThree}`}></div>
+                </Flexbox>
+                {userPermissions.length > 0 ? (
+                  userPermissions.map((permission) =>
+                    <PermissionRow permission={permission}/>
+                  )
+                ) : (
+                  <div>None so far</div>
                 )}
               </Flexbox>
 
-              <h3>Choose Channels to add:</h3>
               <Flexbox justify="center">
-                {Object.keys(PROVIDERS[currentProvider].channels).map((channel) =>
+                {Object.keys(PROVIDERS[provider].channels).map((channel) =>
                   <Button
                     key={channel}
                     style="inverted"
@@ -140,18 +146,8 @@ class LinkProviderAccount extends Component {
                   </Button>
                 )}
               </Flexbox>
-              <SocialLogin
-                loginPending={this.state.loginPending}
-                setPending={this.setPending}
-                providers={{[currentProvider]: PROVIDERS[currentProvider]}}
-                scopes={this.chosenScopes()}
-                disabled={false}
-              />
 
-              <h5>Want to add another {currentProviderName} account?</h5>
-              {["FACEBOOK", "LINKEDIN"].includes(currentProvider) && <p>Make sure you either logged out of {currentProviderName} or are signed into {currentProviderName} with the account you want to add to Growth Ramp, choose the services you want to allow here, and then click the login button below</p>}
             </Form>
-          }
         </ModalBody>
       </ModalContainer>
     )
@@ -168,8 +164,8 @@ const mapStateToProps = (state) => {
   return {
     currentModal: state.viewSettings.currentModal,
     options: state.viewSettings.modalOptions || {},
-    providerAccounts: state.providerAccounts,
+    currentAccount: Helpers.safeDataPath(state.viewSettings, "modalOptions.currentAccount", {}),
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(LinkProviderAccount)
+export default connect(mapStateToProps, mapDispatchToProps)(AccountPermissions)

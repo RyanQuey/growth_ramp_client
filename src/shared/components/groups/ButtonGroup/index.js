@@ -5,13 +5,18 @@ import theme from 'theme'
 
 // default is horizontal
 // TODO vertical vs horizontal doesn't actually do anything yet
+// children should be buttons
 const ButtonGroup = ({ vertical = false, children }) => {
 
   return (
     <div
-      className={`${vertical ? classes.vertical : classes.horizontal}} ${classes.buttonGroup}`}
+      className={`${vertical ? classes.vertical : classes.horizontal} ${classes.buttonGroup}`}
     >
-      {children}
+      {children.map((child) =>
+        <div className={classes.container}>
+          {child}
+        </div>
+      )}
     </div>
   )
 }

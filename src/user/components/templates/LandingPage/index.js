@@ -8,7 +8,8 @@ import theme from 'theme'
 import classes from './style.scss'
 
 import logoUrl from 'images/growth-ramp-logos/GR_logo_only.png' //same as doing Logo
-import grTextUrl from 'images/growth-ramp-logos/GR_text.jpg'
+//png has transparent background
+import grTextUrl from 'images/growth-ramp-logos/GR_text.png'
 import grFullLogoUrl from 'images/growth-ramp-logos/GR_logo.jpg'
 
 class LandingPage extends Component {
@@ -25,13 +26,10 @@ class LandingPage extends Component {
         <div>
           <div>
             <Flexbox flexWrap="wrap" justify="center" align="center" className={`${classes.introCtn} ${classes.layerCtn}`}>
-              <div className={classes.leftCtn}>
-                <h2 >What if you could spend less time tracking links, and more time writing?</h2>
+              <div>
+                <h2>Grow it faster</h2>
                 <h3>Growth Ramp lets you write for your social networks all in one place.</h3>
-                <Link to="/signup/create-account"><Button>I&apos;m in! Let&apos;s setup my free profile.</Button></Link>
-              </div>
-              <div className={classes.rightCtn}>
-                <img src={logoUrl} alt="" style={{ maxWidth: '100%' }} />
+                <Link to="/signup/create-account"><Button>I&apos;m in! Let&apos;s setup my profile.</Button></Link>
               </div>
             </Flexbox>
           </div>
@@ -40,14 +38,14 @@ class LandingPage extends Component {
             <Flexbox flexWrap="wrap" justify="center" align="center" className={`${classes.aboutCtn} ${classes.layerCtn}`}>
               <h1>What is Growth Ramp about?</h1>
 
-              <div className={classes.leftCtn}>
+              <div className={classes.leftSection}>
                 <div className='text-ctn'>
                   <Icon name="clock-o" color="primary" />
                   <h2>Simple but powerful</h2>
                   <h5>Manage your shares with the precision of detail you need but without unnecessary complexity </h5>
                 </div>
               </div>
-              <div className={classes.rightCtn}>
+              <div className={classes.rightSection}>
                 <img src={grTextUrl} alt="logo" />
               </div>
             </Flexbox>
@@ -55,21 +53,17 @@ class LandingPage extends Component {
 
           <div className={classes.middleCtn}>
             <Flexbox flexWrap="wrap" justify="center" align="center" className={classes.layerCtn}>
-              <div className={classes.leftCtn}>
+              <div className={classes.leftSection}>
+                <img src={logoUrl} alt="logo" />
+              </div>
+              <div className={classes.rightSection}>
                 <div className='text-ctn'>
                   <Icon name="bolt" color="primary" />
                   <h2>Automate your UTMs</h2>
                   <h5>We can take care of this so you don't have to</h5>
                 </div>
               </div>
-              <div className={classes.rightCtn}>
-                <img src={logoUrl} alt="logo" />
-              </div>
             </Flexbox>
-          </div>
-
-          <div className={classes.imageCtn}>
-            <img src={logoUrl} alt="logo" />
           </div>
 
           <div className={classes.bottomCtn}>

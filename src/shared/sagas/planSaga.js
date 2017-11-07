@@ -58,10 +58,9 @@ function* create(action) {
 
     const res = yield axios.post("/api/plans", newPlan) //eventually switch to socket
     const newRecord = res.data
-    const planId = newRecord.id
 
     yield all([
-      put({ type: CREATE_PLAN_SUCCESS, payload: {[planId]: newRecord }}),
+      put({ type: CREATE_PLAN_SUCCESS, payload: newRecord}),
       put({ type: SET_CURRENT_PLAN, payload: newRecord }),
     ])
 

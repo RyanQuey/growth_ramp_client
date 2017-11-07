@@ -7,24 +7,4 @@ main.userContent {
   text-align: center;
   padding: 0 10px;
   margin: 0 auto;
-  h1 {
-    @include rems(45);
-  }
-  h4 {
-    @include rems(18);
-    margin: 2rem 0 1rem 0;
-  }
-  h5 {
-    @include rems(12);
-    text-align: center;
-    margin: 1rem 0;
-  }
-  input {
-    width: 90%;
-    color: $text;
-    margin: 0;
-  }
-  button {
-    width: 90%;
-  }
 }
