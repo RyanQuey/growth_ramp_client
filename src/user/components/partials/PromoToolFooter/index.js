@@ -16,8 +16,6 @@ class PromoToolFooter extends Component {
     super()
 
     this.state = {
-      //the farthest they got in the workflow
-      placeInFlow: "Start"
     }
 
     this.go = this.go.bind(this)
@@ -36,9 +34,11 @@ class PromoToolFooter extends Component {
 
   render() {
     const sectionIndex = sections.indexOf(this.props.currentSection)
-    const canGoForward = sections.indexOf(this.state.placeInFlow) > sectionIndex &&
-      this.props.currentSection !== "Send" ||
-      (this.props.currentSection === "Channels" && Object.keys(providerAccounts))
+    //TODO might want to centralize this logic with logic for automatically moving user to place in flow on initial loading somewhere, here or in EditPost
+    const currentPost = Helpers.safeDataPath(this.props, "currentPost", {})
+    const canGoForward = this.props.currentSection !== "Send" &&
+      this.props.currentSection === "Start" && currentPost.planId ||
+      (this.props.currentSection === "Channels" && Object.keys(this.props.providerAccounts))
 
     return (
       <div>

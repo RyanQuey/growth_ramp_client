@@ -112,6 +112,7 @@ function* createPost(action) {
     }
     yield all([
       put({ type: CREATE_POST_SUCCESS, payload: {[postId]: newRecord}}),
+      //TODO especially when there are more posts, will want to just merge this one post to the posts list, rather than fetching all..
       put({type: USER_POSTS_OUTDATED}),
     ])
 
@@ -136,6 +137,7 @@ function* fetchPosts(action) {
     const userId = pld.userId || store.getState().user.id//making it so no reason to actually attach a payload...
 
     //TODO: eventually they filter out posts that have already been sent
+    //also want to just retrieve a specific post sometimes...ie, be able to pass in criteria
     const res = yield axios.get(`/api/users/${userId}/posts`) //eventually switch to socket
 
     //converting into object

@@ -1,7 +1,7 @@
 import { Component } from 'react';
 import { connect } from 'react-redux'
 import { PROVIDERS } from 'constants/providers'
-import { SET_CURRENT_MODAL } from 'constants/actionTypes'
+import { SET_CURRENT_MODAL, FETCH_PERMISSION_REQUEST } from 'constants/actionTypes'
 import {
   withRouter,
 } from 'react-router-dom'
@@ -16,8 +16,8 @@ class AccountCard extends Component {
   }
 
   viewPermissionModal() {
-    const cb = () => this.props.setCurrentModal("AccountPermissionsModal", {currentAccount: this.props.account})
-    this.props.fetchPermissionsRequest(this.props.account, cb)
+    this.props.setCurrentModal("AccountPermissionsModal", {currentAccount: this.props.account})
+    this.props.fetchPermissionsRequest(this.props.account)
   }
 
   render () {
@@ -60,7 +60,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = (dispatch) => {
   return {
     setCurrentModal: (payload, options) => dispatch({type: SET_CURRENT_MODAL, payload, options}),
-    fetchPermissionsRequest: (account, cb) => dispatch({type: FETCH_PERMISSIONS_REQUEST, payload: {accountId: account.id}, cb}),
+    fetchPermissionsRequest: (account, cb) => dispatch({type: FETCH_PERMISSION_REQUEST, payload: {accountId: account.id}, cb}),
   }
 }
 

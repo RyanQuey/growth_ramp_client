@@ -8,7 +8,7 @@ import {
   PromoToolFooter
 } from 'user/components/partials'
 import { Navbar } from 'shared/components/elements'
-import { CREATE_POST_REQUEST } from 'constants/actionTypes'
+import { FETCH_POST_REQUEST, CREATE_POST_REQUEST } from 'constants/actionTypes'
 import theme from 'theme'
 
 const sections = {
@@ -31,7 +31,11 @@ class PromoTool extends Component {
   }
 
   componentDidMount() {
-
+    const currentPost = this.props.posts[this.props.match.params.postId]
+    if (!currentPost) {
+      //this action doesn't yet support any criteria
+      this.props.fetchPostRequest({userId: this.props.user.id})
+    }
   }
 
   //can be called from the promoToolFooter or each of the 4 sections
@@ -48,6 +52,8 @@ console.log(next);
   render() {
     const c = this;
     const Tag = sections[this.state.currentSection]
+    const currentPost = this.props.posts[this.props.match.params.postId]
+
     return (
       <div>
         <Navbar className="" justify="space-around" background={theme.color.moduleGrayOne} color={theme.color.text}>
@@ -63,15 +69,20 @@ console.log(next);
         </Navbar>
 
         <div>
-          <Tag
-            switchTo={this.switchTo}
-            initialOpening={this.state.initialOpening}
-            currentPost={this.props.posts[this.props.match.params.postId]}
-          />
+          {currentPost ? (
+            <Tag
+              switchTo={this.switchTo}
+              initialOpening={this.state.initialOpening}
+              currentPost={currentPost}
+            />
+          ) : (
+            <div>No post with id {this.props.match.params.postId} found</div>
+          )}
         </div>
         <PromoToolFooter
           switchTo={this.switchTo}
           currentSection={this.state.currentSection}
+          currentPost={currentPost}
         />
       </div>
     );
@@ -87,6 +98,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = (dispatch) => {
   return {
     createPostRequest: (data) => dispatch({type: CREATE_POST_REQUEST, payload: data}),
+    fetchPostRequest: (data) => dispatch({type: FETCH_POST_REQUEST, payload: data}),
   }
 }
 

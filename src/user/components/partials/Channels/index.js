@@ -42,6 +42,10 @@ class Channels extends Component {
   }
 
   componentWillReceiveProps(props) {
+    //happens when create new post from navbar
+    if (this.props.currentPost && !this.props.currentPost.planId) {
+      this.props.switchTo("Start", true)
+    }
     /*if (props.providerAccounts !== this.props.providerAccounts) {
 
     }*/

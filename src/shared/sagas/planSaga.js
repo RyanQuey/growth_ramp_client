@@ -9,6 +9,7 @@ import {
   FETCH_PLAN_SUCCESS,
   UPDATE_PLAN_REQUEST,
   UPDATE_PLAN_SUCCESS,
+  UPDATE_POST_REQUEST,
   LIVE_UPDATE_PLAN_REQUEST,
   LIVE_UPDATE_PLAN_SUCCESS,
   LIVE_UPDATE_PLAN_FAILURE,
@@ -55,9 +56,22 @@ function* create(action) {
       utmOptions: {},
       userId: pld.userId,
     }
+    let associatedPost = pld.associatedPost
+    delete pld.associateWithPost
 
     const res = yield axios.post("/api/plans", newPlan) //eventually switch to socket
     const newRecord = res.data
+
+    if (associatedPost) {
+      store.dispatch({
+        type: UPDATE_POST_REQUEST,
+        payload: {
+          id: associatedPost,
+          planId: newRecord.id,
+          userId: pld.userId,
+        }
+      })
+    }
 
     yield all([
       put({ type: CREATE_PLAN_SUCCESS, payload: newRecord}),

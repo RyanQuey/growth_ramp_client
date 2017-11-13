@@ -100,6 +100,7 @@ class Start extends Component {
     const defaults = {
       userId,
       name: this.state.name,
+      associatedPost: this.props.currentPost.id,
     }
 
     const payload = Object.assign(defaults, this.state.planAttributes)

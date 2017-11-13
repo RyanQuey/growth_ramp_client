@@ -96,19 +96,21 @@ class LinkProviderAccount extends Component {
         title={currentProviderName}
       >
         <ModalBody>
-          <ButtonGroup>
-            {!oneProviderOnly && Object.keys(PROVIDERS).map((provider) => {
-              return (
-                <Button
-                  key={provider}
-                  selected={provider === currentProvider}
-                  onClick={this.chooseProvider.bind(this, provider)}
-                >
-                  {PROVIDERS[provider].name}
-                </Button>
-              )
-            })}
-          </ButtonGroup>
+          {!oneProviderOnly &&
+            <ButtonGroup>
+              {Object.keys(PROVIDERS).map((provider) => {
+                return (
+                  <Button
+                    key={provider}
+                    selected={provider === currentProvider}
+                    onClick={this.chooseProvider.bind(this, provider)}
+                  >
+                    {PROVIDERS[provider].name}
+                  </Button>
+                )
+              })}
+            </ButtonGroup>
+          }
 
           {currentProvider &&
             <Form>

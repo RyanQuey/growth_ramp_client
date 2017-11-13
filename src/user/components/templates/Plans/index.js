@@ -3,7 +3,12 @@ import { connect } from 'react-redux'
 import {
   PlanPicker
 } from 'user/components/partials'
-import { CREATE_POST_REQUEST } from 'constants/actionTypes'
+import { Input, Button } from 'shared/components/elements'
+import {
+  CREATE_POST_REQUEST,
+  ARCHIVE_PLAN_REQUEST,
+} from 'constants/actionTypes'
+
 
 class Plans extends Component {
   constructor() {
@@ -22,6 +27,8 @@ class Plans extends Component {
   }
 
   destroyPlan (plan) {
+    //what to do with associated posts?
+    //Not a problem if change the workflow as suggested to Jason
     this.props.archivePlanRequest(plan)
   }
 
@@ -57,13 +64,15 @@ class Plans extends Component {
             <div>Either create a new one or ask for permission from an associate</div>
           </div>
         )}
+
         {selectedPlan &&
           <div>
+            <hr/>
             <h3>{selectedPlan.name}</h3>
               <div>
-                <button onClick={this.destroyPlan.bind(this, selectedPlan)}>
+                <Button onClick={this.destroyPlan.bind(this, selectedPlan)}>
                   Delete Plan ***DANGER***
-                </button>
+                </Button>
               </div>
           </div>
         }

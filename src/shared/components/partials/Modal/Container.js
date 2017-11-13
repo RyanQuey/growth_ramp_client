@@ -30,6 +30,7 @@ class ModalContainer extends Component {
       modalContent,
       modalHeader,
       modalTitle,
+      modalSubtitle,
       modalBody,
       closeButton
     } = (classes);
@@ -45,7 +46,7 @@ class ModalContainer extends Component {
           </button>}
 
           {this.props.title && <h1 className={modalTitle}>{this.props.title}</h1>}
-          {this.props.subtitle && <h2 className={modalsubtitle}>{this.props.subtitle}</h2>}
+          {this.props.subtitle && <h2 className={modalSubtitle}>{this.props.subtitle}</h2>}
         </div>
       )
     }

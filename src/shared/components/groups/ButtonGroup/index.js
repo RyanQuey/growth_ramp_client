@@ -12,8 +12,8 @@ const ButtonGroup = ({ vertical = false, children }) => {
     <div
       className={`${vertical ? classes.vertical : classes.horizontal} ${classes.buttonGroup}`}
     >
-      {children.map((child) =>
-        <div className={classes.container}>
+      {children.map((child, index) =>
+        <div className={classes.container} key={index}>
           {child}
         </div>
       )}

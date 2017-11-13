@@ -39,7 +39,7 @@ class UserNavbar extends Component {
   }
 
   render() {
-    const { user } = this.props
+    const { user, userSettingsOnly } = this.props
 
     return (
       <Navbar className={classes.header}>
@@ -48,12 +48,12 @@ class UserNavbar extends Component {
         </Flexbox>}
 
         <Flexbox className={classes.mainNav} justify="space-between">
-          <Flexbox className={classes.leftNav} align="center" justify={user ? "space-around" : "flex-start" }>
+          <Flexbox className={classes.leftNav} align="center" justify={!userSettingsOnly ? "space-around" : "flex-start" }>
             <Link to="/">
               <Logo />
             </Link>
 
-            {user && <Button onClick={this.createPost}>
+            {!userSettingsOnly && <Button onClick={this.createPost}>
               New post
             </Button>}
           </Flexbox>

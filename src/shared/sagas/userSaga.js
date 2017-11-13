@@ -172,12 +172,15 @@ function* updateUser(action) {
     //const res = yield api.put(`/api/users/${userData.id}`, userData)
     const returnedUser = res.data
     yield put({type: UPDATE_USER_SUCCESS, payload: returnedUser})
-  } catch (e) {
+
+  } catch (err) {
     errorActions.handleErrors({
       templateName: "User",
       templatePart: "update",
-      title: "Error updating",
+      title: "Error:",
       errorObject: err,
+    }, null, null, {
+      useInvalidAttributeMessage: true,
     })
   }
 }

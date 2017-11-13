@@ -18,7 +18,6 @@ class viewPosts extends Component {
   }
 
   componentWillMount() {
-    console.log("now fetching posts");
     this.props.fetchPostRequest({userId: this.props.user.id})
   }
 

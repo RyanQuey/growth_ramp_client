@@ -11,20 +11,20 @@ import { withRouter } from 'react-router-dom'
 
 class Authenticated extends Component {
   render() {
+    const settingCredentials = !this.props.user.password || !this.props.user.email
     return (
       <div>
-        {!this.props.user.password || !this.props.user.email ? (
-          <SetCredentials />
-        ) : (
-          <Flexbox direction="column" >
-            <UserNavbar />
-
+        <Flexbox direction="column" >
+          <UserNavbar userSettingsOnly={settingCredentials}/>
+          {settingCredentials? (
+            <SetCredentials />
+          ) : (
             <Flexbox>
               <UserSidebar />
               <UserContent />
             </Flexbox>
-          </Flexbox>
-        )}
+          )}
+        </Flexbox>
 
         <LinkProviderAccountModal />
         <AccountPermissionsModal />

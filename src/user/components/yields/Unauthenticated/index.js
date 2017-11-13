@@ -12,7 +12,7 @@ class Unauthenticated extends Component {
     return (
       <div>
         <Flexbox direction="column">
-          <UserNavbar />
+          <UserNavbar userSettingsOnly={true}/>
           <UnauthenticatedContent />
         </Flexbox>
 

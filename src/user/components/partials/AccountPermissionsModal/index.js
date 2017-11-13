@@ -92,6 +92,7 @@ console.log(provider, account);
       }
     }
 
+    //doesn't allow things to break and actually better performance
     if (!visible) {
       return null
     }
@@ -120,6 +121,8 @@ console.log(provider, account);
                 ) : (
                   <div>None so far</div>
                 )}
+                <hr/>
+
                 <Flexbox >
                   <div className={`${classes.tableHeader} ${classes.columnOne}`}>Workgroup</div>
                   <div className={`${classes.tableHeader} ${classes.columnTwo}`}>Access</div>
@@ -145,7 +148,9 @@ console.log(provider, account);
                     {channel.titleCase()}
                   </Button>
                 )}
+
               </Flexbox>
+                TODO: figure out if will have user permissions
 
             </Form>
         </ModalBody>
