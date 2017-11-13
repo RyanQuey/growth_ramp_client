@@ -3,38 +3,28 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { UserContent } from 'user/components/templates'
 import { Flexbox, Alert } from 'shared/components/elements'
-import { UserNavbar, UserSidebar, LinkProviderAccountModal, AccountPermissionsModal } from 'user/components/partials'
+import { UserNavbar, UserSidebar, LinkProviderAccountModal, AccountPermissionsModal, SetCredentials } from 'user/components/partials'
 import { } from 'constants/actionTypes'
 import { viewSettingActions } from 'shared/actions'
 import classes from './style.scss'
 import { withRouter } from 'react-router-dom'
 
 class Authenticated extends Component {
-  componentDidMount () {
-    if (this.props.user && !this.props.user.password) {
-      this.props.history.push("/SetCredentials")
-    } else if (this.props.location.pathname === "/SetCredentials") {
-      this.props.history.push("/")
-    }
-  }
-  componentWillReceiveProps (props) {
-    if (!props.user.password && props.location.pathname !== "/SetCredentials") {
-      this.props.history.push("/SetCredentials") //maybe want to just use props.history?
-    } else if (props.user.password && props.location.pathname === "/SetCredentials") {
-      this.props.history.push("/")
-    }
-  }
   render() {
     return (
       <div>
-        <Flexbox direction="column" >
-          <UserNavbar />
+        {!this.props.user.password || !this.props.user.email ? (
+          <SetCredentials />
+        ) : (
+          <Flexbox direction="column" >
+            <UserNavbar />
 
-          <Flexbox>
-            <UserSidebar />
-            <UserContent />
+            <Flexbox>
+              <UserSidebar />
+              <UserContent />
+            </Flexbox>
           </Flexbox>
-        </Flexbox>
+        )}
 
         <LinkProviderAccountModal />
         <AccountPermissionsModal />

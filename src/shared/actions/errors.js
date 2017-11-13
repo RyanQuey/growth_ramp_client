@@ -33,6 +33,10 @@ export const handleErrors = (errors, templateName, templatePart, options = {})  
       }
 
       console.error(errors.errorObject)
+      //axios often has response property, but you wouldn't see it if don't ask for it
+      if (errors.errorObject && errors.errorObject.response) {
+        console.error(errors.errorObject.response)
+      }
       errors = [errors]
     }
   } else {

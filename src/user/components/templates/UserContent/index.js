@@ -7,7 +7,7 @@ import {
   Redirect,
 } from 'react-router-dom'
 import { Alert, Flexbox } from 'shared/components/elements'
-import { Home, SetCredentials, Plans, EditPost, Posts, Providers, ShowProvider, Workgroups } from 'user/components/templates'
+import { Home, Plans, EditPost, Posts, Providers, ShowProvider, Workgroups } from 'user/components/templates'
 import requireAuthenticated from 'lib/requireAuthenticated'
 import forbidAuthenticated from 'lib/forbidAuthenticated'
 import { connect } from 'react-redux'
@@ -33,7 +33,6 @@ class UserContent extends Component {
             <Route path="/providerAccounts/:provider" component={ShowProvider} />
             <Route path="/providerAccounts/:provider?" component={Providers} />
             <Route path="/workgroups" component={Workgroups} />
-            <Route path="/SetCredentials" component={SetCredentials} />
           </Switch>
         </Flexbox>
       </main>

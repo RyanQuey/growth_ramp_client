@@ -21,7 +21,7 @@ import {
 }  from 'constants/actionTypes'
 import { USER_FIELDS_TO_PERSIST, PROVIDER_IDS_MAP } from 'constants'
 import { setupSession } from 'lib/socket'
-import {errorActions} from 'shared/actions'
+import { errorActions, alertActions } from 'shared/actions'
 
 function* signIn(action) {
   const pld = action.payload
@@ -30,7 +30,6 @@ function* signIn(action) {
     const credentials = pld.credentials
     //optional token, in case their login is also needed for the token to work
     const token = pld.token
-console.log(token);
     let result
     switch (signInType) {
       case 'SIGN_UP_WITH_EMAIL':
@@ -69,6 +68,7 @@ console.log(token);
       //no user found
       //TODO: make a separate action for the error
 console.log("no user or error returned...");
+console.log(result);
       yield put({type: SIGN_IN_FAILURE})
       errorActions.handleErrors({
         templateName: "Login",
@@ -80,13 +80,24 @@ console.log("no user or error returned...");
 
     return " all done"
   } catch (err) {
-    console.log('Error in Sign In Saga', err)
     yield put({type: SIGN_IN_FAILURE})
-    errorActions.handleErrors({
-      templateName: "Login",
-      templatePart: "credentials",
-      title: "Error signing in with credentials",
-    })
+
+    if (err && Helpers.safeDataPath(err, "response.status", 500) === 403) {
+      alertActions.newAlert({
+        title: "Invalid credentials",
+        message: "Please try again",
+        level: "WARNING",
+        timer: false,
+      })
+
+    } else {
+      console.log('Error signing in', err)
+      errorActions.handleErrors({
+        templateName: "Login",
+        templatePart: "credentials",
+        title: "Error signing in with credentials",
+      })
+    }
   }
 }
 

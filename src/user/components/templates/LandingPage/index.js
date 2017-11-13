@@ -6,6 +6,7 @@ import { Login } from 'shared/components/partials'
 import { connect } from 'react-redux'
 import theme from 'theme'
 import classes from './style.scss'
+import {SET_CURRENT_MODAL} from 'constants/actionTypes'
 
 import logoUrl from 'images/growth-ramp-logos/GR_logo_only.png' //same as doing Logo
 //png has transparent background
@@ -13,6 +14,17 @@ import grTextUrl from 'images/growth-ramp-logos/GR_text.png'
 import grFullLogoUrl from 'images/growth-ramp-logos/GR_logo.jpg'
 
 class LandingPage extends Component {
+  constructor(props) {
+    super(props)
+
+    this.openLoginModal = this.openLoginModal.bind(this)
+  }
+
+  openLoginModal(e) {
+    e.preventDefault()
+    this.props.setCurrentModal("UserLoginModal")
+  }
+
   render() {
     const { user } = this.props
     return (
@@ -29,7 +41,7 @@ class LandingPage extends Component {
               <div>
                 <h2>Grow it faster</h2>
                 <h3>Growth Ramp lets you write for your social networks all in one place.</h3>
-                <Link to="/signup/create-account"><Button>I&apos;m in! Let&apos;s setup my profile.</Button></Link>
+                <Button onClick={this.openLoginModal}>I&apos;m in! Let&apos;s setup my profile.</Button>
               </div>
             </Flexbox>
           </div>
@@ -71,7 +83,7 @@ class LandingPage extends Component {
               <p className={classes.bottomText}>
                 Growth Ramp <strong>does all of this for you, </strong>simplifying your workflow without compromising on the details.
               </p>
-              <Link to="/signup/create-account"><Button style="inverted">I&apos;m in! Let&apos;s setup my profile</Button></Link>
+              <Button onClick={this.openLoginModal}>I&apos;m in! Let&apos;s setup my profile.</Button>
             </Flexbox>
           </div>
         </div>
@@ -82,12 +94,16 @@ class LandingPage extends Component {
 
 LandingPage.propTypes = {
   history: PropTypes.object,
-  user: PropTypes.object,
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    setCurrentModal: (payload) => dispatch({type: SET_CURRENT_MODAL, payload}),
+  }
 }
 
 const mapStateToProps = (state) => {
-  return { user: state.user }
 }
 
-export default connect(mapStateToProps)(LandingPage)
+export default connect(mapStateToProps, mapDispatchToProps)(LandingPage)
 

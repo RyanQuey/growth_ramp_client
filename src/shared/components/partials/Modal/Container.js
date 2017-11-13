@@ -49,7 +49,7 @@ class ModalContainer extends Component {
       })
     }
 
-    if (this.props.title || this.props.subtitle) {
+    if (!this.props.disableClose || this.props.title || this.props.subtitle) {
       innerContent.push(
         <div key="header" className={modalHeader}>
           {!this.props.disableClose && <button type="button" className={closeButton} data-dismiss="modal" aria-label="Close" onClick={this.props.onClose}>
