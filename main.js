@@ -37,9 +37,10 @@ passport.use(new FacebookStrategy(
   Helpers.facebookOptions,
   function(req, accessToken, refreshToken, profile, done) {
     //console.log(accessToken, refreshToken, profile);
-    //console.log("***profile***");
-    //console.log(profile);
+    console.log("***profile***");
+    console.log(profile);
     const providerData = Helpers.extractPassportData(accessToken, refreshToken, profile, req)
+console.log("providerData", providerData);
     const cookie = Helpers.extractCookie(req.headers.cookie)
 
     return Helpers.tradeTokenForUser(providerData, cookie, done)
