@@ -1,6 +1,6 @@
 import { Component } from 'react';
 import { connect } from 'react-redux'
-import { FETCH_POST_REQUEST } from 'constants/actionTypes'
+import { FETCH_POST_REQUEST, CREATE_POST_REQUEST } from 'constants/actionTypes'
 import { Button } from 'shared/components/elements'
 import {
   PostPicker
@@ -14,6 +14,7 @@ class viewPosts extends Component {
     }
 
     this.handleChoosePost = this.handleChoosePost.bind(this)
+    this.createPost = this.createPost.bind(this)
   }
 
   componentWillMount() {
@@ -25,6 +26,15 @@ class viewPosts extends Component {
     if (props.posts !== this.props.posts) {
       this.setState({status: "ready"})
     }
+  }
+
+  createPost() {
+    //to run on success
+    const cb = (newPost) => {
+      this.props.history.push(`/posts/${newPost.id}/edit`)
+    }
+
+    this.props.createPostRequest(cb)
   }
 
   handleChoosePost(post) {
@@ -49,7 +59,7 @@ class viewPosts extends Component {
           <div>
             <h3>No posts yet.</h3>
             <div>Let's create a new one</div>
-            <button onClick={() => {this.props.history.push("/posts/new")}}>Create a post</button>
+            <Button onClick={this.createPost}>New post</Button>
           </div>
         )}
       </div>
@@ -60,6 +70,13 @@ class viewPosts extends Component {
 const mapDispatchToProps = (dispatch) => {
   return {
     fetchPostRequest: (data) => dispatch({type: FETCH_POST_REQUEST, payload: data}),
+    createPostRequest: (cb) => {
+      const newPost = {
+        userId: store.getState().user.id,
+      }
+
+      return dispatch({type: CREATE_POST_REQUEST, payload: newPost, cb})
+    },
   }
 }
 

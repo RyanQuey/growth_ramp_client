@@ -10,8 +10,8 @@ import { HANDLE_QUERY } from 'constants/actionTypes'
 
 class App extends Component {
   componentDidMount() {
-    axios.get('/api/test')
-    .then(res => console.log("got it: ", res))
+    /*axios.get('/api/test')
+    .then(res => console.log("got it: ", res))*/
 
     //extract the query string
     const query = this.props.location.search

@@ -37,10 +37,10 @@ passport.use(new FacebookStrategy(
   Helpers.facebookOptions,
   function(req, accessToken, refreshToken, profile, done) {
     //console.log(accessToken, refreshToken, profile);
-    console.log("***profile***");
-    console.log(profile);
+    //console.log("***profile***");
+    //console.log(profile);
     const providerData = Helpers.extractPassportData(accessToken, refreshToken, profile, req)
-console.log("providerData", providerData);
+//console.log("providerData", providerData);
     const cookie = Helpers.extractCookie(req.headers.cookie)
 
     return Helpers.tradeTokenForUser(providerData, cookie, done)
@@ -55,8 +55,8 @@ passport.use(new TwitterStrategy(
     //oauth1 is reason why, I think
     const providerData = Helpers.extractPassportData(accessToken, tokenSecret, profile, req)
     const cookie = Helpers.extractCookie(req.headers.cookie)
-    console.log("***profile***");
-    console.log(profile);
+    //console.log("***profile***");
+    //console.log(profile);
     return Helpers.tradeTokenForUser(providerData, cookie, done)
   }
 ))
@@ -133,7 +133,9 @@ console.log(options.callbackUrl);
 app.get(`${Helpers.callbackPath}/:provider`, (req, res, next) => {
   const providerName = req.params.provider.toLowerCase()
   if (!["facebook", "twitter", "linkedin"].includes(providerName)) {
-    console.log("someone is hacking us I think. They tried:", req.params.provider);
+    console.log("someone is hacking us I think. Unless provider is app.js, in which case it's going to growthramp.io/provider_redirect/facebook or something.")
+    console.log("They tried:", req.params.provider);
+    //TODO if req.params.provider === "app.js", should redirect to home page
     next()
   }
   const cookie = Helpers.extractCookie(req.headers.cookie)
@@ -203,10 +205,9 @@ app.use('/api/*', function(req, res) {
 //NOTE: the headers also contain the cookies...perhaps could use that
   const url = `${apiUrl}${req.originalUrl.replace('/api', "")}`
   //can eventually combine with tradeTokenForUser? piping makes it harder; you cannot pipe on just any function
-console.log("******************************");
+//console.log("******************************");
 
-  console.log(url);
-console.log("this is where I went");
+  //console.log(url);
   request[method]({
     //remove the 'api' in front, so we can take advantage of the default sails routes
     url: url,

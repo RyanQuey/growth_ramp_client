@@ -165,6 +165,7 @@ module.exports = {
       //mapping to an object, with keys being the scope
       userData.scopes = {}
       let scopes = passportProfile._json.permissions.data
+      userData.photoUrl = passportProfile.photos[0].value
       for (let i = 0; i < scopes.length; i++) {
         let scope = scopes[i]
         userData.scopes[scope.permission] = {status: scope.status}

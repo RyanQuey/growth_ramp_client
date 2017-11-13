@@ -145,7 +145,7 @@ class Start extends Component {
     const keys = plans && Object.keys(plans)
 
     const namePicker = (
-      <form>
+      <form onSubmit={this.createPlan}>
         Choose a name for your plan
         <Input
           value={this.state.name}
@@ -154,7 +154,6 @@ class Start extends Component {
           placeholder="Plan name"
         />
         <Button
-          onClick={this.createPlan}
           disabled={!this.state.name && "disabled"}
           type="submit"
         >
@@ -209,12 +208,12 @@ class Start extends Component {
               Choose how you want to create this plan
             </h4>
             {["START_FROM_SCRATCH", "COPY_AN_EXISTING_PLAN"].map((option) => (
-              <button
+              <Button
                 key={option}
                 onClick={this.handleChoose.bind(this, option)}
               >
                 {option.replace(/_/g, " ").titleCase()}
-              </button>
+              </Button>
             ))}
           </div>
         )}
@@ -238,7 +237,7 @@ class Start extends Component {
 
         <div>
           {this.state.mode !== "CHOOSE_MODE" && (
-            <button onClick={this.goBack}>Back</button>
+            <Button onClick={this.goBack}>Back</Button>
           )}
         </div>
       </div>
