@@ -119,7 +119,7 @@ app.get('/login/:provider', ((req, res, next) => {
     options.scope = scope.concat(Helpers[`${providerName}Options`].scope || [])
   }
 
-console.log("callback path");
+console.log("callback path (only set for LI)");
 console.log(options.callbackUrl);
   passport.authenticate(providerName, options)(req, res, next)
 }))
@@ -131,7 +131,10 @@ console.log(options.callbackUrl);
 
 app.get(`${Helpers.callbackPath}/:provider`, (req, res, next) => {
   const providerName = req.params.provider.toLowerCase()
-  if (!["facebook", "twitter", "linkedin"].includes(providerName)) {next()}
+  if (!["facebook", "twitter", "linkedin"].includes(providerName)) {
+    console.log("someone is hacking us I think");
+    next()
+  }
   const cookie = Helpers.extractCookie(req.headers.cookie)
 
   const providerCallback = function(err, raw, info) {
@@ -140,9 +143,13 @@ app.get(`${Helpers.callbackPath}/:provider`, (req, res, next) => {
     console.log("user and provider", raw, "info",info);*/
     console.log(err, raw, info);
     if (err || !raw) {
-      console.log("error after authenticating into provider:");
+      console.log("error after authenticating into provider: (if null, no data returned from passport...)");
       console.log(err);
+      if (!err) {
+        console.log(req);
+      }
 
+      //TODO implement for other platforms
       if (providerName === 'linkedin') {
         //if the user rejected the permissions they just asked to give...
         if (err.code === 'user_cancelled_authorize') {
@@ -153,12 +160,12 @@ app.get(`${Helpers.callbackPath}/:provider`, (req, res, next) => {
           return res.redirect(`/?alert=cancelledAuthorization&providerName=${providerName}`)
         }
 
-        console.log("should never get here");
+        console.log("should never get here (LI)");
         //next ... breaks the app, puts node err message on screen
         return next(err);
 
       } else {
-        console.log("should never get here");
+        console.log("should never get here (NOT LI)");
         return next(err);
       }
     }

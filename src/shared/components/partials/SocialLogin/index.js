@@ -42,19 +42,19 @@ console.log(this.props.scopes);
           const providerName = providers[key].name
 
             return (
-              <Button
-                background={providerName.toLowerCase()}
-                disabled={disabled}
-                key={providerName}
-                style={Object.keys(providers).length > 1 ? "inverted" : "primary"}
+              <a
+                href={disabled ? "" : `/login/${providerName}${scopeQuery}`}
+                onClick={this.providerLogin.bind(this, providerName)}
               >
-                <a
-                  href={disabled ? "" : `/login/${providerName}${scopeQuery}`}
-                  onClick={this.providerLogin.bind(this, providerName)}
+                <Button
+                  background={providerName.toLowerCase()}
+                  disabled={disabled}
+                  key={providerName}
+                  style={Object.keys(providers).length > 1 ? "inverted" : "primary"}
                 >
                   {`Login ${preposition} ${providerName}`}
-                </a>
-              </Button>
+                </Button>
+              </a>
             )
         })}
       </div>

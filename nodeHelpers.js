@@ -217,6 +217,7 @@ module.exports = {
       'id',
       'displayName',
       'email',
+      'picture',
       //'link' for link to persons timeline;
       //'accounts': Facebook pages this person administers
       //conversations: Facebook messenger conversation. closely related to
