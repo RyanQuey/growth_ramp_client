@@ -52,7 +52,6 @@ class UserCredentials extends Component {
 
     if (this.props.view === "SET_CREDENTIALS") {
       this.props.updateUser({
-        id: this.props.user.id,
         password,
         email,
       })

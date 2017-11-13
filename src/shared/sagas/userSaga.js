@@ -168,7 +168,10 @@ function* signUserOut() {
 function* updateUser(action) {
   try {
     const userData = action.payload
-    const res = yield axios.put(`/api/users/${userData.id}`, userData)
+    const userId = pld.userId || store.getState().user.id
+    delete userData.id
+
+    const res = yield axios.put(`/api/users/${userId}`, userData)
     //const res = yield api.put(`/api/users/${userData.id}`, userData)
     const returnedUser = res.data
     yield put({type: UPDATE_USER_SUCCESS, payload: returnedUser})
