@@ -1,7 +1,7 @@
 //TODO for helpers that overlap with the JavaScript helpers in the front and,, can just import from there. DRY things up
 const request = require('request')
 let env
-if (!process.env.NODE_ENV === 'production') {
+if (process.env.NODE_ENV !== 'production') {
   const result = require('dotenv').config()
 
   if (result.error) {
@@ -23,6 +23,7 @@ const uuid = require('uuid/v1');
 const $ = require('jquery');
 const _ = require('lodash')
 
+//TODO can put back in objectr and just use Helpers.extractCookie
 const extractCookie = (allCookies) => {
   const splitCookies = allCookies.split("; ")
   //don't need all of this, only need the sessionUser!
@@ -38,6 +39,9 @@ const extractCookie = (allCookies) => {
     let keyAndValue = cookie.split("=")
     let key = keyAndValue[0]
     let value = keyAndValue[1]
+console.log(value);
+    if (!value || !unescape(value) || value === "undefined") {return}
+
     try {
       if (key === "requestedScopes") {
         ret.scopes = JSON.parse(unescape(value))
@@ -45,11 +49,11 @@ const extractCookie = (allCookies) => {
 
       }
       if (key === "sessionUser") {
-        console.log("");
         ret.user = JSON.parse(unescape(value))
       }
     } catch (err) {
       console.log("BROKEN KEY AND VALUE:", key, value);
+      console.log("all cookies", splitCookies);
       console.log(err);
       return
     }
@@ -57,7 +61,7 @@ const extractCookie = (allCookies) => {
   return ret
 }
 
-module.exports = {
+const Helpers = {
   extractCookie: extractCookie,
 
   safeDataPath: function (object, keyString, def = null) {
@@ -165,13 +169,13 @@ module.exports = {
       //mapping to an object, with keys being the scope
       userData.scopes = {}
       let scopes = passportProfile._json.permissions.data
-      userData.photoUrl = passportProfile.photos[0].value
+      userData.photoUrl = Helpers.safeDataPath(passportProfile, "photos.0.value", "")
       for (let i = 0; i < scopes.length; i++) {
         let scope = scopes[i]
         userData.scopes[scope.permission] = {status: scope.status}
       }
       //only persisting one email
-      userData.email = passportProfile.emails[0].value
+      userData.email = Helpers.safeDataPath(passportProfile, "emails.0.value", "")
 
     } else if (userData.provider === "LINKEDIN") {
       if (!refreshToken) {
@@ -242,3 +246,5 @@ module.exports = {
   },
 
 }
+
+module.exports = Helpers

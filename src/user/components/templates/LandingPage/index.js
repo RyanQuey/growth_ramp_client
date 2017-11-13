@@ -41,7 +41,7 @@ class LandingPage extends Component {
               <div>
                 <h2>Grow it faster</h2>
                 <h3>Growth Ramp lets you write for your social networks all in one place.</h3>
-                <Button onClick={this.openLoginModal}>I&apos;m in! Let&apos;s setup my profile.</Button>
+                <Button onClick={this.openLoginModal}>I&apos;m in! Let&apos;s setup my profile</Button>
               </div>
             </Flexbox>
           </div>
@@ -83,7 +83,7 @@ class LandingPage extends Component {
               <p className={classes.bottomText}>
                 Growth Ramp <strong>does all of this for you, </strong>simplifying your workflow without compromising on the details.
               </p>
-              <Button onClick={this.openLoginModal}>I&apos;m in! Let&apos;s setup my profile.</Button>
+              <Button onClick={this.openLoginModal}>I&apos;m in! Let&apos;s setup my profile</Button>
             </Flexbox>
           </div>
         </div>
