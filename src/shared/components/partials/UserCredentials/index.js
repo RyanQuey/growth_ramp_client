@@ -101,7 +101,7 @@ class UserCredentials extends Component {
         }
 
         <Button
-          disabled={(!this.state.validEmail || !this.state.password || this.props.pending)}
+          disabled={(!this.state.validEmail || (!this.props.passwordOnly && !this.state.password) || this.props.pending)}
           type="submit"
 
         >
