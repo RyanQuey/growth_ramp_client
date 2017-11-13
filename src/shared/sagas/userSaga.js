@@ -52,7 +52,8 @@ function* signIn(action) {
         })
         break
     }
-    let user = result.data.user
+
+    let user = result.data.user ? result.data.user : result.data
     let userPlans = result.data.plans
     let providerAccounts = result.data.providerAccounts
 
@@ -68,7 +69,6 @@ function* signIn(action) {
       //no user found
       //TODO: make a separate action for the error
 console.log("no user or error returned...");
-console.log(result);
       yield put({type: SIGN_IN_FAILURE})
       errorActions.handleErrors({
         templateName: "Login",
@@ -91,11 +91,14 @@ console.log(result);
       })
 
     } else {
-      console.log('Error signing in', err)
+      console.log('Error signing in/signing up', err)
       errorActions.handleErrors({
         templateName: "Login",
         templatePart: "credentials",
-        title: "Error signing in with credentials",
+        title: "Error signing in:",
+        errorObject: err,
+      }, null, null, {
+        useInvalidAttributeMessage: true,
       })
     }
   }
@@ -151,7 +154,7 @@ function* signUserOut() {
     yield axios.get(`/api/users/signOut`)
 
   } catch (err) {
-    console.log('There was an error in the signUserOut:', e.message)
+    console.log('There was an error in the signUserOut:', err.message)
     errorActions.handleErrors({
       templateName: "Login",
       templatePart: "signout",

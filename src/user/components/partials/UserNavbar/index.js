@@ -73,7 +73,6 @@ class UserNavbar extends Component {
 }
 
 UserNavbar.propTypes = {
-  user: PropTypes.object,
 }
 
 const mapDispatchToProps = (dispatch) => {
