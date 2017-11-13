@@ -168,7 +168,7 @@ function* signUserOut() {
 function* updateUser(action) {
   try {
     const userData = action.payload
-    const userId = pld.userId || store.getState().user.id
+    const userId = userData.userId || store.getState().user.id
     delete userData.id
 
     const res = yield axios.put(`/api/users/${userId}`, userData)
