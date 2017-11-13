@@ -132,7 +132,7 @@ console.log(options.callbackUrl);
 app.get(`${Helpers.callbackPath}/:provider`, (req, res, next) => {
   const providerName = req.params.provider.toLowerCase()
   if (!["facebook", "twitter", "linkedin"].includes(providerName)) {
-    console.log("someone is hacking us I think");
+    console.log("someone is hacking us I think. They tried:", req.params.provider);
     next()
   }
   const cookie = Helpers.extractCookie(req.headers.cookie)
@@ -146,7 +146,7 @@ app.get(`${Helpers.callbackPath}/:provider`, (req, res, next) => {
       console.log("error after authenticating into provider: (if null, no data returned from passport...)");
       console.log(err);
       if (!err) {
-        console.log(req);
+        //console.log(req);
       }
 
       //TODO implement for other platforms
