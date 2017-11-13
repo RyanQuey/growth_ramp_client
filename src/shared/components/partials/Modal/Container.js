@@ -37,18 +37,6 @@ class ModalContainer extends Component {
     const handleSubmit = this.props.handleSubmit
     let innerContent = [];
 
-    const alerts = _.values(this.props.alerts)
-    if (alerts) {
-      alerts.forEach((alert) => {
-
-        const alertForModal = Helpers.safeDataPath(alert, `options.forComponent`, false) === this.props.currentModal
-
-        if (alertForModal) {
-          innerContent.push(<Alert alert={alert} />)
-        }
-      })
-    }
-
     if (!this.props.disableClose || this.props.title || this.props.subtitle) {
       innerContent.push(
         <div key="header" className={modalHeader}>
@@ -60,6 +48,18 @@ class ModalContainer extends Component {
           {this.props.subtitle && <h2 className={modalsubtitle}>{this.props.subtitle}</h2>}
         </div>
       )
+    }
+
+    const alerts = _.values(this.props.alerts)
+    if (alerts) {
+      alerts.forEach((alert) => {
+
+        const alertForModal = Helpers.safeDataPath(alert, `options.forComponent`, false) === this.props.currentModal
+
+        if (alertForModal) {
+          innerContent.push(<Alert key={`alert-${alert.id}`} alert={alert} />)
+        }
+      })
     }
 
     innerContent.push(this.props.children)

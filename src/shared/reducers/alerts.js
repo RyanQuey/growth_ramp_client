@@ -14,8 +14,7 @@ export default (state = {}, action) => {
       let lastAlertId
       if (Object.keys(state).length >0) {
         const alertCount = Object.keys(state).length
-        const lastAlert = state[alertCount -1]
-        lastAlertId = state[lastAlert].id
+        lastAlertId = Math.max(Object.keys(state))
       } else {
         lastAlertId = 0
       }

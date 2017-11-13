@@ -31,7 +31,6 @@ class SocialLogin extends Component {
     const user = this.props.user;
     const preposition = user ? "to" : "with";
     const providers = this.props.providers || PROVIDERS
-console.log(this.props.scopes);
     const scopeQuery = this.props.scopes ? `?${querystring.stringify({scope: this.props.scopes})}` : "" //take this.props.scopes and convert the object into a query string that will be interpreted by the front end server
     const disabled = this.props.loginPending || this.props.disabled
     //TODO: this button should really make a post...especially when wrapped within a form
@@ -45,11 +44,11 @@ console.log(this.props.scopes);
               <a
                 href={disabled ? "" : `/login/${providerName}${scopeQuery}`}
                 onClick={this.providerLogin.bind(this, providerName)}
+                key={providerName}
               >
                 <Button
                   background={providerName.toLowerCase()}
                   disabled={disabled}
-                  key={providerName}
                   style={Object.keys(providers).length > 1 ? "inverted" : "primary"}
                 >
                   {`Login ${preposition} ${providerName}`}

@@ -1,7 +1,7 @@
 import { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-import { errorActions } from 'shared/actions'
+import { errorActions, alertActions } from 'shared/actions'
 import { Button, Flexbox, Input } from 'shared/components/elements'
 import { SIGN_IN_REQUEST, UPDATE_USER_REQUEST, RESET_PASSWORD_REQUEST } from 'constants/actionTypes'
 
@@ -44,6 +44,8 @@ class UserCredentials extends Component {
   submit(e) {
     e.preventDefault()
     this.props.setPending(true);
+    alertActions.closeAlerts()
+
     let password = this.state.password
     let email = this.state.email
     let token = this.props.viewSettings.modalToken
