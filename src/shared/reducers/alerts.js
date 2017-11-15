@@ -7,37 +7,10 @@ export default (state = {}, action) => {
   switch (action.type) {
     case NEW_ALERT:
       let alert = action.payload
-      if (!alert.options) {
-        alert.options = {}
-      }
-
-      let lastAlertId
-      if (Object.keys(state).length >0) {
-        const alertCount = Object.keys(state).length
-        lastAlertId = Math.max(Object.keys(state))
-      } else {
-        lastAlertId = 0
-      }
-
-      const newId = lastAlertId +1
-      alert.id = newId
-
-      //designate this alert for the modal if it's open
-      //don't need to designate this option for non-modal components...at least for now
-      const currentState = store.getState()
-      const currentModal = Helpers.safeDataPath(currentState, "viewSettings.currentModal", false)
-      if (currentModal && !alert.options.forComponent) {
-        alert.options.forComponent = currentModal
-      }
-
-      const toMerge = {
-        [newId]: alert
-      }
-
-      return Object.assign({}, state, toMerge)
+      return Object.assign({}, state, alert)
     case CLOSE_ALERTS:
 
-      //TODO: only close the alerts in action.payload unless action.payload === "all"
+      //TODO: only close one/some alert(s) in action.payload if action.payload === string/integer
       return {}
 
     default:

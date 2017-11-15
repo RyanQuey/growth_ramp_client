@@ -11,18 +11,4 @@ import {
  *   onClick: , (a function to call on click)
  * }
  */
-export const newAlert = (alert) => {
-console.log(alert);
-  store.dispatch({
-    type: NEW_ALERT,
-    payload: alert
-  })
-}
-
-//alerts should be an array of alert ids, or 'all' to close all
-export const closeAlerts = (alerts = 'all') => {
-  store.dispatch({
-    type: CLOSE_ALERTS,
-    payload: alerts
-  })
-}
+//just using alertActions for now, until async is necessary

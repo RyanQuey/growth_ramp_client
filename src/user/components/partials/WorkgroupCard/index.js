@@ -25,7 +25,7 @@ class WorkgroupCard extends Component {
     //const members = workgroup.members || []
 
     return (
-      <Card height="130px">
+      <Card height="160px">
         <CardHeader title={workgroup.name} />
 
         <div>

@@ -120,8 +120,8 @@ app.get('/login/:provider', ((req, res, next) => {
     options.scope = scope.concat(Helpers[`${providerName}Options`].scope || [])
   }
 
-console.log("callback path (only set for LI)");
-console.log(options.callbackUrl);
+//console.log("callback path (only set for LI)");
+//console.log(options.callbackUrl);
   passport.authenticate(providerName, options)(req, res, next)
 }))
 

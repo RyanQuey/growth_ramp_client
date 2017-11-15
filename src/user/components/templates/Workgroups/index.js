@@ -2,7 +2,11 @@ import { Component } from 'react';
 import { connect } from 'react-redux'
 import { Button, Flexbox, Input } from 'shared/components/elements'
 import { WorkgroupCard } from 'user/components/partials'
+import {
+  withRouter,
+} from 'react-router-dom'
 import { FETCH_WORKGROUP_REQUEST, CREATE_WORKGROUP_REQUEST } from 'constants/actionTypes'
+import { alertActions } from 'shared/actions'
 
 //shows up as buttons in mobile, or sidebar in browser?
 //used in channels and send
@@ -32,6 +36,15 @@ class Workgroups extends Component {
   }
 
   createWorkgroup() {
+    /*if (!this.state.name) {
+      alertActions({
+        title: "Name Required:",
+        message: "Please enter a name and try again",
+        level: "WARNING",
+      })
+
+      return
+    }*/
     this.props.createWorkgroupRequest({
       name: this.state.name,
       ownerId: this.props.user.id,
@@ -77,11 +90,13 @@ class Workgroups extends Component {
             {this.state.creatingGroup ? (
               <form onSubmit={this.createWorkgroup}>
                 <Input
+                  label="Name*"
                   onChange={this.handleName}
+                  placeholder="Workgroup name"
                   value={this.state.name}
                   validate={["required"]}
                 />
-                <Button type="submit">Submit</Button>
+                <Button disabled={!this.state.name} type="submit">Submit</Button>
 
               </form>
             ) : (
@@ -107,6 +122,6 @@ const mapDispatchToProps = (dispatch) => {
   }
 }
 
-const ConnectedWorkgroups = connect(mapStateToProps, mapDispatchToProps)(Workgroups)
+const ConnectedWorkgroups = withRouter(connect(mapStateToProps, mapDispatchToProps)(Workgroups))
 export default ConnectedWorkgroups
 

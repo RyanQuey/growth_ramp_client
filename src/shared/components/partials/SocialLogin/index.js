@@ -7,7 +7,7 @@ import {
   LINK_ACCOUNT_REQUEST,
 } from 'constants/actionTypes'
 import { PROVIDERS, PROVIDER_IDS_MAP } from 'constants/providers'
-import { Button } from 'shared/components/elements'
+import { Button, Icon } from 'shared/components/elements'
 
 class SocialLogin extends Component {
   constructor() {
@@ -50,8 +50,13 @@ class SocialLogin extends Component {
                   background={providerName.toLowerCase()}
                   disabled={disabled}
                   style={Object.keys(providers).length > 1 ? "inverted" : "primary"}
+                  onClick={this.props.setPending}
                 >
-                  {`Login ${preposition} ${providerName}`}
+                  {this.props.pending ? (
+                    <Icon name="spinner" className="fa-spin" color="white" />
+                  ) : (
+                    <span>{`Login ${preposition} ${providerName}`}</span>
+                  )}
                 </Button>
               </a>
             )

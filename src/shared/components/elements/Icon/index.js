@@ -12,7 +12,6 @@ const Icon = ({ border, className, color, name, onClick, size, ...props }) => {
     }
   }
   const style = _.extend(borderStyle, { color: theme.color[color] })
-
   return (
     <i
       aria-hidden="true"

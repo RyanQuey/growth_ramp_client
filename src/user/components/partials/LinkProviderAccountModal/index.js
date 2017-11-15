@@ -18,7 +18,7 @@ class LinkProviderAccount extends Component {
     super(props)
 
     this.state = {
-      loginPending: false,
+      pending: false,
       mode: 'CHOOSE_PROVIDER', //you do this or 'CHOOSE_SCOPE'
       currentProvider: 'FACEBOOK',
       currentAccount: Helpers.safeDataPath(props, "providerAccounts.FACEBOOK.0", false),
@@ -65,7 +65,7 @@ class LinkProviderAccount extends Component {
     }
   }
   setPending() {
-    this.setState({loginPending: true})
+    this.setState({pending: true})
   }
 
   chosenScopes() {
@@ -143,7 +143,7 @@ class LinkProviderAccount extends Component {
                 )}
               </Flexbox>
               <SocialLogin
-                loginPending={this.state.loginPending}
+                pending={this.state.pending}
                 setPending={this.setPending}
                 providers={{[currentProvider]: PROVIDERS[currentProvider]}}
                 scopes={this.chosenScopes()}

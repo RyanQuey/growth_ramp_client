@@ -5,6 +5,9 @@ import { Button } from 'shared/components/elements'
 import {
   PostPicker
 } from 'user/components/partials'
+import {
+  withRouter,
+} from 'react-router-dom'
 
 class viewPosts extends Component {
   constructor() {
@@ -85,4 +88,4 @@ const mapStateToProps = state => {
     posts: state.posts,
   }
 }
-export default connect(mapStateToProps, mapDispatchToProps)(viewPosts)
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(viewPosts))
