@@ -15,21 +15,24 @@ export const closeAlerts = (alerts = 'all') => {
 /* {
  *   title: ,
  *   message: ,
- *   level: ,   (same as error levels)
+ *   level: ,   (same as error levels)(one of "ALERT", "WARNING", "DANGER", "BUG") (don't know if we want this)
  *   timer: ,   ( Boolean, to automatically close after 3 sec ) (defaults to true)
  *   onClick: , (a function to call on click)
  * }
  */
 export const newAlert = (alert) => {
 console.log(alert);
+  const currentState = store.getState()
+  const alertState = currentState.alerts
+
   if (!alert.options) {
     alert.options = {timer: true}
   }
 
   let lastAlertId
-  if (Object.keys(state).length >0) {
-    const alertCount = Object.keys(state).length
-    lastAlertId = Math.max(Object.keys(state))
+  if (Object.keys(alertState).length >0) {
+    const alertCount = Object.keys(alertState).length
+    lastAlertId = Math.max(Object.keys(alertState))
   } else {
     lastAlertId = 0
   }
@@ -39,7 +42,6 @@ console.log(alert);
 
   //designate this alert for the modal if it's open
   //don't need to designate this option for non-modal components...at least for now
-  const currentState = store.getState()
   const currentModal = Helpers.safeDataPath(currentState, "viewSettings.currentModal", false)
   if (currentModal && !alert.options.forComponent) {
     alert.options.forComponent = currentModal

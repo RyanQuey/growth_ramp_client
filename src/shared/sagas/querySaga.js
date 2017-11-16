@@ -7,6 +7,7 @@ import {
   FETCH_PLAN_SUCCESS,
   SET_CURRENT_MODAL,
 } from 'constants/actionTypes'
+import { errorActions, alertActions } from 'shared/actions'
 import { setupSession } from 'lib/socket'
 
 const handleQuery = (rawQuery) => {
@@ -90,14 +91,16 @@ console.log("result of token");
         }
       } catch (err) {
         //TODO make an alert
-        Helpers.notifyOfAPIError({
+        //I really just want to make provider stuff a popup...
+        errorActions.handleErrors({
           title: "Error logging in using provider:",
-          message: "Please try again",
+          message: "Perhaps you tried linking an account that wasn't yours? Please try again",
           templateName: "Home",
           templatePart: "noUser",
-          alert: true
+          errorObject: err,
+        }, null, null, {
+          timer: false
         })
-        console.log(err);
       }
     }
   }
@@ -105,6 +108,7 @@ console.log("result of token");
 
 
 export default function* handleQuerySaga() {
+  //TODO only need to listen on initial page load
   while (true) {
     const action = yield take(HANDLE_QUERY)
     handleQuery(action.payload)

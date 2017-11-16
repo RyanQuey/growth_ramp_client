@@ -53,7 +53,7 @@ class SocialLogin extends Component {
                   onClick={this.props.setPending}
                 >
                   {this.props.pending ? (
-                    <Icon name="spinner" className="fa-spin" color="white" />
+                    <Icon name="spinner" className="fa-spin" color={Object.keys(providers).length > 1 ? "primary" : "white"} />
                   ) : (
                     <span>{`Login ${preposition} ${providerName}`}</span>
                   )}
