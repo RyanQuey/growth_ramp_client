@@ -14,7 +14,7 @@ class Login extends Component {
     super(props)
     this.state = {
       view: props.initialView || 'LOGIN',
-      loginPending: false,
+      pending: false,
     }
 
     this.toggleView = this.toggleView.bind(this)
@@ -26,7 +26,7 @@ class Login extends Component {
     const errors = Helpers.safeDataPath(props, 'errors.Login.onSubmit', false)
 
     if (errors.length > 0 || user && Object.keys(user).length >0) {
-      this.setState({ signingIn: false });
+      this.setState({ pending: false });
     }
 
     if (user && Object.keys(user).length > 0) {
@@ -45,8 +45,8 @@ class Login extends Component {
       }
     })
   }
-  setPending(pending) {
-    this.setState({loginPending: pending})
+  setPending(e) {
+    this.setState({pending: true})
   }
 
   toggleResetPassword(e) {
@@ -93,7 +93,7 @@ class Login extends Component {
         <UserCredentials
           view={view}
           buttonText={generalText}
-          pending={this.state.loginPending}
+          pending={this.state.pending}
           token={this.props.viewSettings.modalToken}
           setPending={this.setPending}
         />
@@ -104,7 +104,7 @@ class Login extends Component {
           <h3>Or {socialText.toLowerCase()} through one of your social networks:</h3>
           <br/>
           <SocialLogin
-            loginPending={this.state.loginPending}
+            pending={this.state.pending}
             setPending={this.setPending}
           />
         </div>}

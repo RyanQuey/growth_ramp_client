@@ -12,11 +12,18 @@ import { Button, Icon } from 'shared/components/elements'
 class SocialLogin extends Component {
   constructor() {
     super()
+    this.state = {
+      chosenProvider: "",
+    }
   }
   //need to enable with e-mail
   providerLogin(providerName, e) {
+    //NOTE: beware of setting onClick on the button, if you do, causes the whole social login to break.
+
     //TODO: eventually have pop-up logic etc. here
     //don't refresh page when button is disabled
+    this.props.setPending(e)
+    this.setState({chosenProvider: chosenProvider})
     this.props.disabled && e.preventDefault()
 
     //works because this runs before the link is followed
@@ -32,7 +39,7 @@ class SocialLogin extends Component {
     const preposition = user ? "to" : "with";
     const providers = this.props.providers || PROVIDERS
     const scopeQuery = this.props.scopes ? `?${querystring.stringify({scope: this.props.scopes})}` : "" //take this.props.scopes and convert the object into a query string that will be interpreted by the front end server
-    const disabled = this.props.loginPending || this.props.disabled
+    const disabled = this.props.pending || this.props.disabled
     //TODO: this button should really make a post...especially when wrapped within a form
 
     return (
@@ -50,9 +57,8 @@ class SocialLogin extends Component {
                   background={providerName.toLowerCase()}
                   disabled={disabled}
                   style={Object.keys(providers).length > 1 ? "inverted" : "primary"}
-                  onClick={this.props.setPending}
                 >
-                  {this.props.pending ? (
+                  {this.props.pending && providerName === this.state.chosenProvider ? (
                     <Icon name="spinner" className="fa-spin" color={Object.keys(providers).length > 1 ? "primary" : "white"} />
                   ) : (
                     <span>{`Login ${preposition} ${providerName}`}</span>

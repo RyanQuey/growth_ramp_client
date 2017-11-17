@@ -64,7 +64,7 @@ class LinkProviderAccount extends Component {
       this.props.onSuccess();
     }
   }
-  setPending() {
+  setPending(e) {
     this.setState({pending: true})
   }
 
