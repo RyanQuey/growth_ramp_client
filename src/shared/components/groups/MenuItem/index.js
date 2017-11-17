@@ -12,7 +12,7 @@ const MenuItem = ({ text, children, icon, link, nav, onClick, location, badge, h
     <div>
       {badge && <span className={classes.badge}>{badge}</span>}
       {icon && <Icon name={icon} className={classes.icon} />}
-      &nbsp;&nbsp;&nbsp;{text}
+      {text}
     </div>
   )
 

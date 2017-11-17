@@ -56,7 +56,7 @@ console.log(alert);
     payload,
   })
 
-  if (options.timer) {
+  if (alert.options.timer) {
     setTimeout(() => {
       closeAlerts(newId)
     }, 3000)
