@@ -1,7 +1,7 @@
 import { Component } from 'react';
 import { connect } from 'react-redux'
 import { FETCH_POST_REQUEST, CREATE_POST_REQUEST } from 'constants/actionTypes'
-import { Button } from 'shared/components/elements'
+import { Button, Flexbox } from 'shared/components/elements'
 import {
   PostPicker
 } from 'user/components/partials'
@@ -54,9 +54,9 @@ class viewPosts extends Component {
       <div>
         <h1>Posts</h1>
         {Object.keys(this.props.posts).length > 0 ? (
-          <div>
+          <Flexbox justify="center">
             <PostPicker />
-          </div>
+          </Flexbox>
         ) : (
           <div>
             <h3>No posts yet.</h3>

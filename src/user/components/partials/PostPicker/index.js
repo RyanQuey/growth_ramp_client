@@ -50,16 +50,16 @@ class PostPicker extends Component {
           return (
             <tr key={postId}>
               <td>
-                {post.createdAt}
+                {moment(post.createdAt).format("MM-DD-YYYY hh:mm")}
               </td>
               <td>
-                {post.status}
+                {post.status.titleCase()}
               </td>
               <td>
                 {(post.planId && this.props.plans[post.planId].name) || "No plan"}
               </td>
               <td>
-                {post.publishedAt || "unpublished"}
+                {post.publishedAt ? moment(post.publishedAt).format("mm-dd-yyyy hh:mm") : "Unpublished"}
               </td>
               <td>
                 <ButtonGroup vertical={true}>

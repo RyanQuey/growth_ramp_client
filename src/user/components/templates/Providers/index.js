@@ -1,7 +1,7 @@
 import { Component } from 'react';
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
-import { Button } from 'shared/components/elements'
+import { Button, Icon } from 'shared/components/elements'
 import { PROVIDERS } from 'constants/providers'
 import {
   AccountsForProvider
@@ -55,6 +55,7 @@ class Providers extends Component {
             {providers.map((provider) => (
               <Link key={provider} to={`/providerAccounts/${provider.toLowerCase()}`}>
                 <Button style="inverted">
+                  {<Icon name={provider.toLowerCase()}  className={classes.icon}/>}
                   {PROVIDERS[provider].name}
                 </Button>
               </Link>
