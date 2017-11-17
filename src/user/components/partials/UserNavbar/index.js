@@ -54,7 +54,7 @@ class UserNavbar extends Component {
             </Link>
 
             {!userSettingsOnly && <Button onClick={this.createPost}>
-              New post
+              New Post
             </Button>}
           </Flexbox>
 

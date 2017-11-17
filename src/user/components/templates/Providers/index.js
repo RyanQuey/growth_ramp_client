@@ -44,7 +44,7 @@ class Providers extends Component {
     //just rendering general info
     return (
       <div>
-        <h1>Provider Accounts</h1>
+        <h1>Platforms</h1>
         <p>At least for now, choose and add providers in the sidebar, you have a clear distinction from when adding accounts to a plan</p>
         <p>details about the selected provider will appear here in the main view</p>
 <hr/>

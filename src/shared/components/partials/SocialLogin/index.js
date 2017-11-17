@@ -23,7 +23,7 @@ class SocialLogin extends Component {
     //TODO: eventually have pop-up logic etc. here
     //don't refresh page when button is disabled
     this.props.setPending(e)
-    this.setState({chosenProvider: chosenProvider})
+    this.setState({chosenProvider: providerName})
     this.props.disabled && e.preventDefault()
 
     //works because this runs before the link is followed
@@ -49,7 +49,7 @@ class SocialLogin extends Component {
 
             return (
               <a
-                href={disabled ? "" : `/login/${providerName}${scopeQuery}`}
+                href={`/login/${providerName}${scopeQuery}`}
                 onClick={this.providerLogin.bind(this, providerName)}
                 key={providerName}
               >

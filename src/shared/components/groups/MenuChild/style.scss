@@ -23,6 +23,12 @@
     }
   }
 
+  .icon {
+    //float: right;
+    padding: 3px 10px;
+    margin-top: -3px;
+  }
+
   .badge {
     display: block;
     background: $primary;
