@@ -9,9 +9,10 @@ import {
 import { CLOSE_MODAL, LINK_ACCOUNT_REQUEST } from 'constants/actionTypes'
 import { SocialLogin } from 'shared/components/partials'
 import { AccountCard } from 'user/components/partials'
-import { Button, Form, Card, Flexbox } from 'shared/components/elements'
+import { Button, Form, Card, Flexbox, Icon } from 'shared/components/elements'
 import { ButtonGroup } from 'shared/components/groups'
 import { PROVIDERS } from 'constants/providers'
+import classes from './style.scss'
 
 class LinkProviderAccount extends Component {
   constructor(props) {
@@ -105,6 +106,7 @@ class LinkProviderAccount extends Component {
                     selected={provider === currentProvider}
                     onClick={this.chooseProvider.bind(this, provider)}
                   >
+                    {<Icon name={provider.toLowerCase()}  className={classes.icon}/>}
                     {PROVIDERS[provider].name}
                   </Button>
                 )

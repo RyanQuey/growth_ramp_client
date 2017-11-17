@@ -7,6 +7,7 @@ import {
   AccountsForProvider
 } from 'user/components/partials'
 import { SET_CURRENT_MODAL } from 'constants/actionTypes'
+import classes from './style.scss'
 
 class Providers extends Component {
   constructor() {

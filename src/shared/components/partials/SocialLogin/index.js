@@ -8,6 +8,7 @@ import {
 } from 'constants/actionTypes'
 import { PROVIDERS, PROVIDER_IDS_MAP } from 'constants/providers'
 import { Button, Icon } from 'shared/components/elements'
+import classes from './style.scss'
 
 class SocialLogin extends Component {
   constructor() {
@@ -61,7 +62,10 @@ class SocialLogin extends Component {
                   {this.props.pending && providerName === this.state.chosenProvider ? (
                     <Icon name="spinner" className="fa-spin" color={Object.keys(providers).length > 1 ? "primary" : "white"} />
                   ) : (
-                    <span>{`Login ${preposition} ${providerName}`}</span>
+                    <span>
+                      {<Icon name={providerName.toLowerCase()}  className={classes.icon}/>}
+                      {`Login ${preposition} ${providerName}`}
+                    </span>
                   )}
                 </Button>
               </a>
