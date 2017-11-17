@@ -69,11 +69,14 @@ class Workgroups extends Component {
     return (
       <div>
         <div>
-          <h1>Workgroups</h1>
-          <p>will have workgroup cards. If selected (will have button to select), everything will switch to the workgroup view. instead of My Posts it will be Workgroup.name Posts</p>
-<p>however, don't do too much in this view. Configuring the workgroup, adding members, etc should require navigating to that workgroup. Will grab the group members, group posts, group plans, etc at that point.</p>
+          <h1>Workgroups: for 2.0</h1>
+          <p>If selected, everything will switch to the workgroup view. Instead of My Posts it will be Workgroup.name Posts, etc</p>
+          <p>There will not be a ton of overlap between views. You cannot view workgroup posts, plans, etc until you switch to that workgroup (similar to github)</p>
+<p>OTHERWISE very confusing to work out whose is what and so on</p>
+<p>Don't want permissions to be too confusing, which is part of why we're doing it this way. Either a group owns a post, or a user does. If a user wants to transfer ownership to the group, fine. If a user wants to copy a plan and let group use it, create a new record, they are now separate plans. Keep it clean</p>
+<hr/>
+<p>Don't do too much in this particular view. Configuring the workgroup, adding members, etc should require navigating to that workgroup. Will grab the group members, group posts, group plans, etc at that point.</p>
 <p>don't have plans that are shared between user and group (?) Just if a group wants that plan, transfer it, or clone it...actually, that's false, might need to be part of several groups</p>
-                  <p>card Will have general summary, permissions per account, buttons to share permissions, and everything that is in the add provider modal</p>
           <Flexbox>
             {Object.keys(workgroups).map((groupId) => {
               const group = workgroups[groupId]

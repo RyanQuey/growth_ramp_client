@@ -54,8 +54,7 @@ class UserSidebar extends Component {
                 </ul>
               )}
             </MenuItem>
-            <hr/>
-            <MenuItem link="/workgroups" text="Workgroups" nav={true} icon="users"/>
+            {false && <MenuItem link="/workgroups" text="Workgroups" nav={true} icon="users"/>}
 
           </ul>
         </div>

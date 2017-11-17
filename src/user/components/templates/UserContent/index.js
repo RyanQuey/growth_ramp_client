@@ -32,7 +32,7 @@ class UserContent extends Component {
             <Route path="/plans" component={Plans} />
             <Route path="/providerAccounts/:provider" component={ShowProvider} />
             <Route path="/providerAccounts/:provider?" component={Providers} />
-            <Route path="/workgroups" component={Workgroups} />
+            {false && <Route path="/workgroups" component={Workgroups} />}
           </Switch>
         </Flexbox>
       </main>
