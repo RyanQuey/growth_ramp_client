@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { take } from 'redux-saga/effects'
 import {
   CREATE_PLAN_REQUEST,
-  UPDATE_POST_REQUEST,
+  UPDATE_CAMPAIGN_REQUEST,
   SET_CURRENT_PLAN,
 } from 'constants/actionTypes'
 import { Input, Button } from 'shared/components/elements'
@@ -28,7 +28,7 @@ class Start extends Component {
 
   componentDidMount() {
     //so, if back button is pressed in future, won't continually bounce you to "Channels"
-    if (this.props.currentPost && this.props.currentPost.planId && this.props.initialOpening) {
+    if (this.props.currentCampaign && this.props.currentCampaign.planId && this.props.initialOpening) {
       this.props.switchTo("Channels", true)
     }
 
@@ -38,14 +38,14 @@ class Start extends Component {
     //now switching after choosing a plan option
     if (props.currentPlan && (props.currentPlan !== this.props.currentPlan)) {
 
-    } else if (props.currentPost && props.currentPost.planId && props.initialOpening) {
+    } else if (props.currentCampaign && props.currentCampaign.planId && props.initialOpening) {
       this.props.switchTo("Channels")
     }
   }
 
   handleClickPlan(plan) {
-    this.props.updatePostRequest({
-      id: this.props.currentPost.id,
+    this.props.updateCampaignRequest({
+      id: this.props.currentCampaign.id,
       planId: plan.id,
       userId: this.props.user.id,
     })
@@ -100,7 +100,7 @@ class Start extends Component {
     const defaults = {
       userId,
       name: this.state.name,
-      associatedPost: this.props.currentPost.id,
+      associatedCampaign: this.props.currentCampaign.id,
     }
 
     const payload = Object.assign(defaults, this.state.planAttributes)
@@ -195,7 +195,7 @@ class Start extends Component {
         {this.state.mode === "USE_EXISTING_PLAN" && (
           <div>
             <h4>
-              Pick a plan to use. You will have a chance to edit your plan before sending your post.
+              Pick a plan to use. You will have a chance to edit your plan before sending your campaign.
             </h4>
             <PlanPicker
               onPick={this.handleClickPlan}
@@ -222,7 +222,7 @@ class Start extends Component {
         {this.state.newPlanType === "COPY_AN_EXISTING_PLAN" && (
           <div>
             <h4>
-              Pick a plan to make a copy from. You will have a chance to edit your new plan before sending your post
+              Pick a plan to make a copy from. You will have a chance to edit your new plan before sending your campaign
             </h4>
             <PlanPicker
               onPick={this.props.choosePlan}
@@ -249,7 +249,7 @@ class Start extends Component {
 const mapStateToProps = state => {
   return {
     user: state.user,
-    posts: state.posts,
+    campaigns: state.campaigns,
     plans: state.plans,
     currentPlan: state.currentPlan,
   }
@@ -257,7 +257,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = (dispatch) => {
   return {
     createPlanRequest: (payload) => dispatch({type: CREATE_PLAN_REQUEST, payload}),
-    updatePostRequest: (payload) => dispatch({type: UPDATE_POST_REQUEST, payload}),
+    updateCampaignRequest: (payload) => dispatch({type: UPDATE_CAMPAIGN_REQUEST, payload}),
     choosePlan: (payload) => {
       dispatch({type: SET_CURRENT_PLAN, payload})
     },

@@ -42,7 +42,7 @@ class UserSidebar extends Component {
 
         <div className={classes.nav}>
           <ul className={classes.sidebarNav}>
-            <MenuItem link="/posts" text="Posts" nav={true} exact={true} icon="sticky-note"/>
+            <MenuItem link="/campaigns" text="Campaigns" nav={true} exact={true} icon="bullhorn"/>
             <MenuItem link="/plans" text="Plans" nav={true} icon="map"/>
             <MenuItem link="/providerAccounts" text="Platforms" nav={true} onClick={this.handleClick.bind(this, "providerAccounts")} icon="vcard">
               {(true || this.state.providerAccounts) && (

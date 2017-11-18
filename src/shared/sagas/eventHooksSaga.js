@@ -6,17 +6,17 @@
 import { call, put, takeLatest, all } from 'redux-saga/effects'
 import {
   CURRENT_USER_OUTDATED,
-  USER_POSTS_OUTDATED,
+  USER_CAMPAIGNS_OUTDATED,
 
   FETCH_USER_REQUEST,
   FETCH_CURRENT_USER_REQUEST,
-  FETCH_POST_REQUEST,
+  FETCH_CAMPAIGN_REQUEST,
 }  from 'constants/actionTypes'
 
-function* refreshUserPosts(action) {
+function* refreshUserCampaigns(action) {
   try {
     yield all([
-      put({type: FETCH_POST_REQUEST}),
+      put({type: FETCH_CAMPAIGN_REQUEST}),
     ])
   } catch (e) {
     yield Helpers.notifyOfAPIError(e)
@@ -24,5 +24,5 @@ function* refreshUserPosts(action) {
 }
 
 export default function* hooksSaga() {
-  yield takeLatest(USER_POSTS_OUTDATED, refreshUserPosts)
+  yield takeLatest(USER_CAMPAIGNS_OUTDATED, refreshUserCampaigns)
 }

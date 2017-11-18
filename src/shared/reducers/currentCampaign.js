@@ -1,26 +1,26 @@
 import {
-  CREATE_POST_SUCCESS,
-  UPDATE_POST_SUCCESS,
-  SET_POST,
+  CREATE_CAMPAIGN_SUCCESS,
+  UPDATE_CAMPAIGN_SUCCESS,
+  SET_CAMPAIGN,
   SIGN_OUT_SUCCESS,
 } from 'constants/actionTypes'
 
-const currentPostReducer = (state = null, action) => {
+const currentCampaignReducer = (state = null, action) => {
 
   switch (action.type) {
 
 // NOTE just using params for now. Easier to track, alerts user what's happening too
-    /*case CREATE_POST_SUCCESS:
+    /*case CREATE_CAMPAIGN_SUCCESS:
       return Object.assign({}, action.payload)
 
-    case UPDATE_POST_SUCCESS:
-      if (store.getState().currentPost.id === action.payload.id) {
+    case UPDATE_CAMPAIGN_SUCCESS:
+      if (store.getState().currentCampaign.id === action.payload.id) {
         return Object.assign({}, action.payload)
       } else {
         return state
       }
 
-    case SET_POST:
+    case SET_CAMPAIGN:
       return Object.assign({}, action.payload)
 
     case SIGN_OUT_SUCCESS:
@@ -31,5 +31,5 @@ const currentPostReducer = (state = null, action) => {
   }
 }
 
-export default currentPostReducer
+export default currentCampaignReducer
 

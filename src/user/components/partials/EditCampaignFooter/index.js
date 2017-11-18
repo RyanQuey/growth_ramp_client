@@ -11,7 +11,7 @@ const sections = [
 
 ]
 
-class PromoToolFooter extends Component {
+class EditCampaignFooter extends Component {
   constructor() {
     super()
 
@@ -59,5 +59,5 @@ const mapDispatchToProps = (dispatch) => {
   }
 }
 
-const ConnectedFooter = connect(mapStateToProps, mapDispatchToProps)(PromoToolFooter)
+const ConnectedFooter = connect(mapStateToProps, mapDispatchToProps)(EditCampaignFooter)
 export default ConnectedFooter

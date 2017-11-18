@@ -25,7 +25,7 @@ class UnauthenticatedContent extends Component {
           })}
 
           <Switch>
-            <Route exact path="/" component={LandingPage} />
+            <Route path="/" component={LandingPage} />
           </Switch>
         </Flexbox>
       </main>

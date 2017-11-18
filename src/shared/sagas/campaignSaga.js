@@ -1,39 +1,39 @@
 import { put, select, take, takeLatest, call, all } from 'redux-saga/effects'
 import { delay } from 'redux-saga'
-import { PUBLISH_POST_REQUEST,
+import { PUBLISH_CAMPAIGN_REQUEST,
   SIGN_IN_POPUP_CLOSED,
-  PUBLISH_POST_SUCCESS,
+  PUBLISH_CAMPAIGN_SUCCESS,
   SIGN_IN_REQUEST,
-  CREATE_POST_SUCCESS,
-  CREATE_POST_REQUEST,
-  DESTROY_POST_REQUEST,
-  DESTROY_POST_SUCCESS,
-  FETCH_POST_REQUEST,
-  FETCH_POST_SUCCESS,
-  SET_POST,
-  UPDATE_POST_REQUEST,
-  UPDATE_POST_SUCCESS,
-  USER_POSTS_OUTDATED,
+  CREATE_CAMPAIGN_SUCCESS,
+  CREATE_CAMPAIGN_REQUEST,
+  DESTROY_CAMPAIGN_REQUEST,
+  DESTROY_CAMPAIGN_SUCCESS,
+  FETCH_CAMPAIGN_REQUEST,
+  FETCH_CAMPAIGN_SUCCESS,
+  SET_CAMPAIGN,
+  UPDATE_CAMPAIGN_REQUEST,
+  UPDATE_CAMPAIGN_SUCCESS,
+  USER_CAMPAIGNS_OUTDATED,
 } from 'constants/actionTypes'
 import {errorActions} from 'shared/actions'
 
 function* sendToProvider(providerName, pld, tokenInfo) {
   const publishFunctions = {
     facebook: () => {
-      /*FB.api(`/me/feed`, 'post', pld.post.message, (response) => {
+      /*FB.api(`/me/feed`, 'campaign', pld.campaign.message, (response) => {
         if (!response || response.error) {
           let newError = helpers.handleError(response.error);
 
         } else {
-          alert('Facebook post ID: ' + response.id);
+          alert('Facebook campaign ID: ' + response.id);
         }
       })*/
     },
     twitter: () => {
       tokenInfo.api.__call("statuses_update", {
-        status: pld.post.content
+        status: pld.campaign.content
       }, function(reply){
-        console.log("Twitter Post Succeeded: ",reply)
+        console.log("Twitter Campaign Succeeded: ",reply)
       });
     },
     linkedin: () => {
@@ -66,7 +66,7 @@ function* checkForToken(providerName, index, logins) {
   return {tokenInfo, logins}
 }
 
-function* publishPost(action) {
+function* publishCampaign(action) {
   let logins = 0
   try {
     const pld = action.payload
@@ -82,20 +82,20 @@ function* publishPost(action) {
       //yield all, or promise all
       yield call(sendToProvider, providerName, pld, tokenInfo)
     }
-    //mark post as published
-    yield database.ref(`posts/${pld.post.id}/published`).set(true)
-    yield put({type: PUBLISH_POST_SUCCESS, payload: {providers: pld.providers}})
+    //mark campaign as published
+    yield database.ref(`campaigns/${pld.campaign.id}/published`).set(true)
+    yield put({type: PUBLISH_CAMPAIGN_SUCCESS, payload: {providers: pld.providers}})
 
   } catch (err) {
-    console.log(`Error in Create post Saga ${err}`)
+    console.log(`Error in Create campaign Saga ${err}`)
   }
 }
 
-function* createPost(action) {
+function* createCampaign(action) {
   try {
     const pld = action.payload
 
-    let blankPost = {
+    let blankCampaign = {
       title: "",
       content: "",
       status: "DRAFT",
@@ -103,25 +103,25 @@ function* createPost(action) {
       planId: pld.planId, //might be undefined
     }
 
-    const res = yield axios.post("/api/posts", blankPost) //eventually switch to socket
+    const res = yield axios.post("/api/campaigns", blankCampaign) //eventually switch to socket
     const newRecord = res.data
-    const postId = newRecord.id
+    const campaignId = newRecord.id
 
     if (action.cb) {
       action.cb(newRecord)
     }
     yield all([
-      put({ type: CREATE_POST_SUCCESS, payload: {[postId]: newRecord}}),
-      //TODO especially when there are more posts, will want to just merge this one post to the posts list, rather than fetching all..
-      put({type: USER_POSTS_OUTDATED}),
+      put({ type: CREATE_CAMPAIGN_SUCCESS, payload: {[campaignId]: newRecord}}),
+      //TODO especially when there are more campaigns, will want to just merge this one campaign to the campaigns list, rather than fetching all..
+      put({type: USER_CAMPAIGNS_OUTDATED}),
     ])
 
   } catch (err) {
-    console.log(`Error in Create post Saga ${err}`)
+    console.log(`Error in Create campaign Saga ${err}`)
     errorActions.handleErrors({
-      templateName: "Post",
+      templateName: "Campaign",
       templatePart: "create",
-      title: "Error creating post",
+      title: "Error creating campaign",
       errorObject: err,
     })
   }
@@ -129,99 +129,99 @@ function* createPost(action) {
 
 // need to make sure that the current user and the userId are identical for security reasons
 // may try using state.user.uid instead, just pulling from the store directly
-//Only want to retrieve this user's posts once...for now
+//Only want to retrieve this user's campaigns once...for now
 //TODO: set up a listener, so that all data the matter which browser etc. will be lively updated (?), Even if multiple people are working on it
-function* fetchPosts(action) {
+function* fetchCampaigns(action) {
   try {
     const pld = action.payload || {}
     const userId = pld.userId || store.getState().user.id//making it so no reason to actually attach a payload...
 
-    //TODO: eventually they filter out posts that have already been sent
-    //also want to just retrieve a specific post sometimes...ie, be able to pass in criteria
-    const res = yield axios.get(`/api/users/${userId}/posts`) //eventually switch to socket
+    //TODO: eventually they filter out campaigns that have already been sent
+    //also want to just retrieve a specific campaign sometimes...ie, be able to pass in criteria
+    const res = yield axios.get(`/api/users/${userId}/campaigns`) //eventually switch to socket
 
     //converting into object
-    const posts = res.data.reduce((acc, post) => {
-      acc[post.id] = post
+    const campaigns = res.data.reduce((acc, campaign) => {
+      acc[campaign.id] = campaign
       return acc
     }, {})
     yield all([
-      put({type: FETCH_POST_SUCCESS, payload: posts})
+      put({type: FETCH_CAMPAIGN_SUCCESS, payload: campaigns})
     ])
 
   } catch (err) {
-    console.log('posts fetch failed', err)
+    console.log('campaigns fetch failed', err)
     // yield put(userFetchFailed(err.message))
   }
 }
 
 //NOTE: make sure to always attach the userId to the payload, for all updates. Saves a roundtrip for the api  :)
-function* updatePost(action) {
+function* updateCampaign(action) {
   try {
-    const postData = action.payload
-console.log(postData);
+    const campaignData = action.payload
+console.log(campaignData);
 
-    const res = yield axios.put(`/api/posts/${postData.id}`, postData) //eventually switch to socket
+    const res = yield axios.put(`/api/campaigns/${campaignData.id}`, campaignData) //eventually switch to socket
 
     yield all([
-      put({ type: UPDATE_POST_SUCCESS, payload: res.data}),
+      put({ type: UPDATE_CAMPAIGN_SUCCESS, payload: res.data}),
     ])
 
   } catch (err) {
-    console.log(`Error in update post Saga ${err}`)
+    console.log(`Error in update campaign Saga ${err}`)
   }
 }
 
-function* destroyPost(action) {
+function* destroyCampaign(action) {
   try {
     const pld = action.payload
 
-    //TODO: eventually they filter out posts that have already been sent
-    const res = yield axios.delete(`/api/posts/${pld.id}`) //eventually switch to socket
+    //TODO: eventually they filter out campaigns that have already been sent
+    const res = yield axios.delete(`/api/campaigns/${pld.id}`) //eventually switch to socket
     yield all([
-      put({type: DESTROY_POST_SUCCESS, payload: res}),
-      put({type: USER_POSTS_OUTDATED}),
+      put({type: DESTROY_CAMPAIGN_SUCCESS, payload: res}),
+      put({type: USER_CAMPAIGNS_OUTDATED}),
     ])
 
   } catch (err) {
-    console.log('posts destroy failed', err)
+    console.log('campaigns destroy failed', err)
   }
 }
 
 
 //actually don't need this for now...but might later, so whatever
-function* populatePost(action) {
+function* populateCampaign(action) {
   try {
-    const post = action.payload
+    const campaign = action.payload
     const userId = pld.userId
 
-    //TODO: eventually they filter out posts that have already been sent
-    const res = yield axios.get(`/api/posts/${post.id}?populate=planId`) //eventually switch to socket
+    //TODO: eventually they filter out campaigns that have already been sent
+    const res = yield axios.get(`/api/campaigns/${campaign.id}?populate=planId`) //eventually switch to socket
 
     //converting into object
-    const posts = res.data.reduce((acc, post) => {
-      acc[post.id] = post
+    const campaigns = res.data.reduce((acc, campaign) => {
+      acc[campaign.id] = campaign
       return acc
     }, {})
     yield all([
-      //put({type: FETCH_POST_SUCCESS, payload: posts})
+      //put({type: FETCH_CAMPAIGN_SUCCESS, payload: campaigns})
     ])
 
   } catch (err) {
-    console.log('posts fetch failed', err)
+    console.log('campaigns fetch failed', err)
     // yield put(userFetchFailed(err.message))
   }
 }
 
 
-export default function* postSaga() {
-  yield takeLatest(FETCH_POST_REQUEST, fetchPosts)
-  yield takeLatest(CREATE_POST_REQUEST, createPost)
-  yield takeLatest(UPDATE_POST_REQUEST, updatePost)
-  yield takeLatest(DESTROY_POST_REQUEST, destroyPost)
-  yield takeLatest(PUBLISH_POST_REQUEST, publishPost)
-  //when setting as the current post, will want to populate several of the associations
-  //yield takeLatest(SET_POST, populatePost)
+export default function* campaignSaga() {
+  yield takeLatest(FETCH_CAMPAIGN_REQUEST, fetchCampaigns)
+  yield takeLatest(CREATE_CAMPAIGN_REQUEST, createCampaign)
+  yield takeLatest(UPDATE_CAMPAIGN_REQUEST, updateCampaign)
+  yield takeLatest(DESTROY_CAMPAIGN_REQUEST, destroyCampaign)
+  yield takeLatest(PUBLISH_CAMPAIGN_REQUEST, publishCampaign)
+  //when setting as the current campaign, will want to populate several of the associations
+  //yield takeLatest(SET_CAMPAIGN, populateCampaign)
 }
 
 

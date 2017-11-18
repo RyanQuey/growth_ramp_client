@@ -8,13 +8,14 @@ class ModalContainer extends Component {
     const html = document.querySelector("html").style.overflowY != "hidden"
     const body = document.querySelector("body").style.overflowY != "hidden"
 
-    if (nextProps.visible && !this.props.visible) {
+    if (nextProps.visible) {
       document.querySelector("html").style.overflowY = "hidden"
       document.querySelector("body").style.overflowY = "hidden"
 
-    } else if (this.props.visible && !nextProps.visible) {
+    } else if (!nextProps.visible) {
       document.querySelector("html").style.overflowY = "auto"
       document.querySelector("body").style.overflowY = "auto"
+
     }
   }
   componentWillUnmount (){
@@ -23,11 +24,6 @@ class ModalContainer extends Component {
   }
 
   render (){
-
-    if (this.props.name !== this.props.currentModal) {
-      return null
-    }
-
     const {
       modal,
       modalDialog,
@@ -55,11 +51,10 @@ class ModalContainer extends Component {
       )
     }
 
-    //convert to array
-    //don't make children part of this array, or when the alerts rerender, might cause the children to rerender (key might solve it)
     const alerts = _.values(this.props.alerts)
     if (alerts) {
       alerts.forEach((alert) => {
+
         const alertForModal = Helpers.safeDataPath(alert, `options.forComponent`, false) === this.props.currentModal
 
         if (alertForModal) {
@@ -68,32 +63,34 @@ class ModalContainer extends Component {
       })
     }
 
-    return (
-      <div className={[modal || ""].join(" ")}>
-        <div className={modalDialog}>
-          <div className={modalContent}>
-            {handleSubmit ? (
-              <form onSubmit={handleSubmit}>
-                {innerContent}
-                {this.props.children}
-              </form>
-            ) : (
-              <div>
-                {innerContent}
-                {this.props.children}
-              </div>
-            )}
+    innerContent.push(this.props.children)
+
+    if (this.props.visible) {
+      return (
+        <div className={[modal || ""].join(" ")}>
+          <div className={modalDialog}>
+            <div className={modalContent}>
+              {handleSubmit ? (
+                <form onSubmit={handleSubmit}>
+                  {innerContent}
+                </form>
+              ) : (
+                innerContent
+              )}
+            </div>
           </div>
         </div>
-      </div>
-    )
+      )
+    } else {
+      return <span />
+    }
   }
 }
 
 const mapStateToProps = (state) => {
   return {
-    alerts: state.shared.alerts,
-    currentModal: state.shared.viewSettings.currentModal,
+    alerts: state.alerts,
+    currentModal: state.viewSettings.currentModal,
   }
 }
 

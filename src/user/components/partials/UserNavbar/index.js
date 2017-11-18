@@ -12,7 +12,7 @@ import {
 } from 'shared/components/elements'
 import { AccountMenu } from 'shared/components/partials'
 import { Logo } from 'shared/components/elements'
-import {SET_CURRENT_MODAL, CREATE_POST_REQUEST} from 'constants/actionTypes'
+import {SET_CURRENT_MODAL, CREATE_CAMPAIGN_REQUEST} from 'constants/actionTypes'
 import theme from 'theme'
 import classes from './style.scss'
 
@@ -21,16 +21,16 @@ class UserNavbar extends Component {
     super(props)
 
     this.openLoginModal = this.openLoginModal.bind(this)
-    this.createPost = this.createPost.bind(this)
+    this.createCampaign = this.createCampaign.bind(this)
   }
 
-  createPost() {
+  createCampaign() {
     //to run on success
-    const cb = (newPost) => {
-      this.props.history.push(`/posts/${newPost.id}/edit`)
+    const cb = (newCampaign) => {
+      this.props.history.push(`/campaigns/${newCampaign.id}/edit`)
     }
 
-    this.props.createPostRequest(cb)
+    this.props.createCampaignRequest(cb)
   }
 
   openLoginModal(e) {
@@ -53,8 +53,8 @@ class UserNavbar extends Component {
               <Logo />
             </Link>
 
-            {!userSettingsOnly && <Button onClick={this.createPost}>
-              New Post
+            {!userSettingsOnly && <Button onClick={this.createCampaign}>
+              New Campaign
             </Button>}
           </Flexbox>
 
@@ -78,12 +78,12 @@ UserNavbar.propTypes = {
 const mapDispatchToProps = (dispatch) => {
   return {
     setCurrentModal: (payload) => dispatch({type: SET_CURRENT_MODAL, payload}),
-    createPostRequest: (cb) => {
-      const newPost = {
+    createCampaignRequest: (cb) => {
+      const newCampaign = {
         userId: store.getState().user.id,
       }
 
-      return dispatch({type: CREATE_POST_REQUEST, payload: newPost, cb})
+      return dispatch({type: CREATE_CAMPAIGN_REQUEST, payload: newCampaign, cb})
     },
   }
 }

@@ -1,17 +1,17 @@
 import { Component } from 'react';
 import { connect } from 'react-redux'
 import {
- EditPost
+ EditCampaign
 } from 'user/components/templates'
-import { CREATE_POST_REQUEST } from 'constants/actionTypes'
-import ViewPosts from './view'
+import { CREATE_CAMPAIGN_REQUEST } from 'constants/actionTypes'
+import ViewCampaigns from './view'
 import {
   withRouter,
   Route,
   Switch,
 } from 'react-router-dom'
 
-class Posts extends Component {
+class Campaigns extends Component {
   constructor() {
     super()
     this.state = {
@@ -22,17 +22,17 @@ class Posts extends Component {
   }
 
   componentDidMount() {
-    //if (this.props.location.pathname === "/posts/edit" && !this.props.currentPost) {
-    //  this.props.history.push("/posts")
+    //if (this.props.location.pathname === "/campaigns/edit" && !this.props.currentCampaign) {
+    //  this.props.history.push("/campaigns")
     //}
   }
 
   render() {
-    //const posts = this.props.posts
+    //const posts = this.props.campaigns
 
     return (
       <div>
-        <ViewPosts />
+        <ViewCampaigns />
       </div>
     );
   }
@@ -41,16 +41,16 @@ class Posts extends Component {
 const mapStateToProps = state => {
   return {
     user: state.user,
-    posts: state.posts,
-    currentPost: state.currentPost,
+    campaigns: state.campaigns,
+    currentCampaign: state.currentCampaign,
   }
 }
 const mapDispatchToProps = (dispatch) => {
   return {
-    createPostRequest: (data) => dispatch({type: CREATE_POST_REQUEST, payload: data}),
+    createPostRequest: (data) => dispatch({type: CREATE_CAMPAIGN_REQUEST, payload: data}),
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Posts)
+export default connect(mapStateToProps, mapDispatchToProps)(Campaigns)
 
 

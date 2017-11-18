@@ -5,10 +5,10 @@ import {
   Send,
   Channels,
   Compose,
-  PromoToolFooter
+  EditCampaignFooter
 } from 'user/components/partials'
 import { Navbar } from 'shared/components/elements'
-import { FETCH_POST_REQUEST, CREATE_POST_REQUEST } from 'constants/actionTypes'
+import { FETCH_CAMPAIGN_REQUEST, CREATE_CAMPAIGN_REQUEST } from 'constants/actionTypes'
 import theme from 'theme'
 
 const sections = {
@@ -18,7 +18,7 @@ const sections = {
   Send,
 }
 
-class PromoTool extends Component {
+class EditCampaign extends Component {
   constructor() {
     super()
     this.state = {
@@ -31,14 +31,14 @@ class PromoTool extends Component {
   }
 
   componentDidMount() {
-    const currentPost = this.props.posts[this.props.match.params.postId]
-    if (!currentPost) {
+    const currentCampaign = this.props.campaigns[this.props.match.params.campaignId]
+    if (!currentCampaign) {
       //this action doesn't yet support any criteria
-      this.props.fetchPostRequest({userId: this.props.user.id})
+      this.props.fetchCampaignRequest({userId: this.props.user.id})
     }
   }
 
-  //can be called from the promoToolFooter or each of the 4 sections
+  //can be called from the EditCampaignFooter or each of the 4 sections
   //initial opening should only be called from the section's componentWillReceiveProps/componentDidMount
   switchTo(next, initialOpening) {
     //const ref = this.refs[next]
@@ -52,7 +52,7 @@ console.log(next);
   render() {
     const c = this;
     const Tag = sections[this.state.currentSection]
-    const currentPost = this.props.posts[this.props.match.params.postId]
+    const currentCampaign = this.props.campaigns[this.props.match.params.campaignId]
 
     return (
       <div>
@@ -69,20 +69,20 @@ console.log(next);
         </Navbar>
 
         <div>
-          {currentPost ? (
+          {currentCampaign ? (
             <Tag
               switchTo={this.switchTo}
               initialOpening={this.state.initialOpening}
-              currentPost={currentPost}
+              currentCampaign={currentCampaign}
             />
           ) : (
-            <div>No post with id {this.props.match.params.postId} found</div>
+            <div>No campaign with id {this.props.match.params.campaignId} found</div>
           )}
         </div>
-        <PromoToolFooter
+        <EditCampaignFooter
           switchTo={this.switchTo}
           currentSection={this.state.currentSection}
-          currentPost={currentPost}
+          currentCampaign={currentCampaign}
         />
       </div>
     );
@@ -92,16 +92,16 @@ console.log(next);
 const mapStateToProps = state => {
   return {
     user: state.user,
-    posts: state.posts,
+    campaigns: state.campaigns,
   }
 }
 const mapDispatchToProps = (dispatch) => {
   return {
-    createPostRequest: (data) => dispatch({type: CREATE_POST_REQUEST, payload: data}),
-    fetchPostRequest: (data) => dispatch({type: FETCH_POST_REQUEST, payload: data}),
+    createCampaignRequest: (data) => dispatch({type: CREATE_CAMPAIGN_REQUEST, payload: data}),
+    fetchCampaignRequest: (data) => dispatch({type: FETCH_CAMPAIGN_REQUEST, payload: data}),
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(PromoTool)
+export default connect(mapStateToProps, mapDispatchToProps)(EditCampaign)
 
 

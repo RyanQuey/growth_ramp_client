@@ -6,10 +6,10 @@ import rootSaga from 'shared/sagas'
 import alertReducer from './alerts'
 import errorReducer from './errors'
 import formsReducer from './forms'
-import postsReducer from './posts'
+import campaignsReducer from './campaigns'
 import plansReducer from './plans'
 import currentPlanReducer from './currentPlan'
-//import currentPostReducer from './currentPost'
+//import currentCampaignReducer from './currentCampaign'
 import providerAccountsReducer from './providerAccounts'
 import userReducer from './user'
 import viewSettingsReducer from './viewSettings'
@@ -19,11 +19,11 @@ const rootReducer = combineReducers({
   alerts: alertReducer,
   //the plan that the user is currently working on
   currentPlan: currentPlanReducer,
-  //the post that the user is currently working on
+  //the campaign that the user is currently working on
   //NOTE just using route params
-  //currentPost: currentPostReducer,
+  //currentCampaign: currentCampaignReducer,
   errors: errorReducer,
-  posts: postsReducer,
+  campaigns: campaignsReducer,
   forms: formsReducer,
   plans: plansReducer,
   workgroups: workgroupsReducer,
