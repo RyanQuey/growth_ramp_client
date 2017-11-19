@@ -15,7 +15,7 @@ class Plans extends Component {
     super()
     this.state = {
       //will need to use a store, if this is ever used in subcomponents of the subcomponents
-      currentPlan: {},
+      currentPlan: null,
     }
 
     this.handleChoosePlan = this.handleChoosePlan.bind(this)
@@ -30,11 +30,14 @@ class Plans extends Component {
     //what to do with associated posts?
     //Not a problem if change the workflow as suggested to Jason
     this.props.archivePlanRequest(plan)
+    this.setState({
+      currentPlan: null,
+    })
   }
 
   handleChoosePlan(plan) {
     this.setState({
-      plan,
+      currentPlan: plan,
     })
     //TODO: want to use refs
     //might be able to use bind and the contentIndex ?
@@ -45,7 +48,7 @@ class Plans extends Component {
     const c = this;
     let tabIndex = 0, contentIndex = 0
     const plans = this.props.plans
-    const selectedPlan = this.state.plan
+    const selectedPlan = this.state.currentPlan
 
     return (
       <div>

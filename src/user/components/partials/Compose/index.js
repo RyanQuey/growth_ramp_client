@@ -1,98 +1,176 @@
 import { Component } from 'react';
 import { connect } from 'react-redux'
-import { take } from 'redux-saga/effects'
 import {
-  CREATE_PLAN_SUCCESS,
-  SET_INPUT_VALUE,
   CREATE_PLAN_REQUEST,
   CHOOSE_PLAN,
+  UPDATE_CAMPAIGN_REQUEST,
+  UPDATE_PLAN_REQUEST,
+  LIVE_UPDATE_PLAN_SUCCESS,
+  LIVE_UPDATE_PLAN_FAILURE,
+  SET_CURRENT_MODAL,
 } from 'constants/actionTypes'
-import { Flexbox, Button, Input, Checkbox } from 'shared/components/elements'
-import $ from 'jquery'; //TODO...
+import { Navbar, Icon, Button } from 'shared/components/elements'
+import { Select } from 'shared/components/groups'
+import { SocialLogin } from 'shared/components/partials'
+import { ProviderAccountsDetails, PostEditor, ChannelPicker, PostPicker, ChannelPosts } from 'user/components/partials'
+import {formActions} from 'shared/actions'
+import {PROVIDERS} from 'constants/providers'
+import theme from 'theme'
 
 class Compose extends Component {
-  constructor() {
-    super()
+  constructor(props) {
+    super(props)
 
-    this.state = {
-      FACEBOOK: {},
-      TWITTER: {},
-      LINKEDIN: {}
+    let currentProvider = "FACEBOOK"
+    let currentAccount
+    if (props.providerAccounts && Object.keys(props.providerAccounts).length > 0) {
+      currentAccount = props.providerAccounts[currentProvider][0]
+    } else {
+      currentAccount = null
     }
 
-    this.changeMessage = this.changeMessage.bind(this)
-    this.submit = this.submit.bind(this)
+    this.state = {
+      status: 'READY', //other statuses include: 'PENDING'
+      mode: 'VIEW', //other modes include: 'EDIT'
+      currentProvider,// will just be the provider name
+      currentAccount,//will be account obj
+      currentChannel: "",//will be obj
+      addingPost: false,
+    }
+
+    this.handleChooseProvider = this.handleChooseProvider.bind(this)
+    this.handleChooseAccount = this.handleChooseAccount.bind(this)
+    this.handleChooseChannel = this.handleChooseChannel.bind(this)
+    this.handleChangeName = this.handleChangeName.bind(this)
+    this.handleLinkProvider = this.handleLinkProvider.bind(this)
   }
 
   componentWillReceiveProps(props) {
-    if (props.plans !== this.props.plans) {
-      //this.setState({status: 'updated'})
-    }
+    //happens when create new campaign from navbar
+    /*if (props.currentCampaign && !props.currentCampaign.planId) {
+      this.props.switchTo("Start", true)
+    }*/
+    /*if (props.providerAccounts !== this.props.providerAccounts) {
+
+    }*/
   }
 
-  submit(e) {
-    this.props.choosePlan(this.props.plans[value])
+  componentDidMount() {
+    //initializing to match persisted record
+    const campaignPosts = Helpers.safeDataPath(this.props, `currentCampaign.posts`, [])
+    //convert to object for easy getting/setting
+    const postObj = campaignPosts.reduce((acc, post) => {
+      acc[post.id] = post
+      return acc
+    }, {})
+
+    formActions.setParams("Compose", "posts", postObj)
   }
 
-  changeMessage (provider, index, value) {
-    providerMessages = this.state[provider]
-    providerMessages[`message${index}`] = value
-
-    this.setState({[provider]: providerMessages})
+  openNewProviderModal(provider) {
+    //provider will be the only provider they add an account for
+    this.props.setCurrentModal("LinkProviderAccountModal", {provider})
   }
 
+  handleChooseProvider(providerOption) {
+    if (providerOption.value === this.state.currentProvider) {return }
+
+    this.setState({
+      currentProvider: providerOption.value,
+      currentAccount: Helpers.safeDataPath(this.props, `providerAccounts.${providerOption.value}.0`, false),
+    })
+  }
+
+  handleChooseAccount(accountOption) {
+    this.setState({
+      currentAccount: accountOption.value,
+    })
+  }
+
+  handleChooseChannel(channelOption) {
+    this.setState({
+      currentChannel: channelOption.value,
+    })
+  }
+
+  handleLinkProvider() {
+    this.props.setCurrentModal("LinkProviderAccountModal")
+  }
+
+  handleChangeMode (mode) {
+    this.setState({mode})
+  }
+
+  handleChangeName (e, errors) {
+    Helpers.handleParam.bind(this, e, "name")()
+  }
 
   render() {
     if (this.props.hide) {
       return null
     }
 
-    //Configure the form
-    let form
-    return   <div>
-        <div>
-          {Object.keys(this.props.currentPlan.channelConfigurations).map((provider) => {
-console.log(provider);
-console.log("watch out, twitter has a limit of 25 tweets per day per user account");
-            const messages = this.props.currentPlan.channelConfigurations[provider]
-            if (!messages.messageTemplates) {return <div></div>}
-//technically, only do the active ones
-            return messages.messageTemplates.map((message, index) => {
-console.log(message, index);
-const key = `message${index}`
-              return (
-                <div key={index}>
-                  <Input
-                    label={"message" + index}
-                    placeholder={`Your message`}
-                    onChange={this.changeMessage.bind(this, provider, index)}
-                    value={this.state[provider][key]}
-                  />
-                </div>
-              )
-            })
+    const {currentAccount, currentProvider, currentChannel} = this.state
 
-          } )}
-<button onClick={this.submit}>send them all</button>
+    //let accountsNotOnPlan = accountsForProvider //when implementing, make array of indices in reverse; remove starting from back to not mess up indicies while removing.
+
+    return (
+      <div>
+        <h1 className="display-3">Where should we promote it?</h1>
+        {this.state.status === "PENDING" && <Icon name="spinner" className="fa-spin" />}
+        <div>
+          <PostPicker
+            account={currentAccount}
+            channel={this.state.currentChannel}
+          />
+        </div>
+
+        <ChannelPicker
+          currentProvider={currentProvider}
+          currentAccount={currentAccount}
+          currentChannel={currentChannel}
+          handleChooseProvider={this.handleChooseProvider}
+          handleChooseAccount={this.handleChooseAccount}
+          handleChooseChannel={this.handleChooseChannel}
+        />
+
+        <div>
+          {currentAccount &&
+            <div key={currentAccount.id} >
+              <img alt="No profile picture on file" src={currentAccount.photoUrl}/>
+              <h5>{currentAccount.email || "No email on file"}</h5>
+            </div>
+          }
+
+          {currentChannel ? (
+            <ChannelPosts
+              currentProvider={currentProvider}
+              currentAccount={currentAccount}
+              currentChannel={currentChannel}
+            />
+          ) : (
+            <div>Pick a channel to begin</div>
+          )}
+          <Button style="inverted" onClick={this.handleLinkProvider}>Add another {PROVIDERS[currentProvider].name} account</Button>
         </div>
       </div>
+    );
   }
 }
 
 const mapStateToProps = state => {
   return {
     user: state.user,
-    posts: state.posts,
-    plans: state.plans,
     currentPlan: state.currentPlan,
-    tokenInfo: state.tokenInfo,
+    providerAccounts: state.providerAccounts,
+    campaignPosts: Helpers.safeDataPath(state.forms, "Compose.posts", {}),
   }
 }
 const mapDispatchToProps = (dispatch) => {
   return {
-    setInputValue: (payload) => dispatch({type: SET_INPUT_VALUE, payload}),
-    planCreateRequest: (payload) => dispatch({type: CREATE_PLAN_REQUEST, payload}),
-    choosePlan: (payload) => dispatch({type: CHOOSE_PLAN, payload}),
+    updateCampaignRequest: (payload) => {dispatch({type: UPDATE_CAMPAIGN_REQUEST, payload})},
+    updatePlanRequest: (payload) => {dispatch({type: UPDATE_PLAN_REQUEST, payload})},
+    setCurrentModal: (payload, modalOptions) => dispatch({type: SET_CURRENT_MODAL, payload, options: modalOptions})
   }
 }
 

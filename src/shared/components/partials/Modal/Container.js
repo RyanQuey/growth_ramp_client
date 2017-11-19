@@ -24,7 +24,8 @@ class ModalContainer extends Component {
 
   render (){
 
-    if (this.props.name !== this.props.currentModal) {
+    //TODO might just do if currentModal === this.props.name, as was doing for ST, at least for some time
+    if (!this.props.visible) {
       return null
     }
 
@@ -92,8 +93,8 @@ class ModalContainer extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    alerts: state.shared.alerts,
-    currentModal: state.shared.viewSettings.currentModal,
+    alerts: state.alerts,
+    currentModal: state.viewSettings.currentModal,
   }
 }
 

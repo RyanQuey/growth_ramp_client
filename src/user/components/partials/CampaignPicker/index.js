@@ -6,7 +6,7 @@ import { userActions, errorActions } from 'shared/actions'
 import { Button, Flexbox, Input } from 'shared/components/elements'
 import { ButtonGroup } from 'shared/components/groups'
 import {
-  SET_CAMPAIGN,
+  FETCH_CURRENT_CAMPAIGN_REQUEST,
   DESTROY_CAMPAIGN_REQUEST,
 } from 'constants/actionTypes'
 
@@ -31,7 +31,7 @@ class CampaignPicker extends Component {
   }
 
   render() {
-    const campaigns = this.props.campaigns
+    const campaigns = this.props.campaigns || {}
 
     //TODO: set the title using props into the modal container (will do a modal...or just a show view?? for each campaign)
     //use flexbox. Assign consistent column lengths to still achieve tablelike look, but with control over spacing etc.
@@ -45,8 +45,10 @@ class CampaignPicker extends Component {
           <th>Date Published</th>
           <th></th>
         </tr>
-        {campaigns && Object.keys(campaigns).map((campaignId) => {
+        {Object.keys(campaigns).length && Object.keys(campaigns).map((campaignId) => {
           const campaign = campaigns[campaignId]
+          const plan = Helpers.safeDataPath(this.props, `plans.${campaign.planId}.name`, false)
+console.log(campaign);
           return (
             <tr key={campaignId}>
               <td>
@@ -56,7 +58,11 @@ class CampaignPicker extends Component {
                 {campaign.status.titleCase()}
               </td>
               <td>
-                {(campaign.planId && this.props.plans[campaign.planId].name) || "No plan"}
+                {campaign.planId ? (
+                  plan ? plan.name : "Plan has been archived"
+                ) : (
+                  "No plan"
+                )}
               </td>
               <td>
                 {campaign.publishedAt ? moment(campaign.publishedAt).format("mm-dd-yyyy hh:mm") : "Unpublished"}
@@ -79,7 +85,7 @@ class CampaignPicker extends Component {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    setCampaign: (campaign) => dispatch({type: SET_CAMPAIGN, payload: campaign}),
+    fetchCurrentCampaign: (campaign, cb) => dispatch({type: FETCH_CURRENT_CAMPAIGN_REQUEST, payload: campaign, cb}),
     destroyCampaignRequest: (campaign) => dispatch({type: DESTROY_CAMPAIGN_REQUEST, payload: campaign}),
   }
 }

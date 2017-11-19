@@ -4,6 +4,7 @@ import {
   FETCH_PLAN_SUCCESS,
   INPUT_UPDATE_SUCCESS,
   SIGN_OUT_SUCCESS,
+  ARCHIVE_PLAN_SUCCESS,
 } from 'constants/actionTypes'
 
 const plansReducer = (state = {}, action) => {
@@ -31,6 +32,12 @@ const plansReducer = (state = {}, action) => {
     case CREATE_PLAN_SUCCESS:
       plan = action.payload
       return Object.assign({}, state, {[plan.id]: plan})
+
+    case ARCHIVE_PLAN_SUCCESS:
+      plan = action.payload
+      let newState = Object.assign({}, state, {[plan.id]: plan})
+      delete newState[plan.id]
+      return newState
 
     case UPDATE_PLAN_SUCCESS:
       plan = action.payload

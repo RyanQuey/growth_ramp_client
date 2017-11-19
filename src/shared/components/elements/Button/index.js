@@ -85,10 +85,6 @@ const Button = ({ style = 'primary', children, onClick, disabled, selected, type
 }
 
 Button.propTypes = {
-  children: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.node
-  ]),
   onClick: PropTypes.func,
 }
 

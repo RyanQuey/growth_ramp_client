@@ -3,17 +3,15 @@ import { connect } from 'react-redux'
 import {
   Start,
   Send,
-  Channels,
   Compose,
   EditCampaignFooter
 } from 'user/components/partials'
 import { Navbar } from 'shared/components/elements'
-import { FETCH_CAMPAIGN_REQUEST, CREATE_CAMPAIGN_REQUEST } from 'constants/actionTypes'
+import { FETCH_CURRENT_CAMPAIGN_REQUEST, SET_CURRENT_CAMPAIGN, CREATE_CAMPAIGN_REQUEST } from 'constants/actionTypes'
 import theme from 'theme'
 
 const sections = {
   Start,
-  Channels,
   Compose,
   Send,
 }
@@ -31,10 +29,21 @@ class EditCampaign extends Component {
   }
 
   componentDidMount() {
-    const currentCampaign = this.props.campaigns[this.props.match.params.campaignId]
-    if (!currentCampaign) {
+    const campaignId = this.props.match.params.campaignId
+    const currentCampaign = this.props.campaigns[campaignId]
+console.log(currentCampaign);
+    //check if need to retrieve and/or populate posts
+    if (!currentCampaign || !currentCampaign.posts) {
       //this action doesn't yet support any criteria
-      this.props.fetchCampaignRequest({userId: this.props.user.id})
+      const cb = () => {
+        this.setState({pending: false})
+      }
+
+      this.setState({pending: true})
+      this.props.fetchCurrentCampaign(campaignId, cb)
+    } else {
+
+      this.props.setCurrentCampaign(currentCampaign)
     }
   }
 
@@ -42,7 +51,6 @@ class EditCampaign extends Component {
   //initial opening should only be called from the section's componentWillReceiveProps/componentDidMount
   switchTo(next, initialOpening) {
     //const ref = this.refs[next]
-console.log(next);
     this.setState({
       currentSection: next,
       initialOpening,
@@ -97,8 +105,9 @@ const mapStateToProps = state => {
 }
 const mapDispatchToProps = (dispatch) => {
   return {
-    createCampaignRequest: (data) => dispatch({type: CREATE_CAMPAIGN_REQUEST, payload: data}),
-    fetchCampaignRequest: (data) => dispatch({type: FETCH_CAMPAIGN_REQUEST, payload: data}),
+    //createCampaignRequest: (data) => dispatch({type: CREATE_CAMPAIGN_REQUEST, payload: data}),
+    fetchCurrentCampaign: (data) => dispatch({type: FETCH_CURRENT_CAMPAIGN_REQUEST, payload: data}),
+    setCurrentCampaign: (data) => dispatch({type: SET_CURRENT_CAMPAIGN, payload: data}),
   }
 }
 

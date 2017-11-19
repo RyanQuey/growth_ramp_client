@@ -4,11 +4,9 @@ import { PROVIDERS, PROVIDER_IDS_MAP } from 'constants/providers'
 import { Button } from 'shared/components/elements'
 
 const sections = [
-  "Start", //pick plan
-  "Channels", //edit plan
+  "Start", //pick plan, name campaign, set content
   "Compose", //edit post
   "Send"  //send post (and choose to save plan or not
-
 ]
 
 class EditCampaignFooter extends Component {
@@ -21,13 +19,6 @@ class EditCampaignFooter extends Component {
     this.go = this.go.bind(this)
   }
 
-  componentWillReceiveProps(props) {
-    //if they haven't gone this far yet
-    if (props.currentSection && sections.indexOf(this.state.placeInFlow) < sections.indexOf(props.currentSection)) {
-      this.setState({placeInFlow: props.currentSection})
-    }
-  }
-
   go(newIndex, e) {
     this.props.switchTo(sections[newIndex])
   }
@@ -38,7 +29,7 @@ class EditCampaignFooter extends Component {
     const currentPost = Helpers.safeDataPath(this.props, "currentPost", {})
     const canGoForward = this.props.currentSection !== "Send" &&
       this.props.currentSection === "Start" && currentPost.planId ||
-      (this.props.currentSection === "Channels" && Object.keys(this.props.providerAccounts))
+      (this.props.currentSection === "Compose" && Object.keys(this.props.providerAccounts))
 
     return (
       <div>

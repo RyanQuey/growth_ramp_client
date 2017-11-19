@@ -1,6 +1,7 @@
 import { Component } from 'react';
 import { connect } from 'react-redux'
 import { SET_INPUT_VALUE, PUBLISH_POST_REQUEST } from 'constants/actionTypes'
+import { SavePlan } from 'user/components/partials'
 
 class Send extends Component {
   constructor() {
@@ -16,6 +17,10 @@ class Send extends Component {
     }
     const c = this;
     const userId = this.props.user.uid
+
+    if (this.state.mode === "save") {
+      return <SavePlan />
+    }
 
     return (
       <div id="send-container">

@@ -1,30 +1,29 @@
 import {
   CREATE_CAMPAIGN_SUCCESS,
   UPDATE_CAMPAIGN_SUCCESS,
-  SET_CAMPAIGN,
+  SET_CURRENT_CAMPAIGN,
   SIGN_OUT_SUCCESS,
 } from 'constants/actionTypes'
 
 const currentCampaignReducer = (state = null, action) => {
 
+  let campaign
   switch (action.type) {
-
-// NOTE just using params for now. Easier to track, alerts user what's happening too
-    /*case CREATE_CAMPAIGN_SUCCESS:
-      return Object.assign({}, action.payload)
 
     case UPDATE_CAMPAIGN_SUCCESS:
       if (store.getState().currentCampaign.id === action.payload.id) {
-        return Object.assign({}, action.payload)
+        campaign = action.payload
+        return Object.assign({}, campaign)
       } else {
         return state
       }
 
-    case SET_CAMPAIGN:
-      return Object.assign({}, action.payload)
+    case SET_CURRENT_CAMPAIGN:
+      campaign = action.payload
+      return Object.assign({}, campaign)
 
     case SIGN_OUT_SUCCESS:
-      return null*/
+      return null
 
     default:
       return state

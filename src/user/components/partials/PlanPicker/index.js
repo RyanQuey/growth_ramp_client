@@ -22,14 +22,14 @@ class PlanPicker extends Component {
     //TODO: set the title using props into the modal container
     return (
       <Flexbox>
-        {plans && Object.keys(plans).map((planId) => (
-          <Card key={planId} onClick={this.props.onPick.bind(this, plans[planId])} height="100px">
+        {plans && Object.keys(plans).map((planId) => {
+          return <Card key={planId} onClick={this.props.onPick.bind(this, plans[planId])} height="100px" selected={this.props.selectedId == planId}>
             <h3>
               {plans[planId].name}
             </h3>
 
           </Card>
-        ))}
+        })}
       </Flexbox>
     )
   }

@@ -9,7 +9,7 @@ import formsReducer from './forms'
 import campaignsReducer from './campaigns'
 import plansReducer from './plans'
 import currentPlanReducer from './currentPlan'
-//import currentCampaignReducer from './currentCampaign'
+import currentCampaignReducer from './currentCampaign'
 import providerAccountsReducer from './providerAccounts'
 import userReducer from './user'
 import viewSettingsReducer from './viewSettings'
@@ -20,8 +20,7 @@ const rootReducer = combineReducers({
   //the plan that the user is currently working on
   currentPlan: currentPlanReducer,
   //the campaign that the user is currently working on
-  //NOTE just using route params
-  //currentCampaign: currentCampaignReducer,
+  currentCampaign: currentCampaignReducer,
   errors: errorReducer,
   campaigns: campaignsReducer,
   forms: formsReducer,

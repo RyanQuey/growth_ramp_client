@@ -13,40 +13,40 @@ import classes from './style.scss'
 
 //shows up as buttons in mobile, or sidebar in browser?
 //used in channels and send
-class MessageTemplate extends Component {
+class PostEditor extends Component {
   constructor() {
     super()
 
     this.state = {
     }
 
-    this.disableMessage = this.disableMessage.bind(this)
+    this.disablePost = this.disablePost.bind(this)
     this.updatePlan = this.updatePlan.bind(this)
   }
 
   updateUtm(utmType, value, e) {
-    let messageTemplate = Object.assign({}, this.props.message)
-    messageTemplate[utmType].value = value
+    let postTemplate = Object.assign({}, this.props.post)
+    postTemplate[utmType].value = value
 
-    this.updatePlan(messageTemplate)
+    this.updatePlan(postTemplate)
   }
   disableUtm(utmType, checked, e) {
-    let messageTemplate = Object.assign({}, this.props.message)
-    messageTemplate[utmType].active = checked
+    let postTemplate = Object.assign({}, this.props.post)
+    postTemplate[utmType].active = checked
 
-    this.updatePlan(messageTemplate)
+    this.updatePlan(postTemplate)
   }
 
-  disableMessage(checked) {
-    let messageTemplate = Object.assign({}, this.props.message)
-    messageTemplate.active = checked
-    this.updatePlan(messageTemplate)
+  disablePost(checked) {
+    let postTemplate = Object.assign({}, this.props.post)
+    postTemplate.active = checked
+    this.updatePlan(postTemplate)
   }
 
   updatePlan(updatedTemplate) {
-    //targetting just the path to this messageTemplate
+    //targetting just the path to this postTemplate
     const updatedPlan = Object.assign({}, this.props.currentPlan)
-    _.set(updatedPlan, `channelConfigurations.${this.props.account.provider}.messageTemplates.${this.props.messageIndex}`, updatedTemplate)
+    _.set(updatedPlan, `channelConfigurations.${this.props.account.provider}.postTemplates.${this.props.postIndex}`, updatedTemplate)
 
     //update the store
     this.props.setCurrentPlan(updatedPlan)
@@ -54,37 +54,38 @@ class MessageTemplate extends Component {
     //live updating this one
     //should not update the plan reducer on its success, just give me an alert if it fails
     //performance might improve if only updating channelConfigurations each time, instead of the whole record, but this makes the code much simpler
-    this.props.liveUpdatePlan(updatedPlan)
+    //this.props.liveUpdatePlan(updatedPlan)
+    this.props.updatePostRequest(plan)
   }
 
   render() {
-    const message = this.props.message
+    const post = this.props.post
 
     return (
       <Flexbox direction="column">
-        <h2>{message.type.titleCase()} {this.props.messageIndex}</h2>
-        <div className={classes.disableMessage}>
+        <h2>{post.type.titleCase()} {this.props.postIndex}</h2>
+        <div className={classes.disablePost}>
           <Checkbox
-            value={message.active}
-            onChange={this.disableMessage}
-          />&nbsp;Disable message
+            value={post.active}
+            onChange={this.disablePost}
+          />&nbsp;Disable post
         </div>
-        <div>These are the defaults for the plan, but can be changed when composing an individual message</div>
-        <div className={classes.messageTemplate}>
-          {message.active ? (
+        <div>These are the defaults for the plan, but can be changed when composing an individual post</div>
+        <div className={classes.postTemplate}>
+          {post.active ? (
             <div>
               {UTM_TYPES.map((utmType) => (
                 <div key={utmType.value}>
                   <Checkbox
-                    value={message[utmType.value].active}
+                    value={post[utmType.value].active}
                     onChange={this.disableUtm.bind(this, utmType.value)}
                   />&nbsp;Disable utm
 
                   <label className={classes.utmHeader}>{utmType.label.titleCase()}</label>
-                  {message[utmType.value].active && <Input
-                    placeholder={`set the default ${utmType.label.titleCase()} utm for this ${message.type.titleCase()}`}
+                  {post[utmType.value].active && <Input
+                    placeholder={`set the default ${utmType.label.titleCase()} utm for this ${post.type.titleCase()}`}
                     onChange={this.updateUtm.bind(this, utmType.value)}
-                    value={message[utmType.value].value}
+                    value={post[utmType.value].value}
 
                   />}
                 </div>
@@ -92,9 +93,9 @@ class MessageTemplate extends Component {
 
               <div>
                 {false && <Input
-                  placeholder={`Your message`}
+                  placeholder={`Your post`}
                   onChange={this.changeStuff}
-                  value={message.value}
+                  value={post.value}
                 />}
               </div>
             </div>
@@ -121,6 +122,6 @@ const mapDispatchToProps = (dispatch) => {
   }
 }
 
-const ConnectedMessageTemplate = connect(mapStateToProps, mapDispatchToProps)(MessageTemplate)
-export default ConnectedMessageTemplate
+const ConnectedPostEditor = connect(mapStateToProps, mapDispatchToProps)(PostEditor)
+export default ConnectedPostEditor
 
