@@ -12,7 +12,10 @@ export default (state = {}, action) => {
   switch (action.type) {
     case SET_PARAMS:
       newState = Object.assign({}, state)
-      _.set(newState, `${pld.component}.${pld.form}`, {params: pld.params, dirty: true})
+      _.set(newState, `${pld.component}.${pld.form}`, {
+        params: pld.params,
+        dirty: true
+      })
 
       return newState
 

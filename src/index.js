@@ -14,7 +14,6 @@ import store from 'shared/reducers'
 import 'prototypeHelpers'
 import Helpers from 'helpers'
 import 'theme/index.scss'
-import 'react-select/dist/react-select.css'
 
 import _ from 'lodash'
 import moment from 'moment'

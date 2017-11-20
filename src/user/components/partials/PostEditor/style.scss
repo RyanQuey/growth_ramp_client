@@ -1,9 +1,41 @@
 @import 'theme/_helpers';
 
-.messageTemplate {
+.postMenu {
+  @include mq(xs) {
+    @include cols(12)
+  }
+  @include mq(sm) {
+    @include cols(3)
+  }
+}
+
+.postFields {
+  @include mq(xs) {
+    @include cols(12)
+  }
+  @include mq(sm) {
+    @include cols(9)
+  }
+
   .utmHeader {
     margin: .5rem;
   }
+  .textEditor {
+    textarea {
+      resize: none;
+      height: 150px;
+      width: 300px;
+    }
+
+    .dropImage {
+      height: 125px;
+      width: 125px;
+      margin: 10px;
+    }
+  }
+}
+
+.messageTemplate {
   @include mq(xs) {
   }
   @include mq(sm) {

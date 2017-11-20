@@ -1,6 +1,5 @@
 import { Component } from 'react'
 import PropTypes from 'prop-types'
-import { Icon } from 'shared/components/elements'
 import theme from 'theme'
 import { StyleSheet, css } from 'aphrodite'
 import classes from './style.scss'
@@ -45,8 +44,6 @@ class MySelect extends Component {
               value={currentOption}
             />
           )}
-
-          <Icon className={`${css(styles.icon)} ${classes.angleDown}`} name="angle-down" />
         </div>
 
         {submitButton.text

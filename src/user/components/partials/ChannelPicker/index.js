@@ -49,7 +49,7 @@ class ChannelPicker extends Component {
 
   accountOption(account) {
     return {
-      label: `${account.userName} (${account.email})`,
+      label: `${account.userName || "no username"} (${account.email || "no email"})`,
       value: account.id,
     }
   }

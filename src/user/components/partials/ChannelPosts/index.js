@@ -97,7 +97,7 @@ console.log(channelPosts);
             {!channelPosts.length && <div>No posts yet</div>}
 
             {channelPosts.map((post) =>
-              <div>
+              <div key={post.id}>
                 <PostEditor
                   account={currentAccount}
                   channel={currentChannel}

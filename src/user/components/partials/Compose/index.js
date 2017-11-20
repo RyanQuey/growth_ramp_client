@@ -88,14 +88,26 @@ class Compose extends Component {
     })
   }
 
+  //persist images here
+  //if before, might be persisting several images they never actually use. Might not be a big deal, especially if can clean up well later. BUt there is cost issue
+  //
   saveCampaignPosts() {
-    const updatedCampaignPosts = Object.assign({}, this.props.campaignPostsForm.params)
+console.log("about to start");
+    const campaignPostsArray = _.values(this.props.campaignPostsForm.params)
 
     //should not update the post reducer on its success, just give me an alert if it fails
     const cb = () => {
       formActions.formPersisted("Compose", "posts")
     }
-    this.props.updatePostRequest(post)
+
+    for (let i = 0; i < campaignPostsArray.length; i++) {
+console.log("iterating over posts", i);
+      let post = campaignPostsArray[i]
+      //replace the preview url in the post form with the s3 url
+      post.uploadedContent = results.successes
+      this.props.updatePostRequest(post, cb)
+    }
+
   }
 
   handleChooseChannel(channelOption) {
@@ -177,12 +189,13 @@ const mapStateToProps = state => {
     currentPlan: state.currentPlan,
     providerAccounts: state.providerAccounts,
     campaignPostsForm: Helpers.safeDataPath(state.forms, "Compose.posts", {}),
+    uploadedFiles: Helpers.safeDataPath(state.forms, "Compose.uploadedFiles", []),
   }
 }
 const mapDispatchToProps = (dispatch) => {
   return {
     updateCampaignRequest: (payload) => {dispatch({type: UPDATE_CAMPAIGN_REQUEST, payload})},
-    updatePlanRequest: (payload) => {dispatch({type: UPDATE_PLAN_REQUEST, payload})},
+    updatePostRequest: (payload) => {dispatch({type: UPDATE_POST_REQUEST, payload})},
     setCurrentModal: (payload, modalOptions) => dispatch({type: SET_CURRENT_MODAL, payload, options: modalOptions})
   }
 }
