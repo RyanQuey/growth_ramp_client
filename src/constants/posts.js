@@ -1,9 +1,9 @@
 
 
 export const UTM_TYPES = [
-  {label: "Medium", value: "defaultMediumUtm"},
-  {label: "Source", value: "defaultSourceUtm"},
-  {label: "Content", value: "defaultContentUtm"},
-  {label: "Term", value: "defaultTermUtm"},
-  {label: "Custom", value: "defaultCustomUtm"},
+  {label: "Medium", value: "mediumUtm"},
+  {label: "Source", value: "sourceUtm"},
+  {label: "Content", value: "contentUtm"},
+  {label: "Term", value: "termUtm"},
+  {label: "Custom", value: "customUtm"},
 ]

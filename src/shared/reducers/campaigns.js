@@ -1,4 +1,6 @@
 import {
+  CREATE_POST_SUCCESS,
+  UPDATE_POST_SUCCESS,
   CREATE_CAMPAIGN_SUCCESS,
   UPDATE_CAMPAIGN_SUCCESS,
   FETCH_CAMPAIGN_SUCCESS,
@@ -8,7 +10,7 @@ import {
 
 const campaignsReducer = (state = {}, action) => {
 
-  let campaign
+  let campaign, post, campaignPosts, postIndex
   switch (action.type) {
 
     case SET_CURRENT_CAMPAIGN:
@@ -23,6 +25,28 @@ const campaignsReducer = (state = {}, action) => {
 
     case UPDATE_CAMPAIGN_SUCCESS:
       campaign = action.payload
+      return Object.assign({}, state, {[campaign.id]: campaign})
+
+    case CREATE_POST_SUCCESS:
+      post = action.payload
+      //should never be {}...
+      campaign = Object.assign({}, Helpers.safeDataPath(store.getState(), `campaigns.${post.campaignId}`, {}))
+      campaignPosts = [...campaign.posts].push(post)
+      campaign.posts = campaignPosts
+
+      return Object.assign({}, state, {[campaign.id]: campaign})
+
+    //NOTE might be easier to just retrieve campaign from db again...but this is faster.
+    case UPDATE_POST_SUCCESS:
+      post = action.payload
+      //should never be {}...
+      campaign = Object.assign({}, Helpers.safeDataPath(store.getState(), `campaigns.${post.campaignId}`, {}))
+      campaignPosts = [...campaign.posts]
+      postIndex = _.findIndex(campaignPosts, {id: post.id})
+      //replaces that item in the array
+      campaignPosts.splice(postIndex, 1, post)
+      campaign.posts = campaignPosts
+
       return Object.assign({}, state, {[campaign.id]: campaign})
 
     case SIGN_OUT_SUCCESS:

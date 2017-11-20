@@ -1,5 +1,6 @@
 import {
   SET_PARAMS,
+  SET_OPTIONS,
   CLEAR_PARAMS,
   FORM_PERSISTED,
 } from 'constants/actionTypes'
@@ -12,13 +13,28 @@ export default (state = {}, action) => {
   switch (action.type) {
     case SET_PARAMS:
       newState = Object.assign({}, state)
+      let oldParams = Helpers.safeDataPath(state, `${pld.component}.${pld.form}.params`, {})
+      let currentOptions = Helpers.safeDataPath(state, `${pld.component}.${pld.form}.options`, {})
       _.set(newState, `${pld.component}.${pld.form}`, {
-        params: pld.params,
-        dirty: true
+        //merge the params in payload onto current params for this form
+        params: Object.assign({}, oldParams, pld.params),
+        dirty: pld.dirty,
+        options: currentOptions,
       })
+console.log(pld.params, newState);
+      return newState
+
+    case SET_OPTIONS:
+      newState = Object.assign({}, state)
+      let oldOptions = Helpers.safeDataPath(state, `${pld.component}.${pld.form}.options`, {})
+      _.set(newState, `${pld.component}.${pld.form}.options`,
+        //merge the options in payload onto current options for this form
+        Object.assign({}, oldOptions, pld.options),
+      )
 
       return newState
 
+    //TODO conditionally clear only a certain form
     case CLEAR_PARAMS:
       return Object.assign({})
 

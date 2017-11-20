@@ -28,26 +28,20 @@ class PostEditor extends Component {
   }
 
   updateUtm(utmType, value, e) {
-    let post = Object.assign({}, this.props.post)
-    post[utmType].value = value
-
-    //update the post form
-    let campaignPosts = Object.assign({}, this.props.campaignPosts)
-    campaignPosts[post.id] = post
-
-    formActions.setParams("Compose", "posts", campaignPosts)
-  }
-
-  disableUtm(utmType, checked, e) {
     //set the param
     let post = Object.assign({}, this.props.post)
-    post[utmType].active = checked
-
+    post[utmType] = value
+console.log(value );
     //update the post form
-    let campaignPosts = Object.assign({}, this.props.campaignPosts)
-    campaignPosts[post.id] = post
+    formActions.setParams("Compose", "posts", {[post.id]: post})
+  }
 
-    formActions.setParams("Compose", "posts", campaignPosts)
+  toggleUtm(utmType, checked, e) {
+    //update the post form
+    let utmFields = Object.assign({}, Helpers.safeDataPath(this.props.formOptions, `${this.props.post.id}.utms`, {}))
+    utmFields[utmType] = checked
+
+    formActions.setOptions("Compose", "posts", {[this.props.post.id]: {utms: utmFields}})
   }
 
   //TODO debounce
@@ -57,10 +51,7 @@ class PostEditor extends Component {
     post.text = value
 
     //update the post form
-    let campaignPosts = Object.assign({}, this.props.campaignPosts)
-    campaignPosts[post.id] = post
-
-    formActions.setParams("Compose", "posts", campaignPosts)
+    formActions.setParams("Compose", "posts", {[post.id]: post})
   }
 
   //NOTE: cannot save a file object in redux, at least not in a easy way.
@@ -89,17 +80,17 @@ class PostEditor extends Component {
       if (!post.uploadedContent) {
         post.uploadedContent = []
       }
-      post.uploadedContent.push(fileUrl)
+      post.uploadedContent.push({url: fileUrl, type: "IMAGE"})
 
-      let campaignPosts = Object.assign({}, this.props.campaignPosts)
-      campaignPosts[post.id] = post
-      formActions.setParams("Compose", "posts", campaignPosts)
+      formActions.setParams("Compose", "posts", {[post.id]: post})
     }
 
   }
 
   render() {
     const post = this.props.post
+    let utmFields = Object.assign({}, Helpers.safeDataPath(this.props.formOptions, `${this.props.post.id}.utms`, {}))
+
 console.log(post);
     return (
       <Flexbox direction="column">
@@ -112,22 +103,26 @@ console.log(post);
         </div>}
         <div className={classes.postFields}>
             <div>
-              {UTM_TYPES.map((utmType) => (
-                <div key={utmType.value}>
+              {UTM_TYPES.map((utmType) => {
+                //TODO want to extract for use with plan editor...if we have a plan editor
+                const type = utmType.value
+                const label = utmType.label
+                const active = utmFields[type]
+console.log(post[type]);
+                return <div key={type}>
                   <Checkbox
-                    value={post[utmType.value].active}
-                    onChange={this.disableUtm.bind(this, utmType.value)}
-                    label={`Enable ${utmType.label.titleCase()} UTM`}
+                    value={active}
+                    onChange={this.toggleUtm.bind(this, type)}
+                    label={`Enable ${label.titleCase()} UTM`}
                   />&nbsp;
 
-                  {post[utmType.value].active && <Input
-                    placeholder={`${utmType.label.titleCase()} utm for this ${post.channel.titleCase()}`}
-                    onChange={this.updateUtm.bind(this, utmType.value)}
-                    value={post[utmType.value].value}
-
+                  {active && <Input
+                    placeholder={`${label.titleCase()} utm for this ${post.channel.titleCase()}`}
+                    onChange={this.updateUtm.bind(this, type)}
+                    value={post[type]}
                   />}
                 </div>
-              ))}
+              })}
 
               <Flexbox direction="column" className={classes.textEditor}>
                 <Input
@@ -148,15 +143,15 @@ console.log(post);
                     onFailure={this.onUpload}
                     className={classes.dropImage}
                   />
-                  {post.uploadedContent && post.uploadedContent.map((uploadUrl) => {
+                  {post.uploadedContent && post.uploadedContent.map((upload) => {
                     return <DropImage
-                      key={uploadUrl}
+                      key={upload.url}
                       user={this.props.user}
                       onStart={this.onDrop}
                       onSuccess={this.onUpload}
                       onFailure={this.onUpload}
                       onDrop={this.handleOverrideDrop}
-                      imageUrl={uploadUrl}
+                      imageUrl={upload.url}
                       className={classes.dropImage}
                     />
                   })}
@@ -173,6 +168,7 @@ const mapStateToProps = state => {
   return {
     user: state.user,
     uploadedFiles: Helpers.safeDataPath(state.forms, "Compose.uploadedFiles", []),
+    formOptions: Helpers.safeDataPath(state.forms, "Compose.posts.options", {}),
   }
 }
 const mapDispatchToProps = (dispatch) => {

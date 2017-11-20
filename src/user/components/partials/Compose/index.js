@@ -1,12 +1,9 @@
 import { Component } from 'react';
 import { connect } from 'react-redux'
 import {
-  CREATE_PLAN_REQUEST,
-  CHOOSE_PLAN,
   UPDATE_CAMPAIGN_REQUEST,
-  UPDATE_PLAN_REQUEST,
-  LIVE_UPDATE_PLAN_SUCCESS,
-  LIVE_UPDATE_PLAN_FAILURE,
+  CREATE_POST_REQUEST,
+  UPDATE_POST_REQUEST,
   SET_CURRENT_MODAL,
 } from 'constants/actionTypes'
 import { Navbar, Icon, Button } from 'shared/components/elements'
@@ -58,14 +55,19 @@ class Compose extends Component {
 
   componentDidMount() {
     //initializing to match persisted record
-    const campaignPosts = Helpers.safeDataPath(this.props, `currentCampaign.posts`, [])
+    this.matchRecordToState()
+ }
+
+  matchRecordToState() {
+    const campaignPosts = Helpers.safeDataPath(store.getState(), `currentCampaign.posts`, [])
     //convert to object for easy getting/setting
     const postObj = campaignPosts.reduce((acc, post) => {
       acc[post.id] = post
       return acc
     }, {})
 
-    formActions.setParams("Compose", "posts", postObj)
+    formActions.setParams("Compose", "posts", postObj, false)
+
   }
 
   openNewProviderModal(provider) {
@@ -94,18 +96,59 @@ class Compose extends Component {
   saveCampaignPosts() {
 console.log("about to start");
     const campaignPostsArray = _.values(this.props.campaignPostsForm.params)
+    const persistedPosts = this.props.currentCampaign.posts
 
     //should not update the post reducer on its success, just give me an alert if it fails
     const cb = () => {
-      formActions.formPersisted("Compose", "posts")
+      //synchronizing state with  persisted record
+      this.matchRecordToState()
     }
 
+    //check if need to update or create each post
     for (let i = 0; i < campaignPostsArray.length; i++) {
-console.log("iterating over posts", i);
-      let post = campaignPostsArray[i]
-      //replace the preview url in the post form with the s3 url
-      post.uploadedContent = results.successes
-      this.props.updatePostRequest(post, cb)
+      let post = Object.assign({}, campaignPostsArray[i])
+      let utmFields = Object.assign({}, Helpers.safeDataPath(this.props.formOptions, `${post.id}.utms`, {}))
+
+      if (typeof post.id === "string") { //.slice(0, 9) === "not-saved") {
+        delete post.id
+        this.props.createPostRequest(post, cb)
+        continue
+
+      } else {
+        //iterate over post attributes, to check for equality
+        let isEqual = true
+        //should never really be {}...but whatever
+        let persistedPost = persistedPosts.find((p) => p.id === post.id) || {}
+        let attributes = Object.keys(post)
+
+        for (let attribute of attributes) {
+          //don't need to check these
+          if (["id", "userId"].includes(attribute)) {continue}
+
+          //if utm is set to post, but field is disabled, set to empty string
+          if (attribute.includes("Utm") && !utmFields[attribute]) {
+            post[attribute] = ""
+          }
+
+          if (_.isEqual(persistedPost[attribute], post[attribute])) {
+            //trim down elements to update in case end up sending
+            //especially because api seems to convert null to a string when setting to req.body...
+            delete post[attribute]
+
+          } else {
+            isEqual = false
+          }
+        }
+
+        if (isEqual) {
+          //no need to update
+          continue
+        }
+
+        this.props.updatePostRequest(post, cb)
+      }
+
+
     }
 
   }
@@ -175,7 +218,7 @@ console.log("iterating over posts", i);
           ) : (
             <div>Pick a channel to begin</div>
           )}
-          <Button style="inverted" disabled={!dirty} onClick={this.saveCampaignPosts}>Save changes</Button>
+          <Button style="inverted" disabled={!dirty} onClick={this.saveCampaignPosts}>{dirty ? "Save changes" : "Draft saved"}</Button>
           <Button style="inverted" onClick={this.handleLinkProvider}>Add another {PROVIDERS[currentProvider].name} account</Button>
         </div>
       </div>
@@ -188,14 +231,17 @@ const mapStateToProps = state => {
     user: state.user,
     currentPlan: state.currentPlan,
     providerAccounts: state.providerAccounts,
+    currentCampaign: state.currentCampaign,
     campaignPostsForm: Helpers.safeDataPath(state.forms, "Compose.posts", {}),
     uploadedFiles: Helpers.safeDataPath(state.forms, "Compose.uploadedFiles", []),
+    formOptions: Helpers.safeDataPath(state.forms, "Compose.posts.options", {}),
   }
 }
 const mapDispatchToProps = (dispatch) => {
   return {
     updateCampaignRequest: (payload) => {dispatch({type: UPDATE_CAMPAIGN_REQUEST, payload})},
-    updatePostRequest: (payload) => {dispatch({type: UPDATE_POST_REQUEST, payload})},
+    updatePostRequest: (payload, cb) => {dispatch({type: UPDATE_POST_REQUEST, payload, cb})},
+    createPostRequest: (payload) => {dispatch({type: CREATE_POST_REQUEST, payload})},
     setCurrentModal: (payload, modalOptions) => dispatch({type: SET_CURRENT_MODAL, payload, options: modalOptions})
   }
 }

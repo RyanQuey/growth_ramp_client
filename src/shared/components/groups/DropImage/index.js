@@ -26,9 +26,6 @@ class DropImage extends Component {
   }
 
   onDrop (acceptedFiles, rejectedFiles) {
-    console.log('acceptedFiles', acceptedFiles)
-    console.log('rejectedFiles', rejectedFiles)
-
     const acceptedFile = acceptedFiles[0]
     const rejectedFile = rejectedFiles[0]
 

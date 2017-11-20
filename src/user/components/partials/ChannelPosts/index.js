@@ -43,25 +43,28 @@ class ChannelPosts extends Component {
 
   newPost (e) {
     //build out the empty post object
-    const postTemplate = {
-      providerAccountId: this.props.currentAccount.id,
+    const post = {
       channel: this.props.currentChannel,
-      campaignId: this.props.currentCampaign.id,
+      contentUrl: this.props.currentCampaign.contentUrl,
       userId: this.props.user.id,
-    }
-    const utmDefaults = UTM_TYPES.map((t) => t.value)
-    for (let i = 0; i < utmDefaults.length; i++) {
-      postTemplate[utmDefaults[i]] = {active: true, value: ''}
+      campaignId: this.props.currentCampaign.id,
+      providerAccountId: this.props.currentAccount.id,
+      planId: this.props.currentCampaign.planId,
     }
 
-    //figure out where to put it
-    let campaignPosts = Object.assign({}, this.props.campaignPosts)
     //create id for it, like "draft1"
     let uuid = `not-saved-${uuidv4()}`
-    postTemplate.id = uuid
-    campaignPosts[uuid] = postTemplate
+    post.id = uuid
 
-    formActions.setParams("Compose", "posts", campaignPosts)
+    formActions.setParams("Compose", "posts", {[uuid]: post})
+
+    //set utm field options (set all to active)
+    const utmDefaults = UTM_TYPES.reduce((acc, t) => {
+      acc[t.value] = true
+      return acc
+    }, {})
+
+    formActions.setOptions("Compose", "posts", {[uuid]: {utms: utmDefaults}})
   }
 
   //takes posts from all providers and accounts and organizes by channel

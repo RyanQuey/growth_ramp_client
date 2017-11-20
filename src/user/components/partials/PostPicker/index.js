@@ -17,7 +17,6 @@ class PostPicker extends Component {
       currentPost: null, //will be an index
     }
 
-    this.newPost = this.newPost.bind(this)
     this.removePost = this.removePost.bind(this)
     this.sortPostsByProvider = this.sortPostsByProvider.bind(this)
   }
@@ -32,38 +31,6 @@ class PostPicker extends Component {
     channelTemplates.splice(index, 1)
 
     this.props.updatePlanRequest(plan)
-  }
-
-  newPost (channelName) {
-    const permittedChannels = Helpers.permittedChannels(this.props.account)
-    if (permittedChannels.includes(channelName)) {
-      const plan = Object.assign({}, this.props.currentPlan)
-
-      const postTemplate = {
-        providerAccountId: this.props.account.id,
-        type: channelName,
-        active: true,
-      }
-      const utmDefaults = UTM_TYPES.map((t) => t.value)
-      for (let i = 0; i < utmDefaults.length; i++) {
-        postTemplate[utmDefaults[i]] = {active: true, value: ''}
-      }
-
-      const channelTemplates = Helpers.safeDataPath(plan, `channelConfigurations.${this.props.account.provider}.postTemplates`, false)
-      if (channelTemplates) {
-        channelTemplates.push(postTemplate)
-      } else {
-        _.set(plan, `channelConfigurations.${this.props.account.provider}.postTemplates`, [postTemplate])
-      }
-
-      this.props.updatePlanRequest(plan)
-
-    } else {
-      //prompt to give permission
-      //will eventually use a store to tell modal to only show this account
-      this.props.setCurrentModal("LinkProviderAccountModal")
-
-    }
   }
 
   //takes posts from all channels and accounts and organizes by provider
@@ -122,6 +89,7 @@ class PostPicker extends Component {
 const mapStateToProps = state => {
   return {
     campaignPosts: Helpers.safeDataPath(state.forms, "Compose.posts", {}),
+    user: state.user,
   }
 }
 const mapDispatchToProps = (dispatch) => {

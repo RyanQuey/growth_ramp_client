@@ -1,9 +1,10 @@
 import { all, call } from 'redux-saga/effects'
 import eventHooksSaga from './eventHooksSaga'
-import permissionSaga from './permissionSaga'
-import planSaga from './planSaga'
 import campaignSaga from './campaignSaga'
 import linkAccountSaga from './linkAccountSaga'
+import permissionSaga from './permissionSaga'
+import planSaga from './planSaga'
+import postSaga from './postSaga'
 import providerSaga from './providerSaga'
 import querySaga from './querySaga'
 import userSaga from './userSaga'
@@ -11,14 +12,15 @@ import workgroupSaga from './workgroupSaga'
 
 export default function* rootSaga() {
   yield all([
+    call(campaignSaga),
+    call(eventHooksSaga),
+    call(linkAccountSaga),
+    call(querySaga),
     call(permissionSaga),
     call(planSaga),
-    call(campaignSaga),
-    call(userSaga),
-    call(linkAccountSaga),
+    call(postSaga),
     call(providerSaga),
-    call(querySaga),
+    call(userSaga),
     call(workgroupSaga),
-    call(eventHooksSaga),
   ])
 }

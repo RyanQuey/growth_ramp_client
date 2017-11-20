@@ -152,6 +152,12 @@ function* fetchCampaigns(action) {
 
   } catch (err) {
     console.log('campaigns fetch failed', err)
+    errorActions.handleErrors({
+      templateName: "Campaign",
+      templatePart: "fetch",
+      title: "Error fetcing campaign(s)",
+      errorObject: err,
+    })
     // yield put(userFetchFailed(err.message))
   }
 }
@@ -178,6 +184,12 @@ function* updateCampaign(action) {
 
   } catch (err) {
     console.log(`Error in update campaign Saga ${err}`)
+    errorActions.handleErrors({
+      templateName: "Campaign",
+      templatePart: "update",
+      title: "Error updating campaign",
+      errorObject: err,
+    })
   }
 }
 
