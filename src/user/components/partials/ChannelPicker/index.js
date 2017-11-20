@@ -41,7 +41,6 @@ class ChannelPicker extends Component {
 
   providerOption(provider) {
     let accountsForProvider = this.props.providerAccounts[provider] || []
-console.log(provider);
     return {
       label: `${PROVIDERS[provider].name} (${accountsForProvider.length} accounts)`,
       value: provider,

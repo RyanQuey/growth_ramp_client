@@ -1,10 +1,12 @@
 import { Component } from 'react';
 import { connect } from 'react-redux'
+import uuidv4 from 'uuid/v4'
 import { Flexbox, Button, Icon } from 'shared/components/elements'
-import { PostCard } from 'user/components/partials'
-import { SET_INPUT_VALUE, SET_CURRENT_MODAL, UPDATE_PLAN_REQUEST  } from 'constants/actionTypes'
+import { PostCard, PostEditor } from 'user/components/partials'
+import { SET_INPUT_VALUE, SET_CURRENT_MODAL, UPDATE_POST_REQUEST  } from 'constants/actionTypes'
 import { PROVIDERS } from 'constants/providers'
-import {UTM_TYPES} from 'constants/plans'
+import {formActions} from 'shared/actions'
+import {UTM_TYPES} from 'constants/posts'
 import classes from './style.scss'
 
 //shows up as buttons in mobile, or sidebar in browser?
@@ -27,11 +29,10 @@ class ChannelPosts extends Component {
       this.setState({currentPost: null})
     }
 
-    const plan = Object.assign({}, this.props.currentPlan)
-    const channelTemplates = Helpers.safeDataPath(plan, `channelConfigurations.${this.props.account.provider}.postTemplates`, [])
+    const channelTemplates = Helpers.safeDataPath(post, `channelConfigurations.${this.props.account.provider}.postTemplates`, [])
     channelTemplates.splice(index, 1)
 
-    this.props.updatePlanRequest(plan)
+    this.props.updatePostRequest(post)
   }
 
   openPermissionModal() {
@@ -40,11 +41,11 @@ class ChannelPosts extends Component {
     this.props.setCurrentModal("LinkProviderAccountModal", this.props.currentProvider)
   }
 
-  newPost (channelName) {
+  newPost (e) {
     //build out the empty post object
     const postTemplate = {
       providerAccountId: this.props.currentAccount.id,
-      channel: channelName,
+      channel: this.props.currentChannel,
       campaignId: this.props.currentCampaign.id,
       userId: this.props.user.id,
     }
@@ -56,16 +57,18 @@ class ChannelPosts extends Component {
     //figure out where to put it
     let campaignPosts = Object.assign({}, this.props.campaignPosts)
     //create id for it, like "draft1"
-    let uuid = uuidv4()
+    let uuid = `not-saved-${uuidv4()}`
+    postTemplate.id = uuid
     campaignPosts[uuid] = postTemplate
 
+    formActions.setParams("Compose", "posts", campaignPosts)
   }
 
   //takes posts from all providers and accounts and organizes by channel
   channelPosts(posts) {
-    const postsArray = _.keys(posts)
-    const channelPosts = postsArray.find((post) => (
-      post.providerAccountId == this.state.currentProvider.id && post.channel === this.state.currentChannel
+    const postsArray = _.values(posts)
+    const channelPosts = postsArray.filter((post) => (
+      post.providerAccountId == this.props.currentAccount.id && post.channel === this.props.currentChannel
     ))
 
     return channelPosts
@@ -85,6 +88,7 @@ class ChannelPosts extends Component {
     if (currentAccount && currentChannel) {
       channelPosts = this.channelPosts(campaignPosts) || []
     }
+console.log(channelPosts);
 
     return (
       <Flexbox>
@@ -99,7 +103,7 @@ class ChannelPosts extends Component {
                   channel={currentChannel}
                   post={post}
                 />
-                <Button style="inverted" onClick={this.removePost}>Destroy</Button>
+                <Button style="inverted" onClick={this.removePost.bind(this, post)}>Destroy Post</Button>
               </div>
             )}
 
@@ -108,8 +112,8 @@ class ChannelPosts extends Component {
           </div>
         ) : (
           <div>
-            <div>Growth Ramp need your permission to make {currentChannel.titleCase()}s for {PROVIDERS[currentProvider].name}</div>
-            <Button style="inverted" onClick={this.newPost}>Grant Permission</Button>
+            <div>Growth Ramp needs your permission to make {currentChannel.titleCase()}s for {PROVIDERS[currentProvider].name}</div>
+            <Button style="inverted" onClick={this.openPermissionModal}>Grant Permission</Button>
           </div>
         )}
       </Flexbox>
@@ -121,13 +125,13 @@ const mapStateToProps = state => {
   return {
     currentCampaign: state.currentCampaign,
     user: state.user,
-    campaignPosts: Helpers.safeDataPath(state.forms, "Compose.posts", {}),
+    campaignPosts: Helpers.safeDataPath(state.forms, "Compose.posts.params", {}),
   }
 }
 const mapDispatchToProps = (dispatch) => {
   return {
     setCurrentModal: (payload, provider) => dispatch({type: SET_CURRENT_MODAL, payload, options: {oneProviderOnly: provider}}),
-    updatePlanRequest: (payload) => {dispatch({type: UPDATE_PLAN_REQUEST, payload})},
+    updatePostRequest: (payload) => {dispatch({type: UPDATE_POST_REQUEST, payload})},
   }
 }
 

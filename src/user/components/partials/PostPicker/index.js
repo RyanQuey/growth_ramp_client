@@ -4,7 +4,7 @@ import { Flexbox, Button, Icon } from 'shared/components/elements'
 import { PostCard } from 'user/components/partials'
 import { SET_INPUT_VALUE, SET_CURRENT_MODAL, UPDATE_PLAN_REQUEST  } from 'constants/actionTypes'
 import { PROVIDERS } from 'constants/providers'
-import {UTM_TYPES} from 'constants/plans'
+import {UTM_TYPES} from 'constants/posts'
 import classes from './style.scss'
 
 //shows up as buttons in mobile, or sidebar in browser?

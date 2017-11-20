@@ -6,9 +6,10 @@ export const NEW_ALERT = 'NEW_ALERT'
 export const CLEAR_ERRORS = 'CLEAR_ERRORS'
 export const HANDLE_ERRORS = 'HANDLE_ERRORS'
 
-//miscellaneous
+//miscellaneous UI
 export const HANDLE_QUERY = 'HANDLE_QUERY'
 export const SET_PARAMS = 'SET_PARAMS'
+export const FORM_PERSISTED = 'FORM_PERSISTED'
 
 //permissions
 export const CREATE_PERMISSION_REQUEST = 'CREATE_PERMISSION_REQUEST'

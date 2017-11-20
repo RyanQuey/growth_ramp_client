@@ -43,6 +43,7 @@ class Compose extends Component {
     this.handleChooseChannel = this.handleChooseChannel.bind(this)
     this.handleChangeName = this.handleChangeName.bind(this)
     this.handleLinkProvider = this.handleLinkProvider.bind(this)
+    this.saveCampaignPosts = this.saveCampaignPosts.bind(this)
   }
 
   componentWillReceiveProps(props) {
@@ -87,6 +88,16 @@ class Compose extends Component {
     })
   }
 
+  saveCampaignPosts() {
+    const updatedCampaignPosts = Object.assign({}, this.props.campaignPostsForm.params)
+
+    //should not update the post reducer on its success, just give me an alert if it fails
+    const cb = () => {
+      formActions.formPersisted("Compose", "posts")
+    }
+    this.props.updatePostRequest(post)
+  }
+
   handleChooseChannel(channelOption) {
     this.setState({
       currentChannel: channelOption.value,
@@ -110,6 +121,7 @@ class Compose extends Component {
       return null
     }
 
+    const dirty = this.props.campaignPostsForm.dirty
     const {currentAccount, currentProvider, currentChannel} = this.state
 
     //let accountsNotOnPlan = accountsForProvider //when implementing, make array of indices in reverse; remove starting from back to not mess up indicies while removing.
@@ -151,6 +163,7 @@ class Compose extends Component {
           ) : (
             <div>Pick a channel to begin</div>
           )}
+          <Button style="inverted" disabled={!dirty} onClick={this.saveCampaignPosts}>Save changes</Button>
           <Button style="inverted" onClick={this.handleLinkProvider}>Add another {PROVIDERS[currentProvider].name} account</Button>
         </div>
       </div>
@@ -163,7 +176,7 @@ const mapStateToProps = state => {
     user: state.user,
     currentPlan: state.currentPlan,
     providerAccounts: state.providerAccounts,
-    campaignPosts: Helpers.safeDataPath(state.forms, "Compose.posts", {}),
+    campaignPostsForm: Helpers.safeDataPath(state.forms, "Compose.posts", {}),
   }
 }
 const mapDispatchToProps = (dispatch) => {
