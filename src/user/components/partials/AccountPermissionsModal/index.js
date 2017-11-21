@@ -76,9 +76,13 @@ class AccountPermissions extends Component {
   }
 
   render (){
+    //doesn't allow things to break and actually better performance
+    if (!visible) {
+      return null
+    }
+
     const account = this.props.currentAccount
     const provider = account.provider
-console.log(provider, account);
     const visible = this.props.currentModal === "AccountPermissionsModal"
     const permissions = account.permissions || []
     const groupPermissions = []
@@ -92,10 +96,6 @@ console.log(provider, account);
       }
     }
 
-    //doesn't allow things to break and actually better performance
-    if (!visible) {
-      return null
-    }
 
     return (
       <ModalContainer

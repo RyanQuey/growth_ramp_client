@@ -8,7 +8,7 @@ import {
   SET_CURRENT_MODAL,
   SET_CURRENT_POST,
 } from 'constants/actionTypes'
-import { Navbar, Icon, Button } from 'shared/components/elements'
+import { Icon, Button } from 'shared/components/elements'
 import { Select } from 'shared/components/groups'
 import { SocialLogin } from 'shared/components/partials'
 import { ProviderAccountsDetails, PostEditor, AddPost, PostPicker, ChannelPosts } from 'user/components/partials'

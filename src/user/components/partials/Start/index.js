@@ -105,9 +105,11 @@ class Start extends Component {
       return null
     }
     const c = this;
-    const userId = this.props.user.uid
-    const plans = this.props.plans
+    const { user, plans, currentCampaign }  = this.props
+    const userId = user.id
     const keys = plans && Object.keys(plans)
+    const campaignPlan = currentCampaign && plans[currentCampaign.planId] || {}
+    const canSwitchPlans = !currentCampaign.planId || !_.isEqual(currentCampaign.posts, campaignPlan.postConfigurations)
 
     return (
       <div>
@@ -130,24 +132,32 @@ class Start extends Component {
             <h4>You don't have any plans yet. We'll just start from scratch</h4>
           </div>
         ) : (
-          <div>
-            <h4>
-              Select one of your plans to use or start from scratch.
-            </h4>
-            <PlanPicker
-              onPick={this.handleClickPlan}
-              selectedId={this.state.planId}
-            />
-            <Card
-              onClick={this.startFromScratch}
-              selected={!this.state.planId}
-              height="100px"
-            >
-              <h3>
-                Start from scratch
-              </h3>
-            </Card>
-          </div>
+          canSwitchPlans ? (
+            <div>
+              <h4>Campaign plan:</h4>
+              <div>{campaignPlan.name}</div>
+              <div>Cannot change plan after posts have been worked on</div>
+            </div>
+          ) : (
+            <div>
+              <h4>
+                Select one of your plans to use or start from scratch.
+              </h4>
+              <PlanPicker
+                onPick={this.handleClickPlan}
+                selectedId={this.state.planId}
+              />
+              <Card
+                onClick={this.startFromScratch}
+                selected={!this.state.planId}
+                height="100px"
+              >
+                <h3>
+                  Start from scratch
+                </h3>
+              </Card>
+            </div>
+          )
         )}
         <Button onClick={this.save}>{this.state.dirty && "Save and "}Continue</Button>
 
@@ -159,6 +169,7 @@ class Start extends Component {
 const mapStateToProps = state => {
   return {
     user: state.user,
+    currentCampaign: state.currentCampaign,
     campaigns: state.campaigns,
     plans: state.plans,
   }

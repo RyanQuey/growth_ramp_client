@@ -18,77 +18,25 @@ import { PUBLISH_CAMPAIGN_REQUEST,
 } from 'constants/actionTypes'
 import {errorActions} from 'shared/actions'
 
-function* sendToProvider(providerName, pld, tokenInfo) {
-  const publishFunctions = {
-    facebook: () => {
-      /*FB.api(`/me/feed`, 'campaign', pld.campaign.message, (response) => {
-        if (!response || response.error) {
-          let newError = helpers.handleError(response.error);
-
-        } else {
-          alert('Facebook campaign ID: ' + response.id);
-        }
-      })*/
-    },
-    twitter: () => {
-      tokenInfo.api.__call("statuses_update", {
-        status: pld.campaign.content
-      }, function(reply){
-        console.log("Twitter Campaign Succeeded: ",reply)
-      });
-    },
-    linkedin: () => {
-
-    },
-  }
-
-console.log(providerName);
-  publishFunctions[providerName]()
-}
-
-function* checkForToken(providerName, index, logins) {
-  let tokenInfo = yield select(state => helpers.safeDataPath(state, `tokenInfo.${providerName}`, false))
-  if (!tokenInfo.authenticated) {
-    if (logins > 0) {
-      //needs a button click; Twitter and perhaps Facebook, don't allow one to go after the other like this
-      throw "Please login again with " + providerName
-    }
-    const data = {
-      signInType: 'PROVIDER',
-      provider: providerName.toUpperCase(),
-      wantTokenOnly: true,
-    }
-    let a = yield put({type: SIGN_IN_REQUEST, payload: data})
-    tokenInfo = yield select(state => helpers.safeDataPath(state, `tokens.${providerName}.accessToken`, false))
-    yield take(SIGN_IN_POPUP_CLOSED)
-    logins++
-  }
-  console.log("going for two fast", providerName);
-  return {tokenInfo, logins}
-}
-
 function* publishCampaign(action) {
   let logins = 0
   try {
-    const pld = action.payload
-    for (let i = 0;i < pld.providers.length; i++) {
-      const providerName = pld.providers[i]
-      console.log("now starting ", providerName);
-      //since I'm passing the token, another reason why this should be done in the backend
+    const campaign = action.payload
 
-      let result = yield call(checkForToken, providerName, i, logins)
-      let tokenInfo = result.tokenInfo
-      logins = result.logins
-      //make sync; can only have one pop up at a time
-      //yield all, or promise all
-      yield call(sendToProvider, providerName, pld, tokenInfo)
-    }
     //mark campaign as published
-    yield database.ref(`campaigns/${pld.campaign.id}/published`).set(true)
+    const results = yield axios.post(`/api/campaigns/${campaign.id}/publish`)
+    console.log("results from the campaign");
+    console.log(results);
     yield put({type: PUBLISH_CAMPAIGN_SUCCESS, payload: {providers: pld.providers}})
 
   } catch (err) {
-    console.log(`Error in Create campaign Saga ${err}`)
+    console.log(`Error publishing campaign: ${err}`)
+    errorActions.handleErrors({
+      templateName: "Campaign",
+      templatePart: "published",
+      title: "Error publishing campaign",
+      errorObject: err,
+    })
   }
 }
 

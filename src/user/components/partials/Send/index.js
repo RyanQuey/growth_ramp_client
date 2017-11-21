@@ -2,6 +2,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux'
 import { SET_INPUT_VALUE, PUBLISH_CAMPAIGN_REQUEST } from 'constants/actionTypes'
 import { SavePlan } from 'user/components/partials'
+import { Icon, Button } from 'shared/components/elements'
 
 class Send extends Component {
   constructor() {
@@ -15,7 +16,7 @@ class Send extends Component {
   }
 
   send() {
-    this.postPublishRequest
+    this.props.campaignPublishRequest(this.props.currentCampaign)
   }
 
   render() {
@@ -34,7 +35,7 @@ class Send extends Component {
         <h1 className="display-3">Send</h1>
         Now you send it
         <div>
-          <Button onClick={this.said}>SEND THEM ALL!</Button>
+          <Button onClick={this.send}>SEND THEM ALL!</Button>
         </div>
       </div>
     );
