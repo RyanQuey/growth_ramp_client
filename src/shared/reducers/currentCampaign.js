@@ -31,7 +31,7 @@ const currentCampaignReducer = (state = null, action) => {
         campaignPosts = [...campaign.posts].push(post)
         campaign.posts = campaignPosts
 
-        return Object.assign({}, state, {[campaign.id]: campaign})
+        return Object.assign({}, state, campaign)
 
       } else {
         return state
@@ -43,12 +43,14 @@ const currentCampaignReducer = (state = null, action) => {
       if (post.campaignId = state.id) {
         campaign = Object.assign({}, state)
         campaignPosts = [...campaign.posts]
-        postIndex = _.findIndex(campaignPosts, {id: post.id})
+        postIndex = _.findIndex(campaignPosts, (p) => p.id === post.id)
+
+
         //replaces that item in the array
         campaignPosts.splice(postIndex, 1, post)
         campaign.posts = campaignPosts
 
-        return Object.assign({}, state, {[campaign.id]: campaign})
+        return Object.assign({}, state, campaign)
 
       } else {
         return state
