@@ -14,7 +14,18 @@ import {
   UPDATE_POST_REQUEST,
   UPDATE_POST_SUCCESS,
 } from 'constants/actionTypes'
-import {errorActions} from 'shared/actions'
+import {errorActions, formActions} from 'shared/actions'
+
+//basically, the post you are working on will reflect the same data it had, and params are ready to persisted if you update again
+const _matchStateToRecord = () => {
+  const campaignPosts = Helpers.safeDataPath(store.getState(), `currentCampaign.posts`, [])
+  //convert to object for easy getting/setting
+  const postObj = campaignPosts.reduce((acc, post) => {
+    acc[post.id] = post
+    return acc
+  }, {})
+  formActions.setParams("Compose", "posts", postObj, false)
+}
 
 function* sendToProvider(providerName, pld, tokenInfo) {
   const publishFunctions = {
@@ -155,8 +166,8 @@ function* updatePost(action) {
     yield all([
       put({ type: UPDATE_POST_SUCCESS, payload: res.data}),
     ])
-    action.cb && action.cb(res)
 
+    _matchStateToRecord()
   } catch (err) {
     console.log(err.response);
     console.log(`Error in update post Saga ${err}`)
@@ -188,7 +199,6 @@ function* fetchCurrentPost(action) {
     yield all([
       put({type: SET_CURRENT_POST, payload: res.data})
     ])
-    action.cb && action.cb(res)
 
   } catch (err) {
     console.log('posts fetch failed', err.response)

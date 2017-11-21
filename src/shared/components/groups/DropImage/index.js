@@ -16,7 +16,7 @@ class DropImage extends Component {
     }
     this.styles = StyleSheet.create({
       dropzone: {
-        background: (props.imageUrl || props.defaultImage) ? `url(${props.imageUrl || props.defaultImage}) no-repeat center center` : this.props.backgroundColor || theme.color.white,
+        background: (props.imageUrl || props.defaultImage) ? `url(${encodeURI(props.imageUrl) || props.defaultImage}) no-repeat center center` : this.props.backgroundColor || theme.color.white,
         backgroundSize: "cover",
         height: props.height || "100%",
         width: props.width || "100%",

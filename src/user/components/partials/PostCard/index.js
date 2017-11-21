@@ -16,17 +16,15 @@ class PostCard extends Component {
 
 
   render () {
-    const { post, selected, onClick, height, maxWidth } = this.props
+    const { post, selected, onClick, height, maxWidth, className } = this.props
 
     return (
-      <Card selected={selected} onClick={onClick} height={height} maxWidth={maxWidth}>
-        <CardHeader title={post.channel.titleCase()} headerImgUrl={Helpers.safeDataPath(post, "uploadedContent.0.url", "")}/>
+      <Card selected={selected} onClick={onClick} height={height} maxWidth={maxWidth} className={className}>
+        <CardHeader title={post.channel.titleCase()} headerImgUrl={false && Helpers.safeDataPath(post, "uploadedContent.0.url", "")}/>
 
         <div>
           <h4>{post.text}</h4>
         </div>
-
-        <Button onClick={this.setCurrentPost}>Choose</Button>
       </Card>
     )
   }

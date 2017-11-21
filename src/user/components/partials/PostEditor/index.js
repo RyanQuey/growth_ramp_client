@@ -34,7 +34,6 @@ class PostEditor extends Component {
     let post = Object.assign({}, this.props.post)
     post[utmType] = value
     post.dirty = true
-console.log(value );
     //update the post form
     formActions.setParams("Compose", "posts", {[post.id]: post})
   }
@@ -71,18 +70,25 @@ console.log(value );
     }
   }
 
-//TODO need a button
   removeUpload(oldFileUrl){
     //TODO also remove from b2
     let uploadedFiles = [...this.props.uploadedFiles]
-    _.remove(uploadedFiles, (f) => f.url === oldFileUrl)
+    _.remove(uploadedFiles, (f) => f === oldFileUrl)
 
     formActions.setParams("Compose", "uploadedFiles", uploadedFiles)
+
+    //update the post form
+    let post = Object.assign({}, this.props.post)
+    _.remove(post.uploadedContent, (c) => c.url === oldFileUrl)
+    post.dirty = true
+    formActions.setParams("Compose", "posts", {[post.id]: post})
+//console.log(post);
   }
 
   onOverrideDrop(oldFileUrl, acceptedFile, rejectedFile) {
     //remove the old file
     this.removeUpload(oldFileUrl)
+
     if (acceptedFile) {
       this.setState({pending: true})
     } else {
@@ -118,10 +124,8 @@ console.log(value );
     const post = this.props.post
     let utmFields = Object.assign({}, Helpers.safeDataPath(this.props.formOptions, `${this.props.post.id}.utms`, {}))
 
-console.log("this is a post");
-console.log(post);
     return (
-      <Flexbox direction="column">
+      <Flexbox direction="column" >
         <h2>{post.channel.titleCase()}</h2>
         {false && <div className={classes.disablePost}>
           <Checkbox
@@ -130,13 +134,44 @@ console.log(post);
           />&nbsp;Disable post
         </div>}
         <div className={classes.postFields}>
-            <div>
+          <div>
+            <Flexbox direction="column" justify="center" className={classes.textEditor}>
+              <Input
+                textarea={true}
+                value={post.text}
+                placeholder={`Your post`}
+                onChange={this.handleText}
+              />
+              <label>Click or drag a file to upload</label>
+              <Flexbox>
+                <DropImage
+                  user={this.props.user}
+                  label="+"
+                  onStart={this.onDrop}
+                  onSuccess={this.onUpload}
+                  onFailure={this.onUpload}
+                  className={classes.dropImage}
+                />
+                {post.uploadedContent && post.uploadedContent.map((upload) => {
+//console.log(upload);
+                  return <Flexbox key={upload.url} direction="column">
+                    <div
+                      style={{backgroundImage: `url(${upload.url})`}}
+                      className={classes.dropImage}
+                    />
+                    <Icon name="close" onClick={this.removeUpload.bind(this, upload.url)} />
+                  </Flexbox>
+                })}
+              </Flexbox>
+            </Flexbox>
+
+            <Flexbox flexWrap="wrap" className={classes.utms}>
               {UTM_TYPES.map((utmType) => {
                 //TODO want to extract for use with plan editor...if we have a plan editor
                 const type = utmType.value
                 const label = utmType.label
                 const active = utmFields[type]
-                return <div key={type}>
+                return <div key={type} className={classes.utmField}>
                   <Checkbox
                     value={active}
                     onChange={this.toggleUtm.bind(this, type)}
@@ -150,44 +185,9 @@ console.log(post);
                   />}
                 </div>
               })}
+            </Flexbox>
 
-              <Flexbox direction="column" className={classes.textEditor}>
-                <Input
-                  label="Your post"
-                  textarea={true}
-                  value={post.text}
-                  placeholder={`Your post`}
-                  onChange={this.handleText}
-                />
-
-                <label>Click or drag a file to upload</label>
-                <Flexbox>
-                  <DropImage
-                    user={this.props.user}
-                    label="+"
-                    onStart={this.onDrop}
-                    onSuccess={this.onUpload}
-                    onFailure={this.onUpload}
-                    className={classes.dropImage}
-                  />
-                  {post.uploadedContent && post.uploadedContent.map((upload) => {
-console.log(upload);
-                    return <div key={upload.url}>
-                      <DropImage
-                        user={this.props.user}
-                        onStart={this.onDrop}
-                        onSuccess={this.onUpload}
-                        onFailure={this.onUpload}
-                        onDrop={this.handleOverrideDrop}
-                        imageUrl={upload.url}
-                        className={classes.dropImage}
-                      />
-                      <Icon name="close" onClick={this.removeUpload.bind(this, upload.url)} />
-                    </div>
-                  })}
-                </Flexbox>
-              </Flexbox>
-            </div>
+          </div>
         </div>
       </Flexbox>
     )

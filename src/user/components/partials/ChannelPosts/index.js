@@ -31,50 +31,46 @@ class ChannelPosts extends Component {
     posts[post.id] = post
 
     formActions.setParams("Compose", "posts", {[post.id]: post})
+    this.props.setCurrentPost(null)
   }
 
   //takes posts from all providers and accounts and organizes by channel
   channelPosts(posts) {
-    const postsArray = _.values(posts)
+   /* const postsArray = _.values(posts)
     const channelPosts = postsArray.filter((post) => (
       post.providerAccountId == this.props.currentAccount.id && post.channel === this.props.currentChannel
     ))
 
-    return channelPosts
+    return channelPosts*/
   }
 
   render() {
-    if (this.props.hide) {
+    const {currentAccount, currentProvider, currentChannel, currentPost, campaignPosts} = this.props
+    if (this.props.hide || !currentPost || !Object.keys(currentPost).length ) {
       return null
     }
 
-    const {currentAccount, currentProvider, currentChannel, currentPost, campaignPosts} = this.props
+    //use the currentPost id, but that object reflects the persisted post. So use the form data
+    let currentPostParams = currentPost && campaignPosts[currentPost.id]
 
-    let channelPosts = []
+    /*let channelPosts = []
     if (currentAccount && currentChannel) {
       channelPosts = this.channelPosts(campaignPosts) || []
     }
     //channel posts besides the current post
     const otherChannelPosts = channelPosts.filter((p) => !currentPost || p.id !== currentPost.id)
-console.log(channelPosts);
+console.log(channelPosts);*/
 
     return (
-      <Flexbox>
-          <div className={classes.postMenu}>
-            {!channelPosts.length && <div>No posts yet</div>}
 
-            {currentPost && (
-              <div key={currentPost.id}>
-                <PostEditor
-                  account={currentAccount}
-                  channel={currentChannel}
-                  post={currentPost}
-                />
-                <Button style="inverted" onClick={this.removePost.bind(this, currentPost)}>Destroy Post</Button>
-              </div>
-            )}
-          </div>
-      </Flexbox>
+        <div key={currentPost.id}>
+          <PostEditor
+            account={currentAccount}
+            channel={currentChannel}
+            post={currentPostParams}
+          />
+          <Button style="inverted" onClick={this.removePost.bind(this, currentPost)}>Destroy Post</Button>
+        </div>
     )
   }
 }

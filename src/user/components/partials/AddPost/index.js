@@ -84,7 +84,6 @@ console.log(accountOption);
     let uuid = `not-saved-${uuidv4()}`
     post.id = uuid
 
-    formActions.setParams("Compose", "posts", {[uuid]: post})
 
     //set utm field options (set all to active)
     const utmDefaults = UTM_TYPES.reduce((acc, t) => {
@@ -92,7 +91,9 @@ console.log(accountOption);
       return acc
     }, {})
 
+    formActions.setParams("Compose", "posts", {[uuid]: post})
     formActions.setOptions("Compose", "posts", {[uuid]: {utms: utmDefaults}})
+    this.props.setCurrentPost(post)
     this.props.toggleAdding()
   }
 
@@ -165,7 +166,6 @@ console.log(accountOption);
       ))
 
       let permittedChannels = Helpers.permittedChannels(currentAccount)
-console.log(permittedChannels);
       if (currentChannel) {
         channelIsAllowed = permittedChannels.includes(currentChannel)
       }
@@ -174,14 +174,13 @@ console.log(permittedChannels);
     const placeholder = {label: "select", value: null}
     //let accountsNotOnPlan = accountsForProvider //when implementing, make array of indices in reverse; remove starting from back to not mess up indicies while removing.
 
-console.log(channelIsAllowed);
     return (
       <div>
-        {this.props.status === "PENDING" && <Icon name="spinner" className="fa-spin" />}
+        {!currentProvider || this.props.status === "PENDING" && <Icon name="spinner" className="fa-spin" />}
 
         <div>
-          <h2>Select what type of post to make</h2>
-          {!(typeof this.props.addingPost === "string") && <Select
+          <h2>Select where to send this {PROVIDERS[currentProvider].name} post to make</h2>
+          {false && !(typeof this.props.addingPost === "string") && <Select
             label="Platform"
             options={providerOptions}
             onChange={this.handleChooseProvider}

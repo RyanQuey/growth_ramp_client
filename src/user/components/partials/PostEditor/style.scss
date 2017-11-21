@@ -10,16 +10,6 @@
 }
 
 .postFields {
-  @include mq(xs) {
-    @include cols(12)
-  }
-  @include mq(sm) {
-    @include cols(9)
-  }
-
-  .utmHeader {
-    margin: .5rem;
-  }
   .textEditor {
     textarea {
       resize: none;
@@ -35,10 +25,24 @@
   }
 }
 
-.messageTemplate {
-  @include mq(xs) {
+.utms {
+  width: 100%;
+  .utmHeader {
+    margin: .5rem;
   }
-  @include mq(sm) {
+  .utmField {
+    @include mq(xs) {
+      @include cols(6)
+    }
+    @include mq(sm) {
+      @include cols(3)
+    }
   }
+
+}
+.dropImage {
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
 }
 

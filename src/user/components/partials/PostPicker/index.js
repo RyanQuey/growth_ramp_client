@@ -1,6 +1,6 @@
 import { Component } from 'react';
 import { connect } from 'react-redux'
-import { Flexbox, Button, Icon } from 'shared/components/elements'
+import { Flexbox, Button, Icon, Card } from 'shared/components/elements'
 import { PostCard, ProviderCard } from 'user/components/partials'
 import { SET_CURRENT_POST, SET_CURRENT_MODAL, UPDATE_PLAN_REQUEST  } from 'constants/actionTypes'
 import { PROVIDERS } from 'constants/providers'
@@ -17,12 +17,12 @@ class PostPicker extends Component {
       currentPost: null, //will be an index
     }
 
-    this.removePost = this.removePost.bind(this)
+    //this.removePost = this.removePost.bind(this)
     this.sortPostsByProvider = this.sortPostsByProvider.bind(this)
     this.setCurrentPost = this.setCurrentPost.bind(this)
   }
 
-  removePost(post, index) {
+  /*removePost(post, index) {
     if (this.state.currentPost === index) {
       this.setState({currentPost: null})
     }
@@ -32,7 +32,7 @@ class PostPicker extends Component {
 
     this.props.updatePostRequest(plan)
     this.props.setCurrentPost(null)
-  }
+  }*/
 
   //takes posts from all channels and accounts and organizes by provider
   sortPostsByProvider(posts) {
@@ -43,7 +43,6 @@ class PostPicker extends Component {
     for (let i = 0; i < providers.length; i++) {
       let provider = providers[i]
       let accountsIdsForProvider = this.props.providerAccounts[provider].map((a) => a.id)
-console.log(accountsIdsForProvider);
 
       sorted[provider] = []
 
@@ -72,41 +71,45 @@ console.log(accountsIdsForProvider);
     }
 
     const sortedPosts = this.sortPostsByProvider(this.props.campaignPosts || [])
-console.log(sortedPosts, this.props.campaignPosts);
     const providers = Object.keys(sortedPosts)
-
-    let cards = []
-    for (let provider of providers) {
-      let providerPosts = sortedPosts[provider]
-      cards.push(
-        <ProviderCard
-          key={provider}
-          provider={provider}
-          onClick={this.props.toggleAdding.bind(this, provider)}
-          height="220px"
-          maxWidth="220px"
-          backgroundColor={provider.toLowerCase()}
-        />
-      )
-      cards = cards.concat(
-        providerPosts.map((post) =>
-          <PostCard
-            key={post.id}
-            post={post}
-            height="220px"
-            maxWidth="220px"
-            onClick={this.setCurrentPost.bind(this, post)}
-          />
-        )
-      )
-    }
 
     return (
       <div >
         <h3>Your posts:</h3>
         {!Object.keys(sortedPosts).length && <div>No posts yet</div>}
-        <Flexbox flexWrap="wrap"  className={classes.postMenu}>
-          {cards}
+
+        <Flexbox className={classes.postMenu}>
+          {providers.map((provider) => {
+            let providerPosts = sortedPosts[provider]
+            return (
+              <Flexbox key={provider} className={classes.providerColumn} direction="column" >
+                <h3>{PROVIDERS[provider].name}</h3>
+
+                {providerPosts.map((post) =>
+                  <PostCard
+                    key={post.id}
+                    className={classes.postCard}
+                    post={post}
+                    height="110px"
+                    maxWidth="220px"
+                    onClick={this.setCurrentPost.bind(this, post)}
+                    selected={this.props.currentPost && this.props.currentPost.id === post.id}
+                  />
+                )}
+
+                <Card
+                  onClick={this.props.toggleAdding.bind(this, provider)}
+                  height="110px"
+                  maxWidth="220px"
+                  className={classes.postCard}
+                >
+                  Add a new post
+                </Card>
+
+              </Flexbox>
+            )
+
+          })}
         </Flexbox>
       </div>
     )
@@ -118,6 +121,7 @@ const mapStateToProps = state => {
     campaignPosts: Helpers.safeDataPath(state.forms, "Compose.posts.params", {}),
     user: state.user,
     providerAccounts: state.providerAccounts,
+    currentPost: state.currentPost,
   }
 }
 const mapDispatchToProps = (dispatch) => {

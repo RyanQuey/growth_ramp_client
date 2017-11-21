@@ -54,10 +54,10 @@ class Compose extends Component {
 
   componentDidMount() {
     //initializing to match persisted record
-    this.matchRecordToState()
+    this.matchStateToRecord()
  }
 
-  matchRecordToState() {
+  matchStateToRecord() {
     const campaignPosts = Helpers.safeDataPath(store.getState(), `currentCampaign.posts`, [])
     //convert to object for easy getting/setting
     const postObj = campaignPosts.reduce((acc, post) => {
@@ -83,15 +83,10 @@ class Compose extends Component {
   //if before, might be persisting several images they never actually use. Might not be a big deal, especially if can clean up well later. BUt there is cost issue
   //
   saveCampaignPosts() {
-console.log("about to start");
     const campaignPostsFormArray = _.values(this.props.campaignPostsForm.params)
     const persistedPosts = this.props.currentCampaign.posts
 
     //should not update the post reducer on its success, just give me an alert if it fails
-    const cb = () => {
-      //synchronizing state with  persisted record
-      this.matchRecordToState()
-    }
 
     //check if need to update or create each post
     for (let i = 0; i < campaignPostsFormArray.length; i++) {
@@ -110,7 +105,7 @@ console.log("about to start");
       // TO CREATE
       } else if (typeof post.id === "string") { //.slice(0, 9) === "not-saved") {
         delete post.id
-        this.props.createPostRequest(post, cb)
+        this.props.createPostRequest(post)
         continue
 
       // TO UPDATE
@@ -142,7 +137,7 @@ console.log("about to start");
           }
         }
 
-        this.props.updatePostRequest(post, cb)
+        this.props.updatePostRequest(post)
       }
     }
 
@@ -220,8 +215,8 @@ const mapStateToProps = state => {
 const mapDispatchToProps = (dispatch) => {
   return {
     updateCampaignRequest: (payload) => {dispatch({type: UPDATE_CAMPAIGN_REQUEST, payload})},
-    updatePostRequest: (payload, cb) => {dispatch({type: UPDATE_POST_REQUEST, payload, cb})},
-    destroyPostRequest: (payload, cb) => {dispatch({type: DESTROY_POST_REQUEST, payload, cb})},
+    updatePostRequest: (payload) => {dispatch({type: UPDATE_POST_REQUEST, payload})},
+    destroyPostRequest: (payload) => {dispatch({type: DESTROY_POST_REQUEST, payload})},
     createPostRequest: (payload) => {dispatch({type: CREATE_POST_REQUEST, payload})},
     setCurrentModal: (payload, modalOptions) => dispatch({type: SET_CURRENT_MODAL, payload, options: modalOptions})
   }
