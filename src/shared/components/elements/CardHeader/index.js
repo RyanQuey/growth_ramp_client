@@ -9,10 +9,16 @@ const CardHeader = ({
   title,
   subtitle,
 }) => {
-
+  const headerLine = title || subtitle
+  const styles = StyleSheet.create({
+    card: {
+      'border-bottom': headerLine ? `1px solid ${theme.color.moduleGrayOne}` : "",
+      'padding-bottom': headerLine ? "20px" : "",
+    },
+  })
   return (
     <div
-      className={`${className} ${classes.cardHeader}`}
+      className={`${className} ${classes.cardHeader} ${styles.card}`}
     >
       {headerImgUrl && <img className={classes.headerImg} src={headerImgUrl} />}
       <h2>{title}</h2>

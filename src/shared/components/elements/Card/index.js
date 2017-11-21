@@ -11,12 +11,14 @@ const Card = ({
   color = 'text',
   children,
   hover,
+  maxWidth,
   height = '300px', //defaults to 300px;
 }) => {
 
   const styles = StyleSheet.create({
     card: {
       background: theme.color[background],
+      'max-width': maxWidth,
       color: theme.color[color],
       height,
       cursor: onClick ? "pointer" : "default",

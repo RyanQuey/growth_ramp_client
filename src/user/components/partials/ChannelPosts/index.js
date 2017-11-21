@@ -1,12 +1,10 @@
 import { Component } from 'react';
 import { connect } from 'react-redux'
-import uuidv4 from 'uuid/v4'
 import { Flexbox, Button, Icon } from 'shared/components/elements'
 import { PostCard, PostEditor } from 'user/components/partials'
-import { SET_INPUT_VALUE, SET_CURRENT_MODAL, UPDATE_POST_REQUEST  } from 'constants/actionTypes'
+import { SET_CURRENT_MODAL, UPDATE_POST_REQUEST, SET_CURRENT_POST  } from 'constants/actionTypes'
 import { PROVIDERS } from 'constants/providers'
 import {formActions} from 'shared/actions'
-import {UTM_TYPES} from 'constants/posts'
 import classes from './style.scss'
 
 //shows up as buttons in mobile, or sidebar in browser?
@@ -18,53 +16,21 @@ class ChannelPosts extends Component {
     this.state = {
     }
 
-    this.newPost = this.newPost.bind(this)
     this.channelPosts = this.channelPosts.bind(this)
     this.removePost = this.removePost.bind(this)
-    this.openPermissionModal = this.openPermissionModal.bind(this)
   }
 
-  removePost(post, index) {
-    if (this.state.currentPost === index) {
-      this.setState({currentPost: null})
+  removePost(post) {
+    if (this.props.currentPost.id === post.id) {
+      this.props.setCurrentPost(null)
     }
 
-    const channelTemplates = Helpers.safeDataPath(post, `channelConfigurations.${this.props.account.provider}.postTemplates`, [])
-    channelTemplates.splice(index, 1)
+    post = Object.assign({}, post)
+    post.toDelete = true
+    let posts = Object.assign({}, this.props.campaignPosts)
+    posts[post.id] = post
 
-    this.props.updatePostRequest(post)
-  }
-
-  openPermissionModal() {
-    //prompt to give permission
-    //will eventually use a store to tell modal to only show this account
-    this.props.setCurrentModal("LinkProviderAccountModal", this.props.currentProvider)
-  }
-
-  newPost (e) {
-    //build out the empty post object
-    const post = {
-      channel: this.props.currentChannel,
-      contentUrl: this.props.currentCampaign.contentUrl,
-      userId: this.props.user.id,
-      campaignId: this.props.currentCampaign.id,
-      providerAccountId: this.props.currentAccount.id,
-      planId: this.props.currentCampaign.planId,
-    }
-
-    //create id for it, like "draft1"
-    let uuid = `not-saved-${uuidv4()}`
-    post.id = uuid
-
-    formActions.setParams("Compose", "posts", {[uuid]: post})
-
-    //set utm field options (set all to active)
-    const utmDefaults = UTM_TYPES.reduce((acc, t) => {
-      acc[t.value] = true
-      return acc
-    }, {})
-
-    formActions.setOptions("Compose", "posts", {[uuid]: {utms: utmDefaults}})
+    formActions.setParams("Compose", "posts", {[post.id]: post})
   }
 
   //takes posts from all providers and accounts and organizes by channel
@@ -82,43 +48,32 @@ class ChannelPosts extends Component {
       return null
     }
 
-    const {currentAccount, currentProvider, currentChannel, campaignPosts} = this.props
-
-    const permittedChannels = Helpers.permittedChannels(currentAccount)
-    const channelIsAllowed = permittedChannels.includes(currentChannel)
+    const {currentAccount, currentProvider, currentChannel, currentPost, campaignPosts} = this.props
 
     let channelPosts = []
     if (currentAccount && currentChannel) {
       channelPosts = this.channelPosts(campaignPosts) || []
     }
+    //channel posts besides the current post
+    const otherChannelPosts = channelPosts.filter((p) => !currentPost || p.id !== currentPost.id)
 console.log(channelPosts);
 
     return (
       <Flexbox>
-        {channelIsAllowed ? (
           <div className={classes.postMenu}>
             {!channelPosts.length && <div>No posts yet</div>}
 
-            {channelPosts.map((post) =>
-              <div key={post.id}>
+            {currentPost && (
+              <div key={currentPost.id}>
                 <PostEditor
                   account={currentAccount}
                   channel={currentChannel}
-                  post={post}
+                  post={currentPost}
                 />
-                <Button style="inverted" onClick={this.removePost.bind(this, post)}>Destroy Post</Button>
+                <Button style="inverted" onClick={this.removePost.bind(this, currentPost)}>Destroy Post</Button>
               </div>
             )}
-
-            <Button style="inverted" onClick={this.newPost}>Add another {currentChannel.titleCase()}</Button>
-
           </div>
-        ) : (
-          <div>
-            <div>Growth Ramp needs your permission to make {currentChannel.titleCase()}s for {PROVIDERS[currentProvider].name}</div>
-            <Button style="inverted" onClick={this.openPermissionModal}>Grant Permission</Button>
-          </div>
-        )}
       </Flexbox>
     )
   }
@@ -127,6 +82,7 @@ console.log(channelPosts);
 const mapStateToProps = state => {
   return {
     currentCampaign: state.currentCampaign,
+    currentPost: state.currentPost,
     user: state.user,
     campaignPosts: Helpers.safeDataPath(state.forms, "Compose.posts.params", {}),
   }
@@ -134,6 +90,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = (dispatch) => {
   return {
     setCurrentModal: (payload, provider) => dispatch({type: SET_CURRENT_MODAL, payload, options: {oneProviderOnly: provider}}),
+    setCurrentPost: (payload) => dispatch({type: SET_CURRENT_POST, payload}),
     updatePostRequest: (payload) => {dispatch({type: UPDATE_POST_REQUEST, payload})},
   }
 }

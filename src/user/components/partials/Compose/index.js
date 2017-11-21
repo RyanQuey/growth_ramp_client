@@ -3,13 +3,15 @@ import { connect } from 'react-redux'
 import {
   UPDATE_CAMPAIGN_REQUEST,
   CREATE_POST_REQUEST,
+  DESTROY_POST_REQUEST,
   UPDATE_POST_REQUEST,
   SET_CURRENT_MODAL,
+  SET_CURRENT_POST,
 } from 'constants/actionTypes'
 import { Navbar, Icon, Button } from 'shared/components/elements'
 import { Select } from 'shared/components/groups'
 import { SocialLogin } from 'shared/components/partials'
-import { ProviderAccountsDetails, PostEditor, ChannelPicker, PostPicker, ChannelPosts } from 'user/components/partials'
+import { ProviderAccountsDetails, PostEditor, AddPost, PostPicker, ChannelPosts } from 'user/components/partials'
 import {formActions} from 'shared/actions'
 import {PROVIDERS} from 'constants/providers'
 import theme from 'theme'
@@ -18,29 +20,26 @@ class Compose extends Component {
   constructor(props) {
     super(props)
 
-    let currentProvider = "FACEBOOK"
-    let currentAccount
+    /*let currentAccount
     if (props.providerAccounts && Object.keys(props.providerAccounts).length > 0) {
-      currentAccount = props.providerAccounts[currentProvider][0]
+      currentAccount = props.providerAccounts[props.currentProvider][0]
     } else {
       currentAccount = null
-    }
+    }*/
 
     this.state = {
       status: 'READY', //other statuses include: 'PENDING'
       mode: 'VIEW', //other modes include: 'EDIT'
-      currentProvider,// will just be the provider name
-      currentAccount,//will be account obj
-      currentChannel: "",//will be obj
+      //currentProvider,// will just be the provider name
+      //currentAccount,//will be account obj
+      //currentChannel: "",//will be obj
       addingPost: false,
     }
 
-    this.handleChooseProvider = this.handleChooseProvider.bind(this)
-    this.handleChooseAccount = this.handleChooseAccount.bind(this)
-    this.handleChooseChannel = this.handleChooseChannel.bind(this)
     this.handleChangeName = this.handleChangeName.bind(this)
     this.handleLinkProvider = this.handleLinkProvider.bind(this)
     this.saveCampaignPosts = this.saveCampaignPosts.bind(this)
+    this.toggleAdding = this.toggleAdding.bind(this)
   }
 
   componentWillReceiveProps(props) {
@@ -75,19 +74,9 @@ class Compose extends Component {
     this.props.setCurrentModal("LinkProviderAccountModal", {provider})
   }
 
-  handleChooseProvider(providerOption) {
-    if (providerOption.value === this.state.currentProvider) {return }
-
-    this.setState({
-      currentProvider: providerOption.value,
-      currentAccount: Helpers.safeDataPath(this.props, `providerAccounts.${providerOption.value}.0`, false),
-    })
-  }
-
-  handleChooseAccount(accountOption) {
-    this.setState({
-      currentAccount: accountOption.value,
-    })
+  toggleAdding(provider, value = !this.state.addingPost) {
+    //if provider is passed in, just starts making a post for that provider
+    this.setState({addingPost: provider || value})
   }
 
   //persist images here
@@ -95,7 +84,7 @@ class Compose extends Component {
   //
   saveCampaignPosts() {
 console.log("about to start");
-    const campaignPostsArray = _.values(this.props.campaignPostsForm.params)
+    const campaignPostsFormArray = _.values(this.props.campaignPostsForm.params)
     const persistedPosts = this.props.currentCampaign.posts
 
     //should not update the post reducer on its success, just give me an alert if it fails
@@ -105,18 +94,34 @@ console.log("about to start");
     }
 
     //check if need to update or create each post
-    for (let i = 0; i < campaignPostsArray.length; i++) {
-      let post = Object.assign({}, campaignPostsArray[i])
+    for (let i = 0; i < campaignPostsFormArray.length; i++) {
+      let post = Object.assign({}, campaignPostsFormArray[i])
       let utmFields = Object.assign({}, Helpers.safeDataPath(this.props.formOptions, `${post.id}.utms`, {}))
 
-      if (typeof post.id === "string") { //.slice(0, 9) === "not-saved") {
+      // TO DESTROY
+      if (post.toDelete) {
+        //if not persisted yet, don't need to save anything
+        if (typeof post === "string") {
+          continue
+        } else {
+          this.props.destroyPostRequest(post)
+        }
+
+      // TO CREATE
+      } else if (typeof post.id === "string") { //.slice(0, 9) === "not-saved") {
         delete post.id
         this.props.createPostRequest(post, cb)
         continue
 
+      // TO UPDATE
       } else {
-        //iterate over post attributes, to check for equality
-        let isEqual = true
+        //iterate over post attributes, to sort params
+        if (!post.dirty) {
+          //no need to update
+          continue
+        }
+        delete post.dirty
+
         //should never really be {}...but whatever
         let persistedPost = persistedPosts.find((p) => p.id === post.id) || {}
         let attributes = Object.keys(post)
@@ -134,37 +139,17 @@ console.log("about to start");
             //trim down elements to update in case end up sending
             //especially because api seems to convert null to a string when setting to req.body...
             delete post[attribute]
-
-          } else {
-            isEqual = false
           }
-        }
-
-        if (isEqual) {
-          //no need to update
-          continue
         }
 
         this.props.updatePostRequest(post, cb)
       }
-
-
     }
 
   }
 
-  handleChooseChannel(channelOption) {
-    this.setState({
-      currentChannel: channelOption.value,
-    })
-  }
-
   handleLinkProvider() {
     this.props.setCurrentModal("LinkProviderAccountModal")
-  }
-
-  handleChangeMode (mode) {
-    this.setState({mode})
   }
 
   handleChangeName (e, errors) {
@@ -185,21 +170,21 @@ console.log("about to start");
       <div>
         <h1 className="display-3">Where should we promote it?</h1>
         {this.state.status === "PENDING" && <Icon name="spinner" className="fa-spin" />}
+
         <div>
           <PostPicker
             account={currentAccount}
             channel={this.state.currentChannel}
+            toggleAdding={this.toggleAdding}
+            addingPost={this.state.addingPost}
           />
+          {this.state.addingPost && <Button style="inverted" onClick={this.toggleAdding}>{this.state.addingPost ? "Cancel" : "New Post"}</Button>}
         </div>
 
-        <ChannelPicker
-          currentProvider={currentProvider}
-          currentAccount={currentAccount}
-          currentChannel={currentChannel}
-          handleChooseProvider={this.handleChooseProvider}
-          handleChooseAccount={this.handleChooseAccount}
-          handleChooseChannel={this.handleChooseChannel}
-        />
+        {this.state.addingPost && <AddPost
+          toggleAdding={this.toggleAdding}
+          currentProvider={this.state.addingPost}
+        />}
 
         <div>
           {currentAccount &&
@@ -209,17 +194,12 @@ console.log("about to start");
             </div>
           }
 
-          {currentChannel ? (
             <ChannelPosts
               currentProvider={currentProvider}
               currentAccount={currentAccount}
               currentChannel={currentChannel}
             />
-          ) : (
-            <div>Pick a channel to begin</div>
-          )}
-          <Button style="inverted" disabled={!dirty} onClick={this.saveCampaignPosts}>{dirty ? "Save changes" : "Draft saved"}</Button>
-          <Button style="inverted" onClick={this.handleLinkProvider}>Add another {PROVIDERS[currentProvider].name} account</Button>
+          <Button style="inverted" disabled={!dirty} onClick={this.saveCampaignPosts}>{dirty ? "Save changes" : "All drafts saved"}</Button>
         </div>
       </div>
     );
@@ -241,6 +221,7 @@ const mapDispatchToProps = (dispatch) => {
   return {
     updateCampaignRequest: (payload) => {dispatch({type: UPDATE_CAMPAIGN_REQUEST, payload})},
     updatePostRequest: (payload, cb) => {dispatch({type: UPDATE_POST_REQUEST, payload, cb})},
+    destroyPostRequest: (payload, cb) => {dispatch({type: DESTROY_POST_REQUEST, payload, cb})},
     createPostRequest: (payload) => {dispatch({type: CREATE_POST_REQUEST, payload})},
     setCurrentModal: (payload, modalOptions) => dispatch({type: SET_CURRENT_MODAL, payload, options: modalOptions})
   }

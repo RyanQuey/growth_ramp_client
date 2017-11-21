@@ -82,14 +82,18 @@ class Start extends Component {
       const options = {
 
       }
-
-      this.props.updateCampaignRequest({
+      const params = {
         id: this.props.currentCampaign.id,
-        planId: this.state.planId,
         name: this.state.name,
         userId: this.props.user.id,
         contentUrl: this.state.contentUrl
-      }, options, done)
+      }
+
+      if (this.state.planId) {
+        params.planId = this.state.planId
+      }
+
+      this.props.updateCampaignRequest(params, options, done)
 
     } else {
       done()
@@ -157,7 +161,6 @@ const mapStateToProps = state => {
     user: state.user,
     campaigns: state.campaigns,
     plans: state.plans,
-    currentPlan: state.currentPlan,
   }
 }
 const mapDispatchToProps = (dispatch) => {

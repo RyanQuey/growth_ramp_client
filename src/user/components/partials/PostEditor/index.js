@@ -1,6 +1,6 @@
 import { Component } from 'react';
 import { connect } from 'react-redux'
-import { Flexbox, Button, Input, Checkbox } from 'shared/components/elements'
+import { Flexbox, Button, Input, Checkbox, Icon } from 'shared/components/elements'
 import { DropImage } from 'shared/components/groups'
 import {
   SET_CURRENT_POST,
@@ -24,6 +24,8 @@ class PostEditor extends Component {
 
     this.handleText = this.handleText.bind(this)
     this.onDrop = this.onDrop.bind(this)
+    this.onOverrideDrop = this.onOverrideDrop.bind(this)
+    this.removeUpload = this.removeUpload.bind(this)
     this.onUpload = this.onUpload.bind(this)
   }
 
@@ -31,6 +33,7 @@ class PostEditor extends Component {
     //set the param
     let post = Object.assign({}, this.props.post)
     post[utmType] = value
+    post.dirty = true
 console.log(value );
     //update the post form
     formActions.setParams("Compose", "posts", {[post.id]: post})
@@ -38,10 +41,13 @@ console.log(value );
 
   toggleUtm(utmType, checked, e) {
     //update the post form
+    let post = Object.assign({}, this.props.post)
     let utmFields = Object.assign({}, Helpers.safeDataPath(this.props.formOptions, `${this.props.post.id}.utms`, {}))
     utmFields[utmType] = checked
+    post.dirty = true
 
     formActions.setOptions("Compose", "posts", {[this.props.post.id]: {utms: utmFields}})
+    formActions.setParams("Compose", "posts", {[post.id]: post})
   }
 
   //TODO debounce
@@ -49,6 +55,7 @@ console.log(value );
     //set the param
     let post = Object.assign({}, this.props.post)
     post.text = value
+    post.dirty = true
 
     //update the post form
     formActions.setParams("Compose", "posts", {[post.id]: post})
@@ -57,6 +64,25 @@ console.log(value );
   //NOTE: cannot save a file object in redux, at least not in a easy way.
   //Just upload here
   onDrop(acceptedFile, rejectedFile) {
+    if (acceptedFile) {
+      this.setState({pending: true})
+    } else {
+      console.log("failed to drop file");
+    }
+  }
+
+//TODO need a button
+  removeUpload(oldFileUrl){
+    //TODO also remove from b2
+    let uploadedFiles = [...this.props.uploadedFiles]
+    _.remove(uploadedFiles, (f) => f.url === oldFileUrl)
+
+    formActions.setParams("Compose", "uploadedFiles", uploadedFiles)
+  }
+
+  onOverrideDrop(oldFileUrl, acceptedFile, rejectedFile) {
+    //remove the old file
+    this.removeUpload(oldFileUrl)
     if (acceptedFile) {
       this.setState({pending: true})
     } else {
@@ -81,6 +107,7 @@ console.log(value );
         post.uploadedContent = []
       }
       post.uploadedContent.push({url: fileUrl, type: "IMAGE"})
+      post.dirty = true
 
       formActions.setParams("Compose", "posts", {[post.id]: post})
     }
@@ -91,6 +118,7 @@ console.log(value );
     const post = this.props.post
     let utmFields = Object.assign({}, Helpers.safeDataPath(this.props.formOptions, `${this.props.post.id}.utms`, {}))
 
+console.log("this is a post");
 console.log(post);
     return (
       <Flexbox direction="column">
@@ -108,7 +136,6 @@ console.log(post);
                 const type = utmType.value
                 const label = utmType.label
                 const active = utmFields[type]
-console.log(post[type]);
                 return <div key={type}>
                   <Checkbox
                     value={active}
@@ -144,16 +171,19 @@ console.log(post[type]);
                     className={classes.dropImage}
                   />
                   {post.uploadedContent && post.uploadedContent.map((upload) => {
-                    return <DropImage
-                      key={upload.url}
-                      user={this.props.user}
-                      onStart={this.onDrop}
-                      onSuccess={this.onUpload}
-                      onFailure={this.onUpload}
-                      onDrop={this.handleOverrideDrop}
-                      imageUrl={upload.url}
-                      className={classes.dropImage}
-                    />
+console.log(upload);
+                    return <div key={upload.url}>
+                      <DropImage
+                        user={this.props.user}
+                        onStart={this.onDrop}
+                        onSuccess={this.onUpload}
+                        onFailure={this.onUpload}
+                        onDrop={this.handleOverrideDrop}
+                        imageUrl={upload.url}
+                        className={classes.dropImage}
+                      />
+                      <Icon name="close" onClick={this.removeUpload.bind(this, upload.url)} />
+                    </div>
                   })}
                 </Flexbox>
               </Flexbox>
