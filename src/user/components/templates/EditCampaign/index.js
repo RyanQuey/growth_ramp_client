@@ -30,7 +30,10 @@ class EditCampaign extends Component {
 
   componentDidMount() {
     const campaignId = this.props.match.params.campaignId
+console.log("campaign ID");
+console.log(campaignId);
     const currentCampaign = this.props.campaigns[campaignId]
+console.log("current campaign");
 console.log(currentCampaign);
     //check if need to retrieve and/or populate posts
     if (!currentCampaign || !currentCampaign.posts) {

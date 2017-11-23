@@ -50,7 +50,6 @@ const mapStateToProps = state => {
 }
 const mapDispatchToProps = (dispatch) => {
   return {
-    setInputValue: (payload) => dispatch({type: SET_INPUT_VALUE, payload}),
     campaignPublishRequest: (payload) => dispatch({type: PUBLISH_CAMPAIGN_REQUEST, payload}),
   }
 }

@@ -28,6 +28,8 @@ console.log("now running");
   formActions.setParams("Compose", "posts", postObj, false)
 }
 
+//if want to send one post apart from campaign
+//don't allow this if campaign isn't published yet
 function* publishPost(action) {
   try {
     const pld = action.payload

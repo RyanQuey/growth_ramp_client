@@ -27,8 +27,17 @@ function* publishCampaign(action) {
     const results = yield axios.post(`/api/campaigns/${campaign.id}/publish`)
     console.log("results from the campaign");
     console.log(results);
-    yield put({type: PUBLISH_CAMPAIGN_SUCCESS, payload: {providers: pld.providers}})
+    //results is an array of posts, now with updated values (ie, published time, postUrl if available)
+    yield put({type: PUBLISH_CAMPAIGN_SUCCESS, payload: {results}})
 
+    //or something to trigger next phase, to prompt saving plan
+    formActions.formPersisted({
+      component: "Send",
+      form: "submit",
+    })
+    alertActions.newAlert({
+      title: "Success!",
+    })
   } catch (err) {
     console.log(`Error publishing campaign: ${err}`)
     errorActions.handleErrors({

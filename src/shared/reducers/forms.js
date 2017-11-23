@@ -21,7 +21,7 @@ export default (state = {}, action) => {
         dirty: pld.dirty,
         options: currentOptions,
       })
-console.log(pld.params, newState);
+//console.log(pld.params, newState);
       return newState
 
     case SET_OPTIONS:

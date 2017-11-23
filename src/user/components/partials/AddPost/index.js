@@ -9,6 +9,7 @@ import {
   LIVE_UPDATE_PLAN_SUCCESS,
   LIVE_UPDATE_PLAN_FAILURE,
   SET_CURRENT_MODAL,
+  SET_CURRENT_POST,
 } from 'constants/actionTypes'
 import { Navbar, Icon, Button } from 'shared/components/elements'
 import { Select } from 'shared/components/groups'
