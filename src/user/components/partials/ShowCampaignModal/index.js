@@ -85,7 +85,7 @@ class ShowCampaign extends Component {
   }
 
   render (){
-    const currentCampaign = this.props.currentCampaign
+    const currentCampaign = this.props.currentCampaign || {}
 
     return (
       <ModalContainer
