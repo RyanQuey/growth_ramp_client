@@ -1,5 +1,6 @@
 import { Component } from 'react';
 import { connect } from 'react-redux'
+import { withRouter } from 'react-router-dom'
 import { take } from 'redux-saga/effects'
 import {
   UPDATE_CAMPAIGN_REQUEST,
@@ -30,9 +31,13 @@ class Start extends Component {
     //so, if back button is pressed in future, won't continually bounce you to "Compose"
     //disabling; keep it simple. They start at the beginning each time
 
-    /*if (this.props.currentCampaign && this.props.currentCampaign.planId && this.props.initialOpening) {
-      this.props.switchTo("Compose", true)
-    }*/
+    //if page loads and at published campaign, don't edit it!!
+    if (this.props.currentCampaign && this.props.currentCampaign.status === "PUBLISHED") {
+      //is already published, don't let them try to edit from using browser link.
+      //will disable link to edit elsewhere if published too
+      this.props.history.push("/campaigns")
+    }
+
 
   }
 
@@ -181,5 +186,5 @@ const mapDispatchToProps = (dispatch) => {
   }
 }
 
-const ConnectedStart = connect(mapStateToProps, mapDispatchToProps)(Start)
+const ConnectedStart = withRouter(connect(mapStateToProps, mapDispatchToProps)(Start))
 export default ConnectedStart

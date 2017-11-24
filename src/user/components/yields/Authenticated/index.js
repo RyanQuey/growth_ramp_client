@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { UserContent, SetCredentials } from 'user/components/templates'
 import { Flexbox, Alert } from 'shared/components/elements'
-import { UserNavbar, UserSidebar, LinkProviderAccountModal, AccountPermissionsModal } from 'user/components/partials'
+import { UserNavbar, UserSidebar, LinkProviderAccountModal, AccountPermissionsModal, ShowCampaignModal } from 'user/components/partials'
 import { } from 'constants/actionTypes'
 import { viewSettingActions } from 'shared/actions'
 import classes from './style.scss'
@@ -26,6 +26,7 @@ class Authenticated extends Component {
           )}
         </Flexbox>
 
+        <ShowCampaignModal />
         <LinkProviderAccountModal />
         <AccountPermissionsModal />
       </div>

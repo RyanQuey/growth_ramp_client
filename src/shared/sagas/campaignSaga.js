@@ -16,27 +16,29 @@ import { PUBLISH_CAMPAIGN_REQUEST,
   UPDATE_CAMPAIGN_SUCCESS,
   USER_CAMPAIGNS_OUTDATED,
 } from 'constants/actionTypes'
-import {errorActions} from 'shared/actions'
+import { errorActions, formActions, alertActions } from 'shared/actions'
 
 function* publishCampaign(action) {
   let logins = 0
   try {
     const campaign = action.payload
+    //mostly using this so UI has something to respond to
+    formActions.setParams("Send", "submit", {publishing: true})
 
     //mark campaign as published
     const results = yield axios.post(`/api/campaigns/${campaign.id}/publish`)
     console.log("results from the campaign");
     console.log(results);
-    //results is an array of posts, now with updated values (ie, published time, postUrl if available)
-    yield put({type: PUBLISH_CAMPAIGN_SUCCESS, payload: {results}})
+    yield put({type: PUBLISH_CAMPAIGN_SUCCESS, payload: {
+      campaign: results.data.campaign,
+      posts: results.data.posts,
+    }})
 
     //or something to trigger next phase, to prompt saving plan
-    formActions.formPersisted({
-      component: "Send",
-      form: "submit",
-    })
+    formActions.formPersisted("Send", "submit")
     alertActions.newAlert({
       title: "Success!",
+      level: "SUCCESS",
     })
   } catch (err) {
     console.log(`Error publishing campaign: ${err}`)

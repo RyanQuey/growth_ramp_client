@@ -18,10 +18,18 @@ class CampaignPicker extends Component {
     super(props)
 
     this.editCampaign = this.editCampaign.bind(this)
+    this.showCampaign = this.showCampaign.bind(this)
     this.removeCampaign = this.removeCampaign.bind(this)
   }
 
+  showCampaign (campaign, e) {
+    this.props.fetchCurrentCampaign(campaignId)
+    this.props.setCurrentCampaign(currentCampaign)
+    this.props.setCurrentModal("ShowCampaignModal")
+  }
+
   editCampaign (campaign, e) {
+    this.props.fetchCurrentCampaign(campaignId)
     this.props.history.push(`/campaigns/${campaign.id}/edit`)
   }
 
@@ -48,11 +56,10 @@ class CampaignPicker extends Component {
         {Object.keys(campaigns).length && Object.keys(campaigns).map((campaignId) => {
           const campaign = campaigns[campaignId]
           const plan = Helpers.safeDataPath(this.props, `plans.${campaign.planId}.name`, false)
-console.log(campaign);
           return (
             <tr key={campaignId}>
               <td>
-                {moment(campaign.createdAt).format("MM-DD-YYYY hh:mm")}
+                {moment(campaign.createdAt).format("MM-DD-YYYY h:mm a")}
               </td>
               <td>
                 {campaign.status.titleCase()}
@@ -65,13 +72,13 @@ console.log(campaign);
                 )}
               </td>
               <td>
-                {campaign.publishedAt ? moment(campaign.publishedAt).format("mm-dd-yyyy hh:mm") : "Unpublished"}
+                {campaign.publishedAt ? moment(campaign.publishedAt).format("MM-DD-YYYY h:mm a") : "Unpublished"}
               </td>
               <td>
                 <ButtonGroup vertical={true}>
-                  <Button onClick={this.editCampaign.bind(this, campaign)}>Edit</Button>
-                  {campaign.status === "DRAFT" && <Button onClick={this.removeCampaign.bind(this, campaign)}>Delete</Button>}
-                  <Button disabled={true}>View Details</Button>
+                  {campaign.status !== "PUBLISHED" && <Button onClick={this.editCampaign.bind(this, campaign)}>Edit Draft</Button>}
+                  <Button onClick={this.showCampaign.bind(this, campaign)}>View Details</Button>
+                  {campaign.status !== "PUBLISHED" && <Button onClick={this.removeCampaign.bind(this, campaign)}>Delete</Button>}
                 </ButtonGroup>
               </td>
             </tr>
@@ -87,6 +94,7 @@ const mapDispatchToProps = (dispatch) => {
   return {
     fetchCurrentCampaign: (campaign, cb) => dispatch({type: FETCH_CURRENT_CAMPAIGN_REQUEST, payload: campaign, cb}),
     destroyCampaignRequest: (campaign) => dispatch({type: DESTROY_CAMPAIGN_REQUEST, payload: campaign}),
+    setCurrentModal: (payload) => dispatch({type: SET_CURRENT_MODAL, payload})
   }
 }
 

@@ -15,6 +15,16 @@ class Send extends Component {
     this.send = this.send.bind(this)
   }
 
+  componentWillReceiveProps(props) {
+    if (props.currentCampaign && props.currentCampaign.status === "PUBLISHED") {
+      this.setState({
+        pending: false,
+        mode: "savePlan"
+      })
+    }
+
+  }
+
   send() {
     this.props.campaignPublishRequest(this.props.currentCampaign)
   }

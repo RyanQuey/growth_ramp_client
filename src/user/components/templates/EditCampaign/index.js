@@ -1,5 +1,6 @@
 import { Component } from 'react';
 import { connect } from 'react-redux'
+import { withRouter } from 'react-router-dom'
 import {
   Start,
   Send,
@@ -38,12 +39,14 @@ console.log(currentCampaign);
     //check if need to retrieve and/or populate posts
     if (!currentCampaign || !currentCampaign.posts) {
       //this action doesn't yet support any criteria
-      const cb = () => {
-        this.setState({pending: false})
-      }
-
       this.setState({pending: true})
-      this.props.fetchCurrentCampaign(campaignId, cb)
+      this.props.fetchCurrentCampaign(campaignId)
+
+    } else if (currentCampaign.status === "PUBLISHED") {
+      //is already published, don't let them try to edit from using browser link.
+      //will disable link to edit elsewhere if published too
+      this.props.history.push("/campaigns")
+
     } else {
 
       this.props.setCurrentCampaign(currentCampaign)
@@ -114,6 +117,6 @@ const mapDispatchToProps = (dispatch) => {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(EditCampaign)
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(EditCampaign))
 
 

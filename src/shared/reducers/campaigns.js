@@ -1,16 +1,19 @@
 import {
   CREATE_POST_SUCCESS,
   UPDATE_POST_SUCCESS,
+  DESTROY_POST_SUCCESS,
   CREATE_CAMPAIGN_SUCCESS,
   UPDATE_CAMPAIGN_SUCCESS,
   FETCH_CAMPAIGN_SUCCESS,
   SIGN_OUT_SUCCESS,
   SET_CURRENT_CAMPAIGN,
+  PUBLISH_CAMPAIGN_SUCCESS,
 } from 'constants/actionTypes'
 
 const campaignsReducer = (state = {}, action) => {
 
   let campaign, post, campaignPosts, postIndex
+  let pld = action.payload
   switch (action.type) {
 
     case SET_CURRENT_CAMPAIGN:
@@ -25,6 +28,17 @@ const campaignsReducer = (state = {}, action) => {
 
     case UPDATE_CAMPAIGN_SUCCESS:
       campaign = action.payload
+      return Object.assign({}, state, {[campaign.id]: campaign})
+
+    case PUBLISH_CAMPAIGN_SUCCESS:
+      campaign = pld.campaign
+      campaign.posts = pld.posts
+      //should never be {}...
+      campaign = Object.assign({}, Helpers.safeDataPath(store.getState(), `campaigns.${post.campaignId}`, {}))
+      postIndex = _.findIndex(campaignPosts, {id: post.id})
+      //replaces that item in the array
+      campaign.posts = campaignPosts
+
       return Object.assign({}, state, {[campaign.id]: campaign})
 
     case CREATE_POST_SUCCESS:
@@ -45,6 +59,19 @@ const campaignsReducer = (state = {}, action) => {
       postIndex = _.findIndex(campaignPosts, {id: post.id})
       //replaces that item in the array
       campaignPosts.splice(postIndex, 1, post)
+      campaign.posts = campaignPosts
+
+      return Object.assign({}, state, {[campaign.id]: campaign})
+
+    //NOTE might be easier to just retrieve campaign from db again...but this is faster.
+    case DESTROY_POST_SUCCESS:
+      post = action.payload
+      //should never be {}...
+      campaign = Object.assign({}, Helpers.safeDataPath(store.getState(), `campaigns.${post.campaignId}`, {}))
+      campaignPosts = [...campaign.posts]
+      postIndex = _.findIndex(campaignPosts, {id: post.id})
+      //replaces that item in the array
+      campaignPosts.splice(postIndex, 1)
       campaign.posts = campaignPosts
 
       return Object.assign({}, state, {[campaign.id]: campaign})
