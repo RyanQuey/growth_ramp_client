@@ -14,7 +14,7 @@ import { ButtonGroup } from 'shared/components/groups'
 import { PROVIDERS } from 'constants/providers'
 import classes from './style.scss'
 
-class ShowCampaign Component {
+class ShowCampaign extends Component {
   constructor(props) {
     super(props)
 
@@ -96,9 +96,9 @@ class ShowCampaign Component {
         <ModalBody>
 
           {currentCampaign.posts ? (
-
+<div>Campaign</div>
           ) : (
-
+<div></div>
           )}
         </ModalBody>
       </ModalContainer>
