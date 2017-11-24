@@ -68,6 +68,7 @@ console.log(currentCampaign);
     const Tag = sections[this.state.currentSection]
     const currentCampaign = this.props.campaigns[this.props.match.params.campaignId]
 
+console.log(currentCampaign);
     return (
       <div>
         <Navbar className="" justify="space-around" background={theme.color.moduleGrayOne} color={theme.color.text}>

@@ -23,13 +23,13 @@ class CampaignPicker extends Component {
   }
 
   showCampaign (campaign, e) {
-    this.props.fetchCurrentCampaign(campaignId)
+    this.props.fetchCurrentCampaign(campaign.id)
     this.props.setCurrentCampaign(currentCampaign)
     this.props.setCurrentModal("ShowCampaignModal")
   }
 
   editCampaign (campaign, e) {
-    this.props.fetchCurrentCampaign(campaignId)
+    //will fetch anyways when we get there, since have to if user goes direcly from the url bar
     this.props.history.push(`/campaigns/${campaign.id}/edit`)
   }
 
