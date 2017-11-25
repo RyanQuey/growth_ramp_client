@@ -32,6 +32,7 @@ export const uploadFile = (file) => {
   return new Promise((resolve, reject) => {
     const formData = new FormData()
     //rename to ensure unique path, and will work as link AND for background image
+    //some of the regex is overkill...but whatever
     let newName = `${uuidv4()}-${file.name.replace(/\(,|\/|\s|\?|:|@|&|=|\+|#\)+/g, "_")}`
     //NOTE: using the File API might make incompatibility with old IE11, Edge 16, old android
     let namedFile = new File([file], newName, {type: file.type})

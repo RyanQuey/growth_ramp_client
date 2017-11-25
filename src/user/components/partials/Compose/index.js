@@ -162,7 +162,7 @@ console.log("value: ", post[attribute], persistedPost[attribute]);
             toggleAdding={this.toggleAdding}
             addingPost={this.state.addingPost}
           />
-          {this.state.addingPost && <Button style="inverted" onClick={this.toggleAdding}>{this.state.addingPost ? "Cancel" : "New Post"}</Button>}
+          {this.state.addingPost && <Button style="inverted" onClick={this.toggleAdding.bind(this, false, this.state.addingPost)}>{this.state.addingPost ? "Cancel" : "New Post"}</Button>}
         </div>
 
         {this.state.addingPost && <AddPost

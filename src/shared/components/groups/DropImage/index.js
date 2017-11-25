@@ -1,7 +1,7 @@
 import { Component } from 'react'
 import PropTypes from 'prop-types'
 import Dropzone from 'react-dropzone'
-import { formActions } from 'shared/actions'
+import { formActions, alertActions } from 'shared/actions'
 import { Flexbox, Icon } from 'shared/components/elements'
 import classes from './style.scss'
 import theme from 'theme'
@@ -25,37 +25,65 @@ class DropImage extends Component {
     this.onDrop = this.onDrop.bind(this)
   }
 
+  handleError(e, a) {
+    console.log(e, a);
+
+  }
+
   onDrop (acceptedFiles, rejectedFiles) {
     const acceptedFile = acceptedFiles[0]
     const rejectedFile = rejectedFiles[0]
 
-    this.props.onStart && this.props.onStart(acceptedFile, rejectedFile)
-    formActions.uploadFile(acceptedFile)
-    .then((fileUrl) => {
-      this.props.onSuccess && this.props.onSuccess(fileUrl)
-    })
-    .catch((err) => {
-      console.log(err);
-      this.props.onFailure && this.props.onFailure(err)
-    })
-    //clear url from browser memory to avoid memory leak
-    window.URL.revokeObjectURL(acceptedFile.preview)
+    if (rejectedFile) {
+      let message
+      if (rejectedFile.size > 2*1000*1000) {
+        message = "Maximum file size is 2MB"
+      } else if (!rejectedFile.type.includes("image/")) {
+        message = "File must be an image"
+      } else {
+        message = "Unknown error"
+      }
 
-    //only use one file per DZ, so can set background to preview
+      alertActions.newAlert({
+        title: "Failed to upload:",
+        message: message,
+        level: "DANGER",
+      })
+
+    } else {
+      this.setState({pending: true})
+      this.props.onStart && this.props.onStart(acceptedFile, rejectedFile)
+      formActions.uploadFile(acceptedFile)
+      .then((fileUrl) => {
+        this.setState({pending: false})
+        this.props.onSuccess && this.props.onSuccess(fileUrl)
+      })
+      .catch((err) => {
+        console.log(err);
+        this.setState({pending: false})
+        this.props.onFailure && this.props.onFailure(err)
+      })
+      //clear url from browser memory to avoid memory leak
+      window.URL.revokeObjectURL(acceptedFile.preview)
+
+    }
   }
 
   render() {
     return (
       <Flexbox align="center" direction="column" justify="center" className={this.props.className || ""}>
         <Dropzone
+          disabled={this.state.pending}
           className={`${css(this.styles.dropzone)} ${classes.dropzone}`}
           multiple={false}
           onDrop={this.onDrop}
           style={this.props.style}
+          maxSize={2*1000*1000} //2MB
+          accept="image/*"
         >
           <Flexbox align="center" direction="column">
             <div>{this.props.label}</div>
-            <Icon color="black" name="picture-o" />
+            {this.state.pending ? <Icon color="black" name="spinner" /> : <Icon color="black" name="picture-o" />}
           </Flexbox>
         </Dropzone>
       </Flexbox>
