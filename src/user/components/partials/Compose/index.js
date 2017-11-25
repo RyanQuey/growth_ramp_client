@@ -72,6 +72,10 @@ class Compose extends Component {
     const campaignPostsFormArray = _.values(this.props.campaignPostsForm.params)
     const persistedPosts = this.props.currentCampaign.posts || []
 
+    const cb = () => {
+      formActions.matchCampaignStateToRecord()
+    }
+
     //should not update the post reducer on its success, just give me an alert if it fails
 
     //check if need to update or create each post
@@ -85,13 +89,13 @@ class Compose extends Component {
         if (typeof post === "string") {
           continue
         } else {
-          this.props.destroyPostRequest(post)
+          this.props.destroyPostRequest(post, cb)
         }
 
       // TO CREATE
       } else if (typeof post.id === "string") { //.slice(0, 9) === "not-saved") {
         delete post.id
-        this.props.createPostRequest(post)
+        this.props.createPostRequest(post, cb)
         continue
 
       // TO UPDATE
@@ -126,7 +130,7 @@ class Compose extends Component {
 console.log("value: ", post[attribute], persistedPost[attribute]);
         }
 
-        this.props.updatePostRequest(post)
+        this.props.updatePostRequest(post, cb)
       }
     }
 
@@ -203,10 +207,10 @@ const mapStateToProps = state => {
 }
 const mapDispatchToProps = (dispatch) => {
   return {
-    updateCampaignRequest: (payload) => {dispatch({type: UPDATE_CAMPAIGN_REQUEST, payload})},
-    updatePostRequest: (payload) => {dispatch({type: UPDATE_POST_REQUEST, payload})},
-    destroyPostRequest: (payload) => {dispatch({type: DESTROY_POST_REQUEST, payload})},
-    createPostRequest: (payload) => {dispatch({type: CREATE_POST_REQUEST, payload})},
+    updateCampaignRequest: (payload, cb) => {dispatch({type: UPDATE_CAMPAIGN_REQUEST, payload, cb})},
+    updatePostRequest: (payload, cb) => {dispatch({type: UPDATE_POST_REQUEST, payload, cb})},
+    destroyPostRequest: (payload, cb) => {dispatch({type: DESTROY_POST_REQUEST, payload, cb})},
+    createPostRequest: (payload, cb) => {dispatch({type: CREATE_POST_REQUEST, payload, cb})},
     setCurrentModal: (payload, modalOptions) => dispatch({type: SET_CURRENT_MODAL, payload, options: modalOptions})
   }
 }

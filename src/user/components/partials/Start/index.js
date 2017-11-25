@@ -73,15 +73,16 @@ class Start extends Component {
   save() {
     const done = () => {
       this.props.switchTo("Compose")
+      formActions.formPersisted("EditCampaign", "other")
     }
 
     if (this.props.dirty) {
       let campaignParams = this.props.campaignParams
       const options = {} //can't remember why i have this..maybe just that, I coudl use if needed?
       const params = {
-        id: campaignParams.id,
+        id: this.props.currentCampaign.id,
         name: campaignParams.name,
-        userId: campaignParams.userId,
+        userId: this.props.currentCampaign.userId,
         contentUrl: campaignParams.contentUrl,
       }
 

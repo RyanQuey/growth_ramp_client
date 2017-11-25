@@ -41,7 +41,7 @@ class AddPost extends Component {
   }
 
   handleChooseProvider(providerOption) {
-    if (providerOption.value === this.state.currentProvider) {return }
+    if (providerOption.value === this.props.currentProvider) {return }
 
     this.setState({
       currentProvider: providerOption.value,
@@ -53,7 +53,8 @@ class AddPost extends Component {
   openProviderModal() {
     //prompt to give permission
     //will eventually use a store to tell modal to only show this account
-    this.props.setCurrentModal("LinkProviderAccountModal", this.props.currentProvider)
+
+    this.props.setCurrentModal("LinkProviderAccountModal", {provider: this.props.currentProvider})
   }
 
   handleChooseAccount(accountOption) {
@@ -179,24 +180,30 @@ console.log(accountOption);
       <div>
         {!currentProvider || this.props.status === "PENDING" && <Icon name="spinner" className="fa-spin" />}
 
-        <div>
-          <h2>Select where to send this {PROVIDERS[currentProvider].name} post to make</h2>
-          {false && !(typeof this.props.addingPost === "string") && <Select
-            label="Platform"
-            options={providerOptions}
-            onChange={this.handleChooseProvider}
-            currentOption={currentProvider ? this.providerOption(currentProvider) : placeholder}
-            name="select-provider"
-          />}
+        {!this.props.providerAccounts || !this.props.providerAccounts[currentProvider].length ? (
+          <div>
+            <div>Growth Ramp needs your permission to make posts for {PROVIDERS[currentProvider].name}</div>
+            <Button style="inverted" onClick={this.openProviderModal}>Grant Provider to continue</Button>
+          </div>
 
-          {currentProvider && accountsForProvider.length === 0 ? (
-            <div>
-              <h3>No social network accounts configured yet; add one more accounts before continuing</h3>
-              <Button onClick={this.openProviderModal.bind(this, currentProvider)}>Add new {PROVIDERS[currentProvider].name} account</Button>
-            </div>
-          ) : (
-            <div>
-              {currentProvider &&
+        ) : (
+          <div>
+            <h2>Select where to send this {PROVIDERS[currentProvider].name} post to make</h2>
+            {false && !(typeof this.props.addingPost === "string") && <Select
+              label="Platform"
+              options={providerOptions}
+              onChange={this.handleChooseProvider}
+              currentOption={currentProvider ? this.providerOption(currentProvider) : placeholder}
+              name="select-provider"
+            />}
+
+            {currentProvider && accountsForProvider.length === 0 ? (
+              <div>
+                <h3>No social network accounts configured yet; add one more accounts before continuing</h3>
+                <Button onClick={this.openProviderModal.bind(this, currentProvider)}>Add new {PROVIDERS[currentProvider].name} account</Button>
+              </div>
+            ) : (
+              <div>
                 <Select
                   label="Account"
                   options={accountOptions}
@@ -204,32 +211,33 @@ console.log(accountOption);
                   currentOption={currentAccount ? this.accountOption(currentAccount) : placeholder}
                   name="select-account"
                 />
-              }
-              {currentAccount &&
-                <Select
-                  label="Channel"
-                  options={channelOptions}
-                  onChange={this.handleChooseChannel}
-                  currentOption={currentChannel ? this.channelOption(currentChannel) : placeholder}
-                  name="select-channel"
-                />
-              }
 
-              {currentChannel && channelIsAllowed ? (
-                <Button style="inverted" onClick={this.newPost}>Add a {currentChannel.titleCase()}</Button>
-              ) : (
-                (currentChannel && !channelIsAllowed) ||
-                (currentProvider && !accountsForProvider.length) && (
+                {currentAccount &&
+                  <Select
+                    label="Channel"
+                    options={channelOptions}
+                    onChange={this.handleChooseChannel}
+                    currentOption={currentChannel ? this.channelOption(currentChannel) : placeholder}
+                    name="select-channel"
+                  />
+                }
+
+                {currentChannel && channelIsAllowed && (
+                  <Button style="inverted" onClick={this.newPost}>Add a {currentChannel.titleCase()}</Button>
+                )}
+
+                {currentChannel && !channelIsAllowed && (
                   <div>
-                    <div>Growth Ramp needs your permission to make a {currentChannel ? currentChannel.titleCase() : "post"}s for {PROVIDERS[currentProvider].name}</div>
+                    <div>Growth Ramp needs your permission to make {currentChannel ? currentChannel.titleCase() : "post"}s for {PROVIDERS[currentProvider].name}</div>
                     <Button style="inverted" onClick={this.openProviderModal}>Grant Provider to continue</Button>
                   </div>
-                )
-              )}
-            </div>
-          )}
-        </div>
 
+                )}
+
+              </div>
+            )}
+          </div>
+        )}
       </div>
     );
   }

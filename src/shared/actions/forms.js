@@ -75,10 +75,9 @@ export const clearParams = () => {
 //basically, the post you are working on will reflect the same data it had, and params are ready to persisted if you update again
 //other campaign params is set too; each "form" is a campaign attribute
 export const matchCampaignStateToRecord = () => {
-console.log("now running");
 
+  //this should match the persisted recoard
   const campaign = Helpers.safeDataPath(store.getState(), `currentCampaign`, {})
-console.log(campaign.id);
   const campaignPosts = campaign.posts || []
   //convert to object for easy getting/setting
   const postObj = campaignPosts.reduce((acc, post) => {
@@ -86,7 +85,12 @@ console.log(campaign.id);
     return acc
   }, {})
 
-  setParams("EditCampaign", "posts", postObj, false)
+  if (Object.keys(postObj).length) {
+    setParams("EditCampaign", "posts", postObj, false)
+  } else {
+    clearParams ("EditCampaign", "posts")
+  }
+
   delete campaign.posts //will not be updating posts on that part of the state, so don't want to confuse things; just remove it
   setParams("EditCampaign", "other", campaign, false)
 }

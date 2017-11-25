@@ -184,7 +184,7 @@ function* fetchCurrentCampaign(action) {
     formActions.matchCampaignStateToRecord()
 
   } catch (err) {
-    console.log('campaigns fetch failed', err.response)
+    console.log('current campaign fetch failed', err.response || err)
     // yield put(userFetchFailed(err.message))
   }
 }

@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types'
 import classes from './style.scss'
 import { StyleSheet, css } from 'aphrodite'
+import { Icon } from 'shared/components/elements'
 import theme from 'theme'
 
 const STYLES = {
@@ -69,7 +70,7 @@ const styles = (style, disabled, selected) => {
 
 }
 
-const Button = ({ style = 'primary', children, onClick, disabled, selected, type }) => {
+const Button = ({ style = 'primary', children, onClick, disabled, selected, type, pending }) => {
   disabled = disabled || disabled == 'disabled' ? true : false
 
   return (
@@ -79,7 +80,7 @@ const Button = ({ style = 'primary', children, onClick, disabled, selected, type
       disabled={disabled}
       type={type || "button"}
     >
-      {children}
+      {!pending ? children : <Icon name="spinner" /> }
     </button>
   )
 }

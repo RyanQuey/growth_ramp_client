@@ -46,16 +46,17 @@ class EditCampaign extends Component {
     }
 
     //give popup if tries to leave while dirty
-    if (props.dirty && !this.props.dirty) {
+    //don't set multiple by only setting if doesn't exist yet
+    if (props.dirty && !window.onbeforeunload) {
       window.onbeforeunload = function(e) {
         var dialogText = 'Form not saved; Are you sure you want to leave?';
         e.returnValue = dialogText;
         return dialogText;
       };
-    } else if (!props.dirty && this.props.dirty) {
 
+    } else if (!props.dirty && this.props.dirty) {
       //remove listener
-      window.onbeforeunload = undefined
+      window.onbeforeunload = null
     }
 
   }
@@ -99,7 +100,6 @@ class EditCampaign extends Component {
     const Tag = sections[this.state.currentSection]
     const currentCampaign = this.props.currentCampaign //campaigns[this.props.match.params.campaignId]
 
-console.log(currentCampaign);
     return (
       <div>
         <Navbar className="" justify="space-around" background={theme.color.moduleGrayOne} color={theme.color.text}>

@@ -9,7 +9,8 @@ class Send extends Component {
     super()
 
     this.state = {
-      mode: "send"
+      mode: "send",
+      pending: false,
     }
 
     this.send = this.send.bind(this)
@@ -45,7 +46,7 @@ class Send extends Component {
         <h1 className="display-3">Send</h1>
         Now you send it
         <div>
-          <Button onClick={this.send}>SEND THEM ALL!</Button>
+          <Button pending={this.state.pending} disabled={this.state.pending} onClick={this.send}>SEND THEM ALL!</Button>
         </div>
       </div>
     );

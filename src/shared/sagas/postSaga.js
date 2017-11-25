@@ -114,6 +114,9 @@ function* destroyPost(action) {
       put({type: DESTROY_POST_SUCCESS, payload: res}),
     ])
 
+    if (action.cb) {
+      action.cb(newRecord)
+    }
   } catch (err) {
     console.log('posts destroy failed', err)
   }

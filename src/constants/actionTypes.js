@@ -25,6 +25,7 @@ export const HANDLE_ERRORS = 'HANDLE_ERRORS'
 //miscellaneous UI
 export const HANDLE_QUERY = 'HANDLE_QUERY'
 export const SET_PARAMS = 'SET_PARAMS'
+export const CLEAR_PARAMS = 'CLEAR_PARAMS'
 export const SET_OPTIONS = 'SET_OPTIONS'
 export const FORM_PERSISTED = 'FORM_PERSISTED'
 
