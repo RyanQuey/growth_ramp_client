@@ -67,6 +67,7 @@ function* createCampaign(action) {
     const newRecord = res.data
     const campaignId = newRecord.id
 
+    //NOTE: This works!
     if (action.cb) {
       action.cb(newRecord)
     }
@@ -157,7 +158,8 @@ function* destroyCampaign(action) {
     const pld = action.payload
 
     //TODO: eventually they filter out campaigns that have already been sent
-    const res = yield axios.delete(`/api/campaigns/${pld.id}`) //eventually switch to socket
+    const res = yield axios.put(`/api/campaigns/${pld.id}`, {status: "ARCHIVED"}) //eventually switch to socket
+
     yield all([
       put({type: DESTROY_CAMPAIGN_SUCCESS, payload: res}),
       put({type: USER_CAMPAIGNS_OUTDATED}),
@@ -179,6 +181,7 @@ function* fetchCurrentCampaign(action) {
       put({type: SET_CURRENT_CAMPAIGN, payload: res.data})
     ])
     action.cb && action.cb(res)
+    formActions.matchCampaignStateToRecord()
 
   } catch (err) {
     console.log('campaigns fetch failed', err.response)

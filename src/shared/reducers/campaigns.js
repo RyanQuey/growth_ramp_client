@@ -12,7 +12,7 @@ import {
 
 const campaignsReducer = (state = {}, action) => {
 
-  let campaign, post, campaignPosts, postIndex
+  let campaign, post, campaignPosts, oldPosts, postIndex
   let pld = action.payload
   switch (action.type) {
 
@@ -45,7 +45,8 @@ const campaignsReducer = (state = {}, action) => {
       post = action.payload
       //should never be {}...
       campaign = Object.assign({}, Helpers.safeDataPath(store.getState(), `campaigns.${post.campaignId}`, {}))
-      campaignPosts = [...campaign.posts].push(post)
+      oldPosts = campaign.posts || []
+      campaignPosts = [...oldPosts].push(post)
       campaign.posts = campaignPosts
 
       return Object.assign({}, state, {[campaign.id]: campaign})
@@ -55,7 +56,8 @@ const campaignsReducer = (state = {}, action) => {
       post = action.payload
       //should never be {}...
       campaign = Object.assign({}, Helpers.safeDataPath(store.getState(), `campaigns.${post.campaignId}`, {}))
-      campaignPosts = [...campaign.posts]
+      oldPosts = campaign.posts || []
+      campaignPosts = [...oldPosts]
       postIndex = _.findIndex(campaignPosts, {id: post.id})
       //replaces that item in the array
       campaignPosts.splice(postIndex, 1, post)

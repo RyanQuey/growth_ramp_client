@@ -118,7 +118,7 @@ class PostPicker extends Component {
 
 const mapStateToProps = state => {
   return {
-    campaignPosts: Helpers.safeDataPath(state.forms, "Compose.posts.params", {}),
+    campaignPosts: Helpers.safeDataPath(state.forms, "EditCampaign.posts.params", {}),
     user: state.user,
     providerAccounts: state.providerAccounts,
     currentPost: state.currentPost,

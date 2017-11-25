@@ -47,6 +47,7 @@ class CampaignPicker extends Component {
       <table>
         <tbody>
         <tr>
+          <th>Name</th>
           <th>Date Created</th>
           <th>Status</th>
           <th>Plan</th>
@@ -58,6 +59,9 @@ class CampaignPicker extends Component {
           const plan = Helpers.safeDataPath(this.props, `plans.${campaign.planId}.name`, false)
           return (
             <tr key={campaignId}>
+              <td>
+                {campaign.name || "No name"}
+              </td>
               <td>
                 {moment(campaign.createdAt).format("MM-DD-YYYY h:mm a")}
               </td>

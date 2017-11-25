@@ -16,18 +16,6 @@ import {
 } from 'constants/actionTypes'
 import {errorActions, formActions} from 'shared/actions'
 
-//basically, the post you are working on will reflect the same data it had, and params are ready to persisted if you update again
-const _matchStateToRecord = () => {
-console.log("now running");
-  const campaignPosts = Helpers.safeDataPath(store.getState(), `currentCampaign.posts`, [])
-  //convert to object for easy getting/setting
-  const postObj = campaignPosts.reduce((acc, post) => {
-    acc[post.id] = post
-    return acc
-  }, {})
-  formActions.setParams("Compose", "posts", postObj, false)
-}
-
 //if want to send one post apart from campaign
 //don't allow this if campaign isn't published yet
 function* publishPost(action) {
@@ -108,7 +96,7 @@ function* updatePost(action) {
       put({ type: UPDATE_POST_SUCCESS, payload: res.data}),
     ])
 
-    _matchStateToRecord()
+    formActions.matchCampaignStateToRecord()
 
   } catch (err) {
     console.log(err.response);

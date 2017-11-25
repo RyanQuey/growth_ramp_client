@@ -9,9 +9,10 @@ import {
   PUBLISH_CAMPAIGN_SUCCESS,
 } from 'constants/actionTypes'
 
+//either the campaign worked on in the EditCampaign template, or viewing details of in the ShowCampaign modal
 const currentCampaignReducer = (state = null, action) => {
 
-  let campaign, post, campaignPosts, postIndex
+  let campaign, post, campaignPosts, oldPosts, postIndex
   switch (action.type) {
 
     case UPDATE_CAMPAIGN_SUCCESS:
@@ -32,7 +33,6 @@ const currentCampaignReducer = (state = null, action) => {
         return state
       }
 
-
     case SET_CURRENT_CAMPAIGN:
       campaign = action.payload
       return Object.assign({}, campaign)
@@ -41,10 +41,13 @@ const currentCampaignReducer = (state = null, action) => {
       post = action.payload
       if (post.campaignId = state.id) {
         campaign = Object.assign({}, state)
-        campaignPosts = [...campaign.posts].push(post)
+console.log("in the reducer");
+console.log(campaign);
+        oldPosts = campaign.posts || []
+        campaignPosts = [...oldPosts].push(post)
         campaign.posts = campaignPosts
 
-        return Object.assign({}, state, campaign)
+        return Object.assign({}, campaign)
 
       } else {
         return state
@@ -55,7 +58,8 @@ const currentCampaignReducer = (state = null, action) => {
       post = action.payload
       if (post.campaignId = state.id) {
         campaign = Object.assign({}, state)
-        campaignPosts = [...campaign.posts]
+        oldPosts = campaign.posts || []
+        campaignPosts = [...oldPosts]
         postIndex = _.findIndex(campaignPosts, (p) => p.id === post.id)
 
 

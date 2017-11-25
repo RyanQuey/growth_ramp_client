@@ -10,6 +10,7 @@ import {
 import { Navbar } from 'shared/components/elements'
 import { FETCH_CURRENT_CAMPAIGN_REQUEST, SET_CURRENT_CAMPAIGN, CREATE_CAMPAIGN_REQUEST } from 'constants/actionTypes'
 import theme from 'theme'
+import { formActions } from 'shared/actions'
 
 const sections = {
   Start,
@@ -27,30 +28,60 @@ class EditCampaign extends Component {
     }
 
     this.switchTo = this.switchTo.bind(this)
+    this.setCampaign = this.setCampaign.bind(this)
   }
 
   componentDidMount() {
+    //set current campaign based on the url params, no matter what it was before
     const campaignId = this.props.match.params.campaignId
-console.log("campaign ID");
-console.log(campaignId);
+    this.setCampaign(campaignId)
+  }
+
+  componentWillReceiveProps (props) {
+    if (props.match.params.campaignId !== this.props.match.params.campaignId) {
+      //editing a new campaign, without remounting.
+      //this would happen if click "New Campaign" while editing a different one
+      this.setCampaign(props.match.params.campaignId)
+
+    }
+
+    //give popup if tries to leave while dirty
+    if (props.dirty && !this.props.dirty) {
+      window.onbeforeunload = function(e) {
+        var dialogText = 'Form not saved; Are you sure you want to leave?';
+        e.returnValue = dialogText;
+        return dialogText;
+      };
+    } else if (!props.dirty && this.props.dirty) {
+
+      //remove listener
+      window.onbeforeunload = undefined
+    }
+
+  }
+
+  setCampaign (campaignId) {
     const currentCampaign = this.props.campaigns[campaignId]
-console.log("current campaign");
-console.log(currentCampaign);
     //check if need to retrieve and/or populate posts
     if (!currentCampaign || !currentCampaign.posts) {
       //this action doesn't yet support any criteria
       this.setState({pending: true})
       this.props.fetchCurrentCampaign(campaignId)
+      //initializing to match persisted record
+      formActions.matchCampaignStateToRecord()
 
-    } else if (currentCampaign.status === "PUBLISHED") {
-      //is already published, don't let them try to edit from using browser link.
+    } else if (currentCampaign.status !== "DRAFT") {
+      //is already published or is archived, don't let them try to edit from using browser link.
       //will disable link to edit elsewhere if published too
       this.props.history.push("/campaigns")
 
     } else {
 
       this.props.setCurrentCampaign(currentCampaign)
+      //initializing to match persisted record
+      formActions.matchCampaignStateToRecord()
     }
+
   }
 
   //can be called from the EditCampaignFooter or each of the 4 sections
@@ -66,7 +97,7 @@ console.log(currentCampaign);
   render() {
     const c = this;
     const Tag = sections[this.state.currentSection]
-    const currentCampaign = this.props.campaigns[this.props.match.params.campaignId]
+    const currentCampaign = this.props.currentCampaign //campaigns[this.props.match.params.campaignId]
 
 console.log(currentCampaign);
     return (
@@ -88,7 +119,6 @@ console.log(currentCampaign);
             <Tag
               switchTo={this.switchTo}
               initialOpening={this.state.initialOpening}
-              currentCampaign={currentCampaign}
             />
           ) : (
             <div>No campaign with id {this.props.match.params.campaignId} found</div>
@@ -97,7 +127,6 @@ console.log(currentCampaign);
         <EditCampaignFooter
           switchTo={this.switchTo}
           currentSection={this.state.currentSection}
-          currentCampaign={currentCampaign}
         />
       </div>
     );
@@ -108,6 +137,9 @@ const mapStateToProps = state => {
   return {
     user: state.user,
     campaigns: state.campaigns,
+    currentCampaign: state.currentCampaign,
+    //if either form is dirty
+    dirty: Helpers.safeDataPath(state.forms, "EditCampaign.posts.dirty", false) || Helpers.safeDataPath(state.forms, "EditCampaign.other.dirty", false) ,
   }
 }
 const mapDispatchToProps = (dispatch) => {

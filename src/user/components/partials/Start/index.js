@@ -7,15 +7,16 @@ import {
 } from 'constants/actionTypes'
 import { Input, Button, Card } from 'shared/components/elements'
 import { PlanPicker } from 'user/components/partials'
+import { formActions } from 'shared/actions'
 
 class Start extends Component {
   constructor(props) {
     super(props)
 
     this.state = {
-      name: props.currentCampaign.name || "",
-      planId: props.currentCampaign.planId,
-      contentUrl: props.currentCampaign.contentUrl || "",
+      //name: props.currentCampaign.name || "",
+      //planId: props.currentCampaign.planId,
+      //contentUrl: props.currentCampaign.contentUrl || "",
       pending: false,
       dirty: false,
     }
@@ -37,8 +38,6 @@ class Start extends Component {
       //will disable link to edit elsewhere if published too
       this.props.history.push("/campaigns")
     }
-
-
   }
 
   componentWillReceiveProps(props) {
@@ -53,45 +52,37 @@ class Start extends Component {
   startFromScratch() {
     this.setState({
       planId: undefined,
-      dirty: true,
     })
   }
 
+//TODO get onto the form store
   handleClickPlan(plan) {
     this.setState({
       planId: plan.id,
-      dirty: true,
     })
   }
 
   handleUrl (value, e, errors) {
-    this.setState({
-      contentUrl: value,
-      dirty: true,
-    })
+    formActions.setParams("EditCampaign", "other", {contentUrl: value})
   }
 
   handleChangeName (value, e, errors) {
-    this.setState({
-      name: value,
-      dirty: true,
-    })
+    formActions.setParams("EditCampaign", "other", {name: value})
   }
 
   save() {
     const done = () => {
-      this.setState({dirty: false})
       this.props.switchTo("Compose")
     }
-    if (this.state.dirty) {
-      const options = {
 
-      }
+    if (this.props.dirty) {
+      let campaignParams = this.props.campaignParams
+      const options = {} //can't remember why i have this..maybe just that, I coudl use if needed?
       const params = {
-        id: this.props.currentCampaign.id,
-        name: this.state.name,
-        userId: this.props.user.id,
-        contentUrl: this.state.contentUrl
+        id: campaignParams.id,
+        name: campaignParams.name,
+        userId: campaignParams.userId,
+        contentUrl: campaignParams.contentUrl,
       }
 
       if (this.state.planId) {
@@ -101,6 +92,7 @@ class Start extends Component {
       this.props.updateCampaignRequest(params, options, done)
 
     } else {
+      this.props.switchTo("Compose")
       done()
     }
   }
@@ -112,21 +104,25 @@ class Start extends Component {
     const c = this;
     const { user, plans, currentCampaign }  = this.props
     const userId = user.id
+
+//TODO get this on the form store too
     const keys = plans && Object.keys(plans)
     const campaignPlan = currentCampaign && plans[currentCampaign.planId] || {}
     const canSwitchPlans = !currentCampaign.planId || !_.isEqual(currentCampaign.posts, campaignPlan.postConfigurations)
+
+    const campaignParams = this.props.campaignParams
 
     return (
       <div>
         <h1 className="display-3">Start</h1>
         <Input
-          value={this.state.name}
+          value={campaignParams.name}
           placeholder="Awesome blog post"
           label="Campaign name:"
           onChange={this.handleChangeName}
         />
         <Input
-          value={this.state.contentUrl}
+          value={campaignParams.contentUrl}
           label="What would you like to promote?"
           placeholder="www.website.com/awesome-blog-post"
           onChange={this.handleUrl}
@@ -164,7 +160,7 @@ class Start extends Component {
             </div>
           )
         )}
-        <Button onClick={this.save}>{this.state.dirty && "Save and "}Continue</Button>
+        <Button onClick={this.save}>{this.props.dirty && "Save and "}Continue</Button>
 
       </div>
     );
@@ -176,6 +172,8 @@ const mapStateToProps = state => {
     user: state.user,
     currentCampaign: state.currentCampaign,
     campaigns: state.campaigns,
+    campaignParams: Helpers.safeDataPath(state.forms, "EditCampaign.other.params", {}),
+    dirty: Helpers.safeDataPath(state.forms, "EditCampaign.other.dirty", false),
     plans: state.plans,
   }
 }

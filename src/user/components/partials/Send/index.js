@@ -56,6 +56,7 @@ const mapStateToProps = state => {
   return {
     user: state.user,
     tokenInfo: state.tokenInfo,
+    currentCampaign: state.currentCampaign,
   }
 }
 const mapDispatchToProps = (dispatch) => {

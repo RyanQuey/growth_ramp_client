@@ -35,7 +35,7 @@ class PostEditor extends Component {
     post[utmType] = value
     post.dirty = true
     //update the post form
-    formActions.setParams("Compose", "posts", {[post.id]: post})
+    formActions.setParams("EditCampaign", "posts", {[post.id]: post})
   }
 
   toggleUtm(utmType, checked, e) {
@@ -45,8 +45,8 @@ class PostEditor extends Component {
     utmFields[utmType] = checked
     post.dirty = true
 
-    formActions.setOptions("Compose", "posts", {[this.props.post.id]: {utms: utmFields}})
-    formActions.setParams("Compose", "posts", {[post.id]: post})
+    formActions.setOptions("EditCampaign", "posts", {[this.props.post.id]: {utms: utmFields}})
+    formActions.setParams("EditCampaign", "posts", {[post.id]: post})
   }
 
   //TODO debounce
@@ -57,7 +57,7 @@ class PostEditor extends Component {
     post.dirty = true
 
     //update the post form
-    formActions.setParams("Compose", "posts", {[post.id]: post})
+    formActions.setParams("EditCampaign", "posts", {[post.id]: post})
   }
 
   //NOTE: cannot save a file object in redux, at least not in a easy way.
@@ -75,13 +75,13 @@ class PostEditor extends Component {
     let uploadedFiles = [...this.props.uploadedFiles]
     _.remove(uploadedFiles, (f) => f === oldFileUrl)
 
-    formActions.setParams("Compose", "uploadedFiles", uploadedFiles)
+    formActions.setParams("EditCampaign", "uploadedFiles", uploadedFiles)
 
     //update the post form
     let post = Object.assign({}, this.props.post)
     _.remove(post.uploadedContent, (c) => c.url === oldFileUrl)
     post.dirty = true
-    formActions.setParams("Compose", "posts", {[post.id]: post})
+    formActions.setParams("EditCampaign", "posts", {[post.id]: post})
 //console.log(post);
   }
 
@@ -105,7 +105,7 @@ class PostEditor extends Component {
       let uploadedFiles = [...this.props.uploadedFiles]
       uploadedFiles.push(fileUrl)
 
-      formActions.setParams("Compose", "uploadedFiles", uploadedFiles)
+      formActions.setParams("EditCampaign", "uploadedFiles", uploadedFiles)
 
       //update the post form
       let post = Object.assign({}, this.props.post)
@@ -115,14 +115,15 @@ class PostEditor extends Component {
       post.uploadedContent.push({url: fileUrl, type: "IMAGE"})
       post.dirty = true
 
-      formActions.setParams("Compose", "posts", {[post.id]: post})
+      formActions.setParams("EditCampaign", "posts", {[post.id]: post})
     }
 
   }
 
   render() {
     const post = this.props.post
-    let utmFields = Object.assign({}, Helpers.safeDataPath(this.props.formOptions, `${this.props.post.id}.utms`, {}))
+    if (!post) {return null} //shouldn't happen, but whatever
+    let utmFields = Object.assign({}, Helpers.safeDataPath(this.props.formOptions, `${post.id}.utms`, {}))
 
     return (
       <Flexbox direction="column" >
@@ -155,9 +156,11 @@ class PostEditor extends Component {
                 {post.uploadedContent && post.uploadedContent.map((upload) => {
 //console.log(upload);
                   return <Flexbox key={upload.url} direction="column">
-                    <div
+                    <a
+                      target="_blank"
                       style={{backgroundImage: `url(${upload.url})`}}
                       className={classes.dropImage}
+                      href={upload.url}
                     />
                     <Icon name="close" onClick={this.removeUpload.bind(this, upload.url)} />
                   </Flexbox>
@@ -197,8 +200,8 @@ class PostEditor extends Component {
 const mapStateToProps = state => {
   return {
     user: state.user,
-    uploadedFiles: Helpers.safeDataPath(state.forms, "Compose.uploadedFiles", []),
-    formOptions: Helpers.safeDataPath(state.forms, "Compose.posts.options", {}),
+    uploadedFiles: Helpers.safeDataPath(state.forms, "EditCampaign.uploadedFiles", []),
+    formOptions: Helpers.safeDataPath(state.forms, "EditCampaign.posts.options", {}),
   }
 }
 const mapDispatchToProps = (dispatch) => {

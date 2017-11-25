@@ -30,7 +30,7 @@ class ChannelPosts extends Component {
     let posts = Object.assign({}, this.props.campaignPosts)
     posts[post.id] = post
 
-    formActions.setParams("Compose", "posts", {[post.id]: post})
+    formActions.setParams("EditCampaign", "posts", {[post.id]: post})
     this.props.setCurrentPost(null)
   }
 
@@ -80,7 +80,7 @@ const mapStateToProps = state => {
     currentCampaign: state.currentCampaign,
     currentPost: state.currentPost,
     user: state.user,
-    campaignPosts: Helpers.safeDataPath(state.forms, "Compose.posts.params", {}),
+    campaignPosts: Helpers.safeDataPath(state.forms, "EditCampaign.posts.params", {}),
   }
 }
 const mapDispatchToProps = (dispatch) => {

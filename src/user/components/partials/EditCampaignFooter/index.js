@@ -46,7 +46,8 @@ class EditCampaignFooter extends Component {
 
 const mapStateToProps = state => {
   return {
-    providerAccounts: state.providerAccounts
+    providerAccounts: state.providerAccounts,
+    currentCampaign: state.currentCampaign,
   }
 }
 const mapDispatchToProps = (dispatch) => {

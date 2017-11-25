@@ -92,8 +92,8 @@ console.log(accountOption);
       return acc
     }, {})
 
-    formActions.setParams("Compose", "posts", {[uuid]: post})
-    formActions.setOptions("Compose", "posts", {[uuid]: {utms: utmDefaults}})
+    formActions.setParams("EditCampaign", "posts", {[uuid]: post})
+    formActions.setOptions("EditCampaign", "posts", {[uuid]: {utms: utmDefaults}})
     this.props.setCurrentPost(post)
     this.props.toggleAdding()
   }

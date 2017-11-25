@@ -14,6 +14,7 @@ import { AccountMenu } from 'shared/components/partials'
 import { Logo } from 'shared/components/elements'
 import {SET_CURRENT_MODAL, CREATE_CAMPAIGN_REQUEST} from 'constants/actionTypes'
 import theme from 'theme'
+import {formActions} from 'shared/actions'
 import classes from './style.scss'
 
 class UserNavbar extends Component {

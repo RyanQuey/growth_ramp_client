@@ -53,21 +53,7 @@ class Compose extends Component {
   }
 
   componentDidMount() {
-    //initializing to match persisted record
-    this.matchStateToRecord()
  }
-
-  matchStateToRecord() {
-    const campaignPosts = Helpers.safeDataPath(store.getState(), `currentCampaign.posts`, [])
-    //convert to object for easy getting/setting
-    const postObj = campaignPosts.reduce((acc, post) => {
-      acc[post.id] = post
-      return acc
-    }, {})
-
-    formActions.setParams("Compose", "posts", postObj, false)
-
-  }
 
   openNewProviderModal(provider) {
     //provider will be the only provider they add an account for
@@ -84,7 +70,7 @@ class Compose extends Component {
   //
   saveCampaignPosts() {
     const campaignPostsFormArray = _.values(this.props.campaignPostsForm.params)
-    const persistedPosts = this.props.currentCampaign.posts
+    const persistedPosts = this.props.currentCampaign.posts || []
 
     //should not update the post reducer on its success, just give me an alert if it fails
 
@@ -210,9 +196,9 @@ const mapStateToProps = state => {
     currentPlan: state.currentPlan,
     providerAccounts: state.providerAccounts,
     currentCampaign: state.currentCampaign,
-    campaignPostsForm: Helpers.safeDataPath(state.forms, "Compose.posts", {}),
-    uploadedFiles: Helpers.safeDataPath(state.forms, "Compose.uploadedFiles", []),
-    formOptions: Helpers.safeDataPath(state.forms, "Compose.posts.options", {}),
+    campaignPostsForm: Helpers.safeDataPath(state.forms, "EditCampaign.posts", {}),
+    uploadedFiles: Helpers.safeDataPath(state.forms, "EditCampaign.uploadedFiles", []),
+    formOptions: Helpers.safeDataPath(state.forms, "EditCampaign.posts.options", {}),
   }
 }
 const mapDispatchToProps = (dispatch) => {
