@@ -1,7 +1,7 @@
 import { Component } from 'react';
 import { connect } from 'react-redux'
 import { SET_INPUT_VALUE, PUBLISH_CAMPAIGN_REQUEST } from 'constants/actionTypes'
-import { SavePlan } from 'user/components/partials'
+import { SavePlanFromCampaign } from 'user/components/partials'
 import { Icon, Button } from 'shared/components/elements'
 
 class Send extends Component {
@@ -36,7 +36,7 @@ class Send extends Component {
     const userId = this.props.user.uid
 
     if (this.state.mode === "savePlan") {
-      return <SavePlan />
+      return <SavePlanFromCampaign />
     }
 
     return (

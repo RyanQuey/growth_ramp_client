@@ -8,6 +8,8 @@ import { ButtonGroup } from 'shared/components/groups'
 import {
   FETCH_CURRENT_CAMPAIGN_REQUEST,
   DESTROY_CAMPAIGN_REQUEST,
+  SET_CURRENT_CAMPAIGN,
+  SET_CURRENT_MODAL,
 } from 'constants/actionTypes'
 
 
@@ -24,7 +26,7 @@ class CampaignPicker extends Component {
 
   showCampaign (campaign, e) {
     this.props.fetchCurrentCampaign(campaign.id)
-    this.props.setCurrentCampaign(currentCampaign)
+    this.props.setCurrentCampaign(campaign)
     this.props.setCurrentModal("ShowCampaignModal")
   }
 
@@ -97,6 +99,7 @@ class CampaignPicker extends Component {
 const mapDispatchToProps = (dispatch) => {
   return {
     fetchCurrentCampaign: (campaign, cb) => dispatch({type: FETCH_CURRENT_CAMPAIGN_REQUEST, payload: campaign, cb}),
+    setCurrentCampaign: (campaign) => dispatch({type: SET_CURRENT_CAMPAIGN, payload: campaign}),
     destroyCampaignRequest: (campaign) => dispatch({type: DESTROY_CAMPAIGN_REQUEST, payload: campaign}),
     setCurrentModal: (payload) => dispatch({type: SET_CURRENT_MODAL, payload})
   }

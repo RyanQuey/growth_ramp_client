@@ -38,7 +38,8 @@ function* find(action) {
     ])
 
   } catch (err) {
-    console.log('plans fetch failed', err)
+    console.log('plans fetch failed')
+    console.log(err.response || err)
     // yield put(userFetchFailed(err.message))
   }
 }
@@ -48,25 +49,29 @@ function* create(action) {
     const pld = action.payload
 
     const newPlan = {
-      posts: [],
-      channels: [],
+      postTemplates: [],
       providers: [],
       createdAt: moment().format(),
       name: pld.name || "",
       utmOptions: {},
       userId: pld.userId,
     }
-    let associatedPost = pld.associatedPost
-    delete pld.associateWithPost
+
+    let associatedCampaign = pld.associatedCampaign
+    delete pld.associateWithCampaign
+
+    if (associatedCampaign) {
+      newPlan.postTemplates = Helpers.convertPostsToTemplates(associatedCampaign.posts)
+    }
 
     const res = yield axios.post("/api/plans", newPlan) //eventually switch to socket
     const newRecord = res.data
 
-    if (associatedPost) {
+    if (associatedCampaign) {
       store.dispatch({
-        type: UPDATE_POST_REQUEST,
+        type: UPDATE_CAMPAIGN_REQUEST,
         payload: {
-          id: associatedPost,
+          id: associatedCampaign,
           planId: newRecord.id,
           userId: pld.userId,
         }
@@ -79,7 +84,8 @@ function* create(action) {
     ])
 
   } catch (err) {
-    console.log(`Error in Create plan Saga ${err}`)
+    console.log(`Error in Create plan Saga:`)
+    console.log(err.response || err)
   }
 }
 
@@ -95,7 +101,8 @@ function* update(action) {
     ])
 
   } catch (err) {
-    console.log(`Error in update plan Saga ${err}`)
+    console.log(`Error in update plan Saga`)
+    console.log(err.response || err)
   }
 }
 
@@ -110,7 +117,8 @@ function* archive(action) {
     ])
 
   } catch (err) {
-    console.log(`Error in archive plan Saga ${err}`)
+    console.log(`Error in archive plan Saga`)
+    console.log(err.response || err)
   }
 }
 

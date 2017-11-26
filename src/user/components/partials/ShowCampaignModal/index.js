@@ -7,10 +7,10 @@ import {
   ModalFooter,
 } from 'shared/components/partials/Modal'
 import { CLOSE_MODAL, LINK_ACCOUNT_REQUEST } from 'constants/actionTypes'
-import { SocialLogin } from 'shared/components/partials'
-import { AccountCard } from 'user/components/partials'
+import { AccountCard, SavePlanFromCampaign } from 'user/components/partials'
 import { Button, Form, Card, Flexbox, Icon } from 'shared/components/elements'
 import { ButtonGroup } from 'shared/components/groups'
+import { SocialLogin } from 'shared/components/partials'
 import { PROVIDERS } from 'constants/providers'
 import classes from './style.scss'
 
@@ -20,10 +20,7 @@ class ShowCampaign extends Component {
 
     this.state = {
       pending: false,
-      mode: 'CHOOSE_PROVIDER', //you do this or 'CHOOSE_SCOPE'
-      currentProvider: 'FACEBOOK',
-      currentAccount: Helpers.safeDataPath(props, "providerAccounts.FACEBOOK.0", false),
-      channels: [],
+      savingPlanFromCampaign: false,
     }
 
     this.onSuccess = this.onSuccess.bind(this)
@@ -32,6 +29,7 @@ class ShowCampaign extends Component {
     this.chooseProvider = this.chooseProvider.bind(this)
     this.chosenScopes = this.chosenScopes.bind(this)
     this.chooseChannel = this.chooseChannel.bind(this)
+    this.toggleSavingPlan = this.toggleSavingPlan.bind(this)
   }
 
   handleClose (){
@@ -44,6 +42,10 @@ class ShowCampaign extends Component {
       currentProvider: provider,
       channels: [],
     })
+  }
+
+  toggleSavingPlan(value = !this.state.savingPlanFromCampaign) {
+    this.setState({savingPlanFromCampaign: value})
   }
 
   chooseChannel(channel) {
@@ -96,10 +98,34 @@ class ShowCampaign extends Component {
         <ModalBody>
 
           {currentCampaign.posts ? (
-<div>Campaign</div>
+            <div>
+              <h2>Campaign Posts</h2>
+              {currentCampaign.posts.map((post) =>
+                <div>
+                  <div><strong>Text:</strong>{post.text}</div>
+                  <div><strong>Channel:</strong>{post.channel.titleCase()}</div>
+                </div>
+              )}
+            </div>
           ) : (
-<div></div>
+            <div>
+              No posts yet
+            </div>
           )}
+
+          <div><strong>Content Url:</strong>&nbsp;{currentCampaign.contentUrl}</div>
+
+
+          {currentCampaign.status === "PUBLISHED" &&
+            this.state.savingPlanFromCampaign ? (
+              <div>
+                <SavePlanFromCampaign />
+                <Button onClick={this.toggleSavingPlan}>Cancel</Button>
+              </div>
+            ) : (
+              <Button onClick={this.toggleSavingPlan}>Save plan from campaign?</Button>
+            )}
+          }
         </ModalBody>
       </ModalContainer>
     )
