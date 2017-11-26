@@ -40,6 +40,9 @@ function* publishCampaign(action) {
       title: "Success!",
       level: "SUCCESS",
     })
+
+    action.cb && action.cb(results.data)
+
   } catch (err) {
     console.log(`Error publishing campaign: ${err}`)
     errorActions.handleErrors({
@@ -67,15 +70,16 @@ function* createCampaign(action) {
     const newRecord = res.data
     const campaignId = newRecord.id
 
+    yield all([
+      put({ type: CREATE_CAMPAIGN_SUCCESS, payload: newRecord}),
+      //TODO especially when there are more campaigns, will want to just merge this one campaign to the campaigns list, rather than fetching all..
+      put({type: USER_CAMPAIGNS_OUTDATED}),
+    ])
+
     //NOTE: This works!
     if (action.cb) {
       action.cb(newRecord)
     }
-    yield all([
-      put({ type: CREATE_CAMPAIGN_SUCCESS, payload: {[campaignId]: newRecord}}),
-      //TODO especially when there are more campaigns, will want to just merge this one campaign to the campaigns list, rather than fetching all..
-      put({type: USER_CAMPAIGNS_OUTDATED}),
-    ])
 
   } catch (err) {
     console.log(`Error in Create campaign Saga ${err}`)

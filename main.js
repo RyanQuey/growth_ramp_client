@@ -41,7 +41,7 @@ passport.use(new FacebookStrategy(
     //console.log(accessToken, refreshToken, profile);
     //console.log("***profile***");
     //console.log(profile);
-    const providerData = Helpers.extractPassportData(accessToken, refreshToken, profile, req)
+    const providerData = Helpers.extractPassportData(accessToken, refreshToken, profile, "", req)
 //console.log("providerData", providerData);
     const cookie = Helpers.extractCookie(req.headers.cookie)
 
@@ -55,7 +55,7 @@ passport.use(new TwitterStrategy(
   function(req, accessToken, tokenSecret, profile, done) {
     //passing in the token secret as the refresh token for twitter
     //oauth1 is reason why, I think
-    const providerData = Helpers.extractPassportData(accessToken, tokenSecret, profile, req)
+    const providerData = Helpers.extractPassportData(accessToken, "", profile, tokenSecret, req)
     const cookie = Helpers.extractCookie(req.headers.cookie)
     //console.log("***profile***");
     //console.log(profile);
@@ -72,7 +72,7 @@ passport.use(new LinkedInStrategy(
     //console.log("***profile***");
     //    console.log(profile);
 
-    const providerData = Helpers.extractPassportData(accessToken, refreshToken, profile, req)
+    const providerData = Helpers.extractPassportData(accessToken, refreshToken, profile, "", req)
     const cookie = Helpers.extractCookie(req.headers.cookie)
 //console.log(req.body, req.params, req.query);
 

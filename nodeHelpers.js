@@ -19,7 +19,7 @@ const callbackPath = '/provider_redirect'
 const callbackUrl = domain + callbackPath
 const apiUrl = process.env.API_URL || 'http://localhost:1337';
 
-const uuid = require('uuid/v1');
+const uuid = require('uuid/v4');
 const $ = require('jquery');
 const _ = require('lodash')
 
@@ -150,14 +150,15 @@ const Helpers = {
   //eventually will probably do more, but just this for now
 
   // extracts the relevant passport profile data from the profile auth data received on login/request, and matches it to the database columns
-  extractPassportData: (accessToken, refreshToken, passportProfile, req) => {
+  // only twitter has a tokenSecret so far
+  extractPassportData: (accessToken, refreshToken, passportProfile, accessTokenSecret, req) => {
     let userData = _.pickBy(passportProfile, (value, key) => {
       return ["providerUserId", "email"].includes(key)
     })
     userData.provider = passportProfile.provider.toUpperCase()
 
     if (userData.provider === "TWITTER") {
-      userData.userName = passportProfile.user_name
+      userData.userName = passportProfile.username
       userData.profilePictureUrl = passportProfile.profile_image_url_https
 
     } else if (userData.provider === "FACEBOOK") {
@@ -169,7 +170,6 @@ const Helpers = {
       //mapping to an object, with keys being the scope
       userData.scopes = {}
       let scopes = passportProfile._json.permissions.data
-      userData.photoUrl = Helpers.safeDataPath(passportProfile, "photos.0.value", "")
       for (let i = 0; i < scopes.length; i++) {
         let scope = scopes[i]
         userData.scopes[scope.permission] = {status: scope.status}
@@ -183,8 +183,7 @@ const Helpers = {
       }
       userData.userName = passportProfile.displayName
       userData.profileUrl = passportProfile._json.publicProfileUrl
-      userData.photoUrl = passportProfile.photos[0].value
-      userData.email = passportProfile.emails[0].value
+      userData.email = Helpers.safeDataPath(passportProfile, "emails.0.value", "")
       //mapping to an object, with keys being the scope
       userData.scopes = {}
 
@@ -199,9 +198,12 @@ const Helpers = {
       }
     }
 
+    userData.photoUrl = Helpers.safeDataPath(passportProfile, "photos.0.value", "")
     userData.providerUserId = passportProfile.id
     userData.accessToken = accessToken
     userData.refreshToken = refreshToken
+    //only twitter sends; because oauth1 probably
+    userData.accessTokenSecret = accessTokenSecret
 
     return userData
   },

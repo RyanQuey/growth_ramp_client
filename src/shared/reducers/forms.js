@@ -9,19 +9,30 @@ import {
 
 export default (state = {}, action) => {
   const pld = action.payload
-  let newState
+  let newState, data
   switch (action.type) {
     case SET_PARAMS:
-      newState = Object.assign({}, state)
-      let oldParams = Helpers.safeDataPath(state, `${pld.component}.${pld.form}.params`, {})
       let currentOptions = Helpers.safeDataPath(state, `${pld.component}.${pld.form}.options`, {})
-      _.set(newState, `${pld.component}.${pld.form}`, {
+      data = {
         //merge the params in payload onto current params for this form
-        params: Object.assign({}, oldParams, pld.params),
         dirty: pld.dirty,
         options: currentOptions,
-      })
-//console.log(pld.params, newState);
+      }
+      newState = Object.assign({}, state)
+
+      if (pld.override) {
+console.log("now override");
+        //override whatever is there
+        data.params = Object.assign({}, pld.params)
+
+      } else {
+        //merging into current state
+        let oldParams = Helpers.safeDataPath(state, `${pld.component}.${pld.form}.params`, {})
+        data.params = Object.assign({}, oldParams, pld.params)
+      }
+console.log(data);
+      _.set(newState, `${pld.component}.${pld.form}`, data)
+console.log(newState);
       return newState
 
     case SET_OPTIONS:

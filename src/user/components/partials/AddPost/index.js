@@ -95,7 +95,6 @@ console.log(accountOption);
 
     formActions.setParams("EditCampaign", "posts", {[uuid]: post})
     formActions.setOptions("EditCampaign", "posts", {[uuid]: {utms: utmDefaults}})
-    this.props.setCurrentPost(post)
     this.props.toggleAdding()
   }
 
@@ -222,9 +221,6 @@ console.log(accountOption);
                   />
                 }
 
-                {currentChannel && channelIsAllowed && (
-                  <Button style="inverted" onClick={this.newPost}>Add a {currentChannel.titleCase()}</Button>
-                )}
 
                 {currentChannel && !channelIsAllowed && (
                   <div>
@@ -238,6 +234,10 @@ console.log(accountOption);
             )}
           </div>
         )}
+        {currentChannel && channelIsAllowed && (
+          <Button style="inverted" onClick={this.newPost}>Add a {currentChannel.titleCase()}</Button>
+        )}
+        <Button style="inverted" onClick={this.props.toggleAdding.bind(this, false, this.state.addingPost)}>Cancel</Button>
       </div>
     );
   }

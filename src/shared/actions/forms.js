@@ -6,16 +6,17 @@ import {
   CLEAR_PARAMS,
 } from 'constants/actionTypes'
 
-//TODO probably make nested object like this in reducer
-export const setParams = (component, form, params, dirty = true) => {
+//override will totally override whatever params are there; otherwise, will just be merged to state
+export const setParams = (component, form, params, dirty = true, override) => {
   const payload = {
     component,
     form,
     params,
     dirty,
+    override,
   }
 
-  store.dispatch({type: SET_PARAMS, payload })
+  store.dispatch({type: SET_PARAMS, payload})
 }
 
 export const setOptions = (component, form, options) => {
@@ -77,7 +78,7 @@ export const clearParams = () => {
 export const matchCampaignStateToRecord = () => {
 
   //this should match the persisted recoard
-  const campaign = Helpers.safeDataPath(store.getState(), `currentCampaign`, {})
+  const campaign = Object.assign({}, Helpers.safeDataPath(store.getState(), `currentCampaign`, {}))
   const campaignPosts = campaign.posts || []
   //convert to object for easy getting/setting
   const postObj = campaignPosts.reduce((acc, post) => {
@@ -86,12 +87,15 @@ export const matchCampaignStateToRecord = () => {
   }, {})
 
   if (Object.keys(postObj).length) {
-    setParams("EditCampaign", "posts", postObj, false)
+    //sets dirty to false, and override to true
+    setParams("EditCampaign", "posts", postObj, false, true)
   } else {
     clearParams ("EditCampaign", "posts")
   }
 
   delete campaign.posts //will not be updating posts on that part of the state, so don't want to confuse things; just remove it
-  setParams("EditCampaign", "other", campaign, false)
+
+  //sets dirty to false, and override to true
+  setParams("EditCampaign", "other", campaign, false, true)
 }
 

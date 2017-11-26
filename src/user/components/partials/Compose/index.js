@@ -62,6 +62,7 @@ class Compose extends Component {
 
   toggleAdding(provider, value = !this.state.addingPost) {
     //if provider is passed in, just starts making a post for that provider
+    this.props.setCurrentPost(null)
     this.setState({addingPost: provider || value})
   }
 
@@ -86,8 +87,10 @@ class Compose extends Component {
       // TO DESTROY
       if (post.toDelete) {
         //if not persisted yet, don't need to save anything
-        if (typeof post === "string") {
+        if (typeof post.id === "string") {
+          cb()
           continue
+
         } else {
           this.props.destroyPostRequest(post, cb)
         }
@@ -126,8 +129,8 @@ class Compose extends Component {
             //especially because api seems to convert null to a string when setting to req.body...
             delete post[attribute]
           }
-          console.log("attribute": attribute);
-console.log("value: ", post[attribute], persistedPost[attribute]);
+          //console.log("attribute": attribute);
+//console.log("value: ", post[attribute], persistedPost[attribute]);
         }
 
         this.props.updatePostRequest(post, cb)
@@ -166,29 +169,34 @@ console.log("value: ", post[attribute], persistedPost[attribute]);
             toggleAdding={this.toggleAdding}
             addingPost={this.state.addingPost}
           />
-          {this.state.addingPost && <Button style="inverted" onClick={this.toggleAdding.bind(this, false, this.state.addingPost)}>{this.state.addingPost ? "Cancel" : "New Post"}</Button>}
         </div>
 
-        {this.state.addingPost && <AddPost
-          toggleAdding={this.toggleAdding}
-          currentProvider={this.state.addingPost}
-        />}
+        {this.state.addingPost ? (
 
-        <div>
-          {currentAccount &&
-            <div key={currentAccount.id} >
-              <img alt="No profile picture on file" src={currentAccount.photoUrl}/>
-              <h5>{currentAccount.email || "No email on file"}</h5>
-            </div>
-          }
+          <AddPost
+            toggleAdding={this.toggleAdding}
+            currentProvider={this.state.addingPost}
+          />
+
+        ) : (
+
+          <div>
+            {currentAccount &&
+              <div key={currentAccount.id} >
+                <img alt="No profile picture on file" src={currentAccount.photoUrl}/>
+                <h5>{currentAccount.email || "No email on file"}</h5>
+              </div>
+            }
 
             <ChannelPosts
               currentProvider={currentProvider}
               currentAccount={currentAccount}
               currentChannel={currentChannel}
             />
-          <Button style="inverted" disabled={!dirty} onClick={this.saveCampaignPosts}>{dirty ? "Save changes" : "All drafts saved"}</Button>
-        </div>
+
+            <Button style="inverted" disabled={!dirty} onClick={this.saveCampaignPosts}>{dirty ? "Save changes" : "All drafts saved"}</Button>
+          </div>
+        )}
       </div>
     );
   }
@@ -207,6 +215,7 @@ const mapStateToProps = state => {
 }
 const mapDispatchToProps = (dispatch) => {
   return {
+    setCurrentPost: (payload) => dispatch({type: SET_CURRENT_POST, payload}),
     updateCampaignRequest: (payload, cb) => {dispatch({type: UPDATE_CAMPAIGN_REQUEST, payload, cb})},
     updatePostRequest: (payload, cb) => {dispatch({type: UPDATE_POST_REQUEST, payload, cb})},
     destroyPostRequest: (payload, cb) => {dispatch({type: DESTROY_POST_REQUEST, payload, cb})},

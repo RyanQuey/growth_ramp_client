@@ -24,7 +24,7 @@ const campaignsReducer = (state = {}, action) => {
       return Object.assign({}, action.payload)
 
     case CREATE_CAMPAIGN_SUCCESS:
-      return Object.assign({}, state, action.payload)
+      return Object.assign({}, state, {[pld.id]: pld})
 
     case UPDATE_CAMPAIGN_SUCCESS:
       campaign = action.payload
@@ -32,12 +32,9 @@ const campaignsReducer = (state = {}, action) => {
 
     case PUBLISH_CAMPAIGN_SUCCESS:
       campaign = pld.campaign
+console.log(campaign);
       campaign.posts = pld.posts
-      //should never be {}...
-      campaign = Object.assign({}, Helpers.safeDataPath(store.getState(), `campaigns.${post.campaignId}`, {}))
-      postIndex = _.findIndex(campaignPosts, {id: post.id})
-      //replaces that item in the array
-      campaign.posts = campaignPosts
+
 
       return Object.assign({}, state, {[campaign.id]: campaign})
 
@@ -46,8 +43,12 @@ const campaignsReducer = (state = {}, action) => {
       //should never be {}...
       campaign = Object.assign({}, Helpers.safeDataPath(store.getState(), `campaigns.${post.campaignId}`, {}))
       oldPosts = campaign.posts || []
-      campaignPosts = [...oldPosts].push(post)
+console.log(oldPosts)
+      campaignPosts = [...oldPosts]
+      campaignPosts.push(post)
       campaign.posts = campaignPosts
+
+console.log(campaignPosts);
 
       return Object.assign({}, state, {[campaign.id]: campaign})
 

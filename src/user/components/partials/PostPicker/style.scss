@@ -23,6 +23,9 @@
       &.dirty {
         border: blue solid;
       }
+      &.toCreate {
+        border: green solid;
+      }
       &.toDelete {
         border: red solid;
       }

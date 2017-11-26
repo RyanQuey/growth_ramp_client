@@ -13,8 +13,8 @@ import {
 const currentCampaignReducer = (state = null, action) => {
 
   let campaign, post, campaignPosts, oldPosts, postIndex
+  let pld = action.payload
   switch (action.type) {
-
     case UPDATE_CAMPAIGN_SUCCESS:
       if (store.getState().currentCampaign.id === action.payload.id) {
         campaign = action.payload
@@ -41,10 +41,9 @@ const currentCampaignReducer = (state = null, action) => {
       post = action.payload
       if (post.campaignId = state.id) {
         campaign = Object.assign({}, state)
-console.log("in the reducer");
-console.log(campaign);
         oldPosts = campaign.posts || []
-        campaignPosts = [...oldPosts].push(post)
+        campaignPosts = [...oldPosts]
+        campaignPosts.push(post)
         campaign.posts = campaignPosts
 
         return Object.assign({}, campaign)

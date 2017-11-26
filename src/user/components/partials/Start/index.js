@@ -123,7 +123,7 @@ class Start extends Component {
           onChange={this.handleChangeName}
         />
         <Input
-          value={campaignParams.contentUrl}
+          value={campaignParams.contentUrl || ""}
           label="What would you like to promote?"
           placeholder="www.website.com/awesome-blog-post"
           onChange={this.handleUrl}

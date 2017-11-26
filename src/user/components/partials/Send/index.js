@@ -16,18 +16,16 @@ class Send extends Component {
     this.send = this.send.bind(this)
   }
 
-  componentWillReceiveProps(props) {
-    if (props.currentCampaign && props.currentCampaign.status === "PUBLISHED") {
+  send() {
+    this.setState({pending: true})
+    const cb = () => {
       this.setState({
         pending: false,
-        mode: "savePlan"
+        mode: "savePlan",
       })
     }
 
-  }
-
-  send() {
-    this.props.campaignPublishRequest(this.props.currentCampaign)
+    this.props.campaignPublishRequest(this.props.currentCampaign, cb)
   }
 
   render() {
@@ -62,7 +60,7 @@ const mapStateToProps = state => {
 }
 const mapDispatchToProps = (dispatch) => {
   return {
-    campaignPublishRequest: (payload) => dispatch({type: PUBLISH_CAMPAIGN_REQUEST, payload}),
+    campaignPublishRequest: (payload, cb) => dispatch({type: PUBLISH_CAMPAIGN_REQUEST, payload, cb}),
   }
 }
 

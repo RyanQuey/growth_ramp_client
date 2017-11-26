@@ -88,7 +88,12 @@ class PostPicker extends Component {
                 {providerPosts.map((post) =>
                   <PostCard
                     key={post.id}
-                    className={`${classes.postCard} ${post.dirty ? classes.dirty : ""} ${post.toDelete ? classes.toDelete : ""}`}
+                    className={`
+                      ${classes.postCard}
+                      ${post.dirty ? classes.dirty : ""}
+                      ${post.toDelete ? classes.toDelete : ""}
+                      ${typeof post.id === "string" ? classes.toCreate : ""}
+                    `}
                     post={post}
                     height="110px"
                     maxWidth="220px"

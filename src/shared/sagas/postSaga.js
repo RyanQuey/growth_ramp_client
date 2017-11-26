@@ -38,13 +38,13 @@ function* createPost(action) {
     const newRecord = res.data
     const postId = newRecord.id
 
+    yield all([
+      put({ type: CREATE_POST_SUCCESS, payload: newRecord}),
+      //TODO especially when there are more posts, will want to just merge this one post to the posts list, rather than fetching all..
+    ])
     if (action.cb) {
       action.cb(newRecord)
     }
-    yield all([
-      put({ type: CREATE_POST_SUCCESS, payload: {[postId]: newRecord}}),
-      //TODO especially when there are more posts, will want to just merge this one post to the posts list, rather than fetching all..
-    ])
 
   } catch (err) {
     console.log(`Error in Create post Saga ${err}`)
@@ -75,6 +75,7 @@ function* fetchPosts(action) {
       acc[post.id] = post
       return acc
     }, {})
+
     yield all([
       put({type: FETCH_POST_SUCCESS, payload: posts})
     ])
@@ -86,7 +87,7 @@ function* fetchPosts(action) {
 }
 
 //NOTE: make sure to always attach the userId to the payload, for all updates. Saves a roundtrip for the api  :)
-function* updatePost(action) {
+function* updatePost(action, cb) {
   try {
     const postData = action.payload
 
@@ -96,7 +97,9 @@ function* updatePost(action) {
       put({ type: UPDATE_POST_SUCCESS, payload: res.data}),
     ])
 
-    formActions.matchCampaignStateToRecord()
+    if (action.cb) {
+      action.cb(res.data)
+    }
 
   } catch (err) {
     console.log(err.response);
@@ -115,8 +118,9 @@ function* destroyPost(action) {
     ])
 
     if (action.cb) {
-      action.cb(newRecord)
+      action.cb(pld) //passing in destroyed record
     }
+
   } catch (err) {
     console.log('posts destroy failed', err)
   }
