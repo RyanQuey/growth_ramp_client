@@ -141,18 +141,6 @@ console.log(channelsForType);
               )}
             </div>
 
-            <Flexbox justify="center">
-              {Object.keys(PROVIDERS[provider].channelTypes).map((channel) =>
-                <Button
-                  key={channel}
-                  style="inverted"
-                  onClick={this.chooseChannel.bind(this, channel)}
-                  selected={this.state.channelTypes.includes(channel)}
-                >
-                  {channel.titleCase()}
-                </Button>
-              )}
-            </Flexbox>
           </div>
         </ModalBody>
       </ModalContainer>
