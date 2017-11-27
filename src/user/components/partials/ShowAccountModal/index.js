@@ -104,20 +104,35 @@ class ShowAccount extends Component {
           <div>
 
             <div>
-              <h3>Current Channel Types:</h3>
+              <h2>Current Channel Types:</h2>
               {permittedChannelTypes.length ? (
                 <div>
                   {permittedChannelTypes.map((channelType) => {
                     const channelName = PROVIDERS[provider].channelTypes[channelType].name
+                    const channelsForType = channels.filter((c) => c.type === channelType)
+console.log(channelsForType);
+                    const canHaveMultiple = PROVIDERS[provider].channelTypes[channelType].hasMultiple
 
                     return <div key={channelType}>
                       <h4>{channelName}</h4>
-                      {channels.filter((c) => c.type === channelType).map((c) => <div>{c.id}</div>)}
-                      {channelType !== "PERSONAL_POST" &&
+
+                      {channelsForType.length ? (
+                        channelsForType.map((c) =>
+                          <div key={c.id}>
+                            <strong></strong>&nbsp;<span>{c.name}</span>
+                          </div>
+                        )
+                      ) : (
+                        canHaveMultiple ? <div>None so far</div> : null
+                      )}
+
+                      {canHaveMultiple &&
                         <Button onClick={this.refreshChannelType.bind(this, channelType)}>
-                          Refresh {channelName} channels from {providerName}
+                          Refresh {channelName} channels
                         </Button>
                       }
+
+                      <hr/>
                     </div>
                   })}
                 </div>
