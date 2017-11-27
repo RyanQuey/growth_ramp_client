@@ -96,20 +96,5 @@ export default {
     return permittedChannels
   },
 
-  convertPostsToTemplates: (posts) => (
-    posts.map((post) => (
-      _.pick(post, [
-        "channel",
-        "providerAccountId",
-        "userId",
-        "campaignUtm",
-        "mediumUtm",
-        "sourceUtm",
-        "contentUtm",
-        "termUtm",
-        "customUtm",
-      ])
-    ))
-  ),
 }
 

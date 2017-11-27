@@ -50,16 +50,11 @@ class Start extends Component {
   }
 
   startFromScratch() {
-    this.setState({
-      planId: undefined,
-    })
+    formActions.setParams("EditCampaign", "other", {planId: null})
   }
 
-//TODO get onto the form store
   handleClickPlan(plan) {
-    this.setState({
-      planId: plan.id,
-    })
+    formActions.setParams("EditCampaign", "other", {planId: plan.id})
   }
 
   handleUrl (value, e, errors) {
@@ -83,11 +78,8 @@ class Start extends Component {
         id: this.props.currentCampaign.id,
         name: campaignParams.name,
         userId: this.props.currentCampaign.userId,
+        planId: campaignParams.planId,
         contentUrl: campaignParams.contentUrl,
-      }
-
-      if (this.state.planId) {
-        params.planId = this.state.planId
       }
 
       this.props.updateCampaignRequest(params, options, done)
@@ -109,7 +101,8 @@ class Start extends Component {
 //TODO get this on the form store too
     const keys = plans && Object.keys(plans)
     const campaignPlan = currentCampaign && plans[currentCampaign.planId] || {}
-    const canSwitchPlans = !currentCampaign.planId || !_.isEqual(currentCampaign.posts, campaignPlan.postConfigurations)
+    //only can switch plans if not saved yet OR there are no posts saved yet
+    const canSwitchPlans = !currentCampaign.planId && (!currentCampaign.posts || !currentCampaign.posts.length)
 
     const campaignParams = this.props.campaignParams
 
@@ -134,7 +127,7 @@ class Start extends Component {
             <h4>You don't have any plans yet. We'll just start from scratch</h4>
           </div>
         ) : (
-          canSwitchPlans ? (
+          !canSwitchPlans ? (
             <div>
               <h4>Campaign plan:</h4>
               <div>{campaignPlan.name}</div>
@@ -147,11 +140,11 @@ class Start extends Component {
               </h4>
               <PlanPicker
                 onPick={this.handleClickPlan}
-                selectedId={this.state.planId}
+                selectedId={campaignParams.planId}
               />
               <Card
                 onClick={this.startFromScratch}
-                selected={!this.state.planId}
+                selected={!campaignParams.planId}
                 height="100px"
               >
                 <h3>

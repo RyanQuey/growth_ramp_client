@@ -54,6 +54,7 @@ function* publishCampaign(action) {
   }
 }
 
+//so far, always creating blank; then goes to the edit view from there
 function* createCampaign(action) {
   try {
     const pld = action.payload
@@ -63,7 +64,7 @@ function* createCampaign(action) {
       content: "",
       status: "DRAFT",
       userId: pld.userId,
-      planId: pld.planId, //might be undefined
+      planId: pld.planId, //might be undefined or null
     }
 
     const res = yield axios.post("/api/campaigns", blankCampaign) //eventually switch to socket
@@ -130,14 +131,11 @@ function* fetchCampaigns(action) {
 function* updateCampaign(action) {
   try {
     const campaignData = action.payload
-    const currentRecord = store.getState().campaigns[campaignData.id]
+    //not using currently
+    //const currentRecord = store.getState().campaigns[campaignData.id]
+
     //not using currently
     //const options = action.options || {}
-
-    if (campaignData.planId && campaignData.planId !== currentRecord.planId) {
-      //TODO update campaign posts with new plan utms, but only if there is a plan set
-
-    }
 
     const res = yield axios.put(`/api/campaigns/${campaignData.id}`, campaignData) //eventually switch to socket
 

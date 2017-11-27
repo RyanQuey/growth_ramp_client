@@ -21,9 +21,9 @@ class PlanPicker extends Component {
     const plans = this.props.plans
     //TODO: set the title using props into the modal container
     return (
-      <Flexbox>
+      <Flexbox flexWrap="wrap">
         {plans && Object.keys(plans).map((planId) => {
-          return <Card key={planId} onClick={this.props.onPick.bind(this, plans[planId])} height="100px" selected={this.props.selectedId == planId}>
+          return <Card key={planId} onClick={this.props.onPick.bind(this, plans[planId])} height="100px" maxWidth="100px" selected={this.props.selectedId == planId}>
             <h3>
               {plans[planId].name}
             </h3>

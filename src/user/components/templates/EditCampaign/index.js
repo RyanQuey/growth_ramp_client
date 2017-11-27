@@ -31,10 +31,14 @@ class EditCampaign extends Component {
     this.setCampaign = this.setCampaign.bind(this)
   }
 
-  componentDidMount() {
+ componentDidMount() {
     //set current campaign based on the url params, no matter what it was before
     const campaignId = this.props.match.params.campaignId
     this.setCampaign(campaignId)
+  }
+
+  componentWillUnmount() {
+    window.onbeforeunload = null
   }
 
   componentWillReceiveProps (props) {

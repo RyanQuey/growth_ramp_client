@@ -13,6 +13,7 @@ import {
   LIVE_UPDATE_PLAN_REQUEST,
   LIVE_UPDATE_PLAN_SUCCESS,
   LIVE_UPDATE_PLAN_FAILURE,
+  UPDATE_CAMPAIGN_SUCCESS,
 } from 'constants/actionTypes'
 
 // need to make sure that the current user and the userId are identical for security reasons
@@ -58,23 +59,26 @@ function* create(action) {
     }
 
     let associatedCampaign = pld.associatedCampaign
-    delete pld.associateWithCampaign
+
+    let res
 
     if (associatedCampaign) {
-      newPlan.postTemplates = Helpers.convertPostsToTemplates(associatedCampaign.posts)
+      newPlan.associatedCampaign = associatedCampaign
+
+      res = yield axios.post("/api/plans/createFromCampaign", newPlan) //eventually switch to socket
+
+    } else {
+      res = yield axios.post("/api/plans", newPlan) //eventually switch to socket
     }
 
-    const res = yield axios.post("/api/plans", newPlan) //eventually switch to socket
     const newRecord = res.data
 
     if (associatedCampaign) {
       store.dispatch({
-        type: UPDATE_CAMPAIGN_REQUEST,
-        payload: {
-          id: associatedCampaign,
-          planId: newRecord.id,
-          userId: pld.userId,
-        }
+        type: UPDATE_CAMPAIGN_SUCCESS,
+        payload: Object.assign({}, associatedCampaign, {
+          planId: newRecord.id
+        }),
       })
     }
 

@@ -36,8 +36,8 @@ class DropImage extends Component {
 
     if (rejectedFile) {
       let message
-      if (rejectedFile.size > 2*1000*1000) {
-        message = "Maximum file size is 2MB"
+      if (rejectedFile.size > 4*1000*1000) {
+        message = "Maximum file size is 4MB"
       } else if (!rejectedFile.type.includes("image/")) {
         message = "File must be an image"
       } else {
@@ -78,7 +78,7 @@ class DropImage extends Component {
           multiple={false}
           onDrop={this.onDrop}
           style={this.props.style}
-          maxSize={2*1000*1000} //2MB
+          maxSize={4*1000*1000} //4MB
           accept="image/*"
         >
           <Flexbox align="center" direction="column">
