@@ -1,7 +1,7 @@
 import { Component } from 'react';
 import { connect } from 'react-redux'
 import { PROVIDERS } from 'constants/providers'
-import { SET_CURRENT_MODAL, FETCH_PERMISSION_REQUEST } from 'constants/actionTypes'
+import { SET_CURRENT_MODAL, FETCH_CURRENT_ACCOUNT_REQUEST } from 'constants/actionTypes'
 import {
   withRouter,
 } from 'react-router-dom'
@@ -12,16 +12,19 @@ class AccountCard extends Component {
   constructor() {
     super()
 
-    this.viewPermissionModal = this.viewPermissionModal.bind(this)
+    this.viewModal = this.viewModal.bind(this)
   }
 
-  viewPermissionModal() {
-    this.props.setCurrentModal("AccountPermissionsModal", {currentAccount: this.props.account})
-    this.props.fetchPermissionsRequest(this.props.account)
+  viewModal() {
+//    const cb = () => {
+this.props.setCurrentModal("ShowAccountModal", {currentAccount: this.props.account})//}
+
+
+//    this.props.fetchCurrentAccountRequest(this.props.account, cb)
   }
 
   render () {
-    const { account, selected, onClick, height, showPermissions } = this.props
+    const { account, selected, onClick, height, detailsButton } = this.props
     const permittedChannels = Helpers.permittedChannels(account)
 
     return (
@@ -41,9 +44,9 @@ class AccountCard extends Component {
           )}
         </div>
 
-        {showPermissions &&
+        {detailsButton &&
           <div>
-            <Button onClick={this.viewPermissionModal}>View permissions</Button>
+            <Button onClick={this.viewModal}>View Details</Button>
           </div>
         }
       </Card>
@@ -60,7 +63,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = (dispatch) => {
   return {
     setCurrentModal: (payload, options) => dispatch({type: SET_CURRENT_MODAL, payload, options}),
-    fetchPermissionsRequest: (account, cb) => dispatch({type: FETCH_PERMISSION_REQUEST, payload: {accountId: account.id}, cb}),
+//    fetchCurrentAccountRequest: (account, cb) => dispatch({type: FETCH_CURRENT_ACCOUNT_REQUEST, payload: {accountId: account.id}, cb}),
   }
 }
 

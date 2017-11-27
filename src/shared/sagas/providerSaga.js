@@ -1,57 +1,34 @@
 import { call, put, takeLatest, takeEvery, all, fork, join } from 'redux-saga/effects'
-import { UPDATE_PROVIDER_REQUEST, UPDATE_PROVIDER_FAILURE, UPDATE_PROVIDER_SUCCESS } from 'constants/actionTypes'
+import {
+  UPDATE_PROVIDER_REQUEST,
+  UPDATE_PROVIDER_FAILURE,
+  UPDATE_PROVIDER_SUCCESS,
+  REFRESH_CHANNEL_TYPE_REQUEST,
+  REFRESH_CHANNEL_TYPE_SUCCESS,
+} from 'constants/actionTypes'
 import { USER_FIELDS_TO_PERSIST, PROVIDER_IDS_MAP  } from 'constants'
+
 //disabling environment variables in the front-end; so remove this  ||  when this gets moved to the backend. I will want to throw an error at that point
 const providerInfo = {}
 
 //called when there is no provider in the store (e.g., initial store load), or expired provider in the store
-function* getProviders(providerId, credential) {
-/*console.log(providerId, credential);
-  let provider, providerToken
-  let providerName = PROVIDER_IDS_MAP[providerId]
-  if (credential && credential.providerId === providerId) {
-    providerToken = credential.accessToken
-  } else {
-    let firebaseToken = firebase.auth().currentUser.getToken()
-    //it doesn't work currently, I can't get this data provider token in this way...try https://firebase.google.com/docs/auth/web/account-linking
-    //or, skip firebase: https://developers.facebook.com/docs/facebook-login/access-tokens/expiration-and-extension/
-    //providerToken = firebase.auth().FacebookAuthProvider.credential(firebaseToken)
+
+//Gets all the populated data required for working on a single campaign
+function* fetchCurrentAccount(action) {
+  try {
+    const accountId = action.payload.id
+
+    const res = yield axios.get(`/api/providerAccounts/${accountId}?populate=channels`) //eventually switch to socket
+
+    yield all([
+      put({type: SET_CURRENT_ACCOUNT, payload: res.data})
+    ])
+    action.cb && action.cb(res)
+
+  } catch (err) {
+    console.log('current account fetch failed', err.response || err)
+    // yield put(userFetchFailed(err.message))
   }
-console.log(providerToken, providerName);
-  if (providerToken) {
-    switch (providerName) {
-      case 'facebook':
-        FB.setAccessToken(providerToken)
-
-        //create a hash of the token (which Facebook requires)
-        hmac.update(providerToken)
-        //TODO: require this in the Facebook app, then pass it in with each request
-        tokenInfo.facebookAppSecretProof = hmac.digest('hex');//use hex?
-
-        break
-      case 'twitter':
-        codeBird.setToken(credential.accessToken, credential.secret)
-        tokenInfo.twitter = {}
-      //can't do this, read us can store something like a codeBird
-        tokenInfo.twitter.api = codeBird
-        break
-
-      case 'google':
-        break
-
-      default:
-        //not really sure which token this returns...
-        provider = firebase.auth().getIdToken(true)
-    }
-    //might not want to put this into store...probably just use Boolean instead
-    tokenInfo[providerName] = tokenInfo[providerName] || {}
-    tokenInfo[providerName].authenticated = true
-
-  }
-
-  // TODO: don't save this in the store, save it somewhere where it can be reused even if there is a screen refresh...without all of the database calls if possible (am I making database calls?)
-  return tokenInfo
-*/
 }
 
 function* updateData(action) {
@@ -80,7 +57,31 @@ function* updateData(action) {
     yield put({type: UPDATE_PROVIDER_FAILURE, payload: err.message})
   }
 }
+function* refreshChannelType(action) {
+  try {
+    // action.payload is an object: {providerIds: ['facebook.com',], credential: {provider: '...'}}
+    // only gets a credential if this action was called from the signInSaga
+    const pld = action.payload
+    if (!pld.account || !pld.channelType) {
+      throw "need account and channeltype"
+    }
+
+    const res = yield axios.post(`/api/providerAccounts/${pld.account.id}/refreshChannelType`, {channelType: pld.channelType})
+
+    yield put({type: REFRESH_CHANNEL_TYPE_SUCCESS, payload: res.data})
+
+    action.cb && action.cb()
+
+  } catch (err) {
+    console.log('provider update failed', err.response || err)
+    yield put({type: UPDATE_PROVIDER_FAILURE, payload: err.message})
+  }
+}
+
 
 export default function* updateProviderSaga() {
   yield takeLatest(UPDATE_PROVIDER_REQUEST, updateData)
+  yield takeLatest(REFRESH_CHANNEL_TYPE_REQUEST, refreshChannelType)
+  yield takeLatest(FETCH_CURRENT_ACCOUNT_REQUEST, fetchCurrentAccount)
+
 }

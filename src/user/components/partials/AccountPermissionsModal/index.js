@@ -16,6 +16,7 @@ import { PROVIDERS } from 'constants/providers'
 import classes from './style.scss'
 
 
+//TODO merge with the show account modal,
 class AccountPermissions extends Component {
   constructor(props) {
     super(props)

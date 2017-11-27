@@ -127,7 +127,7 @@ class PostEditor extends Component {
 
     return (
       <Flexbox direction="column" >
-        <h2>{post.channel.titleCase()}</h2>
+        <h2>{post.channelType.titleCase()}</h2>
         {false && <div className={classes.disablePost}>
           <Checkbox
             value={post.active}
@@ -182,7 +182,7 @@ class PostEditor extends Component {
                   />&nbsp;
 
                   {active && <Input
-                    placeholder={`${label.titleCase()} utm for this ${post.channel.titleCase()}`}
+                    placeholder={`${label.titleCase()} utm for this ${post.channelType.titleCase()}`}
                     onChange={this.updateUtm.bind(this, type)}
                     value={post[type]}
                   />}

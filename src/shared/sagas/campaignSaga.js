@@ -73,10 +73,10 @@ function* createCampaign(action) {
 
     yield all([
       put({ type: CREATE_CAMPAIGN_SUCCESS, payload: newRecord}),
+      //just handling in the reducer
       //put({type: USER_CAMPAIGNS_OUTDATED}),
     ])
 
-    //only want to run the callback when finished reloading campaigns...unless eventually just
     if (action.cb) {
       action.cb(newRecord)
     }

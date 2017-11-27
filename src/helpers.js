@@ -88,8 +88,8 @@ export default {
       return account.scopes[scopeType].status === 'granted'
     })
 
-    const permittedChannels = Object.keys(PROVIDERS[account.provider].channels).filter((channel) => {
-      const channelScopes = PROVIDERS[account.provider].channels[channel]
+    const permittedChannels = Object.keys(PROVIDERS[account.provider].channelTypes).filter((channel) => {
+      const channelScopes = PROVIDERS[account.provider].channelTypes[channel].requiredScopes
       return channelScopes.every((scope) => (permittedScopes.includes(scope))) //also returns true when the channel requires no scopes at all (empty array)
     })
 

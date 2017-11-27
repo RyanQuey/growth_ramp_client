@@ -23,7 +23,7 @@ class LinkProviderAccount extends Component {
       mode: 'CHOOSE_PROVIDER', //you do this or 'CHOOSE_SCOPE'
       currentProvider: 'FACEBOOK',
       currentAccount: Helpers.safeDataPath(props, "providerAccounts.FACEBOOK.0", false),
-      channels: [],
+      channelTypes: [],
     }
 
     this.onSuccess = this.onSuccess.bind(this)
@@ -42,20 +42,20 @@ class LinkProviderAccount extends Component {
     this.setState({
       mode: 'CHOOSE_SCOPE',
       currentProvider: provider,
-      channels: [],
+      channelTypes: [],
     })
   }
 
   chooseChannel(channel) {
-    let channels = this.state.channels
+    let channelTypes = this.state.channelTypes
 
-    if (channels.includes(channel)) {
-      _.remove(channels, (c) => channel === c)
+    if (channelTypes.includes(channel)) {
+      _.remove(channelTypes, (c) => channel === c)
     } else {
-      channels = channels.concat(channel)
+      channelTypes = channelTypes.concat(channel)
     }
 
-    this.setState({channels})
+    this.setState({channelTypes})
   }
 
   onSuccess () {
@@ -71,12 +71,12 @@ class LinkProviderAccount extends Component {
 
   chosenScopes() {
     //might make a helper function if I needed anywhere else
-    //takes channels and provider and returns the scopes needed for that channel
+    //takes channelTypes and provider and returns the scopes needed for that channel
     const scopes = []
     const provider = this.state.currentProvider
 
-    this.state.channels.forEach((channel) => {
-      const newScopes = PROVIDERS[provider].channels[channel].filter((scope) => !scopes.includes(scope))
+    this.state.channelTypes.forEach((channel) => {
+      const newScopes = PROVIDERS[provider].channelTypes[channel].filter((scope) => !scopes.includes(scope))
       scopes.push(...newScopes)
     })
 
@@ -94,9 +94,10 @@ class LinkProviderAccount extends Component {
       <ModalContainer
         visible={this.props.currentModal === "LinkProviderAccountModal"}
         onClose={this.handleClose}
-        title={currentProviderName}
+        title={false && currentProviderName}
       >
         <ModalBody>
+          <h3>Add a new account, or add additional channels to a current account (depending on which account you sign into)</h3>
           {!oneProviderOnly &&
             <ButtonGroup>
               {Object.keys(PROVIDERS).map((provider) => {
@@ -116,8 +117,8 @@ class LinkProviderAccount extends Component {
 
           {currentProvider &&
             <Form>
-              <h3>{currentProviderName} Accounts ({currentAccounts ? currentAccounts.length : 0})</h3>
-              <Flexbox>
+              {false && <h3>{currentProviderName} Accounts ({currentAccounts ? currentAccounts.length : 0})</h3>}
+              {false && "just show in account details modal" && <Flexbox>
                 {currentAccounts ? (
                   currentAccounts.map((account) => (
                     <AccountCard
@@ -129,21 +130,27 @@ class LinkProviderAccount extends Component {
                 ) : (
                   <p>You don't have any {currentProviderName} accounts linked to your Growth Ramp account yet.</p>
                 )}
-              </Flexbox>
+              </Flexbox>}
 
-              <h3>Choose Channels to add:</h3>
-              <Flexbox justify="center">
-                {Object.keys(PROVIDERS[currentProvider].channels).map((channel) =>
-                  <Button
-                    key={channel}
-                    style="inverted"
-                    onClick={this.chooseChannel.bind(this, channel)}
-                    selected={this.state.channels.includes(channel)}
-                  >
-                    {channel.titleCase()}
-                  </Button>
-                )}
-              </Flexbox>
+              {currentProvider === "TWITTER" ? (
+                <p>All channels available by default for Twitter</p>
+              ) : (
+                <div>
+                  <h3>Choose Channels to add:</h3>
+                  <Flexbox justify="center">
+                    {Object.keys(PROVIDERS[currentProvider].channelTypes).map((channel) =>
+                      <Button
+                        key={channel}
+                        style="inverted"
+                        onClick={this.chooseChannel.bind(this, channel)}
+                        selected={this.state.channelTypes.includes(channel)}
+                      >
+                        {channel.titleCase()}
+                      </Button>
+                    )}
+                  </Flexbox>
+                </div>
+              )}
               <SocialLogin
                 pending={this.state.pending}
                 setPending={this.setPending}
@@ -153,7 +160,7 @@ class LinkProviderAccount extends Component {
               />
 
               <h5>Want to add another {currentProviderName} account?</h5>
-              {["FACEBOOK", "LINKEDIN"].includes(currentProvider) && <p>Make sure you either logged out of {currentProviderName} or are signed into {currentProviderName} with the account you want to add to Growth Ramp, choose the services you want to allow here, and then click the login button below</p>}
+              {["FACEBOOK", "LINKEDIN"].includes(currentProvider) && <p><strong>Instructions:</strong> Make sure you either logged out of {currentProviderName} or are signed into {currentProviderName} with the account you want to add to Growth Ramp, choose the services you want to allow here, and then click the login button above</p>}
             </Form>
           }
         </ModalBody>

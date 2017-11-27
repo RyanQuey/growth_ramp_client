@@ -34,11 +34,11 @@ class ChannelPosts extends Component {
     this.props.setCurrentPost(null)
   }
 
-  //takes posts from all providers and accounts and organizes by channel
+  //takes posts from all providers and accounts and organizes by channelType
   channelPosts(posts) {
    /* const postsArray = _.values(posts)
     const channelPosts = postsArray.filter((post) => (
-      post.providerAccountId == this.props.currentAccount.id && post.channel === this.props.currentChannel
+      post.providerAccountId == this.props.currentAccount.id && post.channelType === this.props.currentChannel
     ))
 
     return channelPosts*/
@@ -66,7 +66,7 @@ console.log(channelPosts);*/
         <div key={currentPost.id}>
           <PostEditor
             account={currentAccount}
-            channel={currentChannel}
+            channelType={currentChannel}
             post={currentPostParams}
           />
           <Button style="inverted" onClick={this.removePost.bind(this, currentPost)}>Destroy Post</Button>

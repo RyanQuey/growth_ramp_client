@@ -50,6 +50,7 @@ class ModalContainer extends Component {
             <span aria-hidden="true">×</span>
           </button>}
 
+          {this.props.headerImgUrl && <img className={classes.headerImg} src={this.props.headerImgUrl} />}
           {this.props.title && <h1 className={modalTitle}>{this.props.title}</h1>}
           {this.props.subtitle && <h2 className={modalSubtitle}>{this.props.subtitle}</h2>}
         </div>

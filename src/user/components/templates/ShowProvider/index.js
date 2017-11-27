@@ -24,17 +24,15 @@ class ShowProvider extends Component {
     return (
       <div>
         <div>
-          <h1>{PROVIDERS[currentProvider].name}</h1>
+          <h1>{PROVIDERS[currentProvider].name} Accounts</h1>
 
           <Flexbox>
             {currentAccounts.map((account) => (
-              <div key={account.providerUserId}>
-                <p>Will have general summary, permissions per account, buttons to share permissions, and everything that is in the add provider modal</p>
-                  <AccountCard
-                    account={account}
-                    showPermissions={true}
-                  />
-              </div>
+                <AccountCard
+                  key={account.providerUserId}
+                  account={account}
+                  detailsButton={true}
+                />
             ))}
           </Flexbox>
         </div>

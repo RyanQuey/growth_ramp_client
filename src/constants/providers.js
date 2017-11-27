@@ -24,11 +24,23 @@ module.exports = {
     FACEBOOK: {
       name: 'Facebook',
       providerId: 'FACEBOOK',
-      channels: {
-        PERSONAL_POST: ["publish_actions"],
+      channelTypes: {
+        PERSONAL_POST: {
+          name: "Personal",
+          requiredScopes: ["publish_actions"],
+          hasMultiple: false, //if there are a list of channels for this channelType
+        },
         //PRIVATE_MESSAGE: [probably friends, ],
-        GROUP_POST: ["publish_actions", "user_managed_groups"],
-        PAGE_POST: ["manage_pages", "publish_pages", "pages_show_list"], //mostly for businesses
+        GROUP_POST: {
+          name: "Group",
+          requiredScopes: ["publish_actions", "user_managed_groups"],
+          hasMultiple: true,
+        },
+        PAGE_POST: {
+          name: "Page",
+          requiredScopes: ["manage_pages", "publish_pages", "pages_show_list"], //mostly for businesses
+          hasMultiple: true,
+        },
         //"DARK_POST",
         //"BUSINESS_MESSAGE",
       },
@@ -42,20 +54,32 @@ module.exports = {
     LINKEDIN: {
       name: 'LinkedIn',
       providerId: 'LINKEDIN',
-      channels: {
-        PERSONAL_POST: ['w_share'],
+      channelTypes: {
+        PERSONAL_POST: {
+          name: "Personal",
+          requiredScopes: ['w_share'],
+          hasMultiple: false,
+        },
         //PRIVATE_MESSAGE: [probably friends, ],
         //GROUP_POST: ['w_share'], discontinued: https://www.linkedin.com/help/linkedin/answer/81635/groups-api-no-longer-available?lang=en
-        PAGE_POST: ['rw_company_admin'], //mostly for businesses https://developer.linkedin.com/docs/company-pages. Watch out, will want to check page settings to see if they have permitted it in their linkedIn accoutn
+        PAGE_POST: {
+          name: "Page",
+          requiredScopes: ['rw_company_admin'], //mostly for businesses https://developer.linkedin.com/docs/company-pages. Watch out, will want to check page settings to see if they have permitted it in their linkedIn accoutn
+          hasMultiple: true,
+        },
       }
     },
     TWITTER: {
       name: 'Twitter',
       providerId: 'TWITTER',
-      channels: {
-        PERSONAL_POST: [],//tweet. distinct from business post?
+      channelTypes: {
+        PERSONAL_POST: {
+          name: "Personal",
+          requiredScopes: [],//tweet. distinct from business post?
+          hasMultiple: false,
+        },
         //PRIVATE_MESSAGE: [],//probably friends, ], TODO want to support soon
-      }
+      },
     },
   },
 }

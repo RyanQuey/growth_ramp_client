@@ -58,7 +58,6 @@ class AddPost extends Component {
   }
 
   handleChooseAccount(accountOption) {
-console.log(accountOption);
     this.setState({
       currentAccount: accountOption.value,
       currentChannel: "",
@@ -74,11 +73,12 @@ console.log(accountOption);
   newPost (e) {
     //build out the empty post object
     const post = {
-      channel: this.state.currentChannel,
+      channelType: this.state.currentChannel,
       contentUrl: this.props.currentCampaign.contentUrl,
       userId: this.props.user.id,
       campaignId: this.props.currentCampaign.id,
       providerAccountId: this.state.currentAccount.id,
+      provider: this.state.currentAccount.provider,
       planId: this.props.currentCampaign.planId,
     }
 
@@ -113,10 +113,10 @@ console.log(accountOption);
     }
   }
 
-  channelOption(channel) {
+  channelOption(channelType) {
     return {
-      label: channel.titleCase(),
-      value: channel || null,
+      label: channelType.titleCase(),
+      value: channelType || null,
     }
   }
 
@@ -159,9 +159,9 @@ console.log(accountOption);
     ))
 
     //get channel options
-    let availableChannels, channelPosts, sortedPosts, channelOptions, channelIsAllowed
+    let channelPosts, sortedPosts, channelOptions, channelIsAllowed
     if (currentAccount) {
-      availableChannels = Helpers.safeDataPath(PROVIDERS, `${currentProvider}.channels`, {})
+      let availableChannels = Helpers.safeDataPath(PROVIDERS, `${currentProvider}.channels`, {})
       channelOptions = Object.keys(availableChannels).map((key) => (
         this.channelOption(key)
       ))

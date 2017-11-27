@@ -25,6 +25,12 @@
   margin-left: auto;
   margin-right: auto;
   @include vertical-align
+
+  img.headerImg {
+    border-radius: 15px;
+    width: 50px;
+    float: right;
+  }
 }
 .modalContent {
   position: relative;

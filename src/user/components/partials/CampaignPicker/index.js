@@ -41,7 +41,9 @@ class CampaignPicker extends Component {
   }
 
   render() {
-    const campaigns = this.props.campaigns || {}
+    let campaignIds = Object.keys(this.props.campaigns || {})
+    //reversing to put newest on top; since I think organized by id by default
+    campaignIds.reverse()
 
     //TODO: set the title using props into the modal container (will do a modal...or just a show view?? for each campaign)
     //use flexbox. Assign consistent column lengths to still achieve tablelike look, but with control over spacing etc.
@@ -56,8 +58,8 @@ class CampaignPicker extends Component {
           <th>Date Published</th>
           <th></th>
         </tr>
-        {Object.keys(campaigns).length && Object.keys(campaigns).map((campaignId) => {
-          const campaign = campaigns[campaignId]
+        {campaignIds.map((campaignId) => {
+          const campaign = this.props.campaigns[campaignId]
           //not sure why this keeps on happening, but it does
           if (!campaign) {return null}
 

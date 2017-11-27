@@ -48,16 +48,16 @@ class ShowCampaign extends Component {
     this.setState({savingPlanFromCampaign: value})
   }
 
-  chooseChannel(channel) {
-    let channels = this.state.channels
+  chooseChannel(channelType) {
+    let channelTypes = this.state.channelTypes
 
-    if (channels.includes(channel)) {
-      _.remove(channels, (c) => channel === c)
+    if (channelTypes.includes(channelType)) {
+      _.remove(channelTypes, (c) => channelType === c)
     } else {
-      channels = channels.concat(channel)
+      channelTypes = channelTypes.concat(channelType)
     }
 
-    this.setState({channels})
+    this.setState({channelTypes})
   }
 
   onSuccess () {
@@ -73,12 +73,12 @@ class ShowCampaign extends Component {
 
   chosenScopes() {
     //might make a helper function if I needed anywhere else
-    //takes channels and provider and returns the scopes needed for that channel
+    //takes channelTypes and provider and returns the scopes needed for that channelType
     const scopes = []
     const provider = this.state.currentProvider
 
-    this.state.channels.forEach((channel) => {
-      const newScopes = PROVIDERS[provider].channels[channel].filter((scope) => !scopes.includes(scope))
+    this.state.channelTypes.forEach((channelType) => {
+      const newScopes = PROVIDERS[provider].channelTypes[channelType].filter((scope) => !scopes.includes(scope))
       scopes.push(...newScopes)
     })
 
@@ -103,7 +103,7 @@ class ShowCampaign extends Component {
               {currentCampaign.posts.map((post) =>
                 <div>
                   <div><strong>Text:</strong>{post.text}</div>
-                  <div><strong>Channel:</strong>{post.channel.titleCase()}</div>
+                  <div><strong>Channel:</strong>{post.channelType.titleCase()}</div>
                 </div>
               )}
             </div>
@@ -124,7 +124,7 @@ class ShowCampaign extends Component {
               </div>
             ) : (
               <Button onClick={this.toggleSavingPlan}>Save plan from campaign?</Button>
-            )}
+            )
           }
         </ModalBody>
       </ModalContainer>

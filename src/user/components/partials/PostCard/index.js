@@ -20,7 +20,7 @@ class PostCard extends Component {
 
     return (
       <Card selected={selected} onClick={onClick} height={height} maxWidth={maxWidth} className={className}>
-        <CardHeader title={post.channel.titleCase()} headerImgUrl={false && Helpers.safeDataPath(post, "uploadedContent.0.url", "")}/>
+        <CardHeader title={post.channelType.titleCase()} headerImgUrl={false && Helpers.safeDataPath(post, "uploadedContent.0.url", "")}/>
 
         <div>
           <h4>{post.text}</h4>
