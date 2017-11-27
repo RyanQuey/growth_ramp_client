@@ -76,7 +76,7 @@ export const clearParams = () => {
 //basically, the post you are working on will reflect the same data it had, and params are ready to persisted if you update again
 //other campaign params is set too; each "form" is a campaign attribute
 export const matchCampaignStateToRecord = () => {
-
+console.log("now matching");
   //this should match the persisted recoard
   const campaign = Object.assign({}, Helpers.safeDataPath(store.getState(), `currentCampaign`, {}))
   const campaignPosts = campaign.posts || []

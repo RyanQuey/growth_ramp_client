@@ -44,9 +44,9 @@ class Compose extends Component {
 
   componentWillReceiveProps(props) {
     //happens when create new campaign from navbar
-    /*if (props.currentCampaign && !props.currentCampaign.planId) {
+    if (props.currentCampaign && !props.currentCampaign.planId) {
       this.props.switchTo("Start", true)
-    }*/
+    }
     /*if (props.providerAccounts !== this.props.providerAccounts) {
 
     }*/

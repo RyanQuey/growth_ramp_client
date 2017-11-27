@@ -58,7 +58,11 @@ class CampaignPicker extends Component {
         </tr>
         {Object.keys(campaigns).length && Object.keys(campaigns).map((campaignId) => {
           const campaign = campaigns[campaignId]
+          //not sure why this keeps on happening, but it does
+          if (!campaign) {return null}
+
           const plan = Helpers.safeDataPath(this.props, `plans.${campaign.planId}.name`, false)
+
           return (
             <tr key={campaignId}>
               <td>

@@ -68,7 +68,7 @@ class Start extends Component {
   save() {
     const done = () => {
       this.props.switchTo("Compose")
-      formActions.formPersisted("EditCampaign", "other")
+      formActions.matchCampaignStateToRecord()
     }
 
     if (this.props.dirty) {

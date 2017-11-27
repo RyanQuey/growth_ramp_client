@@ -15,6 +15,7 @@ import {
   LIVE_UPDATE_PLAN_FAILURE,
   UPDATE_CAMPAIGN_SUCCESS,
 } from 'constants/actionTypes'
+import { errorActions, formActions, alertActions } from 'shared/actions'
 
 // need to make sure that the current user and the userId are identical for security reasons
 // may try using state.user.uid instead, just pulling from the store directly
@@ -86,6 +87,12 @@ function* create(action) {
       put({ type: CREATE_PLAN_SUCCESS, payload: newRecord}),
       put({ type: SET_CURRENT_PLAN, payload: newRecord }),
     ])
+    alertActions.newAlert({
+      title: "Success!",
+      message: "Successfully created plan",
+      level: "SUCCESS",
+    })
+    action.cb && action.cb(newRecord)
 
   } catch (err) {
     console.log(`Error in Create plan Saga:`)
@@ -103,7 +110,13 @@ function* update(action) {
     yield all([
       put({ type: UPDATE_PLAN_SUCCESS, payload: planData}),
     ])
+    alertActions.newAlert({
+      title: "Success!",
+      message: "Successfully updated plan",
+      level: "SUCCESS",
+    })
 
+    action.cb && action.cb(planData)
   } catch (err) {
     console.log(`Error in update plan Saga`)
     console.log(err.response || err)

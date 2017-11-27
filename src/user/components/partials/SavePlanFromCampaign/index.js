@@ -5,6 +5,7 @@ import {
   UPDATE_PLAN_REQUEST,
   SET_CURRENT_PLAN,
 } from 'constants/actionTypes'
+import { withRouter } from 'react-router-dom'
 import { Icon, Button, Input } from 'shared/components/elements'
 
 class SavePlanFromCampaign extends Component {
@@ -60,6 +61,7 @@ class SavePlanFromCampaign extends Component {
     }
     const cb = () => {
       this.setState({pending: false})
+      this.props.history.push("/campaigns")
     }
 
     //will have to set the some other way, in case someone else makes one that's later than them or something, and firebase updates it
@@ -77,6 +79,7 @@ class SavePlanFromCampaign extends Component {
     }
     const cb = () => {
       this.setState({pending: false})
+      this.props.history.push("/campaigns")
     }
 
     //will have to set the some other way, in case someone else makes one that's later than them or something, and firebase updates it
@@ -159,5 +162,5 @@ const mapDispatchToProps = (dispatch) => {
   }
 }
 
-const ConnectedSavePlan = connect(mapStateToProps, mapDispatchToProps)(SavePlanFromCampaign)
+const ConnectedSavePlan = withRouter(connect(mapStateToProps, mapDispatchToProps)(SavePlanFromCampaign))
 export default ConnectedSavePlan

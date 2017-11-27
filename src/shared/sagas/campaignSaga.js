@@ -73,11 +73,10 @@ function* createCampaign(action) {
 
     yield all([
       put({ type: CREATE_CAMPAIGN_SUCCESS, payload: newRecord}),
-      //TODO especially when there are more campaigns, will want to just merge this one campaign to the campaigns list, rather than fetching all..
-      put({type: USER_CAMPAIGNS_OUTDATED}),
+      //put({type: USER_CAMPAIGNS_OUTDATED}),
     ])
 
-    //NOTE: This works!
+    //only want to run the callback when finished reloading campaigns...unless eventually just
     if (action.cb) {
       action.cb(newRecord)
     }

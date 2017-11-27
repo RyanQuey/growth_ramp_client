@@ -2,6 +2,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux'
 import { SET_INPUT_VALUE, PUBLISH_CAMPAIGN_REQUEST } from 'constants/actionTypes'
 import { SavePlanFromCampaign } from 'user/components/partials'
+import { withRouter } from 'react-router-dom'
 import { Icon, Button } from 'shared/components/elements'
 
 class Send extends Component {
@@ -37,6 +38,7 @@ class Send extends Component {
 
     if (this.state.mode === "savePlan") {
       return <SavePlanFromCampaign />
+
     }
 
     return (
@@ -64,5 +66,5 @@ const mapDispatchToProps = (dispatch) => {
   }
 }
 
-const ConnectedSend = connect(mapStateToProps, mapDispatchToProps)(Send)
+const ConnectedSend = withRouter(connect(mapStateToProps, mapDispatchToProps)(Send))
 export default ConnectedSend
