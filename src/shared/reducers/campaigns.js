@@ -32,9 +32,7 @@ const campaignsReducer = (state = {}, action) => {
 
     case PUBLISH_CAMPAIGN_SUCCESS:
       campaign = pld.campaign
-console.log(campaign);
       campaign.posts = pld.posts
-
 
       return Object.assign({}, state, {[campaign.id]: campaign})
 
@@ -43,12 +41,9 @@ console.log(campaign);
       //should never be {}...
       campaign = Object.assign({}, Helpers.safeDataPath(store.getState(), `campaigns.${post.campaignId}`, {}))
       oldPosts = campaign.posts || []
-console.log(oldPosts)
       campaignPosts = [...oldPosts]
       campaignPosts.push(post)
       campaign.posts = campaignPosts
-
-console.log(campaignPosts);
 
       return Object.assign({}, state, {[campaign.id]: campaign})
 

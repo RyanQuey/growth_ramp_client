@@ -53,7 +53,7 @@ class Compose extends Component {
   }
 
   componentDidMount() {
- }
+  }
 
   openNewProviderModal(provider) {
     //provider will be the only provider they add an account for

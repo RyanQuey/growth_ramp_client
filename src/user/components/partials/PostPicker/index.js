@@ -5,10 +5,11 @@ import { PostCard, ProviderCard } from 'user/components/partials'
 import { SET_CURRENT_POST, SET_CURRENT_MODAL, UPDATE_PLAN_REQUEST  } from 'constants/actionTypes'
 import { PROVIDERS } from 'constants/providers'
 import {UTM_TYPES} from 'constants/posts'
+import {formActions} from 'shared/actions'
 import classes from './style.scss'
 
 //shows up as buttons in mobile, or sidebar in browser?
-//used in channels and send
+//used in Compose only
 class PostPicker extends Component {
   constructor() {
     super()
@@ -64,7 +65,18 @@ class PostPicker extends Component {
     //turn off adding a post when click on a card
     this.props.toggleAdding(false, false)
     this.props.setCurrentPost(post)
+
+    //make sure utms are enabled if post has those utms
+    let utmKeys = UTM_TYPES.map((t) => t.value)
+    let utmFields = {}
+    for (let i = 0; i < utmKeys.length; i++) {
+      let key = utmKeys[i]
+      utmFields[key] = post[key] ? true : false
+    }
+
+    formActions.setOptions("EditCampaign", "posts", {[post.id]: {utms: utmFields}})
   }
+
   render() {
     if (this.props.hide) {
       return null
@@ -123,6 +135,7 @@ class PostPicker extends Component {
 
 const mapStateToProps = state => {
   return {
+    //really is campaign posts params
     campaignPosts: Helpers.safeDataPath(state.forms, "EditCampaign.posts.params", {}),
     user: state.user,
     providerAccounts: state.providerAccounts,
