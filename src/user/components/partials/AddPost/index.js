@@ -34,14 +34,26 @@ class AddPost extends Component {
 
     //this.sortPostsByChannelType = this.sortPostsByChannelType.bind(this)
     this.newPost = this.newPost.bind(this)
-    this.handleChooseProvider = this.handleChooseProvider.bind(this)
+    //this.handleChooseProvider = this.handleChooseProvider.bind(this)
     this.handleChooseAccount = this.handleChooseAccount.bind(this)
     this.handleChooseChannelType = this.handleChooseChannelType.bind(this)
     this.handleChooseChannel = this.handleChooseChannel.bind(this)
     this.openProviderModal = this.openProviderModal.bind(this)
   }
 
-  handleChooseProvider(providerOption) {
+  componentWillReceiveProps(props) {
+    if (props.currentProvider !== this.props.currentProvider) {
+      this.setState({
+        currentAccount: false,
+        currentChannelType: "",
+        currentChannel: false,
+      })
+
+    }
+  }
+
+  //only adding post if click button in post picker, which also sets the provider
+  /*handleChooseProvider(providerOption) {
     if (providerOption.value === this.props.currentProvider) {return }
 
     this.setState({
@@ -49,7 +61,7 @@ class AddPost extends Component {
       currentAccount: false,
       currentChannelType: "",
     })
-  }
+  }*/
 
   openProviderModal() {
     //prompt to give permission
@@ -62,12 +74,14 @@ class AddPost extends Component {
     this.setState({
       currentAccount: accountOption.value,
       currentChannelType: "",
+      currentChannel: "",
     })
   }
 
   handleChooseChannelType(channelTypeOption) {
     this.setState({
       currentChannelType: channelTypeOption.value,
+      currentChannel: "",
     })
   }
 
@@ -203,6 +217,7 @@ class AddPost extends Component {
       }
     }
 
+console.log(channelTypeHasMultiple, currentChannelType,channelTypeIsAllowed);
     const placeholder = {label: "select", value: null}
     //let accountsNotOnPlan = accountsForProvider //when implementing, make array of indices in reverse; remove starting from back to not mess up indicies while removing.
 
@@ -244,7 +259,7 @@ class AddPost extends Component {
 
                 {currentAccount &&
                   <Select
-                    label="Channel"
+                    label="Channel Type"
                     options={channelTypeOptions}
                     onChange={this.handleChooseChannelType}
                     currentOption={currentChannelType ? this.channelTypeOption(currentChannelType) : placeholder}
@@ -276,9 +291,9 @@ class AddPost extends Component {
         )}
 
         {(
-          currentChannelType && channelTypeIsAllowed && !channelTypeHasMultiple) ||
-          currentChannel &&
-        (
+          (currentChannelType && channelTypeIsAllowed && !channelTypeHasMultiple) ||
+          currentChannel
+        ) && (
             <Button style="inverted" onClick={this.newPost}>Add a {currentChannelType.titleCase()}</Button>
         )}
 

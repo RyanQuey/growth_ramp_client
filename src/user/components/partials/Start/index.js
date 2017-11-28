@@ -7,7 +7,7 @@ import {
 } from 'constants/actionTypes'
 import { Input, Button, Card } from 'shared/components/elements'
 import { PlanPicker } from 'user/components/partials'
-import { formActions } from 'shared/actions'
+import { formActions, alertActions } from 'shared/actions'
 
 class Start extends Component {
   constructor(props) {
@@ -25,7 +25,7 @@ class Start extends Component {
     this.startFromScratch = this.startFromScratch.bind(this)
     this.handleChangeName = this.handleChangeName.bind(this)
     this.handleUrl = this.handleUrl.bind(this)
-    this.save = this.save.bind(this)
+    this.saveOrContinue = this.saveOrContinue.bind(this)
   }
 
   componentDidMount() {
@@ -65,15 +65,26 @@ class Start extends Component {
     formActions.setParams("EditCampaign", "other", {name: value})
   }
 
-  save(e) {
+  saveOrContinue(e) {
     e && e.preventDefault()
+
+    let campaignParams = this.props.campaignParams
+    if (!campaignParams.contentUrl) {
+
+      alertActions.newAlert({
+        title: "Failed to save:",
+        message: "Content url is required",
+        level: "DANGER",
+      })
+      return
+    }
+
     const done = () => {
       this.props.switchTo("Compose")
       formActions.matchCampaignStateToRecord()
     }
 
     if (this.props.dirty) {
-      let campaignParams = this.props.campaignParams
       const options = {} //can't remember why i have this..maybe just that, I coudl use if needed?
       const params = {
         id: this.props.currentCampaign.id,
@@ -81,6 +92,7 @@ class Start extends Component {
         userId: this.props.currentCampaign.userId,
         planId: campaignParams.planId,
         contentUrl: campaignParams.contentUrl,
+        provider: campaignParams
       }
 
       this.props.updateCampaignRequest(params, options, done)
@@ -108,7 +120,7 @@ class Start extends Component {
     const campaignParams = this.props.campaignParams
 
     return (
-      <form onSubmit={this.save} >
+      <form onSubmit={this.saveOrContinue} >
         <h1 className="display-3">Start</h1>
         <Input
           value={campaignParams.name}

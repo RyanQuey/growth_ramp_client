@@ -61,6 +61,7 @@ class CampaignPicker extends Component {
         {campaignIds.map((campaignId) => {
           const campaign = this.props.campaigns[campaignId]
           //not sure why this keeps on happening, but it does
+console.log(campaign);
           if (!campaign) {return null}
 
           const plan = Helpers.safeDataPath(this.props, `plans.${campaign.planId}.name`, false)

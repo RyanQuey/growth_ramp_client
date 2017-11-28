@@ -17,6 +17,18 @@ class Send extends Component {
     this.send = this.send.bind(this)
   }
 
+  //TODO might just put in EditCampaign, DRY things up
+  componentWillReceiveProps(props) {
+    //happens when create new campaign from navbar
+    //only trigger if there is currently a campaign already set
+    if (this.props.currentCampaign.id && props.currentCampaign.id !== this.props.currentCampaign.id) {
+      this.props.switchTo("Start", true)
+    }
+    /*if (props.providerAccounts !== this.props.providerAccounts) {
+
+    }*/
+  }
+
   send() {
     this.setState({pending: true})
     const cb = () => {
