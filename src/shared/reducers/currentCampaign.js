@@ -24,9 +24,8 @@ const currentCampaignReducer = (state = null, action) => {
       }
 
     case PUBLISH_CAMPAIGN_SUCCESS:
-      campaign = pld.campaign
+      campaign = pld
       if (campaign.id = state.id) {
-        campaign.posts = pld.posts
         return Object.assign({}, state, {[campaign.id]: campaign})
 
       } else {

@@ -18,42 +18,6 @@ import { PUBLISH_CAMPAIGN_REQUEST,
 } from 'constants/actionTypes'
 import { errorActions, formActions, alertActions } from 'shared/actions'
 
-function* publishCampaign(action) {
-  let logins = 0
-  try {
-    const campaign = action.payload
-    //mostly using this so UI has something to respond to
-    formActions.setParams("Send", "submit", {publishing: true})
-
-    //mark campaign as published
-    const results = yield axios.post(`/api/campaigns/${campaign.id}/publish`)
-    console.log("results from the campaign");
-    console.log(results);
-    yield put({type: PUBLISH_CAMPAIGN_SUCCESS, payload: {
-      campaign: results.data.campaign,
-      posts: results.data.posts,
-    }})
-
-    //or something to trigger next phase, to prompt saving plan
-    formActions.formPersisted("Send", "submit")
-    alertActions.newAlert({
-      title: "Success!",
-      level: "SUCCESS",
-    })
-
-    action.cb && action.cb(results.data)
-
-  } catch (err) {
-    console.log(`Error publishing campaign: ${err}`)
-    errorActions.handleErrors({
-      templateName: "Campaign",
-      templatePart: "published",
-      title: "Error publishing campaign",
-      errorObject: err,
-    })
-  }
-}
-
 //so far, always creating blank; then goes to the edit view from there
 function* createCampaign(action) {
   try {
@@ -188,6 +152,42 @@ function* fetchCurrentCampaign(action) {
   } catch (err) {
     console.log('current campaign fetch failed', err.response || err)
     // yield put(userFetchFailed(err.message))
+  }
+}
+
+function* publishCampaign(action) {
+  let logins = 0
+  try {
+    const campaign = action.payload
+    //mostly using this so UI has something to respond to
+    formActions.setParams("Send", "submit", {publishing: true})
+
+    //mark campaign as published
+    const results = yield axios.post(`/api/campaigns/${campaign.id}/publish`)
+    console.log("results from the campaign");
+    console.log(results);
+    yield put({type: PUBLISH_CAMPAIGN_SUCCESS, payload: {
+      campaign: results.data,
+      posts: results.data.posts,
+    }})
+
+    //or something to trigger next phase, to prompt saving plan
+    formActions.formPersisted("Send", "submit")
+    alertActions.newAlert({
+      title: "Success!",
+      level: "SUCCESS",
+    })
+
+    action.cb && action.cb(results.data)
+
+  } catch (err) {
+    console.log(`Error publishing campaign: ${err}`)
+    errorActions.handleErrors({
+      templateName: "Campaign",
+      templatePart: "published",
+      title: "Error publishing campaign",
+      errorObject: err,
+    })
   }
 }
 

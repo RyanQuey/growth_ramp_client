@@ -33,7 +33,6 @@ const campaignsReducer = (state = {}, action) => {
 
     case PUBLISH_CAMPAIGN_SUCCESS:
       campaign = pld.campaign
-      campaign.posts = pld.posts
 
       return Object.assign({}, state, {[campaign.id]: campaign})
 
