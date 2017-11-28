@@ -139,7 +139,8 @@ function* updateCampaign(action) {
     const res = yield axios.put(`/api/campaigns/${campaignData.id}`, campaignData) //eventually switch to socket
 
     yield all([
-      put({ type: UPDATE_CAMPAIGN_SUCCESS, payload: res.data}),
+      //assumes only updating one campaign
+      put({ type: UPDATE_CAMPAIGN_SUCCESS, payload: res.data[0]}),
     ])
     action.cb && action.cb(res)
 

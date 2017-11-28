@@ -9,10 +9,11 @@ import {
 
 export default (state = {}, action) => {
   const pld = action.payload
-  let newState, data
+  let newState, data, currentOptions
+
   switch (action.type) {
     case SET_PARAMS:
-      let currentOptions = Helpers.safeDataPath(state, `${pld.component}.${pld.form}.options`, {})
+      currentOptions = Helpers.safeDataPath(state, `${pld.component}.${pld.form}.options`, {})
       data = {
         //merge the params in payload onto current params for this form
         dirty: pld.dirty,
@@ -21,7 +22,7 @@ export default (state = {}, action) => {
       newState = Object.assign({}, state)
 
       if (pld.override) {
-console.log("now override");
+//console.log("now override");
         //override whatever is there
         data.params = Object.assign({}, pld.params)
 
@@ -30,9 +31,9 @@ console.log("now override");
         let oldParams = Helpers.safeDataPath(state, `${pld.component}.${pld.form}.params`, {})
         data.params = Object.assign({}, oldParams, pld.params)
       }
-console.log(data);
+//console.log(data);
       _.set(newState, `${pld.component}.${pld.form}`, data)
-console.log(newState);
+//console.log(newState);
       return newState
 
     case SET_OPTIONS:
@@ -45,9 +46,19 @@ console.log(newState);
 
       return newState
 
-    //TODO conditionally clear only a certain form
     case CLEAR_PARAMS:
-      return Object.assign({})
+      currentOptions = Helpers.safeDataPath(state, `${pld.component}.${pld.form}.options`, {})
+      data = {
+        //merge the params in payload onto current params for this form
+        dirty: false,
+        options: currentOptions,
+        params: {}
+      }
+
+      newState = Object.assign({}, state)
+      _.set(newState, `${pld.component}.${pld.form}`, data)
+
+      return newState
 
     case FORM_PERSISTED:
       newState = Object.assign({}, state)

@@ -64,7 +64,6 @@ class CampaignPicker extends Component {
           if (!campaign) {return null}
 
           const plan = Helpers.safeDataPath(this.props, `plans.${campaign.planId}.name`, false)
-
           return (
             <tr key={campaignId}>
               <td>

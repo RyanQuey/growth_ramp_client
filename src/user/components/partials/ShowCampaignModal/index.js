@@ -101,7 +101,7 @@ class ShowCampaign extends Component {
             <div>
               <h2>Campaign Posts</h2>
               {currentCampaign.posts.map((post) =>
-                <div>
+                <div key={post.id}>
                   <div><strong>Text:</strong>{post.text}</div>
                   <div><strong>Channel:</strong>{post.channelType.titleCase()}</div>
                 </div>

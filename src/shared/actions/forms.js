@@ -68,8 +68,14 @@ export const formPersisted = (component, form) => {
     },
   })
 }
-export const clearParams = () => {
-  store.dispatch({type: CLEAR_PARAMS})
+export const clearParams = (component, form) => {
+  store.dispatch({
+    type: CLEAR_PARAMS,
+    payload: {
+      component,
+      form,
+    },
+  })
 }
 
 
@@ -90,7 +96,7 @@ console.log("now matching");
     //sets dirty to false, and override to true
     setParams("EditCampaign", "posts", postObj, false, true)
   } else {
-    clearParams ("EditCampaign", "posts")
+    clearParams("EditCampaign", "posts")
   }
 
   delete campaign.posts //will not be updating posts on that part of the state, so don't want to confuse things; just remove it

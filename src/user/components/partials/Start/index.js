@@ -65,7 +65,8 @@ class Start extends Component {
     formActions.setParams("EditCampaign", "other", {name: value})
   }
 
-  save() {
+  save(e) {
+    e && e.preventDefault()
     const done = () => {
       this.props.switchTo("Compose")
       formActions.matchCampaignStateToRecord()
@@ -107,7 +108,7 @@ class Start extends Component {
     const campaignParams = this.props.campaignParams
 
     return (
-      <div>
+      <form onSubmit={this.save} >
         <h1 className="display-3">Start</h1>
         <Input
           value={campaignParams.name}
@@ -154,9 +155,9 @@ class Start extends Component {
             </div>
           )
         )}
-        <Button onClick={this.save}>{this.props.dirty && "Save and "}Continue</Button>
+        <Button type="submit">{this.props.dirty && "Save and "}Continue</Button>
 
-      </div>
+      </form>
     );
   }
 }

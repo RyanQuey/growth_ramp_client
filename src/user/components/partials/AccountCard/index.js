@@ -25,7 +25,7 @@ this.props.setCurrentModal("ShowAccountModal", {currentAccount: this.props.accou
 
   render () {
     const { account, selected, onClick, height, detailsButton } = this.props
-    const permittedChannels = Helpers.permittedChannels(account)
+    const permittedChannelTypes = Helpers.permittedChannelTypes(account)
 
     return (
       <Card selected={selected} onClick={onClick} height={height}>
@@ -33,10 +33,10 @@ this.props.setCurrentModal("ShowAccountModal", {currentAccount: this.props.accou
 
         <div>
           <h4>Current Channel Types:</h4>
-          {permittedChannels.length ? (
+          {permittedChannelTypes.length ? (
             <div>
-              {permittedChannels.map((channel) => (
-                <div key={channel}>{channel.titleCase()}</div>
+              {permittedChannelTypes.map((channelType) => (
+                <div key={channelType}>{channelType.titleCase()}</div>
               ))}
             </div>
           ) : (

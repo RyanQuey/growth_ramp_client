@@ -2,14 +2,14 @@ import { Component } from 'react';
 import { connect } from 'react-redux'
 import uuidv4 from 'uuid/v4'
 import {
-  CREATE_PLAN_REQUEST,
-  CHOOSE_PLAN,
-  UPDATE_CAMPAIGN_REQUEST,
-  UPDATE_PLAN_REQUEST,
-  LIVE_UPDATE_PLAN_SUCCESS,
-  LIVE_UPDATE_PLAN_FAILURE,
-  SET_CURRENT_MODAL,
-  SET_CURRENT_POST,
+  //CREATE_PLAN_REQUEST,
+  //CHOOSE_PLAN,
+  //UPDATE_CAMPAIGN_REQUEST,
+  //UPDATE_PLAN_REQUEST,
+  //LIVE_UPDATE_PLAN_SUCCESS,
+  //LIVE_UPDATE_PLAN_FAILURE,
+  //SET_CURRENT_MODAL,
+  //SET_CURRENT_POST,
 } from 'constants/actionTypes'
 import { Navbar, Icon, Button } from 'shared/components/elements'
 import { Select } from 'shared/components/groups'
@@ -29,13 +29,14 @@ class AddPost extends Component {
       mode: 'VIEW', //other modes include: 'EDIT'
       currentProvider: "",// will just be the provider name
       currentAccount: false,//will be account obj
-      currentChannel: "",//will be obj
+      currentChannelType: "",//will be obj
     }
 
-    //this.sortPostsByChannel = this.sortPostsByChannel.bind(this)
+    //this.sortPostsByChannelType = this.sortPostsByChannelType.bind(this)
     this.newPost = this.newPost.bind(this)
     this.handleChooseProvider = this.handleChooseProvider.bind(this)
     this.handleChooseAccount = this.handleChooseAccount.bind(this)
+    this.handleChooseChannelType = this.handleChooseChannelType.bind(this)
     this.handleChooseChannel = this.handleChooseChannel.bind(this)
     this.openProviderModal = this.openProviderModal.bind(this)
   }
@@ -46,7 +47,7 @@ class AddPost extends Component {
     this.setState({
       currentProvider: providerOption.value,
       currentAccount: false,
-      currentChannel: "",
+      currentChannelType: "",
     })
   }
 
@@ -60,7 +61,13 @@ class AddPost extends Component {
   handleChooseAccount(accountOption) {
     this.setState({
       currentAccount: accountOption.value,
-      currentChannel: "",
+      currentChannelType: "",
+    })
+  }
+
+  handleChooseChannelType(channelTypeOption) {
+    this.setState({
+      currentChannelType: channelTypeOption.value,
     })
   }
 
@@ -72,8 +79,11 @@ class AddPost extends Component {
 
   newPost (e) {
     //build out the empty post object
+    const channelId = this.state.currentChannel ? parseInt(this.state.currentChannel.id) : null
+
     const post = {
-      channelType: this.state.currentChannel,
+      channelType: this.state.currentChannelType,
+      channelId,
       contentUrl: this.props.currentCampaign.contentUrl,
       userId: this.props.user.id,
       campaignId: this.props.currentCampaign.id,
@@ -95,7 +105,7 @@ class AddPost extends Component {
 
     formActions.setParams("EditCampaign", "posts", {[uuid]: post})
     formActions.setOptions("EditCampaign", "posts", {[uuid]: {utms: utmDefaults}})
-    this.props.toggleAdding()
+    this.props.toggleAdding(false, false, post)
   }
 
   providerOption(provider) {
@@ -113,14 +123,21 @@ class AddPost extends Component {
     }
   }
 
-  channelOption(channelType) {
+  channelTypeOption(channelType) {
     return {
       label: channelType.titleCase(),
       value: channelType || null,
     }
   }
 
-  /*sortPostsByChannel(posts) {
+  channelOption(channel) {
+    return {
+      label: `${channel.name || channel.id}`,
+      value: channel,
+    }
+  }
+
+  /*sortPostsByChannelType(posts) {
     const sorted = {}
     for (let i = 0; i < posts.length; i++) {
       let post = posts[i]
@@ -143,7 +160,7 @@ class AddPost extends Component {
     if (this.props.hide) {
       return null
     }
-    let {currentAccount, currentChannel} = this.state
+    let {currentAccount, currentChannelType, currentChannel} = this.state
     let currentProvider = this.props.currentProvider
 
     //get provider options
@@ -159,16 +176,30 @@ class AddPost extends Component {
     ))
 
     //get channel options
-    let channelPosts, sortedPosts, channelOptions, channelIsAllowed
+    let sortedPosts,
+      channelTypeOptions,
+      channelTypeName,
+      channelTypeIsAllowed,
+      channelTypeHasMultiple,
+      channelOptions
+
     if (currentAccount) {
-      let availableChannels = Helpers.safeDataPath(PROVIDERS, `${currentProvider}.channels`, {})
-      channelOptions = Object.keys(availableChannels).map((key) => (
-        this.channelOption(key)
+      let availableChannelTypes = Helpers.safeDataPath(PROVIDERS, `${currentProvider}.channelTypes`, {})
+      channelTypeOptions = Object.keys(availableChannelTypes).map((key) => (
+        this.channelTypeOption(key)
       ))
 
-      let permittedChannels = Helpers.permittedChannels(currentAccount)
-      if (currentChannel) {
-        channelIsAllowed = permittedChannels.includes(currentChannel)
+      let permittedChannelTypes = Helpers.permittedChannelTypes(currentAccount)
+
+      if (currentChannelType) {
+        channelTypeIsAllowed = permittedChannelTypes.includes(currentChannelType)
+
+        channelTypeHasMultiple = PROVIDERS[currentProvider].channelTypes[currentChannelType].hasMultiple
+        channelTypeName = PROVIDERS[currentProvider].channelTypes[currentChannelType].name
+        let channelsForType = currentAccount.channels.filter((c) => c.type === currentChannelType)
+        channelOptions = channelsForType.map((channel) => (
+          this.channelOption(channel)
+        ))
       }
     }
 
@@ -214,17 +245,17 @@ class AddPost extends Component {
                 {currentAccount &&
                   <Select
                     label="Channel"
-                    options={channelOptions}
-                    onChange={this.handleChooseChannel}
-                    currentOption={currentChannel ? this.channelOption(currentChannel) : placeholder}
-                    name="select-channel"
+                    options={channelTypeOptions}
+                    onChange={this.handleChooseChannelType}
+                    currentOption={currentChannelType ? this.channelTypeOption(currentChannelType) : placeholder}
+                    name="select-channel-type"
                   />
                 }
 
 
-                {currentChannel && !channelIsAllowed && (
+                {currentChannelType && !channelTypeIsAllowed && (
                   <div>
-                    <div>Growth Ramp needs your permission to make {currentChannel ? currentChannel.titleCase() : "post"}s for {PROVIDERS[currentProvider].name}</div>
+                    <div>Growth Ramp needs your permission to make {currentChannelType ? currentChannelType.titleCase() : "post"}s for {PROVIDERS[currentProvider].name}</div>
                     <Button style="inverted" onClick={this.openProviderModal}>Grant Provider to continue</Button>
                   </div>
 
@@ -234,9 +265,23 @@ class AddPost extends Component {
             )}
           </div>
         )}
-        {currentChannel && channelIsAllowed && (
-          <Button style="inverted" onClick={this.newPost}>Add a {currentChannel.titleCase()}</Button>
+        {currentChannelType && channelTypeIsAllowed && channelTypeHasMultiple && (
+          <Select
+            label={channelTypeName}
+            options={channelOptions}
+            onChange={this.handleChooseChannel}
+            currentOption={currentChannel ? this.channelOption(currentChannel) : placeholder}
+            name="select-channel"
+          />
         )}
+
+        {(
+          currentChannelType && channelTypeIsAllowed && !channelTypeHasMultiple) ||
+          currentChannel &&
+        (
+            <Button style="inverted" onClick={this.newPost}>Add a {currentChannelType.titleCase()}</Button>
+        )}
+
         <Button style="inverted" onClick={this.props.toggleAdding.bind(this, false, this.state.addingPost)}>Cancel</Button>
       </div>
     );
@@ -253,11 +298,11 @@ const mapStateToProps = state => {
 }
 const mapDispatchToProps = (dispatch) => {
   return {
-    updateCampaignRequest: (payload) => {dispatch({type: UPDATE_CAMPAIGN_REQUEST, payload})},
-    updatePlanRequest: (payload) => {dispatch({type: UPDATE_PLAN_REQUEST, payload})},
-    setCurrentModal: (payload, modalOptions) => dispatch({type: SET_CURRENT_MODAL, payload, options: modalOptions}),
-    setCurrentPost: (payload) => dispatch({type: SET_CURRENT_POST, payload}),
-    updatePostRequest: (payload) => {dispatch({type: UPDATE_POST_REQUEST, payload})},
+    //updateCampaignRequest: (payload) => {dispatch({type: UPDATE_CAMPAIGN_REQUEST, payload})},
+    //updatePlanRequest: (payload) => {dispatch({type: UPDATE_PLAN_REQUEST, payload})},
+    //setCurrentModal: (payload, modalOptions) => dispatch({type: SET_CURRENT_MODAL, payload, options: modalOptions}),
+    //setCurrentPost: (payload) => dispatch({type: SET_CURRENT_POST, payload}),
+    //updatePostRequest: (payload) => {dispatch({type: UPDATE_POST_REQUEST, payload})},
   }
 }
 

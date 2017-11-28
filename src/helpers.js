@@ -80,7 +80,7 @@ export default {
 
   //takes a list of scopes for an account and returns the list of available channels for that account
   //might make a helper function if I needed anywhere else
-  permittedChannels: (account) => {
+  permittedChannelTypes: (account) => {
     if (!account || typeof account !== "object") {
       return []
     }
@@ -88,12 +88,12 @@ export default {
       return account.scopes[scopeType].status === 'granted'
     })
 
-    const permittedChannels = Object.keys(PROVIDERS[account.provider].channelTypes).filter((channel) => {
+    const permittedChannelTypes = Object.keys(PROVIDERS[account.provider].channelTypes).filter((channel) => {
       const channelScopes = PROVIDERS[account.provider].channelTypes[channel].requiredScopes
       return channelScopes.every((scope) => (permittedScopes.includes(scope))) //also returns true when the channel requires no scopes at all (empty array)
     })
 
-    return permittedChannels
+    return permittedChannelTypes
   },
 
 }

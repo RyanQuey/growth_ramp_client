@@ -44,7 +44,8 @@ class Compose extends Component {
 
   componentWillReceiveProps(props) {
     //happens when create new campaign from navbar
-    if (props.currentCampaign && !props.currentCampaign.planId) {
+    //only trigger if there is currently a campaign already set
+    if (this.props.currentCampaign.id && props.currentCampaign.id !== this.props.currentCampaign.id) {
       this.props.switchTo("Start", true)
     }
     /*if (props.providerAccounts !== this.props.providerAccounts) {
@@ -60,9 +61,9 @@ class Compose extends Component {
     this.props.setCurrentModal("LinkProviderAccountModal", {provider})
   }
 
-  toggleAdding(provider, value = !this.state.addingPost) {
+  toggleAdding(provider, value = !this.state.addingPost, currentPost = null) {
     //if provider is passed in, just starts making a post for that provider
-    this.props.setCurrentPost(null)
+    this.props.setCurrentPost(currentPost)
     this.setState({addingPost: provider || value})
   }
 

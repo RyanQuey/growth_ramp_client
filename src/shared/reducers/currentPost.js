@@ -23,9 +23,9 @@ const currentPostReducer = (state = null, action) => {
       post = action.payload
       return Object.assign({}, post)
 
-    case CREATE_POST_SUCCESS:
-      post = action.payload
-        return Object.assign({}, post)
+    //case CREATE_POST_SUCCESS:
+      //post = action.payload
+      //  return Object.assign({}, post)
 
     case SIGN_OUT_SUCCESS:
       return null

@@ -88,7 +88,7 @@ class ShowAccount extends Component {
     const provider = account.provider
     const providerName = PROVIDERS[provider].name
 //might combine with potentialChannels somehow, or channelTypes
-    const permittedChannelTypes = Helpers.permittedChannels(account)
+    const permittedChannelTypes = Helpers.permittedChannelTypes(account)
 
     const channels = account.channels
 

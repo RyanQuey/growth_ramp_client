@@ -26,6 +26,7 @@ const campaignsReducer = (state = {}, action) => {
     case CREATE_CAMPAIGN_SUCCESS:
       return Object.assign({}, state, {[pld.id]: pld})
 
+    //assumes only updating one campaign
     case UPDATE_CAMPAIGN_SUCCESS:
       campaign = action.payload
       return Object.assign({}, state, {[campaign.id]: campaign})
