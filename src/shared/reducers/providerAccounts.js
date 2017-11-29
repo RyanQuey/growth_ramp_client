@@ -22,13 +22,16 @@ const providersReducer = (state = {}, action) => {
     case REFRESH_CHANNEL_TYPE_SUCCESS:
       let newState = Object.assign({}, state)
       //get one to find out which provider and which channelType was retrieved for
+      if (!pld || !pld.length) {return state}
       let sampleChannel = pld[0]
 
       //getting reference for that object, and just editing it. Will change newState too automatically
-      let account = _.find(newState[sampleChannel.provider], (account) => account.id === sampleChannel.accountId)
+      let providerAccounts = newState[sampleChannel.provider]
+      let account = _.find(providerAccounts, (a) => a.id === sampleChannel.providerAccountId)
+      account.channels = account.channels || []
       //returns all channels of that channel type, old and new, so just overwrite everything for that provider's channeltype
       _.remove(account.channels, (c) => sampleChannel.type === c.type)
-      account.channels.concat()
+      account.channels = account.channels.concat(pld)
 
       return newState
 

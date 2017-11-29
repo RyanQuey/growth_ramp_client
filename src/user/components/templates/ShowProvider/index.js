@@ -1,8 +1,11 @@
 import { Component } from 'react';
 import { connect } from 'react-redux'
 import { Button, Flexbox } from 'shared/components/elements'
-import { PROVIDERS } from 'constants/providers'
 import { AccountCard } from 'user/components/partials'
+import { PROVIDERS } from 'constants/providers'
+import {
+  SET_CURRENT_MODAL,
+} from 'constants/actionTypes'
 
 //shows up as buttons in mobile, or sidebar in browser?
 //used in channels and send
@@ -10,6 +13,15 @@ class ShowProvider extends Component {
   constructor() {
     super()
 
+    this.openProviderModal = this.openProviderModal.bind(this)
+  }
+
+  openProviderModal() {
+    //prompt to give permission
+    //will eventually use a store to tell modal to only show this account
+
+    const currentProvider = Helpers.safeDataPath(this.props, "match.params.provider", "").toUpperCase()
+    this.props.setCurrentModal("LinkProviderAccountModal", {provider: currentProvider})
   }
 
   render() {
@@ -35,6 +47,7 @@ class ShowProvider extends Component {
                 />
             ))}
           </Flexbox>
+          <Button style="inverted" onClick={this.openProviderModal}>Add a new account or add permissions to a current account</Button>
         </div>
       </div>
     )
@@ -49,6 +62,7 @@ const mapStateToProps = state => {
 }
 const mapDispatchToProps = (dispatch) => {
   return {
+    setCurrentModal: (payload, modalOptions) => dispatch({type: SET_CURRENT_MODAL, payload, options: modalOptions}),
   }
 }
 

@@ -8,7 +8,7 @@ import {
   //UPDATE_PLAN_REQUEST,
   //LIVE_UPDATE_PLAN_SUCCESS,
   //LIVE_UPDATE_PLAN_FAILURE,
-  //SET_CURRENT_MODAL,
+  SET_CURRENT_MODAL,
   //SET_CURRENT_POST,
 } from 'constants/actionTypes'
 import { Navbar, Icon, Button } from 'shared/components/elements'
@@ -315,7 +315,7 @@ const mapDispatchToProps = (dispatch) => {
   return {
     //updateCampaignRequest: (payload) => {dispatch({type: UPDATE_CAMPAIGN_REQUEST, payload})},
     //updatePlanRequest: (payload) => {dispatch({type: UPDATE_PLAN_REQUEST, payload})},
-    //setCurrentModal: (payload, modalOptions) => dispatch({type: SET_CURRENT_MODAL, payload, options: modalOptions}),
+    setCurrentModal: (payload, modalOptions) => dispatch({type: SET_CURRENT_MODAL, payload, options: modalOptions}),
     //setCurrentPost: (payload) => dispatch({type: SET_CURRENT_POST, payload}),
     //updatePostRequest: (payload) => {dispatch({type: UPDATE_POST_REQUEST, payload})},
   }

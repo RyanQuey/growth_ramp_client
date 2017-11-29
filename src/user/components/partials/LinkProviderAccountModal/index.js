@@ -21,8 +21,8 @@ class LinkProviderAccount extends Component {
     this.state = {
       pending: false,
       mode: 'CHOOSE_PROVIDER', //you do this or 'CHOOSE_SCOPE'
-      currentProvider: 'FACEBOOK',
-      currentAccount: Helpers.safeDataPath(props, "providerAccounts.FACEBOOK.0", false),
+      currentProvider: 'FACEBOOK', //doesn't get used if pass in provider to the modal
+      //currentAccount: Helpers.safeDataPath(props, "providerAccounts.FACEBOOK.0", false),
       channelTypes: [],
     }
 
@@ -73,7 +73,8 @@ class LinkProviderAccount extends Component {
     //might make a helper function if I needed anywhere else
     //takes channelTypes and provider and returns the scopes needed for that channel
     const scopes = []
-    const provider = this.state.currentProvider
+    const oneProviderOnly = this.props.options.provider  //mostly use as a Boolean
+    const provider = oneProviderOnly || this.state.currentProvider
 
     this.state.channelTypes.forEach((channelType) => {
       const newScopes = PROVIDERS[provider].channelTypes[channelType].requiredScopes.filter((scope) => !scopes.includes(scope))
@@ -97,7 +98,7 @@ class LinkProviderAccount extends Component {
         title={false && currentProviderName}
       >
         <ModalBody>
-          <h3>Add a new account, or add additional channels to a current account (depending on which account you sign into)</h3>
+          <h2>Add a new account, or add additional channels to a current account (depending on which account you sign into)</h2>
           {!oneProviderOnly &&
             <ButtonGroup>
               {Object.keys(PROVIDERS).map((provider) => {
