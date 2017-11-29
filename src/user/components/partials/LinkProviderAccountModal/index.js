@@ -46,13 +46,13 @@ class LinkProviderAccount extends Component {
     })
   }
 
-  chooseChannel(channel) {
+  chooseChannel(channelType) {
     let channelTypes = this.state.channelTypes
 
-    if (channelTypes.includes(channel)) {
-      _.remove(channelTypes, (c) => channel === c)
+    if (channelTypes.includes(channelType)) {
+      _.remove(channelTypes, (c) => channelType === c)
     } else {
-      channelTypes = channelTypes.concat(channel)
+      channelTypes = channelTypes.concat(channelType)
     }
 
     this.setState({channelTypes})
@@ -75,8 +75,8 @@ class LinkProviderAccount extends Component {
     const scopes = []
     const provider = this.state.currentProvider
 
-    this.state.channelTypes.forEach((channel) => {
-      const newScopes = PROVIDERS[provider].channelTypes[channel].filter((scope) => !scopes.includes(scope))
+    this.state.channelTypes.forEach((channelType) => {
+      const newScopes = PROVIDERS[provider].channelTypes[channelType].requiredScopes.filter((scope) => !scopes.includes(scope))
       scopes.push(...newScopes)
     })
 
@@ -138,14 +138,14 @@ class LinkProviderAccount extends Component {
                 <div>
                   <h3>Choose Channels to add:</h3>
                   <Flexbox justify="center">
-                    {Object.keys(PROVIDERS[currentProvider].channelTypes).map((channel) =>
+                    {Object.keys(PROVIDERS[currentProvider].channelTypes).map((channelType) =>
                       <Button
-                        key={channel}
+                        key={channelType}
                         style="inverted"
-                        onClick={this.chooseChannel.bind(this, channel)}
-                        selected={this.state.channelTypes.includes(channel)}
+                        onClick={this.chooseChannel.bind(this, channelType)}
+                        selected={this.state.channelTypes.includes(channelType)}
                       >
-                        {channel.titleCase()}
+                        {channelType.titleCase()}
                       </Button>
                     )}
                   </Flexbox>
