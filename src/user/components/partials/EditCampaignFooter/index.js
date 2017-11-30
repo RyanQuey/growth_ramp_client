@@ -32,8 +32,10 @@ class EditCampaignFooter extends Component {
       (this.props.currentSection === "Start" && currentPost.planId) ||
       (this.props.currentSection === "Compose" && Object.keys(this.props.providerAccounts))
 
-    const canGoBack = !this.props.currentCampaign ||
+    const canGoBack = (
+      !this.props.currentCampaign ||
       this.props.currentSection !== "Start"
+    )
 
     return (
       <div>

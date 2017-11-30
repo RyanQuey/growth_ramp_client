@@ -25,9 +25,7 @@ class CampaignPicker extends Component {
   }
 
   showCampaign (campaign, e) {
-    this.props.fetchCurrentCampaign(campaign.id)
-    this.props.setCurrentCampaign(campaign)
-    this.props.setCurrentModal("ShowCampaignModal")
+    this.props.history.push(`/campaigns/${campaign.id}`)
   }
 
   editCampaign (campaign, e) {
@@ -104,7 +102,7 @@ console.log(campaign);
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    fetchCurrentCampaign: (campaign, cb) => dispatch({type: FETCH_CURRENT_CAMPAIGN_REQUEST, payload: campaign, cb}),
+    fetchCurrentCampaign: (campaign, options, cb) => dispatch({type: FETCH_CURRENT_CAMPAIGN_REQUEST, payload: campaign, options, cb}),
     setCurrentCampaign: (campaign) => dispatch({type: SET_CURRENT_CAMPAIGN, payload: campaign}),
     destroyCampaignRequest: (campaign) => dispatch({type: DESTROY_CAMPAIGN_REQUEST, payload: campaign}),
     setCurrentModal: (payload) => dispatch({type: SET_CURRENT_MODAL, payload})

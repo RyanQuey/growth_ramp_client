@@ -7,7 +7,7 @@ import {
   Redirect,
 } from 'react-router-dom'
 import { Alert, Flexbox } from 'shared/components/elements'
-import { Home, Plans, EditCampaign, Campaigns, Providers, ShowProvider, Workgroups } from 'user/components/templates'
+import { Home, Plans, ShowCampaign, EditCampaign, Campaigns, Providers, ShowProvider, Workgroups } from 'user/components/templates'
 import requireAuthenticated from 'lib/requireAuthenticated'
 import forbidAuthenticated from 'lib/forbidAuthenticated'
 import { connect } from 'react-redux'
@@ -28,6 +28,7 @@ class UserContent extends Component {
           <Switch>
             <Route exact path="/" render={() => (<Redirect to="/campaigns"/>)} />
             <Route path="/campaigns/:campaignId/edit" component={EditCampaign} />
+            <Route path="/campaigns/:campaignId" component={ShowCampaign} />
             <Route path="/campaigns" component={Campaigns} />
             <Route path="/plans" component={Plans} />
             <Route path="/providerAccounts/:provider" component={ShowProvider} />

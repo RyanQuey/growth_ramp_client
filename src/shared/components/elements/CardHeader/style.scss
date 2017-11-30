@@ -1,9 +1,14 @@
 @import 'theme/_helpers';
 
 .cardHeader {
+  .icon {
+    border-radius: 15px;
+    float: right;
+  }
   img.headerImg {
     border-radius: 15px;
     width: 50px;
     float: right;
   }
+
 }

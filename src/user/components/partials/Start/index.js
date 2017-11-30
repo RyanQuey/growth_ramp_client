@@ -69,11 +69,11 @@ class Start extends Component {
     e && e.preventDefault()
 
     let campaignParams = this.props.campaignParams
-    if (!campaignParams.contentUrl) {
+    if (!campaignParams.name) {
 
       alertActions.newAlert({
         title: "Failed to save:",
-        message: "Content url is required",
+        message: "Name is required",
         level: "DANGER",
       })
       return

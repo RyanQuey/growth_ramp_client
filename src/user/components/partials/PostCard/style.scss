@@ -3,3 +3,28 @@
 .profilePic {
   width: 50px;
 }
+
+.utms {
+  width: 100%;
+  .utmHeader {
+    margin: .5rem;
+  }
+  .utmField {
+    @include mq(xs) {
+      @include cols(6)
+    }
+    @include mq(sm) {
+      @include cols(3)
+    }
+  }
+
+}
+.imageLink {
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  height: 125px;
+  width: 125px;
+  margin: 10px;
+  cursor: pointer;
+}

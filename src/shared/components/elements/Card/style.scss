@@ -1,6 +1,7 @@
 @import 'theme/_helpers';
 
 .card {
+  //can easily be overridden by just nesting two or more classes
   @include mq(2xs) {
     @include cols(12)
   }

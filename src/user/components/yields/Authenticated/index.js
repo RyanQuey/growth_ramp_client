@@ -7,7 +7,6 @@ import {
   UserNavbar,
   UserSidebar,
   LinkProviderAccountModal,
-  ShowCampaignModal,
   ShowAccountModal
 } from 'user/components/partials'
 import { } from 'constants/actionTypes'
@@ -32,7 +31,6 @@ class Authenticated extends Component {
           )}
         </Flexbox>
 
-        <ShowCampaignModal />
         <LinkProviderAccountModal />
         <ShowAccountModal />
       </div>

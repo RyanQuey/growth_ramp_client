@@ -141,7 +141,12 @@ function* fetchCurrentCampaign(action) {
   try {
     const campaignId = action.payload
 
-    const res = yield axios.get(`/api/campaigns/${campaignId}?populate=posts`) //eventually switch to socket
+    let res
+    if (action.options && action.options.getAnalytics) {
+      res = yield axios.get(`/api/campaigns/${campaignId}/getAnalytics`)
+    } else {
+      res = yield axios.get(`/api/campaigns/${campaignId}?populate=posts`)
+    }
 
     yield all([
       put({type: SET_CURRENT_CAMPAIGN, payload: res.data})
@@ -175,6 +180,7 @@ function* publishCampaign(action) {
     formActions.formPersisted("Send", "submit")
     alertActions.newAlert({
       title: "Success!",
+      message: "Campaign successfully published",
       level: "SUCCESS",
     })
 

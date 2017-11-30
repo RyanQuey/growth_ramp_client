@@ -1,11 +1,12 @@
 import { Component } from 'react';
 import { connect } from 'react-redux'
 import { PROVIDERS } from 'constants/providers'
+import { UTM_TYPES } from 'constants/posts'
 import { SET_CURRENT_POST} from 'constants/actionTypes'
 import {
   withRouter,
 } from 'react-router-dom'
-import { Card, CardHeader, Flexbox, Button } from 'shared/components/elements'
+import { Card, CardHeader, Flexbox, Button, Icon } from 'shared/components/elements'
 import classes from './style.scss'
 
 class PostCard extends Component {
@@ -17,14 +18,44 @@ class PostCard extends Component {
 
   render () {
     const { post, selected, onClick, height, maxWidth, className } = this.props
+    if (!post) {return null} //shouldn't happen, but whatever
 
     return (
       <Card selected={selected} onClick={onClick} height={height} maxWidth={maxWidth} className={className}>
-        <CardHeader title={post.channelType.titleCase()} headerImgUrl={false && Helpers.safeDataPath(post, "uploadedContent.0.url", "")}/>
+        <CardHeader title={post.channelType.titleCase()} icon={post.provider.toLowerCase()} iconColor={post.provider.toLowerCase()}/>
 
-        <div>
-          <h4>{post.text}</h4>
-        </div>
+        <Flexbox direction="column" >
+          {PROVIDERS[post.provider].channelTypes[post.channelType].hasMultiple && post.channelId && (
+            <div><strong>Channel:</strong>&nbsp;{post.channelId.name}</div>
+          )}
+
+          <div><strong>Text:</strong>&nbsp;{post.text}</div>
+          <div><strong>Short Link:</strong>&nbsp;{post.shortUrl}</div>
+
+          <Flexbox>
+            {post.uploadedContent && post.uploadedContent.map((upload) => {
+              return <Flexbox key={upload.url} direction="column">
+                <a
+                  target="_blank"
+                  style={{backgroundImage: `url(${upload.url})`}}
+                  className={classes.imageLink}
+                  href={upload.url}
+                />
+              </Flexbox>
+            })}
+          </Flexbox>
+
+          <Flexbox flexWrap="wrap" className={classes.utms}>
+            {UTM_TYPES.filter((t) => post.t).map((utmType) => {
+              //TODO want to extract for use with plan editor...if we have a plan editor
+              const type = utmType.value
+              const label = utmType.label.titleCase()
+              return <div key={type} className={classes.utmField}>
+                <span>`${label} UTM`}:</span>&nbsp;<span>{post[type]}</span>
+              </div>
+            })}
+          </Flexbox>
+        </Flexbox>
       </Card>
     )
   }

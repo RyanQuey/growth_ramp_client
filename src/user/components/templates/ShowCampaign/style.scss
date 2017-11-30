@@ -1,0 +1,30 @@
+@import 'theme/_helpers';
+
+  .icon {
+    //float: right;
+    padding: 0px 5px 0 0;
+  }
+.tableHeader {
+  font-weight: bold;
+}
+.columnOne {
+  @include cols(6)
+}
+.columnTwo {
+  @include cols(6)
+
+}
+.columnThree {
+  @include cols(6)
+
+}
+.posts {
+  .postCard {
+    @include mq(2xs) {
+      @include cols(12)
+    }
+    @include mq(md) {
+      @include cols(6)
+    }
+  }
+}
