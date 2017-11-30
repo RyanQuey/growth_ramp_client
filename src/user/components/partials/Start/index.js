@@ -1,11 +1,10 @@
 import { Component } from 'react';
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
-import { take } from 'redux-saga/effects'
 import {
   UPDATE_CAMPAIGN_REQUEST,
 } from 'constants/actionTypes'
-import { Input, Button, Card } from 'shared/components/elements'
+import { Input, Button, Card, Flexbox } from 'shared/components/elements'
 import { PlanPicker } from 'user/components/partials'
 import { formActions, alertActions } from 'shared/actions'
 
@@ -33,18 +32,11 @@ class Start extends Component {
     //disabling; keep it simple. They start at the beginning each time
 
     //if page loads and at published campaign, don't edit it!!
-    if (this.props.currentCampaign && this.props.currentCampaign.status === "PUBLISHED") {
-      //is already published, don't let them try to edit from using browser link.
-      //will disable link to edit elsewhere if published too
-      this.props.history.push("/campaigns")
-    }
   }
 
   componentWillReceiveProps(props) {
     //now switching after choosing a plan option
-    if (props.currentPlan && (props.currentPlan !== this.props.currentPlan)) {
-
-    } else if (props.currentCampaign && props.currentCampaign.planId && props.initialOpening) {
+    if (props.currentCampaign && props.currentCampaign.planId && props.initialOpening) {
       this.props.switchTo("Compose")
     }
   }
@@ -132,6 +124,7 @@ class Start extends Component {
           value={campaignParams.contentUrl || ""}
           label="What would you like to promote?"
           placeholder="www.website.com/awesome-blog-post"
+          disabled={currentCampaign.status !== "DRAFT"}
           onChange={this.handleUrl}
         />
 
@@ -151,19 +144,13 @@ class Start extends Component {
               <h4>
                 Select one of your plans to use or start from scratch.
               </h4>
+
               <PlanPicker
                 onPick={this.handleClickPlan}
                 selectedId={campaignParams.planId}
+                startFromScratch={this.startFromScratch}
+                blankPlan={true}
               />
-              <Card
-                onClick={this.startFromScratch}
-                selected={!campaignParams.planId}
-                height="100px"
-              >
-                <h3>
-                  Start from scratch
-                </h3>
-              </Card>
             </div>
           )
         )}

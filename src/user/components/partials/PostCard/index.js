@@ -17,12 +17,12 @@ class PostCard extends Component {
 
 
   render () {
-    const { post, selected, onClick, height, maxWidth, className } = this.props
+    const { post, selected, onClick, height, maxWidth, className, showUtms, showIcon, showLink, showImages } = this.props
     if (!post) {return null} //shouldn't happen, but whatever
 
     return (
       <Card selected={selected} onClick={onClick} height={height} maxWidth={maxWidth} className={className}>
-        <CardHeader title={post.channelType.titleCase()} icon={post.provider.toLowerCase()} iconColor={post.provider.toLowerCase()}/>
+        <CardHeader title={post.channelType.titleCase()} icon={showIcon && post.provider.toLowerCase()} iconColor={post.provider.toLowerCase()}/>
 
         <Flexbox direction="column" >
           {PROVIDERS[post.provider].channelTypes[post.channelType].hasMultiple && post.channelId && (
@@ -30,9 +30,9 @@ class PostCard extends Component {
           )}
 
           <div><strong>Text:</strong>&nbsp;{post.text}</div>
-          <div><strong>Short Link:</strong>&nbsp;{post.shortUrl}</div>
+          {showLink && <div><strong>Short Link:</strong>&nbsp;{post.shortUrl}</div>}
 
-          <Flexbox>
+          {showImages && <Flexbox>
             {post.uploadedContent && post.uploadedContent.map((upload) => {
               return <Flexbox key={upload.url} direction="column">
                 <a
@@ -43,9 +43,9 @@ class PostCard extends Component {
                 />
               </Flexbox>
             })}
-          </Flexbox>
+          </Flexbox>}
 
-          <Flexbox flexWrap="wrap" className={classes.utms}>
+          {showUtms && <Flexbox flexWrap="wrap" className={classes.utms}>
             {UTM_TYPES.filter((t) => post.t).map((utmType) => {
               //TODO want to extract for use with plan editor...if we have a plan editor
               const type = utmType.value
@@ -54,7 +54,7 @@ class PostCard extends Component {
                 <span>`${label} UTM`}:</span>&nbsp;<span>{post[type]}</span>
               </div>
             })}
-          </Flexbox>
+          </Flexbox>}
         </Flexbox>
       </Card>
     )

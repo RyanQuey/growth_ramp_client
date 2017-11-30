@@ -61,9 +61,9 @@ class viewCampaigns extends Component {
           <div>
             <h3>No campaigns yet.</h3>
             <div>Let's create a new one</div>
-            <Button onClick={this.createCampaign}>New campaign</Button>
           </div>
         )}
+        <Button onClick={this.createCampaign}>New campaign</Button>
       </div>
     )
   }

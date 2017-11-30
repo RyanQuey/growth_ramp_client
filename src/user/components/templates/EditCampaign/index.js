@@ -121,6 +121,7 @@ class EditCampaign extends Component {
         <div>
           {currentCampaign ? (
             <Tag
+              pending={this.state.pending}
               switchTo={this.switchTo}
               initialOpening={this.state.initialOpening}
             />

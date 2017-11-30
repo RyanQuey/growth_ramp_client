@@ -1,17 +1,14 @@
 import { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-import {
-  ModalContainer,
-  ModalBody,
-  ModalFooter,
-} from 'shared/components/partials/Modal'
 import { FETCH_CURRENT_CAMPAIGN_REQUEST, } from 'constants/actionTypes'
 import { SavePlanFromCampaign, PostCard } from 'user/components/partials'
 import { Button, Form, Card, Flexbox, Icon } from 'shared/components/elements'
 import { ButtonGroup } from 'shared/components/groups'
-import { SocialLogin } from 'shared/components/partials'
 import { PROVIDERS } from 'constants/providers'
+import {
+  withRouter,
+} from 'react-router-dom'
 import classes from './style.scss'
 
 class ShowCampaign extends Component {
@@ -91,7 +88,7 @@ console.log(getAnalytics, currentCampaign);
 
   render (){
     const currentCampaign = this.props.currentCampaign || {}
-    let links = currentCampaign.status === "PUBLISHED" && currentCampaign.posts && _.values(this.extractCampaignLinks(currentCampaign.posts))
+    let links = currentCampaign.posts && _.values(this.extractCampaignLinks(currentCampaign.posts))
 
     return (
       <div>
@@ -99,7 +96,7 @@ console.log(getAnalytics, currentCampaign);
           <div><strong>Content Url:</strong>&nbsp;{currentCampaign.contentUrl}</div>
           {links &&
             <Flexbox direction="column">
-              <h2>Links</h2>
+              <h2>Analytics</h2>
               {links.map((link) =>
                 <Flexbox key={link.shortUrl} direction="column">
                   <div>
@@ -108,7 +105,7 @@ console.log(getAnalytics, currentCampaign);
                   </div>
                   <div>
                     <div className={`${classes.columnOne}`}>{link.shortUrl}</div>
-                    <div className={`${classes.columnTwo}`}>{link.analytics.allTime.shortUrlClicks}</div>
+                    <div className={`${classes.columnTwo}`}>{Helpers.safeDataPath(link, "analytics.allTime.shortUrlClicks", "")}</div>
                   </div>
                 </Flexbox>
               )}
@@ -119,7 +116,16 @@ console.log(getAnalytics, currentCampaign);
               <h2>Campaign Posts</h2>
               <Flexbox flexWrap="wrap" >
                 {currentCampaign.posts.map((post) =>
-                  <PostCard key={post.id} post={post} className={classes.postCard}/>
+                  <PostCard
+                    key={post.id}
+                    post={post}
+                    className={classes.postCard}
+                    height="250px"
+                    showIcon={true}
+                    showImages={true}
+                    showUtms={true}
+                    showLink={true}
+                  />
                 )}
               </Flexbox>
             </div>
@@ -168,4 +174,4 @@ const mapStateToProps = (state) => {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ShowCampaign)
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(ShowCampaign))

@@ -21,6 +21,7 @@ class PlanPicker extends Component {
     const plans = this.props.plans
     //TODO: set the title using props into the modal container
     return (
+
       <Flexbox flexWrap="wrap">
         {plans && Object.keys(plans).map((planId) => {
           return <Card key={planId} onClick={this.props.onPick.bind(this, plans[planId])} height="100px" maxWidth="100px" selected={this.props.selectedId == planId}>
@@ -30,6 +31,15 @@ class PlanPicker extends Component {
 
           </Card>
         })}
+        {this.props.blankPlan && <Card
+          onClick={this.props.startFromScratch}
+          selected={!this.props.selectedId}
+          height="100px"
+        >
+          <h3>
+            Start from scratch
+          </h3>
+        </Card>}
       </Flexbox>
     )
   }

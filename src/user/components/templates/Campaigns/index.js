@@ -22,9 +22,6 @@ class Campaigns extends Component {
   }
 
   componentDidMount() {
-    //if (this.props.location.pathname === "/campaigns/edit" && !this.props.currentCampaign) {
-    //  this.props.history.push("/campaigns")
-    //}
   }
 
   render() {
