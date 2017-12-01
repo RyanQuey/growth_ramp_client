@@ -11,6 +11,7 @@ import plansReducer from './plans'
 import currentPlanReducer from './currentPlan'
 import currentCampaignReducer from './currentCampaign'
 import currentPostReducer from './currentPost'
+import currentPostTemplateReducer from './currentPostTemplate'
 import providerAccountsReducer from './providerAccounts'
 import userReducer from './user'
 import viewSettingsReducer from './viewSettings'
@@ -20,6 +21,8 @@ const rootReducer = combineReducers({
   alerts: alertReducer,
   //the plan that the user is currently working on OR viewing
   currentPlan: currentPlanReducer,
+  //the postTemplate that the user is currently working on
+  currentPostTemplate: currentPostTemplateReducer,
   //the post that the user is currently working on
   currentPost: currentPostReducer,
   //the campaign that the user is currently working on

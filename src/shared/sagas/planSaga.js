@@ -5,6 +5,7 @@ import {
   CREATE_PLAN_SUCCESS,
   CREATE_PLAN_REQUEST,
   SET_CURRENT_PLAN,
+  FETCH_CURRENT_PLAN_REQUEST,
   FETCH_PLAN_REQUEST,
   FETCH_PLAN_SUCCESS,
   UPDATE_PLAN_REQUEST,
@@ -139,6 +140,27 @@ function* archive(action) {
   }
 }
 
+//Gets all the populated data required for working on a single campaign
+//and details like analytics (show and edit view are more closely related, so get all the data at once, no matter what)
+function* fetchCurrentPlan(action) {
+  try {
+    const planId = action.payload
+
+    let res = yield axios.get(`/api/plans/${planId}?populate=postTemplates&populate=campaigns`)
+
+    yield all([
+      put({type: SET_CURRENT_PLAN, payload: res.data})
+    ])
+
+    action.cb && action.cb(res)
+    formActions.matchPlanStateToRecord()
+
+  } catch (err) {
+    console.log('current campaign fetch failed', err.response || err)
+    // yield put(userFetchFailed(err.message))
+  }
+}
+
 function* liveUpdate(action) {
   try {
     const planData = action.payload
@@ -159,6 +181,7 @@ function* liveUpdate(action) {
 }
 export default function* planSagas() {
   yield takeLatest(FETCH_PLAN_REQUEST, find)
+  yield takeLatest(FETCH_CURRENT_PLAN_REQUEST, fetchCurrentPlan)
   yield takeLatest(CREATE_PLAN_REQUEST, create)
   yield takeLatest(UPDATE_PLAN_REQUEST, update)
   yield takeLatest(ARCHIVE_PLAN_REQUEST, archive)

@@ -15,7 +15,7 @@ const Icon = ({ border, className, color, name, onClick, size, ...props }) => {
   return (
     <i
       aria-hidden="true"
-      className={`fa fa-${name.toLowerCase()} fa-${size} ${className} ${classes.icon}`}
+      className={`fa fa-${name.toLowerCase()} fa-${size} ${className} ${classes.icon} ${name === "spinner" ? "fa-spin" : ""}`}
       onClick={onClick}
       style={style}
       {...props}

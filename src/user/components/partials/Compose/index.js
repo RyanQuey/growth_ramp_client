@@ -11,7 +11,7 @@ import {
 import { Icon, Button } from 'shared/components/elements'
 import { Select } from 'shared/components/groups'
 import { SocialLogin } from 'shared/components/partials'
-import { ProviderAccountsDetails, PostEditor, AddPost, PostPicker, ChannelPosts } from 'user/components/partials'
+import { ProviderAccountsDetails, PostEditor, AddPost, PostPicker, CampaignPosts } from 'user/components/partials'
 import {formActions} from 'shared/actions'
 import {PROVIDERS} from 'constants/providers'
 import theme from 'theme'
@@ -36,7 +36,6 @@ class Compose extends Component {
       addingPost: false,
     }
 
-    this.handleChangeName = this.handleChangeName.bind(this)
     this.handleLinkProvider = this.handleLinkProvider.bind(this)
     this.saveCampaignPosts = this.saveCampaignPosts.bind(this)
     this.toggleAdding = this.toggleAdding.bind(this)
@@ -144,10 +143,6 @@ class Compose extends Component {
     this.props.setCurrentModal("LinkProviderAccountModal")
   }
 
-  handleChangeName (e, errors) {
-    Helpers.handleParam.bind(this, e, "name")()
-  }
-
   render() {
     if (this.props.hide) {
       return null
@@ -189,7 +184,7 @@ class Compose extends Component {
               </div>
             }
 
-            <ChannelPosts
+            <CampaignPosts
               currentProvider={currentProvider}
               currentAccount={currentAccount}
               currentChannel={currentChannel}

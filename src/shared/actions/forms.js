@@ -104,3 +104,28 @@ export const matchCampaignStateToRecord = () => {
   setParams("EditCampaign", "other", campaign, false, true)
 }
 
+//basically, the postTemplate you are working on will reflect the same data it had, and params are ready to persisted if you update again
+//other plan params is set too; each "form" is a plan attribute
+export const matchPlanStateToRecord = () => {
+  //this should match the persisted recoard
+  const plan = Object.assign({}, Helpers.safeDataPath(store.getState(), `currentPlan`, {}))
+  const planPostTemplates = plan.postTemplates || []
+  //convert to object for easy getting/setting
+  const postTemplateObj = planPostTemplates.reduce((acc, template) => {
+    acc[template.id] = template
+    return acc
+  }, {})
+
+  if (Object.keys(postTemplateObj).length) {
+    //sets dirty to false, and override to true
+    setParams("EditPlan", "postTemplates", postTemplateObj, false, true)
+  } else {
+    clearParams("EditPlan", "postTemplates")
+  }
+
+  delete plan.postTemplates //will not be updating posts on that part of the state, so don't want to confuse things; just remove it
+
+  //sets dirty to false, and override to true
+  setParams("EditPlan", "other", plan, false, true)
+}
+
