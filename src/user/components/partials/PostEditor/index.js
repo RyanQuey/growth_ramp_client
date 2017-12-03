@@ -163,8 +163,8 @@ class PostEditor extends Component {
                 placeholder={`Your post`}
                 onChange={this.handleText}
                 type="text"
-                maxLength={maxCharacters}
-              />
+                maxLength={maxCharacters - URL_LENGTH}
+             />
 
                 <label>{imageCount < maxImages ? "Click or drag a file to upload" : "(No more images allowed for this kind of post)"}</label>
               <Flexbox>

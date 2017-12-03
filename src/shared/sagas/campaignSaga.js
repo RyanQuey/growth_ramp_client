@@ -137,6 +137,7 @@ function* destroyCampaign(action) {
 }
 
 //Gets all the populated data required for working on a single campaign
+//or details like analytics, as the case may be
 function* fetchCurrentCampaign(action) {
   try {
     const campaignId = action.payload
