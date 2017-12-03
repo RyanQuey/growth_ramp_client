@@ -98,7 +98,7 @@ class LinkProviderAccount extends Component {
         title={false && currentProviderName}
       >
         <ModalBody>
-          <h2>Add a new account, or add additional channels to a current account (depending on which account you sign into)</h2>
+          <h2>Add a new account or new channels to a current account</h2>
           {!oneProviderOnly &&
             <ButtonGroup>
               {Object.keys(PROVIDERS).map((provider) => {
@@ -160,8 +160,17 @@ class LinkProviderAccount extends Component {
                 disabled={false}
               />
 
-              <h5>Want to add another {currentProviderName} account?</h5>
-              {["FACEBOOK", "LINKEDIN"].includes(currentProvider) && <p><strong>Instructions:</strong> Make sure you either logged out of {currentProviderName} or are signed into {currentProviderName} with the account you want to add to Growth Ramp, choose the services you want to allow here, and then click the login button above</p>}
+              <hr/>
+              <div className={classes.instructions}>
+                {["FACEBOOK", "LINKEDIN", "TWITTER"].includes(currentProvider) && (
+                  <div>
+                    <strong>Instructions:</strong>
+                    <div>1) Sign in to the {currentProviderName} account you want to add.</div>
+                    <div>2) Add the channels you'll want for your posts by clicking on the buttons above.</div>
+                    <div>3) Then, click "Login to {currentProviderName}" to finish.</div>
+                  </div>
+                )}
+              </div>
             </Form>
           }
         </ModalBody>

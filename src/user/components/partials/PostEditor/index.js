@@ -9,7 +9,7 @@ import {
   LIVE_UPDATE_POST_FAILURE,
 } from 'constants/actionTypes'
 import { PROVIDERS } from 'constants/providers'
-import { UTM_TYPES } from 'constants/posts'
+import { UTM_TYPES, URL_LENGTH } from 'constants/posts'
 import {formActions} from 'shared/actions'
 import classes from './style.scss'
 
@@ -56,8 +56,20 @@ class PostEditor extends Component {
     post.text = value
     post.dirty = true
 
-    //update the post form
-    formActions.setParams("EditCampaign", "posts", {[post.id]: post})
+    const maxCharacters = PROVIDERS[post.provider].channelTypes[post.channelType].maxCharacters
+    const characterCount = Helpers.safeDataPath(post, "text", "").length + (post.contentUrl ? URL_LENGTH : 0)
+
+    if (characterCount.length > maxCharacters) {
+      alertActions.newAlert({
+        title: "Warning:",
+        message: "Character limit reached",
+        level: "WARNING",
+      })
+
+    } else {
+      //update the post form
+      formActions.setParams("EditCampaign", "posts", {[post.id]: post})
+    }
   }
 
   //NOTE: cannot save a file object in redux, at least not in a easy way.
@@ -125,6 +137,12 @@ class PostEditor extends Component {
     if (!post) {return null} //shouldn't happen, but whatever
     let utmFields = Object.assign({}, Helpers.safeDataPath(this.props.formOptions, `${post.id}.utms`, {}))
 
+    const maxImages = PROVIDERS[post.provider].channelTypes[post.channelType].maxImages
+    const imageCount = post.uploadedContent ? post.uploadedContent.length : 0
+
+    const maxCharacters = PROVIDERS[post.provider].channelTypes[post.channelType].maxCharacters
+    const characterCount = Helpers.safeDataPath(post, "text", "").length + (post.contentUrl ? URL_LENGTH : 0)
+
     return (
       <Flexbox direction="column" >
         <h2>{post.channelType.titleCase()}</h2>
@@ -134,25 +152,31 @@ class PostEditor extends Component {
             onChange={this.disablePost}
           />&nbsp;Disable post
         </div>}
+
         <div className={classes.postFields}>
           <div>
             <Flexbox direction="column" justify="center" className={classes.textEditor}>
+              <div>Maximum: {maxCharacters};&nbsp;Current Count: {characterCount} {post.contentUrl ? `(including ${URL_LENGTH} for the url length)` : ""}</div>
               <Input
                 textarea={true}
                 value={post.text}
                 placeholder={`Your post`}
                 onChange={this.handleText}
+                type="text"
+                maxLength={maxCharacters}
               />
-              <label>Click or drag a file to upload</label>
+
+                <label>{imageCount < maxImages ? "Click or drag a file to upload" : "(No more images allowed for this kind of post)"}</label>
               <Flexbox>
-                <DropImage
+                {imageCount < maxImages && <DropImage
                   user={this.props.user}
                   label="+"
                   onStart={this.onDrop}
                   onSuccess={this.onUpload}
                   onFailure={this.onUpload}
                   className={classes.dropImage}
-                />
+                />}
+
                 {post.uploadedContent && post.uploadedContent.map((upload) => {
 //console.log(upload);
                   return <Flexbox key={upload.url} direction="column">

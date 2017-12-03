@@ -52,7 +52,7 @@ class AccountMenu extends Component {
               <span className={classes.caret}/>
             </div>
             <ul className={`${classes.menuDropdown}`}>
-              <MenuItem link="/settings" text="Settings" hoverType="textOnly" />
+              {false && <MenuItem link="/settings" text="Settings" hoverType="textOnly" />}
               <MenuItem link="/" onClick={signOut} text="Sign Out" hoverType="textOnly"/>
             </ul>
           </div>

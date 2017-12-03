@@ -19,7 +19,6 @@ const CardHeader = ({
       'padding-bottom': headerLine ? "20px" : "",
     },
   })
-console.log(css(styles.card));
   return (
     <div
       className={`${className} ${classes.cardHeader} ${css(styles.card)}`}
