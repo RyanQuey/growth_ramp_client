@@ -131,7 +131,7 @@ function* fetchCurrentPost(action) {
   try {
     const postId = action.payload
 
-    const res = yield axios.get(`/api/posts/${postId}?populate=posts`) //eventually switch to socket
+    const res = yield axios.get(`/api/posts/${postId}`) //eventually switch to socket
 
     yield all([
       put({type: SET_CURRENT_POST, payload: res.data})

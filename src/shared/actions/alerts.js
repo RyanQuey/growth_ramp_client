@@ -59,6 +59,6 @@ console.log(alert);
   if (alert.options.timer) {
     setTimeout(() => {
       closeAlerts(newId)
-    }, 3000)
+    }, 5000)
   }
 }

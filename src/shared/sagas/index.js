@@ -5,6 +5,7 @@ import linkAccountSaga from './linkAccountSaga'
 import permissionSaga from './permissionSaga'
 import planSaga from './planSaga'
 import postSaga from './postSaga'
+import postTemplateSaga from './postTemplateSaga'
 import providerSaga from './providerSaga'
 import querySaga from './querySaga'
 import userSaga from './userSaga'
@@ -19,6 +20,7 @@ export default function* rootSaga() {
     call(permissionSaga),
     call(planSaga),
     call(postSaga),
+    call(postTemplateSaga),
     call(providerSaga),
     call(userSaga),
     call(workgroupSaga),

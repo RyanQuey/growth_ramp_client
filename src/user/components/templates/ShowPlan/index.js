@@ -2,36 +2,40 @@ import { Component } from 'react';
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 import {
-  Start,
-  Send,
-  Compose,
-  ShowPlanFooter
+  PostTemplateDetails,
+  AddPost, //shared with the CampaignEditor
+  PostTemplatePicker,
+  PostTemplateWrapper
 } from 'user/components/partials'
-import { SocialLogin } from 'shared/components/partials'
-import { ProviderAccountsDetails, AddPostTemplate, PostTemplatePicker, PlanPostTemplates } from 'user/components/partials'
 import { Navbar, Icon, Button, Input, Flexbox } from 'shared/components/elements'
-import { FETCH_CURRENT_PLAN_REQUEST, SET_CURRENT_PLAN, CREATE_PLAN_REQUEST } from 'constants/actionTypes'
+import {
+  FETCH_CURRENT_PLAN_REQUEST,
+  SET_CURRENT_PLAN,
+  CREATE_PLAN_REQUEST,
+  UPDATE_PLAN_REQUEST,
+  CREATE_POST_TEMPLATE_REQUEST,
+  UPDATE_POST_TEMPLATE_REQUEST,
+  SET_CURRENT_POST_TEMPLATE,
+} from 'constants/actionTypes'
 import theme from 'theme'
-import { formActions } from 'shared/actions'
-
-const sections = {
-  Start,
-  Compose,
-  Send,
-}
+import { formActions, alertActions } from 'shared/actions'
+import classes from './style.scss'
 
 class ShowPlan extends Component {
   constructor() {
     super()
     this.state = {
-      addingPost: false,
+      addingPostTemplate: false,
     }
 
     this.handleLinkProvider = this.handleLinkProvider.bind(this)
-    this.saveCampaignPosts = this.saveCampaignPosts.bind(this)
+    this.savePlan = this.savePlan.bind(this)
+    this._savePostTemplates = this._savePostTemplates.bind(this)
     this.toggleAdding = this.toggleAdding.bind(this)
+    this.toggleMode = this.toggleMode.bind(this)
     this.setPlan = this.setPlan.bind(this)
     this.handleChangeName = this.handleChangeName.bind(this)
+
   }
 
  componentDidMount() {
@@ -70,7 +74,7 @@ class ShowPlan extends Component {
 
   setPlan (planId) {
     const currentPlan = this.props.plans[planId]
-    //check if need to retrieve and/or populate posts
+    //check if need to retrieve and/or populate postTemplates
     if (!currentPlan || !currentPlan.postTemplatess) {
       //this action doesn't yet support any criteria
       this.setState({pending: true})
@@ -87,7 +91,7 @@ class ShowPlan extends Component {
   }
 
   handleChangeName (value, e, errors) {
-    formActions.setParams("EditCampaign", "other", {name: value})
+    formActions.setParams("EditPlan", "other", {name: value})
   }
 
 
@@ -96,81 +100,128 @@ class ShowPlan extends Component {
     this.props.setCurrentModal("LinkProviderAccountModal", {provider})
   }
 
-  toggleAdding(provider, value = !this.state.addingPost, currentPost = null) {
-    //if provider is passed in, just starts making a post for that provider
-    this.props.setCurrentPost(currentPost)
-    this.setState({addingPost: provider || value})
+  toggleMode() {
+    const mode = Helpers.safeDataPath(this.props, "match.params.editing", false) ? "EDIT" : "SHOW"
+
+    if (mode === "EDIT") {
+      formActions.setParams("EditPlan", "other", this.props.currentPlan)
+      this.props.history.push(`/plans/${this.props.currentPlan.id}`)
+
+    } else {
+      this.props.history.push(`/plans/${this.props.currentPlan.id}/edit`)
+
+    }
   }
 
-  //persist images here
-  //if before, might be persisting several images they never actually use. Might not be a big deal, especially if can clean up well later. BUt there is cost issue
-  //
-  saveCampaignPosts() {
-    const campaignPostsFormArray = _.values(this.props.campaignPostsForm.params)
-    const persistedPosts = this.props.currentCampaign.posts || []
+  toggleAdding(provider, value = !this.state.addingPostTemplate, currentPostTemplate = null) {
+    //if provider is passed in, just starts making a postTemplate for that provider
+    this.props.setCurrentPostTemplate(currentPostTemplate)
+    this.setState({addingPostTemplate: provider || value})
+  }
+
+  _savePostTemplates() {
+
+    const planPostTemplatesFormArray = _.values(this.props.planPostTemplatesForm.params)
+    const persistedPostTemplates = this.props.currentPlan.postTemplates || []
 
     const cb = () => {
-      formActions.matchCampaignStateToRecord()
+      formActions.matchPlanStateToRecord()
     }
 
-    //should not update the post reducer on its success, just give me an alert if it fails
+    //should not update the postTemplate reducer on its success, just give me an alert if it fails
 
-    //check if need to update or create each post
-    for (let i = 0; i < campaignPostsFormArray.length; i++) {
-      let post = Object.assign({}, campaignPostsFormArray[i])
-      let utmFields = Object.assign({}, Helpers.safeDataPath(this.props.formOptions, `${post.id}.utms`, {}))
+    //check if need to update or create each postTemplate
+    for (let i = 0; i < planPostTemplatesFormArray.length; i++) {
+      let postTemplate = Object.assign({}, planPostTemplatesFormArray[i])
+      let utmFields = Object.assign({}, Helpers.safeDataPath(this.props.formOptions, `${postTemplate.id}.utms`, {}))
 
       // TO DESTROY
-      if (post.toDelete) {
+      if (postTemplate.toDelete) {
         //if not persisted yet, don't need to save anything
-        if (typeof post.id === "string") {
+        if (typeof postTemplate.id === "string") {
           cb()
           continue
 
         } else {
-          this.props.destroyPostRequest(post, cb)
+          this.props.destroyPostTemplateRequest(postTemplate, cb)
         }
 
       // TO CREATE
-      } else if (typeof post.id === "string") { //.slice(0, 9) === "not-saved") {
-        delete post.id
-        this.props.createPostRequest(post, cb)
+      } else if (typeof postTemplate.id === "string") { //.slice(0, 9) === "not-saved") {
+        delete postTemplate.id
+        this.props.createPostTemplateRequest(postTemplate, cb)
         continue
 
       // TO UPDATE
       } else {
-        //iterate over post attributes, to sort params
-        if (!post.dirty) {
+        //iterate over postTemplate attributes, to sort params
+        if (!postTemplate.dirty) {
           //no need to update
           continue
         }
-        delete post.dirty
+        delete postTemplate.dirty
 
         //should never really be {}...but whatever
-        let persistedPost = persistedPosts.find((p) => p.id === post.id) || {}
-        let attributes = Object.keys(post)
+        let persistedPostTemplate = persistedPostTemplates.find((p) => p.id === postTemplate.id) || {}
+        let attributes = Object.keys(postTemplate)
 
         for (let attribute of attributes) {
           //don't need to check these
           if (["id", "userId"].includes(attribute)) {continue}
 
-          //if utm is set to post, but field is disabled, set to empty string
+          //if utm is set to postTemplate, but field is disabled, set to empty string
           if (attribute.includes("Utm") && !utmFields[attribute]) {
-            post[attribute] = ""
+            postTemplate[attribute] = ""
           }
 
           //should no longer be necessary, now checking in the backend
-          if (_.isEqual(persistedPost[attribute], post[attribute])) {
+          if (_.isEqual(persistedPostTemplate[attribute], postTemplate[attribute])) {
             //trim down elements to update in case end up sending
             //especially because api seems to convert null to a string when setting to req.body...
-            delete post[attribute]
+            delete postTemplate[attribute]
           }
           //console.log("attribute": attribute);
-//console.log("value: ", post[attribute], persistedPost[attribute]);
+//console.log("value: ", postTemplate[attribute], persistedPostTemplate[attribute]);
         }
 
-        this.props.updatePostRequest(post, cb)
+        this.props.updatePostTemplateRequest(postTemplate, cb)
       }
+    }
+
+
+  }
+
+  savePlan() {
+
+    //save plan metadata
+    let planParams = this.props.planParams
+    const persistedRecord =  this.props.currentPlan
+    if (!planParams.name) {
+
+      alertActions.newAlert({
+        title: "Failed to save:",
+        message: "Name is required",
+        level: "DANGER",
+      })
+      return
+    }
+
+    const done = () => {
+      this._savePostTemplates()
+    }
+
+    if (this.props.dirty && planParams.name !== persistedRecord.name) {
+      const options = {} //can't remember why i have this..maybe just that, I coudl use if needed?
+      const params = {
+        id: persistedRecord.id,
+        name: planParams.name, //only thing I'm saving so far
+        userId: persistedRecord.userId,
+      }
+
+      this.props.updatePlanRequest(params, options, done)
+
+    } else {
+      done()
     }
 
   }
@@ -181,9 +232,9 @@ class ShowPlan extends Component {
 
   render() {
     const c = this;
-    const currentPlan = this.props.currentPlan //plans[this.props.match.params.planId]
+    const {currentPlan, planParams, planPostTemplatesForm} = this.props
     const mode = Helpers.safeDataPath(this.props, "match.params.editing", false) ? "EDIT" : "SHOW"
-    const dirty = this.props.campaignPostsForm.dirty
+    const dirty = this.props.dirty
     const {currentAccount, currentProvider, currentChannel} = this.state
 
 
@@ -196,8 +247,9 @@ class ShowPlan extends Component {
             ) : (
               <Input
                 value={planParams.name}
-                placeholder="Plan for best content"
+                placeholder="Plan Name"
                 onChange={this.handleChangeName}
+                className={classes.nameInput}
               />
             )}
             <div>
@@ -205,14 +257,16 @@ class ShowPlan extends Component {
                 account={currentAccount}
                 channel={this.state.currentChannel}
                 toggleAdding={this.toggleAdding}
-                addingPost={this.state.addingPost}
+                addingPostTemplate={this.state.addingPostTemplate}
+                mode={mode}
               />
             </div>
 
-            {this.state.addingPost ? (
+            {this.state.addingPostTemplate ? (
 
-              <AddPostTemplate
+              <AddPost
                 toggleAdding={this.toggleAdding}
+                type="postTemplate"
                 currentProvider={this.state.addingPostTemplate}
               />
 
@@ -226,13 +280,27 @@ class ShowPlan extends Component {
                   </div>
                 }
 
-                <PlanPostTemplates
+                <PostTemplateWrapper
                   currentProvider={currentProvider}
                   currentAccount={currentAccount}
                   currentChannel={currentChannel}
+                  mode={mode}
                 />
 
-                <Button style="inverted" disabled={!dirty} onClick={this.saveCampaignPosts}>{dirty ? "Save changes" : "All drafts saved"}</Button>
+                {mode === "EDIT" ? (
+                  <div>
+                    <Button style="inverted" disabled={!dirty} onClick={this.savePlan}>
+                      {dirty ? "Save changes" : "All drafts saved"}
+                    </Button>
+                    <Button style="inverted" onClick={this.toggleMode}>
+                      {dirty ? "Cancel edits" : "Finished editing"}
+                    </Button>
+                  </div>
+                ) : (
+                  <Button style="inverted" onClick={this.toggleMode}>
+                    Edit
+                  </Button>
+                )}
               </div>
             )}
           </div>
@@ -250,7 +318,9 @@ const mapStateToProps = state => {
     plans: state.plans,
     currentPlan: state.currentPlan,
     //if either form is dirty
-    dirty: Helpers.safeDataPath(state.forms, "ShowPlan.posts.dirty", false) || Helpers.safeDataPath(state.forms, "ShowPlan.other.dirty", false) ,
+    planPostTemplatesForm: Helpers.safeDataPath(state.forms, "EditPlan.postTemplates", {}),
+    planParams: Helpers.safeDataPath(state.forms, "EditPlan.other.params", {}),
+    dirty: Helpers.safeDataPath(state.forms, "EditPlan.postTemplates.dirty", false) || Helpers.safeDataPath(state.forms, "EditPlan.other.dirty", false) ,
   }
 }
 const mapDispatchToProps = (dispatch) => {
@@ -258,6 +328,10 @@ const mapDispatchToProps = (dispatch) => {
     //createPlanRequest: (data) => dispatch({type: CREATE_PLAN_REQUEST, payload: data}),
     fetchCurrentPlan: (data) => dispatch({type: FETCH_CURRENT_PLAN_REQUEST, payload: data}),
     setCurrentPlan: (data) => dispatch({type: SET_CURRENT_PLAN, payload: data}),
+    createPostTemplateRequest: (payload, cb) => {dispatch({type: CREATE_POST_TEMPLATE_REQUEST, payload, cb})},
+    updatePlanRequest: (payload, options, cb) => {dispatch({type: UPDATE_PLAN_REQUEST, payload, options, cb})},
+    updatePostTemplateRequest: (payload, cb) => {dispatch({type: UPDATE_POST_TEMPLATE_REQUEST, payload, cb})},
+    setCurrentPostTemplate: (data) => dispatch({type: SET_CURRENT_POST_TEMPLATE, payload: data}),
   }
 }
 

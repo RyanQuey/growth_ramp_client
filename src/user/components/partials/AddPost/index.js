@@ -2,14 +2,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux'
 import uuidv4 from 'uuid/v4'
 import {
-  //CREATE_PLAN_REQUEST,
-  //CHOOSE_PLAN,
-  //UPDATE_CAMPAIGN_REQUEST,
-  //UPDATE_PLAN_REQUEST,
-  //LIVE_UPDATE_PLAN_SUCCESS,
-  //LIVE_UPDATE_PLAN_FAILURE,
   SET_CURRENT_MODAL,
-  //SET_CURRENT_POST,
 } from 'constants/actionTypes'
 import { Navbar, Icon, Button } from 'shared/components/elements'
 import { Select } from 'shared/components/groups'
@@ -19,6 +12,10 @@ import { ProviderAccountsDetails, PostEditor } from 'user/components/partials'
 import {PROVIDERS} from 'constants/providers'
 import {UTM_TYPES} from 'constants/posts'
 import theme from 'theme'
+
+////////////////////////////////////
+// NOTE for posts and postTemplates, depending on this.props.type
+////////////////////////////////////
 
 class AddPost extends Component {
   constructor(props) {
@@ -33,7 +30,7 @@ class AddPost extends Component {
     }
 
     //this.sortPostsByChannelType = this.sortPostsByChannelType.bind(this)
-    this.newPost = this.newPost.bind(this)
+    this.new = this.new.bind(this)
     //this.handleChooseProvider = this.handleChooseProvider.bind(this)
     this.handleChooseAccount = this.handleChooseAccount.bind(this)
     this.handleChooseChannelType = this.handleChooseChannelType.bind(this)
@@ -91,35 +88,41 @@ class AddPost extends Component {
     })
   }
 
-  newPost (e) {
+  new (e) {
     //build out the empty post object
     const channelId = this.state.currentChannel ? parseInt(this.state.currentChannel.id) : null
-
-    const post = {
-      channelType: this.state.currentChannelType,
-      channelId,
-      contentUrl: this.props.currentCampaign.contentUrl,
-      userId: this.props.user.id,
-      campaignId: this.props.currentCampaign.id,
-      providerAccountId: this.state.currentAccount.id,
-      provider: this.state.currentAccount.provider,
-      planId: this.props.currentCampaign.planId,
-    }
-
-    //create id for it, like "draft1"
-    let uuid = `not-saved-${uuidv4()}`
-    post.id = uuid
-
-
+    //just a temp id
+    let tempUuid = `not-saved-${uuidv4()}`
     //set utm field options (set all to active)
     const utmDefaults = UTM_TYPES.reduce((acc, t) => {
       acc[t.value] = true
       return acc
     }, {})
 
-    formActions.setParams("EditCampaign", "posts", {[uuid]: post})
-    formActions.setOptions("EditCampaign", "posts", {[uuid]: {utms: utmDefaults}})
-    this.props.toggleAdding(false, false, post)
+
+    let newParams = {
+      id: tempUuid,
+      channelType: this.state.currentChannelType,
+      channelId,
+      userId: this.props.user.id,
+      providerAccountId: this.state.currentAccount.id,
+      provider: this.state.currentAccount.provider,
+    }
+
+    if (this.props.type === "post") {
+      newParams.campaignId = this.props.currentCampaign.id
+      newParams.contentUrl = this.props.currentCampaign.contentUrl
+      newParams.planId = this.props.currentCampaign.planId
+      formActions.setParams("EditCampaign", "posts", {[tempUuid]: newParams})
+      formActions.setOptions("EditCampaign", "posts", {[tempUuid]: {utms: utmDefaults}})
+
+    } else if (this.props.type === "postTemplate") {
+      newParams.planId = this.props.currentPlan.id
+      formActions.setParams("EditPlan", "postTemplates", {[tempUuid]: newParams})
+      formActions.setOptions("EditPlan", "postTemplates", {[tempUuid]: {utms: utmDefaults}})
+    }
+
+    this.props.toggleAdding(false, false, newParams)
   }
 
   providerOption(provider) {
@@ -294,7 +297,7 @@ console.log(channelTypeHasMultiple, currentChannelType,channelTypeIsAllowed);
           (currentChannelType && channelTypeIsAllowed && !channelTypeHasMultiple) ||
           currentChannel
         ) && (
-            <Button style="inverted" onClick={this.newPost}>Add a {currentChannelType.titleCase()}</Button>
+            <Button style="inverted" onClick={this.new}>Add a {currentChannelType.titleCase()}</Button>
         )}
 
         <Button style="inverted" onClick={this.props.toggleAdding.bind(this, false, this.state.addingPost)}>Cancel</Button>
@@ -305,7 +308,9 @@ console.log(channelTypeHasMultiple, currentChannelType,channelTypeIsAllowed);
 
 const mapStateToProps = state => {
   return {
+    //has a currentCampaign or a currentPlan in props depending on whether it is a post or a postTemplate
     currentCampaign: state.currentCampaign,
+    currentPlan: state.currentPlan,
     user: state.user,
     currentPlan: state.currentPlan,
     providerAccounts: state.providerAccounts,
@@ -313,11 +318,7 @@ const mapStateToProps = state => {
 }
 const mapDispatchToProps = (dispatch) => {
   return {
-    //updateCampaignRequest: (payload) => {dispatch({type: UPDATE_CAMPAIGN_REQUEST, payload})},
-    //updatePlanRequest: (payload) => {dispatch({type: UPDATE_PLAN_REQUEST, payload})},
     setCurrentModal: (payload, modalOptions) => dispatch({type: SET_CURRENT_MODAL, payload, options: modalOptions}),
-    //setCurrentPost: (payload) => dispatch({type: SET_CURRENT_POST, payload}),
-    //updatePostRequest: (payload) => {dispatch({type: UPDATE_POST_REQUEST, payload})},
   }
 }
 

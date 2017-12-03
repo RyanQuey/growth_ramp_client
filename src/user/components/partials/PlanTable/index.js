@@ -15,7 +15,7 @@ import {
 
 import classes from './style.scss'
 
-class PlanPicker extends Component {
+class PlanTable extends Component {
   constructor(props) {
     super(props)
 
@@ -97,4 +97,4 @@ const mapStateToProps = (state) => {
   }
 }
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(PlanPicker))
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(PlanTable))

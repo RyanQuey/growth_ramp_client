@@ -14,7 +14,7 @@ import {formActions} from 'shared/actions'
 import classes from './style.scss'
 
 //will edit and show details...so...
-class PostTemplateEditor extends Component {
+class PostTemplateDetails extends Component {
   constructor() {
     super()
 
@@ -59,6 +59,7 @@ class PostTemplateEditor extends Component {
     const postTemplate = this.props.postTemplate
     if (!postTemplate) {return null} //shouldn't happen, but whatever
     let utmFields = Object.assign({}, Helpers.safeDataPath(this.props.formOptions, `${postTemplate.id}.utms`, {}))
+    const mode = this.props.mode
 
     return (
       <Flexbox direction="column" >
@@ -69,6 +70,7 @@ class PostTemplateEditor extends Component {
             onChange={this.disablePostTemplate}
           />&nbsp;Disable postTemplate
         </div>}
+
         <div className={classes.postTemplateFields}>
           <div>
             <Flexbox flexWrap="wrap" className={classes.utms}>
@@ -78,17 +80,26 @@ class PostTemplateEditor extends Component {
                 const label = utmType.label
                 const active = utmFields[type]
                 return <div key={type} className={classes.utmField}>
-                  <Checkbox
-                    value={active}
-                    onChange={this.toggleUtm.bind(this, type)}
-                    label={`Enable ${label.titleCase()} UTM`}
-                  />&nbsp;
+                  {mode === "EDIT" ? (
+                    <div>
+                      <Checkbox
+                        value={active}
+                        onChange={this.toggleUtm.bind(this, type)}
+                        label={`Enable ${label.titleCase()} UTM`}
+                      />&nbsp;
 
-                  {active && <Input
-                    placeholder={`${label.titleCase()} utm for this ${postTemplate.channelType.titleCase()}`}
-                    onChange={this.updateUtm.bind(this, type)}
-                    value={postTemplate[type]}
-                  />}
+                      {active && <Input
+                        placeholder={`${label.titleCase()} utm for this template`}
+                        onChange={this.updateUtm.bind(this, type)}
+                        value={postTemplate[type]}
+                      />}
+                    </div>
+                  ) : (
+                    <div>
+                      <label>{label.titleCase()} UTM:</label>&nbsp;
+                      <span>{postTemplate[type] || "None"}</span>
+                    </div>
+                  )}
                 </div>
               })}
             </Flexbox>
@@ -113,6 +124,6 @@ const mapDispatchToProps = (dispatch) => {
   }
 }
 
-const ConnectedPostTemplateEditor = connect(mapStateToProps, mapDispatchToProps)(PostTemplateEditor)
-export default ConnectedPostTemplateEditor
+const ConnectedPostTemplateDetails = connect(mapStateToProps, mapDispatchToProps)(PostTemplateDetails)
+export default ConnectedPostTemplateDetails
 

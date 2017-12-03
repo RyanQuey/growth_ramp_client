@@ -91,7 +91,6 @@ class Start extends Component {
         userId: this.props.currentCampaign.userId,
         planId: campaignParams.planId,
         contentUrl: campaignParams.contentUrl && campaignParams.contentUrl.toString().trim(),
-        provider: campaignParams
       }
 
       this.props.updateCampaignRequest(params, options, done)

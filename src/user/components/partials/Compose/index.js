@@ -11,7 +11,7 @@ import {
 import { Icon, Button } from 'shared/components/elements'
 import { Select } from 'shared/components/groups'
 import { SocialLogin } from 'shared/components/partials'
-import { ProviderAccountsDetails, PostEditor, AddPost, PostPicker, CampaignPosts } from 'user/components/partials'
+import { ProviderAccountsDetails, PostEditor, AddPost, PostPicker, CampaignPostWrapper } from 'user/components/partials'
 import {formActions} from 'shared/actions'
 import {PROVIDERS} from 'constants/providers'
 import theme from 'theme'
@@ -171,6 +171,7 @@ class Compose extends Component {
 
           <AddPost
             toggleAdding={this.toggleAdding}
+            type="post"
             currentProvider={this.state.addingPost}
           />
 
@@ -184,7 +185,7 @@ class Compose extends Component {
               </div>
             }
 
-            <CampaignPosts
+            <CampaignPostWrapper
               currentProvider={currentProvider}
               currentAccount={currentAccount}
               currentChannel={currentChannel}
