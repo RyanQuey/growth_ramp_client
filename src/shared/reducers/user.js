@@ -21,6 +21,10 @@ const userReducer = (state = null, action) => {
       return Object.assign({}, state, { providerData: action.payload.providerData })
 
     case SET_CURRENT_USER:
+      //cover that up, in case some xss can get it or something
+      if (Helpers.safeDataPath(action.payload, "apiToken", false)) {
+        action.payload.apiToken = true
+      }
       return Object.assign({}, action.payload)
 
     case UPDATE_USER_SUCCESS:
@@ -29,25 +33,22 @@ const userReducer = (state = null, action) => {
     case SET_IMAGE:
       return Object.assign({}, state, { [action.payload.name]: action.payload.url })
 
-    case INPUT_UPDATE_SUCCESS:
-      let pathArray = action.payload.path.split("/")
-      let root = pathArray.shift()
-      let relativePath = pathArray.join(".")
-      if (root === "user") {
-        let newState = Object.assign({}, state)
-        _.set(newState, relativePath, action.payload.value)
-        return newState
-      } else {
-        return state
-      }
-
     case SIGN_OUT_SUCCESS:
       return false
 
     case FETCH_CURRENT_USER_SUCCESS:
+      //cover that up, in case some xss can get it or something
+      if (Helpers.safeDataPath(action.payload, "apiToken", false)) {
+        action.payload.apiToken = true
+      }
+
       return Object.assign({}, state, action.payload)
 
     case SIGN_IN_SUCCESS:
+      //cover that up, in case some xss can get it or something
+      if (Helpers.safeDataPath(action.payload, "apiToken", false)) {
+        action.payload.apiToken = true
+      }
       return Object.assign({}, state, action.payload)
 
     default:

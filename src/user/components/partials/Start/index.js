@@ -16,11 +16,13 @@ class Start extends Component {
       //name: props.currentCampaign.name || "",
       //planId: props.currentCampaign.planId,
       //contentUrl: props.currentCampaign.contentUrl || "",
+      errors: [],
       pending: false,
       dirty: false,
     }
 
     this.handleClickPlan = this.handleClickPlan.bind(this)
+    this.handleErrors = this.handleErrors.bind(this)
     this.startFromScratch = this.startFromScratch.bind(this)
     this.handleChangeName = this.handleChangeName.bind(this)
     this.handleUrl = this.handleUrl.bind(this)
@@ -53,6 +55,11 @@ class Start extends Component {
     formActions.setParams("EditCampaign", "other", {contentUrl: value})
   }
 
+  //eventually will have to handle differently, probably wit errors store, if want to validate name too
+  handleErrors (errors, inputName) {
+    this.setState({errors })
+  }
+
   handleChangeName (value, e, errors) {
     formActions.setParams("EditCampaign", "other", {name: value})
   }
@@ -83,7 +90,7 @@ class Start extends Component {
         name: campaignParams.name,
         userId: this.props.currentCampaign.userId,
         planId: campaignParams.planId,
-        contentUrl: campaignParams.contentUrl,
+        contentUrl: campaignParams.contentUrl && campaignParams.contentUrl.toString().trim(),
         provider: campaignParams
       }
 
@@ -118,14 +125,17 @@ class Start extends Component {
           value={campaignParams.name}
           placeholder="Awesome blog post"
           label="Campaign name:"
+          validations={["required"]}
           onChange={this.handleChangeName}
         />
         <Input
           value={campaignParams.contentUrl || ""}
           label="What would you like to promote?"
-          placeholder="www.website.com/awesome-blog-post"
+          placeholder="https://www.website.com/awesome-blog-post"
           disabled={currentCampaign.status !== "DRAFT"}
+          validations={["url"]}
           onChange={this.handleUrl}
+          handleErrors={this.handleErrors}
         />
 
         {Object.keys(plans).length === 0 ? (
@@ -154,7 +164,7 @@ class Start extends Component {
             </div>
           )
         )}
-        <Button type="submit">{this.props.dirty && "Save and "}Continue</Button>
+        <Button type="submit" disabled={this.state.errors && this.state.errors.length }>{this.props.dirty && "Save and "}Continue</Button>
 
       </form>
     );

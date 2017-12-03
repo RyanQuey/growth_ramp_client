@@ -58,7 +58,7 @@ class Send extends Component {
         <h1 className="display-3">Send</h1>
         Now you send it
         <div>
-          <Button pending={this.state.pending} disabled={this.state.pending} onClick={this.send}>SEND THEM ALL!</Button>
+          <Button pending={this.state.pending} disabled={this.state.pending} onClick={this.send}>Send Posts</Button>
         </div>
       </div>
     );

@@ -96,7 +96,7 @@ class UserCredentials extends Component {
             placeholder="password"
             type="password"
             value={this.state.password}
-            validations={['required']}
+            validations={['required', 'newPassword']}
           />
         }
 
