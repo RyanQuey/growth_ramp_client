@@ -54,7 +54,7 @@ const currentCampaignReducer = (state = null, action) => {
     //NOTE might be easier to just retrieve campaign from db again...but this is faster.
     case UPDATE_POST_SUCCESS:
       post = action.payload
-      if (post.campaignId = state.id) {
+      if (post.campaignId === state.id) {
         campaign = Object.assign({}, state)
         oldPosts = campaign.posts || []
         campaignPosts = [...oldPosts]

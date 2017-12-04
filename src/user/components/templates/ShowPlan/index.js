@@ -171,6 +171,7 @@ class ShowPlan extends Component {
 
           //if utm is set to postTemplate, but field is disabled, set to empty string
           if (attribute.includes("Utm") && !utmFields[attribute]) {
+console.log(utmFields, attribute);
             postTemplate[attribute] = ""
           }
 
@@ -319,6 +320,7 @@ const mapStateToProps = state => {
     currentPlan: state.currentPlan,
     //if either form is dirty
     planPostTemplatesForm: Helpers.safeDataPath(state.forms, "EditPlan.postTemplates", {}),
+    formOptions: Helpers.safeDataPath(state.forms, "EditPlan.postTemplates.options", {}),
     planParams: Helpers.safeDataPath(state.forms, "EditPlan.other.params", {}),
     dirty: Helpers.safeDataPath(state.forms, "EditPlan.postTemplates.dirty", false) || Helpers.safeDataPath(state.forms, "EditPlan.other.dirty", false) ,
   }

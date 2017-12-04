@@ -91,7 +91,7 @@ class PostTemplateDetails extends Component {
                       {active && <Input
                         placeholder={`${label.titleCase()} utm for this template`}
                         onChange={this.updateUtm.bind(this, type)}
-                        value={postTemplate[type]}
+                        value={postTemplate[type] || ""}
                       />}
                     </div>
                   ) : (
