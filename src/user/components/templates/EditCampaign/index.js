@@ -29,12 +29,14 @@ class EditCampaign extends Component {
 
     this.switchTo = this.switchTo.bind(this)
     this.setCampaign = this.setCampaign.bind(this)
+    this._setInitialView = this._setInitialView.bind(this)
   }
 
  componentDidMount() {
     //set current campaign based on the url params, no matter what it was before
     const campaignId = this.props.match.params.campaignId
     this.setCampaign(campaignId)
+
   }
 
   componentWillUnmount() {
@@ -62,7 +64,25 @@ class EditCampaign extends Component {
       //remove listener
       window.onbeforeunload = null
     }
+  }
 
+  _setInitialView (currentCampaign) {
+
+    //is already published or is archived, don't let them try to edit from using browser link.
+    //will disable link to edit elsewhere if published too
+    if (currentCampaign.status !== "DRAFT") {
+console.log(currentCampaign);
+      this.props.history.push("/campaigns")
+    } else {
+      this.props.setCurrentCampaign(currentCampaign)
+      //initializing to match persisted record
+      formActions.matchCampaignStateToRecord()
+
+      //if have name set, means they already finished the Start phase
+      if (currentCampaign.name) {
+        this.switchTo("Compose")
+      }
+    }
   }
 
   setCampaign (campaignId) {
@@ -71,20 +91,16 @@ class EditCampaign extends Component {
     if (!currentCampaign || !currentCampaign.posts) {
       //this action doesn't yet support any criteria
       this.setState({pending: true})
-      this.props.fetchCurrentCampaign(campaignId)
-      //initializing to match persisted record
-      formActions.matchCampaignStateToRecord()
 
-    } else if (currentCampaign.status !== "DRAFT") {
-      //is already published or is archived, don't let them try to edit from using browser link.
-      //will disable link to edit elsewhere if published too
-      this.props.history.push("/campaigns")
+      const cb = (currentCampaign) => {
+        this.setState({pending: false})
+        this._setInitialView(currentCampaign)
+      }
+
+      this.props.fetchCurrentCampaign(campaignId, cb)
 
     } else {
-
-      this.props.setCurrentCampaign(currentCampaign)
-      //initializing to match persisted record
-      formActions.matchCampaignStateToRecord()
+      this._setInitialView(currentCampaign)
     }
 
   }
@@ -150,7 +166,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = (dispatch) => {
   return {
     //createCampaignRequest: (data) => dispatch({type: CREATE_CAMPAIGN_REQUEST, payload: data}),
-    fetchCurrentCampaign: (data) => dispatch({type: FETCH_CURRENT_CAMPAIGN_REQUEST, payload: data}),
+    fetchCurrentCampaign: (data, cb) => dispatch({type: FETCH_CURRENT_CAMPAIGN_REQUEST, payload: data, cb}),
     setCurrentCampaign: (data) => dispatch({type: SET_CURRENT_CAMPAIGN, payload: data}),
   }
 }

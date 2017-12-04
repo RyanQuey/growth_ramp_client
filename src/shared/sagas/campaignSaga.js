@@ -152,8 +152,8 @@ function* fetchCurrentCampaign(action) {
     yield all([
       put({type: SET_CURRENT_CAMPAIGN, payload: res.data})
     ])
-    action.cb && action.cb(res)
-    formActions.matchCampaignStateToRecord()
+
+    action.cb && action.cb(res.data)
 
   } catch (err) {
     console.log('current campaign fetch failed', err.response || err)

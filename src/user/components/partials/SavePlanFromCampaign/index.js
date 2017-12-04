@@ -93,11 +93,12 @@ class SavePlanFromCampaign extends Component {
 
     const userId = this.props.user.uid
     const campaign = this.props.currentCampaign
+    const campaignPlan = campaign && this.props.plans && this.props.plans[campaign.planId]
 
     return (
       <div id="send-container">
         <h1 className="display-3">Save?</h1>
-        <h3>Save your planned for later?</h3>
+        <h3>Do you want to use this campaign as a template for future campaigns?</h3>
 
         {this.state.mode === "CHOOSE_MODE" && (
           <div>
@@ -105,7 +106,7 @@ class SavePlanFromCampaign extends Component {
               <Button
                 onClick={this.handleChoose.bind(this, "UPDATE_CURRENT_PLAN")}
               >
-                Save over current plan
+                Save over current plan (campaignPlan.name)
               </Button>
             }
 
