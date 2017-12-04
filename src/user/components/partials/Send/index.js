@@ -15,6 +15,7 @@ class Send extends Component {
     }
 
     this.send = this.send.bind(this)
+    this.finished = this.finished.bind(this)
   }
 
   //TODO might just put in EditCampaign, DRY things up
@@ -41,25 +42,38 @@ class Send extends Component {
     this.props.campaignPublishRequest(this.props.currentCampaign, cb)
   }
 
+  finished() {
+    this.props.history.push("/campaigns")
+  }
+
   render() {
     if (this.props.hide) {
       return null
     }
     const c = this;
     const userId = this.props.user.uid
+    const mode = this.state.mode
 
     if (this.state.mode === "savePlan") {
-      return <SavePlanFromCampaign />
 
     }
 
     return (
       <div id="send-container">
-        <h1 className="display-3">Send</h1>
-        Now you send it
-        <div>
-          <Button pending={this.state.pending} disabled={this.state.pending} onClick={this.send}>Send Posts</Button>
-        </div>
+        <h1 className="display-3">{mode === "savePlan" ? "Save" : "Send"}</h1>
+        {mode === "savePlan" ? (
+          <div>
+            <h3>Do you want to use this campaign as a template for future campaigns?</h3>
+            <SavePlanFromCampaign
+              finished={this.finished}
+            />
+          </div>
+        ) : (
+          <div>
+            Now you send it
+            <Button pending={this.state.pending} disabled={this.state.pending} onClick={this.send}>Send Posts</Button>
+          </div>
+        )}
       </div>
     );
   }

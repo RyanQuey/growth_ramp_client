@@ -16,7 +16,7 @@ const currentPlanReducer = (state = null, action) => {
 
     case UPDATE_PLAN_SUCCESS:
       //payload should be the updated plan
-      if (store.getState().currentPlan.id === action.payload.id) {
+      if (state && state.id === action.payload.id) {
         return Object.assign({}, action.payload)
       } else {
         return state
@@ -24,13 +24,11 @@ const currentPlanReducer = (state = null, action) => {
 
     case CREATE_POST_TEMPLATE_SUCCESS:
       postTemplate = action.payload
-console.log(postTemplate.planId , (state && state.id));
       if (postTemplate.planId === (state && state.id)) {
         plan = Object.assign({}, state)
         oldPostTemplates = plan.postTemplates || []
         planPostTemplates = [...oldPostTemplates]
         planPostTemplates.push(postTemplate)
-console.log(planPostTemplates);
         plan.postTemplates = planPostTemplates
 
         return Object.assign({}, plan)
@@ -40,7 +38,7 @@ console.log(planPostTemplates);
       }
 
     case UPDATE_POST_TEMPLATE_SUCCESS:
-      if (store.getState().currentPlan.id === action.payload.planId) {
+      if (state && state.currentPlan.id === action.payload.planId) {
         postTemplate = action.payload
         plan = Object.assign({}, state)
         oldPostTemplates = plan.postTemplates || []

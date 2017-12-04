@@ -23,6 +23,7 @@ class ShowCampaign extends Component {
     this.setCampaign = this.setCampaign.bind(this)
     this.editCampaign = this.editCampaign.bind(this)
     this.toggleSavingPlan = this.toggleSavingPlan.bind(this)
+    this.finishedSavingAsPlan = this.finishedSavingAsPlan.bind(this)
   }
 
  componentDidMount() {
@@ -64,8 +65,9 @@ console.log(getAnalytics, currentCampaign);
     this.props.history.push(`/campaigns/${this.props.currentCampaign.id}/edit`)
   }
 
-  toggleSavingPlan(value = !this.state.savingPlanFromCampaign) {
-    this.setState({savingPlanFromCampaign: value})
+  toggleSavingPlan(value) {
+    let newState = typeof value === "boolean" ? value : !this.state.savingPlanFromCampaign
+    this.setState({savingPlanFromCampaign: newState})
   }
 
   extractCampaignLinks(posts) {
@@ -84,6 +86,10 @@ console.log(getAnalytics, currentCampaign);
     }
 
     return links
+  }
+
+  finishedSavingAsPlan() {
+    this.toggleSavingPlan(false)
   }
 
   render (){
@@ -138,12 +144,13 @@ console.log(getAnalytics, currentCampaign);
           {currentCampaign.status === "PUBLISHED" ? (
             this.state.savingPlanFromCampaign ? (
               <div>
-                <SavePlanFromCampaign />
-                <Button onClick={this.toggleSavingPlan}>Cancel</Button>
+                <SavePlanFromCampaign
+                  finished={this.finishedSavingAsPlan}
+                />
+                <Button style="inverted" onClick={this.toggleSavingPlan}>Cancel</Button>
               </div>
             ) : (
               <div>
-
                 <Button onClick={this.toggleSavingPlan}>Save plan from campaign</Button>
               </div>
             )

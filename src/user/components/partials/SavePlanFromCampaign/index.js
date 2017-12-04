@@ -31,9 +31,7 @@ class SavePlanFromCampaign extends Component {
 
         break
       case "CREATE_NEW_PLAN":
-        this.setState({
-          mode: option
-        })
+        this.setState({mode: option})
 
         break
 
@@ -61,7 +59,7 @@ class SavePlanFromCampaign extends Component {
     }
     const cb = () => {
       this.setState({pending: false})
-      this.props.history.push("/campaigns")
+      this.props.finished()
     }
 
     //will have to set the some other way, in case someone else makes one that's later than them or something, and firebase updates it
@@ -79,7 +77,7 @@ class SavePlanFromCampaign extends Component {
     }
     const cb = () => {
       this.setState({pending: false})
-      this.props.history.push("/campaigns")
+      this.props.finished()
     }
 
     //will have to set the some other way, in case someone else makes one that's later than them or something, and firebase updates it
@@ -97,8 +95,6 @@ class SavePlanFromCampaign extends Component {
 
     return (
       <div id="send-container">
-        <h1 className="display-3">Save?</h1>
-        <h3>Do you want to use this campaign as a template for future campaigns?</h3>
 
         {this.state.mode === "CHOOSE_MODE" && (
           <div>
@@ -106,7 +102,7 @@ class SavePlanFromCampaign extends Component {
               <Button
                 onClick={this.handleChoose.bind(this, "UPDATE_CURRENT_PLAN")}
               >
-                Save over current plan (campaignPlan.name)
+                Save over current plan ({campaignPlan.name})
               </Button>
             }
 
@@ -139,9 +135,9 @@ class SavePlanFromCampaign extends Component {
 
         {this.state.mode === "UPDATE_CURRENT_PLAN" && (
           <div>
-            This will replace all the utms and settings of plan {this.props.plans[campaign.planId]}. This action cannot be undone. Are you sure you want to do this?
-            <Button onClick={this.goBack}>Back</Button>
-            <Button onClick={this.updateCurrentPlan}>Confirm</Button>
+            <p>This will replace all the utms and settings of plan {campaign.name}. This action cannot be undone. Are you sure you want to do this?</p>
+            {false && <Button onClick={this.goBack}>Back</Button>}
+            <Button onClick={this.updatePlan}>Confirm</Button>
           </div>
         )}
       </div>
