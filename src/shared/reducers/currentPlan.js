@@ -24,11 +24,13 @@ const currentPlanReducer = (state = null, action) => {
 
     case CREATE_POST_TEMPLATE_SUCCESS:
       postTemplate = action.payload
-      if (postTemplate.planId === state && state.id) {
+console.log(postTemplate.planId , (state && state.id));
+      if (postTemplate.planId === (state && state.id)) {
         plan = Object.assign({}, state)
         oldPostTemplates = plan.postTemplates || []
         planPostTemplates = [...oldPostTemplates]
         planPostTemplates.push(postTemplate)
+console.log(planPostTemplates);
         plan.postTemplates = planPostTemplates
 
         return Object.assign({}, plan)

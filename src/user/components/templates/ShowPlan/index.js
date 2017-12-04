@@ -16,7 +16,9 @@ import {
   CREATE_POST_TEMPLATE_REQUEST,
   UPDATE_POST_TEMPLATE_REQUEST,
   SET_CURRENT_POST_TEMPLATE,
+  DESTROY_POST_TEMPLATE_REQUEST,
 } from 'constants/actionTypes'
+import {UTM_TYPES} from 'constants/posts'
 import theme from 'theme'
 import { formActions, alertActions } from 'shared/actions'
 import classes from './style.scss'
@@ -108,6 +110,7 @@ class ShowPlan extends Component {
       this.props.history.push(`/plans/${this.props.currentPlan.id}`)
 
     } else {
+      formActions.matchPlanStateToRecord()
       this.props.history.push(`/plans/${this.props.currentPlan.id}/edit`)
 
     }
@@ -133,7 +136,7 @@ class ShowPlan extends Component {
     //check if need to update or create each postTemplate
     for (let i = 0; i < planPostTemplatesFormArray.length; i++) {
       let postTemplate = Object.assign({}, planPostTemplatesFormArray[i])
-      let utmFields = Object.assign({}, Helpers.safeDataPath(this.props.formOptions, `${postTemplate.id}.utms`, {}))
+      let utmFields = UTM_TYPES.map((t) => t.type)
 
       // TO DESTROY
       if (postTemplate.toDelete) {
@@ -163,27 +166,6 @@ class ShowPlan extends Component {
 
         //should never really be {}...but whatever
         let persistedPostTemplate = persistedPostTemplates.find((p) => p.id === postTemplate.id) || {}
-        let attributes = Object.keys(postTemplate)
-
-        for (let attribute of attributes) {
-          //don't need to check these
-          if (["id", "userId"].includes(attribute)) {continue}
-
-          //if utm is set to postTemplate, but field is disabled, set to empty string
-          if (attribute.includes("Utm") && !utmFields[attribute]) {
-console.log(utmFields, attribute);
-            postTemplate[attribute] = ""
-          }
-
-          //should no longer be necessary, now checking in the backend
-          if (_.isEqual(persistedPostTemplate[attribute], postTemplate[attribute])) {
-            //trim down elements to update in case end up sending
-            //especially because api seems to convert null to a string when setting to req.body...
-            delete postTemplate[attribute]
-          }
-          //console.log("attribute": attribute);
-//console.log("value: ", postTemplate[attribute], persistedPostTemplate[attribute]);
-        }
 
         this.props.updatePostTemplateRequest(postTemplate, cb)
       }
@@ -334,6 +316,7 @@ const mapDispatchToProps = (dispatch) => {
     updatePlanRequest: (payload, options, cb) => {dispatch({type: UPDATE_PLAN_REQUEST, payload, options, cb})},
     updatePostTemplateRequest: (payload, cb) => {dispatch({type: UPDATE_POST_TEMPLATE_REQUEST, payload, cb})},
     setCurrentPostTemplate: (data) => dispatch({type: SET_CURRENT_POST_TEMPLATE, payload: data}),
+    destroyPostTemplateRequest: (payload) => dispatch({type: DESTROY_POST_TEMPLATE_REQUEST, payload}),
   }
 }
 

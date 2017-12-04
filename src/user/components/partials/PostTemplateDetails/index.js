@@ -24,10 +24,17 @@ class PostTemplateDetails extends Component {
     this.handleText = this.handleText.bind(this)
   }
 
-  updateUtm(utmType, value, e) {
+  updateUtm(utmType, settingKey = false, value, e) {
     //set the param
     let postTemplate = Object.assign({}, this.props.postTemplate)
-    postTemplate[utmType] = value
+
+    if (settingKey) {
+      postTemplate[utmType].key = value
+
+    } else {
+      postTemplate[utmType].value = value
+    }
+
     postTemplate.dirty = true
     //update the postTemplate form
     formActions.setParams("EditPlan", "postTemplates", {[postTemplate.id]: postTemplate})
@@ -37,10 +44,11 @@ class PostTemplateDetails extends Component {
     //update the postTemplate form
     let postTemplate = Object.assign({}, this.props.postTemplate)
     let utmFields = Object.assign({}, Helpers.safeDataPath(this.props.formOptions, `${this.props.postTemplate.id}.utms`, {}))
-    utmFields[utmType] = checked
+
+    utmFields[utmType].active = checked
     postTemplate.dirty = true
 
-    formActions.setOptions("EditPlan", "postTemplates", {[this.props.postTemplate.id]: {utms: utmFields}})
+    //formActions.setOptions("EditPlan", "postTemplates", {[this.props.postTemplate.id]: {utms: utmFields}})
     formActions.setParams("EditPlan", "postTemplates", {[postTemplate.id]: postTemplate})
   }
 
@@ -63,7 +71,7 @@ class PostTemplateDetails extends Component {
 
     return (
       <Flexbox direction="column" >
-        <h2>{postTemplate.channelType.titleCase()}</h2>
+        <h2>{PROVIDERS[postTemplate.provider].name} {postTemplate.channelType.titleCase()}</h2>
         {false && <div className={classes.disablePostTemplate}>
           <Checkbox
             value={postTemplate.active}
@@ -76,28 +84,35 @@ class PostTemplateDetails extends Component {
             <Flexbox flexWrap="wrap" className={classes.utms}>
               {UTM_TYPES.map((utmType) => {
                 //TODO want to extract for use with plan editor...if we have a plan editor
-                const type = utmType.value
+                const type = utmType.type
                 const label = utmType.label
-                const active = utmFields[type]
+                const active = Helpers.safeDataPath(postTemplate, `${type}.active`, false)
+                const value = Helpers.safeDataPath(postTemplate, `${type}.value`, "")
+                const key = Helpers.safeDataPath(postTemplate, `${type}.key`, "")
                 return <div key={type} className={classes.utmField}>
                   {mode === "EDIT" ? (
                     <div>
                       <Checkbox
                         value={active}
                         onChange={this.toggleUtm.bind(this, type)}
-                        label={`Enable ${label.titleCase()} UTM`}
+                        label={`${label.titleCase()} UTM`}
                       />&nbsp;
 
                       {active && <Input
                         placeholder={`${label.titleCase()} utm for this template`}
-                        onChange={this.updateUtm.bind(this, type)}
-                        value={postTemplate[type] || ""}
+                        onChange={this.updateUtm.bind(this, type, false)}
+                        value={value}
+                      />}
+                      {active && type === "customUtm" && <Input
+                        placeholder={`Key for this utm`}
+                        onChange={this.updateUtm.bind(this, type, "settingKey")}
+                        value={key}
                       />}
                     </div>
                   ) : (
                     <div>
                       <label>{label.titleCase()} UTM:</label>&nbsp;
-                      <span>{postTemplate[type] || "None"}</span>
+                      <span>{Helpers.safeDataPath(postTemplate, `${type}.value`, "None")}</span>
                     </div>
                   )}
                 </div>

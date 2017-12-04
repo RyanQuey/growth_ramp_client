@@ -114,25 +114,6 @@ class Compose extends Component {
         let persistedPost = persistedPosts.find((p) => p.id === post.id) || {}
         let attributes = Object.keys(post)
 
-        for (let attribute of attributes) {
-          //don't need to check these
-          if (["id", "userId"].includes(attribute)) {continue}
-
-          //if utm is set to post, but field is disabled, set to empty string
-          if (attribute.includes("Utm") && !utmFields[attribute]) {
-            post[attribute] = ""
-          }
-
-          //should no longer be necessary, now checking in the backend
-          if (_.isEqual(persistedPost[attribute], post[attribute])) {
-            //trim down elements to update in case end up sending
-            //especially because api seems to convert null to a string when setting to req.body...
-            delete post[attribute]
-          }
-          //console.log("attribute": attribute);
-//console.log("value: ", post[attribute], persistedPost[attribute]);
-        }
-
         this.props.updatePostRequest(post, cb)
       }
     }

@@ -94,11 +94,6 @@ class AddPost extends Component {
     //just a temp id
     let tempUuid = `not-saved-${uuidv4()}`
     //set utm field options (set all to active)
-    const utmDefaults = UTM_TYPES.reduce((acc, t) => {
-      acc[t.value] = true
-      return acc
-    }, {})
-
 
     let newParams = {
       id: tempUuid,
@@ -109,17 +104,27 @@ class AddPost extends Component {
       provider: this.state.currentAccount.provider,
     }
 
+    //set fields to active and params to active for each type
+    const utmDefaults = UTM_TYPES.forEach((t) => {
+      newParams[t.value] = {
+        active: true,
+        value: "",
+      }
+
+      if (t === "customUtm") {newParams[t.value].key = ""}
+    })
+
     if (this.props.type === "post") {
       newParams.campaignId = this.props.currentCampaign.id
       newParams.contentUrl = this.props.currentCampaign.contentUrl
       newParams.planId = this.props.currentCampaign.planId
       formActions.setParams("EditCampaign", "posts", {[tempUuid]: newParams})
-      formActions.setOptions("EditCampaign", "posts", {[tempUuid]: {utms: utmDefaults}})
+      //formActions.setOptions("EditCampaign", "posts", {[tempUuid]: {utms: utmDefaults}})
 
     } else if (this.props.type === "postTemplate") {
       newParams.planId = this.props.currentPlan.id
       formActions.setParams("EditPlan", "postTemplates", {[tempUuid]: newParams})
-      formActions.setOptions("EditPlan", "postTemplates", {[tempUuid]: {utms: utmDefaults}})
+      //formActions.setOptions("EditPlan", "postTemplates", {[tempUuid]: {utms: utmDefaults}})
     }
 
     this.props.toggleAdding(false, false, newParams)
@@ -220,7 +225,6 @@ class AddPost extends Component {
       }
     }
 
-console.log(channelTypeHasMultiple, currentChannelType,channelTypeIsAllowed);
     const placeholder = {label: "select", value: null}
     //let accountsNotOnPlan = accountsForProvider //when implementing, make array of indices in reverse; remove starting from back to not mess up indicies while removing.
 

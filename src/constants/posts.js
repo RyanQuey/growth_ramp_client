@@ -1,11 +1,12 @@
 
 
 export const UTM_TYPES = [
-  {label: "Medium", value: "mediumUtm"},
-  {label: "Source", value: "sourceUtm"},
-  {label: "Content", value: "contentUtm"},
-  {label: "Term", value: "termUtm"},
-  {label: "Custom", value: "customUtm"},
+  {label: "Medium", type: "mediumUtm"},
+  {label: "Source", type: "sourceUtm"},
+  {label: "Content", type: "contentUtm"},
+  {label: "Campaign", type: "campaignUtm"},
+  {label: "Term", type: "termUtm"},
+  {label: "Custom", type: "customUtm"},
 ]
 
 // Using this as a referewnce: https://stackoverflow.com/questions/15275445/length-of-goo-gl-urls

@@ -16,7 +16,8 @@ const currentCampaignReducer = (state = null, action) => {
   let pld = action.payload
   switch (action.type) {
     case UPDATE_CAMPAIGN_SUCCESS:
-      if (store.getState().currentCampaign.id === action.payload.id) {
+console.log(pld);
+      if (state && state.id === pld.id) {
         campaign = action.payload
         return Object.assign({}, campaign)
       } else {
@@ -25,7 +26,7 @@ const currentCampaignReducer = (state = null, action) => {
 
     case PUBLISH_CAMPAIGN_SUCCESS:
       campaign = pld
-      if (campaign.id = state.id) {
+      if (campaign.id === state.id) {
         return Object.assign({}, state, {[campaign.id]: campaign})
 
       } else {
@@ -38,7 +39,7 @@ const currentCampaignReducer = (state = null, action) => {
 
     case CREATE_POST_SUCCESS:
       post = action.payload
-      if (post.campaignId = state.id) {
+      if (post.campaignId === state.id) {
         campaign = Object.assign({}, state)
         oldPosts = campaign.posts || []
         campaignPosts = [...oldPosts]
@@ -54,7 +55,7 @@ const currentCampaignReducer = (state = null, action) => {
     //NOTE might be easier to just retrieve campaign from db again...but this is faster.
     case UPDATE_POST_SUCCESS:
       post = action.payload
-      if (post.campaignId === state.id) {
+      if (post.campaignId === (state && state.id)) {
         campaign = Object.assign({}, state)
         oldPosts = campaign.posts || []
         campaignPosts = [...oldPosts]

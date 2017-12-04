@@ -51,17 +51,21 @@ class ShowPost extends Component {
 
             <Flexbox flexWrap="wrap" className={classes.utms}>
               {UTM_TYPES.map((utmType) => {
-                //TODO want to extract for use with plan editor...if we have a plan editor
-                const type = utmType.value
+                //TODO want to extract for use with plan editor
+                const type = utmType.type
                 const label = utmType.label
-                const active = utmFields[type]
-                return <div key={type} className={classes.utmField}>
-                  <span>`${label.titleCase()} UTM`}:</span>&nbsp;
+                const active = Helpers.safeDataPath(post, `${type}.active`, false)
+                const value = Helpers.safeDataPath(post, `${type}.value`, "")
+                const key = Helpers.safeDataPath(post, `${type}.key`, "")
+                return !active ? null : (
+                  <div key={type} className={classes.utmField}>
+                    <span>`${label.titleCase()} UTM`}:</span>&nbsp;
 
-                  <span>
-                    {post[type]}
-                  </span>
-                </div>
+                    <span>
+                      {value}
+                    </span>
+                  </div>
+                )
               })}
             </Flexbox>
 

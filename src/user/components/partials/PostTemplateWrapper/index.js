@@ -2,7 +2,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux'
 import { Flexbox, Button, Icon } from 'shared/components/elements'
 import { PostTemplateCard, PostTemplateDetails } from 'user/components/partials'
-import { SET_CURRENT_MODAL, UPDATE_POST_TEMPLATE_REQUEST, SET_CURRENT_POST_TEMPLATE  } from 'constants/actionTypes'
+import { SET_CURRENT_MODAL, UPDATE_POST_TEMPLATE_REQUEST, SET_CURRENT_POST_TEMPLATE,  } from 'constants/actionTypes'
 import { PROVIDERS } from 'constants/providers'
 import {formActions} from 'shared/actions'
 import classes from './style.scss'

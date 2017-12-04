@@ -29,10 +29,17 @@ class PostEditor extends Component {
     this.onUpload = this.onUpload.bind(this)
   }
 
-  updateUtm(utmType, value, e) {
+  updateUtm(utmType, settingKey = false, value, e) {
     //set the param
     let post = Object.assign({}, this.props.post)
-    post[utmType] = value
+
+    if (settingKey) {
+      post[utmType].key = value
+
+    } else {
+      post[utmType].value = value
+    }
+
     post.dirty = true
     //update the post form
     formActions.setParams("EditCampaign", "posts", {[post.id]: post})
@@ -42,10 +49,10 @@ class PostEditor extends Component {
     //update the post form
     let post = Object.assign({}, this.props.post)
     let utmFields = Object.assign({}, Helpers.safeDataPath(this.props.formOptions, `${this.props.post.id}.utms`, {}))
-    utmFields[utmType] = checked
+
+    utmFields[utmType].active = checked
     post.dirty = true
 
-    formActions.setOptions("EditCampaign", "posts", {[this.props.post.id]: {utms: utmFields}})
     formActions.setParams("EditCampaign", "posts", {[post.id]: post})
   }
 
@@ -195,22 +202,33 @@ class PostEditor extends Component {
             <Flexbox flexWrap="wrap" className={classes.utms}>
               {UTM_TYPES.map((utmType) => {
                 //TODO want to extract for use with plan editor...if we have a plan editor
-                const type = utmType.value
+                const type = utmType.type
                 const label = utmType.label
-                const active = utmFields[type]
-                return <div key={type} className={classes.utmField}>
-                  <Checkbox
-                    value={active}
-                    onChange={this.toggleUtm.bind(this, type)}
-                    label={`Enable ${label.titleCase()} UTM`}
-                  />&nbsp;
+                const active = Helpers.safeDataPath(post, `${type}.active`, false)
+                const value = Helpers.safeDataPath(post, `${type}.value`, "")
+                const key = Helpers.safeDataPath(post, `${type}.key`, "")
+                return (
+                  <div key={type} className={classes.utmField}>
+                    <div>
+                      <Checkbox
+                        value={active}
+                        onChange={this.toggleUtm.bind(this, type)}
+                        label={`${label.titleCase()} UTM`}
+                      />&nbsp;
 
-                  {active && <Input
-                    placeholder={`${label.titleCase()} utm for this ${post.channelType.titleCase()}`}
-                    onChange={this.updateUtm.bind(this, type)}
-                    value={post[type]}
-                  />}
-                </div>
+                      {active && <Input
+                        placeholder={`${label.titleCase()} utm for this template`}
+                        onChange={this.updateUtm.bind(this, type, false)}
+                        value={value}
+                      />}
+                      {active && type === "customUtm" && <Input
+                        placeholder={`Key for this utm`}
+                        onChange={this.updateUtm.bind(this, type, "settingKey")}
+                        value={key}
+                      />}
+                    </div>
+                  </div>
+                )
               })}
             </Flexbox>
 

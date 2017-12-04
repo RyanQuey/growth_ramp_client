@@ -114,7 +114,7 @@ function* destroyPostTemplate(action) {
     //TODO: eventually they filter out postTemplates that have already been sent
     const res = yield axios.delete(`/api/postTemplates/${pld.id}`) //eventually switch to socket
     yield all([
-      put({type: DESTROY_POST_TEMPLATE_SUCCESS, payload: res}),
+      put({type: DESTROY_POST_TEMPLATE_SUCCESS, payload: res.data}),
     ])
 
     if (action.cb) {

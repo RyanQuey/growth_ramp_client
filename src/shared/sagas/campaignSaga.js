@@ -104,7 +104,7 @@ function* updateCampaign(action) {
 
     yield all([
       //assumes only updating one campaign
-      put({ type: UPDATE_CAMPAIGN_SUCCESS, payload: res.data[0]}),
+      put({ type: UPDATE_CAMPAIGN_SUCCESS, payload: res.data}),
     ])
     action.cb && action.cb(res)
 

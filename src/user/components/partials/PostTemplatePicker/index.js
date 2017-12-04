@@ -64,6 +64,7 @@ class PostTemplatePicker extends Component {
   setCurrentPostTemplate(postTemplate) {
     //turn off adding a postTemplate when click on a card
     this.props.toggleAdding(false, false)
+console.log("now setting",postTemplate);
     this.props.setCurrentPostTemplate(postTemplate)
 
     //make sure utms are enabled if postTemplate has those utms
