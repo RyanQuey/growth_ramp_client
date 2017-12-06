@@ -2,7 +2,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 import {
-  PostTemplateDetails,
+  PostTemplateEditor,
   AddPost, //shared with the CampaignEditor
   PostTemplatePicker,
   PostTemplateWrapper

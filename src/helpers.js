@@ -88,13 +88,29 @@ export default {
       return account.scopes[scopeType].status === 'granted'
     })
 
-    const permittedChannelTypes = Object.keys(PROVIDERS[account.provider].channelTypes).filter((channel) => {
-      const channelScopes = PROVIDERS[account.provider].channelTypes[channel].requiredScopes
+    const permittedChannelTypes = Object.keys(PROVIDERS[account.provider].channelTypes).filter((channelType) => {
+      const channelScopes = PROVIDERS[account.provider].channelTypes[channelType].requiredScopes
+
       return channelScopes.every((scope) => (permittedScopes.includes(scope))) //also returns true when the channel requires no scopes at all (empty array)
     })
 
     return permittedChannelTypes
   },
 
+  //takes upper scored provider name and returns friendly name
+  //either need channel or the other two
+  providerFriendlyName: (providerName) => PROVIDERS[providerName].name,
+
+  //takes channel record and returns friendly name
+  //either need channel or the other two
+  channelTypeFriendlyName: (channel, providerName, channelType) => PROVIDERS[providerName || channel.provider].channelTypes[channelType || channel.type].name,
+
+  //takes channel record and returns whether the channel type normally has multiple channels for it
+  //either need channel or the other two
+  channelTypeHasMultiple: (channel, providerName, channelType) => PROVIDERS[providerName || channel.provider].channelTypes[channelType || channel.type].hasMultiple,
+
+  //takes channel record and returns required scopes
+  //either need channel or the other two
+  channelTypeScopes: (channel, providerName, channelType) => PROVIDERS[providerName || channel.provider].channelTypes[channelType || channel.type].requiredScopes,
 }
 

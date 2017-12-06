@@ -105,15 +105,16 @@ class AddPost extends Component {
     }
 
     //set fields to active and params to active for each type
-    const utmDefaults = UTM_TYPES.forEach((t) => {
-      newParams[t.value] = {
-        active: true,
-        value: "",
+    UTM_TYPES.forEach((t) => {
+      newParams[t.type] = {
+        active: t.defaultActive,
+        //note: currentCampaign not available if postTemplate
+        value: t.defaultValue(this.state.currentAccount, this.state.currentChannel, this.props.currentCampaign, this.state.currentChannelType),
       }
-
-      if (t === "customUtm") {newParams[t.value].key = ""}
+      //if (t === "customUtm") {newParams[t.value].key = ""} //disabled customUtm
     })
 
+console.log();
     if (this.props.type === "post") {
       newParams.campaignId = this.props.currentCampaign.id
       newParams.contentUrl = this.props.currentCampaign.contentUrl

@@ -117,6 +117,30 @@ class PostTemplateDetails extends Component {
                   )}
                 </div>
               })}
+
+              <p>
+                <strong>Instructions:</strong>&nbsp; Use campaign data in the utm once gets created from this plan by putting variables inside of double-curly braces (e.g., "{"{{your-variable}}"}"). Spaces and most other punctuation will become automatically converted into hyphens. Note that variables can only be used like this in plans, not campaigns.
+              </p>
+              <p>
+                <strong>Available attributes:</strong>&nbsp;
+                <Flexbox>
+                  <Flexbox direction="column">
+                    <div>{"{{campaign.name}}"}</div>
+                    <div>{"{{campaign.id}}"}</div>
+                    <div>{"{{platform.name}}"}</div>
+                    <div>{"{{channel.type}}"}</div>
+                    <div>{"{{channel.name}}"}</div>
+                  </Flexbox>
+                  <Flexbox direction="column">
+                    <div>The name of the campaign</div>
+                    <div>A unique id number Growth Ramp assigns to each of your campaigns</div>
+                    <div>The name of the social media platform (e.g., "Facebook" or "Twitter")</div>
+                    <div>The type of channel the post is for (e.g., "Personal" or "Company-Page")</div>
+                    <div>The name of the channel if applicable (e.g., "My-Favorite-Group"). Will be blank if personal post</div>
+                  </Flexbox>
+
+                </Flexbox>
+              </p>
             </Flexbox>
 
           </div>
