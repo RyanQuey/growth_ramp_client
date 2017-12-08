@@ -132,6 +132,8 @@ function* fetchCurrentUser(action) {
     yield put({type: FETCH_PROVIDER_SUCCESS, payload: result.providerAccounts})
     yield put({type: FETCH_PLAN_SUCCESS, payload: result.plans})
 
+    action.cb && action.cb(result.user)
+
   } catch (err) {
     errorActions.handleErrors({
       templateName: "Login",

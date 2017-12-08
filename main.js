@@ -155,7 +155,8 @@ app.get(`${Helpers.callbackPath}/:provider`, (req, res, next) => {
         //if the user rejected the permissions they just asked to give...
         //const user = cookie.user
         //then, redirect back to app
-        return res.redirect(`/?alert=cancelledAuthorization&providerName=${providerName}`)
+        //NOTE: currently not using the providerName part
+        return res.redirect(`/?alert=canceledAuthorization&providerName=${providerName}`)
 
       case "unknown-error":
         //should never get here

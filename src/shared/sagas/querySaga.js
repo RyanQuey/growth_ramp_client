@@ -14,12 +14,14 @@ const handleQuery = (rawQuery) => {
   //pulls a global variable from the HTML file, what was dynamically rendered via the front end server
   //TODO: if I ever set other variables, change the way that these variables get passed around , so I don't have to parse more than once
   if (rawQuery) {
+    let cb
     const variables = rawQuery.replace(/^\?/, "").split('&')
     for (let i = 0; i < variables.length; i++) {
       try {
         const pair = variables[i].split('=')
         const key = decodeURIComponent(pair[0])
         const value = decodeURIComponent(pair[1])
+console.log(pair);
         switch (key) {
           case "user":
             const userData = JSON.parse(value)
@@ -40,39 +42,28 @@ const handleQuery = (rawQuery) => {
             const user = userData.user ? userData.user : userData
             const userPlans = userData.plans ? userData.plans : null
 
-            //setup the session
-            setupSession(user)
-            store.dispatch({type: FETCH_CURRENT_USER_REQUEST, payload: user})
-
-            break;
-
-          /*case "providers:
-            const provider = JSON.parse(value)
-
-            if (
-              !provider || !(typeof provider === "object") || Object.keys(provider).length === 0
-            ) {
-              Helpers.notifyOfAPIError({
-                title: "Error logging in using provider:",
-                message: "Please try again",
-                templateName: "Home",
-                templatePart: "noProvider",
-                alert: true
+            cb = () => {
+              let cu = Cookie.get('sessionUser');
+              alertActions.newAlert({
+                title: "Success!",
+                //TODO would send this even on signing in...eventually, be able to distinguish signing in and adding permissions for the message.
+                //message: "Permissions granted for this platform",
+                level: "SUCCESS",
               })
-              return
             }
 
-            store.dispatch({type: UPDATE_TOKEN_SUCCESS, payload: { [provider.name]: provider}})
-            break;*/
+            //setup the session
+            setupSession(user)
+            store.dispatch({type: FETCH_CURRENT_USER_REQUEST, payload: user, cb})
+
+            break;
 
           case "token":
             const token = value
 
             //retrieve the token data and handle
-console.log("about to post");
             axios.post(`/api/tokens/${token}/useToken`)
             .then((result) => {
-console.log("result of token");
               console.log(result);
               if (result.data.result.code === "promptLogin") {
                 store.dispatch({type: SET_CURRENT_MODAL, payload: "UserLoginModal", token: result.data.token, options: {credentialsOnly: true}})
@@ -86,6 +77,19 @@ console.log("result of token");
                 //prompt login
               }
             })
+
+            break;
+
+          case "alert":
+            const alertType = value
+
+            if (alertType === "canceledAuthorization") {
+              alertActions.newAlert({
+                title: "Warning:",
+                message: "Permissions not granted",
+                level: "WARNING",
+              })
+            }
 
             break;
         }
