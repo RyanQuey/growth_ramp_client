@@ -34,7 +34,7 @@ class UserCredentials extends Component {
   handleEmail(value, e, errors) {
     this.setState({
       email: value,
-      validEmail: (errors.length === 0),
+      validEmail: (!errors || errors.length === 0),
     })
   }
   setPending() {
