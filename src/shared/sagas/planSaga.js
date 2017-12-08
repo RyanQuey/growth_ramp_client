@@ -134,6 +134,8 @@ function* archive(action) {
       put({ type: ARCHIVE_PLAN_SUCCESS, payload: planData}),
     ])
 
+    action.cb && action.cb(planData)
+
   } catch (err) {
     console.log(`Error in archive plan Saga`)
     console.log(err.response || err)

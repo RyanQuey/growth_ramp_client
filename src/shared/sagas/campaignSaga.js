@@ -131,6 +131,7 @@ function* destroyCampaign(action) {
       put({type: USER_CAMPAIGNS_OUTDATED}),
     ])
 
+    action.cb && action.cb(res)
   } catch (err) {
     console.log('campaigns destroy failed', err)
   }
@@ -170,8 +171,6 @@ function* publishCampaign(action) {
 
     //mark campaign as published
     const results = yield axios.post(`/api/campaigns/${campaign.id}/publish`)
-    console.log("results from the campaign");
-    console.log(results);
     yield put({type: PUBLISH_CAMPAIGN_SUCCESS, payload: {
       campaign: results.data,
       posts: results.data.posts,

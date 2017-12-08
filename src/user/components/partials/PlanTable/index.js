@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { userActions, errorActions } from 'shared/actions'
 import { Button, Flexbox, Input, Card } from 'shared/components/elements'
-import { ButtonGroup } from 'shared/components/groups'
+import { ButtonGroup, ConfirmationPopup } from 'shared/components/groups'
 import {
   CHOOSE_PLAN,
   ARCHIVE_PLAN_REQUEST, //really just archives
@@ -19,9 +19,15 @@ class PlanTable extends Component {
   constructor(props) {
     super(props)
 
+    this.state = {
+      deleting: false,
+      deletePending: false,
+    }
+
     this.editPlan = this.editPlan.bind(this)
     this.showPlan = this.showPlan.bind(this)
     this.removePlan = this.removePlan.bind(this)
+    this.toggleDeleting = this.toggleDeleting.bind(this)
   }
 
   showPlan (plan, e) {
@@ -31,6 +37,12 @@ class PlanTable extends Component {
   editPlan (plan, e) {
     //will fetch anyways when we get there, since have to if user goes direcly from the url bar
     this.props.history.push(`/plans/${plan.id}/edit`)
+  }
+
+  //can be id or false
+  toggleDeleting (planId) {
+    const newState = typeof value === "boolean" ? value : !this.state.deleting
+    this.setState({deleting: planId})
   }
 
   removePlan (plan, e) {
@@ -74,7 +86,17 @@ class PlanTable extends Component {
                 <ButtonGroup vertical={true}>
                   <Button onClick={this.editPlan.bind(this, plan)}>Edit Plan</Button>
                   <Button onClick={this.showPlan.bind(this, plan)}>View Details</Button>
-                  <Button onClick={this.removePlan.bind(this, plan)}>Delete</Button>
+                  <div className={classes.popupWrapper}>
+                    <Button onClick={this.toggleDeleting.bind(this, planId)}>Delete</Button>
+                    {this.state.deleting === planId &&
+                      <ConfirmationPopup
+                        onConfirm={this.removePlan.bind(this, plan)}
+                        onCancel={this.toggleDeleting.bind(this, false)}
+                        pending={this.state.deletePending}
+                        dangerous={true}
+                      />
+                    }
+                  </div>
                 </ButtonGroup>
               </td>
             </tr>

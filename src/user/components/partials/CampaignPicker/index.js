@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 import { userActions, errorActions } from 'shared/actions'
 import { Button, Flexbox, Input } from 'shared/components/elements'
-import { ButtonGroup } from 'shared/components/groups'
+import { ButtonGroup, ConfirmationPopup } from 'shared/components/groups'
 import {
   FETCH_CURRENT_CAMPAIGN_REQUEST,
   DESTROY_CAMPAIGN_REQUEST,
@@ -19,9 +19,15 @@ class CampaignPicker extends Component {
   constructor(props) {
     super(props)
 
+    this.state = {
+      deleting: false,
+      deletePending: false,
+    }
+
     this.editCampaign = this.editCampaign.bind(this)
     this.showCampaign = this.showCampaign.bind(this)
     this.removeCampaign = this.removeCampaign.bind(this)
+    this.toggleDeleting = this.toggleDeleting.bind(this)
   }
 
   showCampaign (campaign, e) {
@@ -35,7 +41,20 @@ class CampaignPicker extends Component {
 
   removeCampaign (campaign, e) {
     //might just archive, but leaving that to the api to figure out :)
-    this.props.destroyCampaignRequest(campaign)
+    this.setState({deletePending: true})
+
+    const cb = () => {
+      this.setState({deletePending: false})
+      this.toggleDeleting(false)
+    }
+
+    this.props.destroyCampaignRequest(campaign, cb)
+  }
+
+  //can be id or false
+  toggleDeleting (campaignId) {
+    const newState = typeof value === "boolean" ? value : !this.state.deleting
+    this.setState({deleting: campaignId})
   }
 
   render() {
@@ -87,7 +106,19 @@ class CampaignPicker extends Component {
                 <ButtonGroup vertical={true}>
                   {campaign.status !== "PUBLISHED" && <Button onClick={this.editCampaign.bind(this, campaign)}>Edit Draft</Button>}
                   <Button onClick={this.showCampaign.bind(this, campaign)}>View Details</Button>
-                  {campaign.status !== "PUBLISHED" && <Button onClick={this.removeCampaign.bind(this, campaign)}>Delete</Button>}
+                  {campaign.status !== "PUBLISHED" && (
+                    <div className={classes.popupWrapper}>
+                      <Button onClick={this.toggleDeleting.bind(this, campaign.id)}>Delete</Button>
+                      {this.state.deleting === campaign.id &&
+                        <ConfirmationPopup
+                          onConfirm={this.removeCampaign.bind(this, campaign)}
+                          onCancel={this.toggleDeleting.bind(this, false)}
+                          pending={this.state.deletePending}
+                          dangerous={true}
+                        />
+                      }
+                    </div>
+                  )}
                 </ButtonGroup>
               </td>
             </tr>
@@ -103,7 +134,7 @@ const mapDispatchToProps = (dispatch) => {
   return {
     fetchCurrentCampaign: (campaign, options, cb) => dispatch({type: FETCH_CURRENT_CAMPAIGN_REQUEST, payload: campaign, options, cb}),
     setCurrentCampaign: (campaign) => dispatch({type: SET_CURRENT_CAMPAIGN, payload: campaign}),
-    destroyCampaignRequest: (campaign) => dispatch({type: DESTROY_CAMPAIGN_REQUEST, payload: campaign}),
+    destroyCampaignRequest: (campaign, cb) => dispatch({type: DESTROY_CAMPAIGN_REQUEST, payload: campaign, cb}),
     setCurrentModal: (payload) => dispatch({type: SET_CURRENT_MODAL, payload})
   }
 }

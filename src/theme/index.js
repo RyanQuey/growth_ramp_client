@@ -22,5 +22,7 @@ export default {
     google: 'rgb(221, 75, 57)',
     twitter: 'rgb(85, 172, 238)',
     linkedin: 'rgb(0, 119, 181)',
+    danger: '#da513d',
+    darkRed: '#7d2e23',
   }
 }

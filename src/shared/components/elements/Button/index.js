@@ -43,6 +43,22 @@ const STYLES = {
       hover: theme.color.lightPurpleGray,
     },
   },
+  danger: {
+    regular: {
+      background: theme.color.darkRed,
+      color: theme.color.white,
+      hover: theme.color.danger,
+    },
+    disabled: {
+      background: theme.color.moduleGrayOne,
+      color: theme.color.primary,
+    },
+    selected: {
+      background: theme.color.danger,
+      color: theme.color.white,
+      hover: theme.color.danger,
+    },
+  },
 }
 //takes the style prop and outputs preset button types
 const styles = (style, disabled, selected) => {
@@ -77,7 +93,7 @@ const Button = ({ style = 'primary', children, onClick, disabled, selected, type
     <button
       className={`${css(styles(style, disabled, selected).button)} ${classes.button} ${disabled ? classes.disabled : ""}`}
       onClick={onClick}
-      disabled={disabled}
+      disabled={disabled || pending}
       type={type || "button"}
     >
       {!pending ? children : <Icon name="spinner" /> }

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { Avatar, Button } from 'shared/components/elements'
-import { MenuItem } from 'shared/components/groups'
+import { MenuItem, Popup } from 'shared/components/groups'
 import { SIGN_OUT_REQUEST } from 'constants/actionTypes'
 import theme from 'theme'
 import avatar from 'images/avatar.png'
@@ -47,17 +47,14 @@ class AccountMenu extends Component {
         />
 
         {this.state.open ? (
-          <div>
-            <div className={classes.scrim}>
-              <span className={classes.caret}/>
-            </div>
+          <Popup body="left">
             <ul className={`${classes.menuDropdown}`}>
               {false && <MenuItem link="/settings" text="Settings" hoverType="textOnly" />}
               <MenuItem link="/" onClick={signOut} text="Sign Out" hoverType="textOnly"/>
             </ul>
-          </div>
+          </Popup>
         ) : (
-          <ul></ul>
+          null
         )}
       </div>
     )
