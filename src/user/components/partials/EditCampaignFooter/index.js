@@ -29,10 +29,12 @@ class EditCampaignFooter extends Component {
     const sectionIndex = sections.indexOf(this.props.currentSection)
     //TODO might want to centralize this logic with logic for automatically moving user to place in flow on initial loading somewhere, here or in EditPost
     const currentPost = Helpers.safeDataPath(this.props, "currentPost", {})
+    const dirty = this.props.campaignPostsForm.dirty
+
     const canGoForward = !this.props.currentCampaign ||
       this.props.currentSection !== "Send" &&
       (this.props.currentSection === "Start" && currentPost.planId) ||
-      (this.props.currentSection === "Compose" && Object.keys(this.props.providerAccounts))
+      (this.props.currentSection === "Compose" && !dirty && Object.keys(this.props.providerAccounts))
 
     const canGoBack = (
       this.props.currentCampaign.status === "DRAFT" && this.props.currentSection !== "Start"
@@ -51,6 +53,7 @@ const mapStateToProps = state => {
   return {
     providerAccounts: state.providerAccounts,
     currentCampaign: state.currentCampaign,
+    campaignPostsForm: Helpers.safeDataPath(state.forms, "EditCampaign.posts", {}),
   }
 }
 const mapDispatchToProps = (dispatch) => {
