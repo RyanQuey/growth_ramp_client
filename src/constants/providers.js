@@ -71,7 +71,7 @@ module.exports = {
         //PRIVATE_MESSAGE: [probably friends, ],
         //GROUP_POST: ['w_share'], discontinued: https://www.linkedin.com/help/linkedin/answer/81635/groups-api-no-longer-available?lang=en
         PAGE_POST: {
-          name: "Page",
+          name: "Company Page",
           requiredScopes: ['rw_company_admin'], //mostly for businesses https://developer.linkedin.com/docs/company-pages. Watch out, will want to check page settings to see if they have permitted it in their linkedIn accoutn
           hasMultiple: true,
           maxImages: 1,

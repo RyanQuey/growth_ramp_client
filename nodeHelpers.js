@@ -247,6 +247,59 @@ const Helpers = {
     state: true, //a security thing
   },
 
+  //checks if user rejected the request to add permission...though they had asked for it...
+  parseProviderResponse: {
+    //TODO implement for other platforms
+    linkedin: (req, err, raw) => {
+      //if the user rejected the permissions they just asked to give...
+      if (err && err.code === 'user_cancelled_authorize') {
+        return "user-rejected"
+
+      } else if (err || !raw) {
+        console.log("should never get here (LI)");
+        console.log("ERROR: Unknown");
+        console.log(err);
+
+        return "unknown-error"
+      }
+
+      return "success"
+    },
+    facebook: (req, err, raw) => {
+      console.log(err);
+      //if the user rejected the permissions they just asked to give...
+      if (req.query && req.query.error === 'access_denied') {
+        //then, redirect back to app
+        return "user-rejected"
+
+      } else if (err || !raw){
+        console.log("should never get here (FB)");
+        console.log("ERROR: Unknown");
+        console.log(err);
+
+        return "unknown-error"
+      }
+
+      return "success"
+    },
+    twitter: (req, err, raw) => {
+      //if the user rejected the permissions they just asked to give...
+      if (req.query && req.query.denied) {
+        //then, redirect back to app
+        return "user-rejected"
+
+      } else if (err || !raw) {
+        console.log("should never get here (FB)");
+        console.log("ERROR: Unknown");
+        console.log(err);
+
+        return "unknown-error"
+      }
+
+      return "success"
+    },
+  }
+
 }
 
 module.exports = Helpers

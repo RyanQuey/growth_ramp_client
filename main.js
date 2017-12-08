@@ -147,34 +147,39 @@ app.get(`${Helpers.callbackPath}/:provider`, (req, res, next) => {
     console.log("********************************************");
     console.log("user and provider", raw, "info",info);*/
     console.log(err, raw, info);
-    if (err || !raw) {
-      console.log("error after authenticating into provider: (if null, no data returned from passport...)");
-      console.log(err);
-      if (!err) {
-        //console.log(req);
-      }
 
-      //TODO implement for other platforms
-      if (providerName === 'linkedin') {
+    const result = Helpers.parseProviderResponse[providerName](req, err, raw)
+
+    switch (result) {
+      case "user-rejected":
         //if the user rejected the permissions they just asked to give...
-        if (err.code === 'user_cancelled_authorize') {
-          //revoking all right permissions (at least, our record of their write permissions
-          //unfortunately, LI doesn't seem to return data on all the scopes that the user has given...so this is all necessary
-          const user = cookie.user
-          //then, redirect back to app
-          return res.redirect(`/?alert=cancelledAuthorization&providerName=${providerName}`)
-        }
+        //const user = cookie.user
+        //then, redirect back to app
+        return res.redirect(`/?alert=cancelledAuthorization&providerName=${providerName}`)
 
-        console.log("should never get here (LI)");
+      case "unknown-error":
+        //should never get here
         //next ... breaks the app, puts node err message on screen
         return next(err);
 
-      } else {
-        console.log("should never get here (NOT LI)");
-        return next(err);
-      }
+      case "success":
+        //worked fine!
+
+      default:
+        //worked fine!
     }
-//man...could have just taken the cookie from the req.header  and returned that as the user. Oh well
+
+    if (err || !raw) {
+      //should never get here...totally unhandled error
+      //try to handle everything in Helpers.parseProviderResponse
+      console.log(`error after authenticating into ${providerName}: `);
+      console.log(err);
+
+      return next(err || `Nothing returned after authenticating into ${providerName} (don't know why) `);
+    }
+    //otherwise, things worked fine
+
+    //man...could have just taken the cookie from the req.header  and returned that as the user. Oh well
     const data = JSON.parse(raw)
     const user = JSON.stringify(data.user)
     const provider = JSON.stringify(data.provider)
