@@ -7,7 +7,7 @@ import classes from './style.scss'
 //hoverType:
 //  noHover turns off changes on hover altogether
 //  textOnly only changes the font color on hover
-const MenuItem = ({ text, children, icon, link, nav, onClick, location, badge, hoverType, exact = false }) => {
+const MenuItem = ({ text, children, icon, link, nav, onClick, location, badge, hoverType, exact = false, selected }) => {
   let content = (
     <div>
       {badge && <span className={classes.badge}>{badge}</span>}
@@ -29,9 +29,9 @@ const MenuItem = ({ text, children, icon, link, nav, onClick, location, badge, h
         </Link>
       }
       {!link &&
-        content
+        <div className={`${classes.noLink} ${selected ? classes.navActive : ""}`}>{content}</div>
       }
-      {location.pathname.includes(link) && children}
+      {(location.pathname.includes(link) || selected) && children}
     </li>
   )
 }

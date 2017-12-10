@@ -28,3 +28,21 @@
   margin: 10px;
   cursor: pointer;
 }
+.toUpdate {
+  border: blue solid 1.5px;
+  caption {
+    color: blue;
+  }
+}
+.toCreate {
+  border: green solid 1.5px;
+  caption {
+    color: green;
+  }
+}
+.toDelete {
+  border: red solid 1.5px;
+  caption {
+    color: red;
+  }
+}

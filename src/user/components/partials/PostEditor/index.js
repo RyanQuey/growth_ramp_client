@@ -152,7 +152,7 @@ class PostEditor extends Component {
 
     return (
       <Flexbox direction="column" >
-        <h2>{post.channelType.titleCase()}</h2>
+        <h2>{Helpers.providerFriendlyName(post.provider)} {post.channelType.titleCase()}</h2>
         {false && <div className={classes.disablePost}>
           <Checkbox
             value={post.active}
@@ -173,11 +173,11 @@ class PostEditor extends Component {
                 maxLength={maxCharacters - URL_LENGTH}
              />
 
-                <label>{imageCount < maxImages ? "Click or drag a file to upload" : "(No more images allowed for this kind of post)"}</label>
+              {imageCount > maxImages && <label>(No more images allowed for this kind of post)</label>}
               <Flexbox>
                 {imageCount < maxImages && <DropImage
                   user={this.props.user}
-                  label="+"
+                  label="Upload an image"
                   onStart={this.onDrop}
                   onSuccess={this.onUpload}
                   onFailure={this.onUpload}
@@ -199,7 +199,7 @@ class PostEditor extends Component {
               </Flexbox>
             </Flexbox>
 
-            <Flexbox flexWrap="wrap" className={classes.utms}>
+            <Flexbox className={classes.utms} justify="flex-start" align="flex-start" direction="column">
               {UTM_TYPES.map((utmType) => {
                 //TODO want to extract for use with plan editor...if we have a plan editor
                 const type = utmType.type

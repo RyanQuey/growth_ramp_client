@@ -17,12 +17,25 @@ class PostTemplateCard extends Component {
 
 
   render () {
-    const { postTemplate, selected, onClick, height, maxWidth, className, showUtms, showIcon } = this.props
+    const { postTemplate, selected, onClick, height, maxWidth, className, showUtms, showIcon, status } = this.props
     if (!postTemplate) {return null} //shouldn't happen, but whatever
+    let subtitle
+    switch(status) {
+      case "toDelete":
+        subtitle = "Ready to Delete"
+        break
+      case "toCreate":
+        subtitle = "Ready to Create"
+        break
+      case "toUpdate":
+        subtitle = "Ready to Update"
+        break
+    }
+
 
     return (
       <Card selected={selected} onClick={onClick} height={height} maxWidth={maxWidth} className={className}>
-        <CardHeader title={postTemplate.channelType.titleCase()} icon={showIcon && postTemplate.provider.toLowerCase()} iconColor={postTemplate.provider.toLowerCase()}/>
+        <CardHeader title={postTemplate.channelType.titleCase()} subtitle={subtitle} icon={showIcon && postTemplate.provider.toLowerCase()} iconColor={postTemplate.provider.toLowerCase()}/>
 
         <Flexbox direction="column" >
           {PROVIDERS[postTemplate.provider].channelTypes[postTemplate.channelType].hasMultiple && postTemplate.channelId && (

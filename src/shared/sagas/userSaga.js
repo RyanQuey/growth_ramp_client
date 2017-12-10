@@ -191,11 +191,18 @@ function* updateUser(action) {
 }
 
 function* resetPassword(action) {
-console.log("now updating user");
   try {
     const email = action.payload
     const res = yield axios.post(`/api/users/resetPassword`, {email})
     yield put({type: RESET_PASSWORD_SUCCESS, payload: email})
+
+    alertActions.newAlert({
+      title: "Successfully reset password:",
+      message: "Please check your e-mail for instructions to set your new password",
+      level: "SUCCESS",
+      timer: false,
+    })
+    action.cb && action.cb(result.user)
 
   } catch (err) {
     errorActions.handleErrors({

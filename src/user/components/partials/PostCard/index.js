@@ -15,21 +15,33 @@ class PostCard extends Component {
 
   }
 
-
   render () {
-    const { post, selected, onClick, height, maxWidth, className, showUtms, showIcon, showLink, showImages } = this.props
+    const { post, selected, status, onClick, height, maxWidth, className, showUtms, showIcon, showLink, showImages} = this.props
     if (!post) {return null} //shouldn't happen, but whatever
 
+    let subtitle
+    switch(status) {
+      case "toDelete":
+        subtitle = "Ready to Delete"
+        break
+      case "toCreate":
+        subtitle = "Ready to Create"
+        break
+      case "toUpdate":
+        subtitle = "Ready to Update"
+        break
+    }
+
     return (
-      <Card selected={selected} onClick={onClick} height={height} maxWidth={maxWidth} className={className}>
-        <CardHeader title={post.channelType.titleCase()} icon={showIcon && post.provider.toLowerCase()} iconColor={post.provider.toLowerCase()}/>
+      <Card selected={selected} onClick={onClick} height={height} maxWidth={maxWidth} className={`${className} ${classes[status]}`}>
+        <CardHeader title={post.channelType.titleCase()} subtitle={subtitle} icon={showIcon && post.provider.toLowerCase()} iconColor={post.provider.toLowerCase()}/>
 
         <Flexbox direction="column" >
           {PROVIDERS[post.provider].channelTypes[post.channelType].hasMultiple && post.channelId && (
             <div><strong>Channel:</strong>&nbsp;{post.channelId.name}</div>
           )}
 
-          <div><strong>Text:</strong>&nbsp;{post.text}</div>
+          <div><strong>Text:</strong>&nbsp;{post.text || "(none)"}</div>
           {showLink && <div><strong>Short Link:</strong>&nbsp;{post.shortUrl}</div>}
 
           {showImages && <Flexbox>

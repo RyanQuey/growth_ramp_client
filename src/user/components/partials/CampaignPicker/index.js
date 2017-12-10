@@ -77,6 +77,7 @@ class CampaignPicker extends Component {
         </tr>
         {campaignIds.map((campaignId) => {
           const campaign = this.props.campaigns[campaignId]
+console.log(campaign)
           //not sure why this keeps on happening, but it does
           if (!campaign) {return null}
 

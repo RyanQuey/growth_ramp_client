@@ -5,7 +5,8 @@
   cursor: pointer;
   text-align: left;
   list-style: none;
-  & > a, & > a:visited {
+  //basic style for all links
+  & > a, & > a:visited, & > .noLink {
     display: block;
     padding: 10px 20px;
     background: $nav-bg;
@@ -16,7 +17,8 @@
     }
   }
 
-  & > a.navActive {
+  //for any active nav, w/ or w/o link
+  & > a.navActive, div.navActive.noLink {
     background: $nav-hover-bg;
     color: $nav-hover-font;
     &:hover {
@@ -32,6 +34,8 @@
       background: inherit;
     }
   }
+
+  //using for navbar items mostly
   & > a.textOnly,
   & > a.textOnly:visited,
   & > a.navActive.textOnly {

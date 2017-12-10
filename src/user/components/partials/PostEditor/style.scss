@@ -11,10 +11,10 @@
 
 .postFields {
   .textEditor {
+    //TODO size by characters, depending on the maximum allowed for that post type
     textarea {
-      resize: none;
-      height: 150px;
-      width: 300px;
+      //resize: none;
+      width: 100%;
     }
 
     .dropImage {
@@ -27,17 +27,10 @@
 }
 
 .utms {
-  width: 100%;
-  .utmHeader {
-    margin: .5rem;
+  div {
+    display: inline-block;
   }
   .utmField {
-    @include mq(xs) {
-      @include cols(6)
-    }
-    @include mq(sm) {
-      @include cols(3)
-    }
   }
 
 }

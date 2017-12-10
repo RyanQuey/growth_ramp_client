@@ -187,6 +187,7 @@ app.get(`${Helpers.callbackPath}/:provider`, (req, res, next) => {
     //NOTE: don't try changing this are making more simple, unless you have lots of free time...is just a time drain
     //it appears that you cannot change the URL in the browser without doing res.redirect, even if you change the req.query, or res.locals
     //and another approach would be to set res.locals, then transform the html file before sending...but that seems potentially dangerous and hacky.(?). this saves a step.
+console.log("now redirecting");
     res.redirect(`/?user=${user}&provider=${provider}`)
     //next()
   }
@@ -201,6 +202,7 @@ app.get(`${Helpers.callbackPath}/:provider`, (req, res, next) => {
 app.use('/api/*', function(req, res) {
   const method = req.method.toLowerCase();
   const body = req.body;
+console.log("now contacting API");
   //for some reason axios is using 'content-type': 'application/json;charset=UTF-8'
   //this might have something to do with it: https://github.com/axios/axios/issues/362
   delete req.headers["content-type"]

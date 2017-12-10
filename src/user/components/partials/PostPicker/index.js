@@ -87,32 +87,39 @@ class PostPicker extends Component {
 
     return (
       <div >
-        <h3>Your posts:</h3>
+        <h2>Your Posts:</h2>
         {!Object.keys(sortedPosts).length && <div>No posts yet</div>}
 
         <Flexbox className={classes.postMenu}>
           {providers.map((provider) => {
             let providerPosts = sortedPosts[provider]
             return (
-              <Flexbox key={provider} className={classes.providerColumn} direction="column" >
+              <Flexbox key={provider} className={classes.providerColumn} direction="column" align="center">
                 <h3>{PROVIDERS[provider].name}</h3>
 
-                {providerPosts.map((post) =>
-                  <PostCard
+                {providerPosts.map((post) => {
+
+                  let status
+                  if (post.toDelete) {
+                    status = "toDelete"
+                  } else if (typeof post.id === "string") {
+                    status = "toCreate"
+
+                  } else if (post.dirty){
+                    status = "toUpdate"
+                  }
+
+                  return <PostCard
                     key={post.id}
-                    className={`
-                      ${classes.postCard}
-                      ${post.dirty ? classes.dirty : ""}
-                      ${post.toDelete ? classes.toDelete : ""}
-                      ${typeof post.id === "string" ? classes.toCreate : ""}
-                    `}
+                    className={`${classes.postCard}`}
                     post={post}
+                    status={status}
                     height="110px"
                     maxWidth="220px"
                     onClick={this.setCurrentPost.bind(this, post)}
                     selected={this.props.currentPost && this.props.currentPost.id === post.id}
                   />
-                )}
+                })}
 
                 <Card
                   onClick={this.props.toggleAdding.bind(this, provider)}

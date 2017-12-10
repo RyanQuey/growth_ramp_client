@@ -20,15 +20,6 @@
 
     .postCard {
       width: 100%;
-      &.dirty {
-        border: blue solid;
-      }
-      &.toCreate {
-        border: green solid;
-      }
-      &.toDelete {
-        border: red solid;
-      }
     }
   }
 }

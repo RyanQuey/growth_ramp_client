@@ -136,17 +136,8 @@ class Compose extends Component {
 
     return (
       <div>
-        <h1 className="display-3">Where should we promote it?</h1>
+        <h1 className="display-3">Compose Your Posts</h1>
         {this.state.status === "PENDING" && <Icon name="spinner" className="fa-spin" />}
-
-        <div>
-          <PostPicker
-            account={currentAccount}
-            channel={this.state.currentChannel}
-            toggleAdding={this.toggleAdding}
-            addingPost={this.state.addingPost}
-          />
-        </div>
 
         {this.state.addingPost ? (
 
@@ -172,9 +163,18 @@ class Compose extends Component {
               currentChannel={currentChannel}
             />
 
-            <Button style="inverted" disabled={!dirty} onClick={this.saveCampaignPosts}>{dirty ? "Save changes" : "All drafts saved"}</Button>
+            <Button style="inverted" disabled={!dirty} onClick={this.saveCampaignPosts}>{dirty ? "Save Changes" : "All drafts saved"}</Button>
           </div>
         )}
+            <div>
+              <PostPicker
+                account={currentAccount}
+                channel={this.state.currentChannel}
+                toggleAdding={this.toggleAdding}
+                addingPost={this.state.addingPost}
+              />
+            </div>
+
       </div>
     );
   }

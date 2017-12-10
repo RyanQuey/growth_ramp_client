@@ -220,6 +220,7 @@ console.log();
         channelTypeHasMultiple = PROVIDERS[currentProvider].channelTypes[currentChannelType].hasMultiple
         channelTypeName = PROVIDERS[currentProvider].channelTypes[currentChannelType].name
         let channelsForType = currentAccount.channels.filter((c) => c.type === currentChannelType)
+
         channelOptions = channelsForType.map((channel) => (
           this.channelOption(channel)
         ))
@@ -236,7 +237,7 @@ console.log();
         {!this.props.providerAccounts || !this.props.providerAccounts[currentProvider].length ? (
           <div>
             <div>Growth Ramp needs your permission to make posts for {PROVIDERS[currentProvider].name}</div>
-            <Button style="inverted" onClick={this.openProviderModal}>Grant Provider to continue</Button>
+            <Button style="inverted" onClick={this.openProviderModal}>Grant Permission to Continue</Button>
           </div>
 
         ) : (

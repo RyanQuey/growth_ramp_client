@@ -99,22 +99,27 @@ console.log("now setting",postTemplate);
               <Flexbox key={provider} className={classes.providerColumn} direction="column" >
                 <h3>{PROVIDERS[provider].name}</h3>
 
-                {providerPostTemplates.map((postTemplate) =>
-                  <PostTemplateCard
+                {providerPostTemplates.map((postTemplate) => {
+                  let status
+                  if (postTemplate.toDelete) {
+                    status = "toDelete"
+                  } else if (typeof postTemplate.id === "string") {
+                    status = "toCreate"
+
+                  } else if (postTemplate.dirty){
+                    status = "toUpdate"
+                  }
+
+                  return <PostTemplateCard
                     key={postTemplate.id}
-                    className={`
-                      ${classes.postTemplateCard}
-                      ${postTemplate.dirty ? classes.dirty : ""}
-                      ${postTemplate.toDelete ? classes.toDelete : ""}
-                      ${typeof postTemplate.id === "string" ? classes.toCreate : ""}
-                    `}
+                    className={`${classes.postTemplateCard}`}
                     postTemplate={postTemplate}
                     height="110px"
                     maxWidth="220px"
                     onClick={this.setCurrentPostTemplate.bind(this, postTemplate)}
                     selected={this.props.currentPostTemplate && this.props.currentPostTemplate.id === postTemplate.id}
                   />
-                )}
+                })}
 
                 {mode === "EDIT" && <Card
                   onClick={this.props.toggleAdding.bind(this, provider)}

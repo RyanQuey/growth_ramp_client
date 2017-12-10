@@ -87,7 +87,7 @@ module.exports = {
           name: "Personal",
           requiredScopes: [],//tweet. distinct from business post?
           hasMultiple: false,
-          maxImages: 1,
+          maxImages: 4,
           maxCharacters: 280,
         },
         //PRIVATE_MESSAGE:,, TODO want to support soon

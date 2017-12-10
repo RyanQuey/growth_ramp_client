@@ -49,6 +49,7 @@ class UserCredentials extends Component {
     let password = this.state.password
     let email = this.state.email
     let token = this.props.viewSettings.modalToken
+    let cb
 
     if (this.props.view === "SET_CREDENTIALS") {
       this.props.updateUser({
@@ -57,6 +58,12 @@ class UserCredentials extends Component {
       })
 
     } else if (this.props.view === "RESETTING_PASSWORD") {
+      cb = () => {
+        this.props.setPending(false)
+        this.setState({
+          //change view to login
+        })
+      }
       this.props.resetPasswordRequest(email)
 
     } else {
@@ -101,7 +108,11 @@ class UserCredentials extends Component {
         }
 
         <Button
-          disabled={(!this.state.validEmail || (!this.props.passwordOnly && !this.state.password) || this.props.pending)}
+          disabled={(
+            (!this.props.passwordOnly && !this.state.validEmail) ||
+            (view !== "RESETTING_PASSWORD" && !this.state.password) ||
+            this.props.pending
+          )}
           type="submit"
 
         >

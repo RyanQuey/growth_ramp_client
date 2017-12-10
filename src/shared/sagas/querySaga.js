@@ -14,6 +14,7 @@ const handleQuery = (rawQuery) => {
   //pulls a global variable from the HTML file, what was dynamically rendered via the front end server
   //TODO: if I ever set other variables, change the way that these variables get passed around , so I don't have to parse more than once
   if (rawQuery) {
+
     let cb
     const variables = rawQuery.replace(/^\?/, "").split('&')
     for (let i = 0; i < variables.length; i++) {
@@ -21,7 +22,6 @@ const handleQuery = (rawQuery) => {
         const pair = variables[i].split('=')
         const key = decodeURIComponent(pair[0])
         const value = decodeURIComponent(pair[1])
-console.log(pair);
         switch (key) {
           case "user":
             const userData = JSON.parse(value)
@@ -41,7 +41,6 @@ console.log(pair);
 
             const user = userData.user ? userData.user : userData
             const userPlans = userData.plans ? userData.plans : null
-
             cb = () => {
               let cu = Cookie.get('sessionUser');
               alertActions.newAlert({
@@ -51,7 +50,6 @@ console.log(pair);
                 level: "SUCCESS",
               })
             }
-
             //setup the session
             setupSession(user)
             store.dispatch({type: FETCH_CURRENT_USER_REQUEST, payload: user, cb})
@@ -93,6 +91,7 @@ console.log(pair);
 
             break;
         }
+
       } catch (err) {
         //TODO make an alert
         //I really just want to make provider stuff a popup...

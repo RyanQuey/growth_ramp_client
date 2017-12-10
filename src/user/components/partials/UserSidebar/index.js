@@ -25,9 +25,7 @@ class UserSidebar extends Component {
     e.preventDefault()
     switch(menuItem) {
       case "providerAccounts":
-        if (Object.keys(this.props.providerAccounts).length) {
-          this.setState({providerAccounts: true})
-        }
+        this.setState({providerAccounts: true})
         break
     }
   }
@@ -44,15 +42,13 @@ class UserSidebar extends Component {
           <ul className={classes.sidebarNav}>
             <MenuItem link="/campaigns" text="Campaigns" nav={true} exact={true} icon="bullhorn"/>
             <MenuItem link="/plans" text="Plans" nav={true} icon="map"/>
-            <MenuItem link="/providerAccounts" text="Platforms" nav={true} onClick={this.handleClick.bind(this, "providerAccounts")} icon="vcard">
-              {(true || this.state.providerAccounts) && (
-                <ul>
-                  {Object.keys(this.props.providerAccounts).map((providerName) => (
-                    <MenuChild key={providerName} text={PROVIDERS[providerName].name} link={`/providerAccounts/${providerName.toLowerCase()}`} nav={true} icon={providerName.toLowerCase()}/>
-                  ))}
-                  <MenuChild text="New Account" onClick={this.openNewProviderModal} link={`/providerAccounts`} icon="plus-circle"/>
-                </ul>
-              )}
+            <MenuItem link={false && "/providerAccounts"} text="Platforms" selected={this.state.providerAccounts} onClick={this.handleClick.bind(this, "providerAccounts")} icon="vcard">
+              <ul>
+                {Object.keys(this.props.providerAccounts).map((providerName) => (
+                  <MenuChild key={providerName} text={PROVIDERS[providerName].name} link={`/providerAccounts/${providerName.toLowerCase()}`} nav={true} icon={providerName.toLowerCase()}/>
+                ))}
+                <MenuChild text="New Account" onClick={this.openNewProviderModal} link={`/providerAccounts`} icon="plus-circle"/>
+              </ul>
             </MenuItem>
             {false && <MenuItem link="/workgroups" text="Workgroups" nav={true} icon="users"/>}
 

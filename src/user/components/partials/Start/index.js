@@ -122,7 +122,7 @@ class Start extends Component {
         <h1 className="display-3">Start</h1>
         <Input
           value={campaignParams.name}
-          placeholder="Awesome blog post"
+          placeholder="e.g., Awesome blog post"
           label="Campaign name:"
           validations={["required"]}
           onChange={this.handleChangeName}
@@ -130,7 +130,7 @@ class Start extends Component {
         <Input
           value={campaignParams.contentUrl || ""}
           label="What would you like to promote?"
-          placeholder="https://www.website.com/awesome-blog-post"
+          placeholder="e.g., https://www.website.com/awesome-blog-post"
           disabled={currentCampaign.status !== "DRAFT"}
           validations={["url"]}
           onChange={this.handleUrl}

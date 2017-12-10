@@ -21,12 +21,8 @@ class Campaigns extends Component {
 
   }
 
-  componentDidMount() {
-  }
-
   render() {
     //const posts = this.props.campaigns
-
     return (
       <div>
         <ViewCampaigns />

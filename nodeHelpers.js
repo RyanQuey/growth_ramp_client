@@ -234,7 +234,7 @@ const Helpers = {
       'permissions', //this app 's current permissions
     ],
     passReqToCallback: true,//to extract the code from the query...for some reason, passport doesn't get it by default. also to get cookies
-    //scope: 'email, '
+    scope: ["publish_actions"],
   },
 
   linkedinOptions: {
@@ -242,7 +242,7 @@ const Helpers = {
     clientSecret: env.CLIENT_LINKEDIN_SECRET,
     callbackURL: `${callbackUrl}/linkedin`,
     //gets read access for these two
-    scope: ['r_emailaddress', 'r_basicprofile'],
+    scope: ['r_emailaddress', 'r_basicprofile', 'w_share'],
     passReqToCallback: true,//to extract the code from the query...for some reason, passport doesn't get it by default. also to get cookies
     state: true, //a security thing
   },

@@ -69,7 +69,7 @@ console.log(channelPosts);*/
             channelType={currentChannel}
             post={currentPostParams}
           />
-          <Button style="inverted" onClick={this.removePost.bind(this, currentPost)}>Destroy Post</Button>
+          <Button style="danger" onClick={this.removePost.bind(this, currentPost)}>Delete Post</Button>
         </div>
     )
   }
