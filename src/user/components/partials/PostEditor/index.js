@@ -48,9 +48,8 @@ class PostEditor extends Component {
   toggleUtm(utmType, checked, e) {
     //update the post form
     let post = Object.assign({}, this.props.post)
-    let utmFields = Object.assign({}, Helpers.safeDataPath(this.props.formOptions, `${this.props.post.id}.utms`, {}))
-
-    utmFields[utmType].active = checked
+    //let utmField = Object.assign({}, Helpers.safeDataPath(this.props.postParams, `${this.props.post.id}.${utmType}`, {}))
+    post[utmType].active = checked
     post.dirty = true
 
     formActions.setParams("EditCampaign", "posts", {[post.id]: post})
@@ -209,24 +208,24 @@ class PostEditor extends Component {
                 const key = Helpers.safeDataPath(post, `${type}.key`, "")
                 return (
                   <div key={type} className={classes.utmField}>
-                    <div>
+                    <div className={classes.utmCheckbox}>
                       <Checkbox
                         value={active}
                         onChange={this.toggleUtm.bind(this, type)}
                         label={`${label.titleCase()} UTM`}
                       />&nbsp;
 
-                      {active && <Input
-                        placeholder={`${label.titleCase()} utm for this template`}
-                        onChange={this.updateUtm.bind(this, type, false)}
-                        value={value}
-                      />}
-                      {active && type === "customUtm" && <Input
-                        placeholder={`Key for this utm`}
-                        onChange={this.updateUtm.bind(this, type, "settingKey")}
-                        value={key}
-                      />}
                     </div>
+                    {active && <Input
+                      placeholder={false ? `${label.titleCase()} utm for this template` : ""}
+                      onChange={this.updateUtm.bind(this, type, false)}
+                      value={value}
+                    />}
+                    {active && type === "customUtm" && <Input
+                      placeholder={`Key for this utm`}
+                      onChange={this.updateUtm.bind(this, type, "settingKey")}
+                      value={key}
+                    />}
                   </div>
                 )
               })}
@@ -243,7 +242,7 @@ const mapStateToProps = state => {
   return {
     user: state.user,
     uploadedFiles: Helpers.safeDataPath(state.forms, "EditCampaign.uploadedFiles", []),
-    formOptions: Helpers.safeDataPath(state.forms, "EditCampaign.posts.options", {}),
+    postsParams: Helpers.safeDataPath(state.forms, "EditCampaign.posts.params", {}),
   }
 }
 const mapDispatchToProps = (dispatch) => {

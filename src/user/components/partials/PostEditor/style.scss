@@ -30,7 +30,16 @@
   div {
     display: inline-block;
   }
+  .utmCheckbox {
+    width: 200px;
+    text-align: left;
+
+    i {
+      width: 20px;
+    }
+  }
   .utmField {
+    line-height: 1.7rem;
   }
 
 }

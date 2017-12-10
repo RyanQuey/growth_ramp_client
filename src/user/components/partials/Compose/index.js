@@ -166,14 +166,15 @@ class Compose extends Component {
             <Button style="inverted" disabled={!dirty} onClick={this.saveCampaignPosts}>{dirty ? "Save Changes" : "All drafts saved"}</Button>
           </div>
         )}
-            <div>
-              <PostPicker
-                account={currentAccount}
-                channel={this.state.currentChannel}
-                toggleAdding={this.toggleAdding}
-                addingPost={this.state.addingPost}
-              />
-            </div>
+        <div>
+          <hr/>
+          <PostPicker
+            account={currentAccount}
+            channel={this.state.currentChannel}
+            toggleAdding={this.toggleAdding}
+            addingPost={this.state.addingPost}
+          />
+        </div>
 
       </div>
     );

@@ -38,7 +38,6 @@ const MenuItem = ({ text, children, icon, link, nav, onClick, location, badge, h
 
 MenuItem.propTypes = {
   children: PropTypes.node,
-  link: PropTypes.string,
   nav: PropTypes.bool,
 }
 
