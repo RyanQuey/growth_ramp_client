@@ -46,12 +46,14 @@ class PlanTable extends Component {
   }
 
   removePlan (plan, e) {
-    //what to do with associated posts?
-    //Not a problem if change the workflow as suggested to Jason
-    this.props.archivePlanRequest(plan)
-    this.setState({
-      currentPlan: null,
-    })
+    this.setState({deletePending: true})
+
+    const cb = () => {
+      this.setState({deletePending: false})
+      this.toggleDeleting(false)
+    }
+
+    this.props.archivePlanRequest(plan, cb)
   }
 
   render() {
@@ -110,6 +112,7 @@ class PlanTable extends Component {
 
 const mapDispatchToProps = (dispatch) => {
   return {
+    archivePlanRequest: (campaign, cb) => dispatch({type: ARCHIVE_PLAN_REQUEST, payload: campaign, cb}),
   }
 }
 

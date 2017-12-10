@@ -91,14 +91,14 @@ class SavePlanFromCampaign extends Component {
 
     const userId = this.props.user.uid
     const campaign = this.props.currentCampaign
-    const campaignPlan = campaign && this.props.plans && this.props.plans[campaign.planId]
+    const campaignPlan = Helpers.safeDataPath(this.props, `plans.${campaign.planId}`, false)
 
     return (
       <div id="send-container">
 
         {this.state.mode === "CHOOSE_MODE" && (
           <div>
-            {campaign.planId &&
+            {campaignPlan &&
               <Button
                 onClick={this.handleChoose.bind(this, "UPDATE_CURRENT_PLAN")}
               >
@@ -123,7 +123,7 @@ class SavePlanFromCampaign extends Component {
               placeholder="Plan name"
             />
 
-            <Button onClick={this.goBack}>Back</Button>
+            {false && <Button onClick={this.goBack}>Back</Button>}
             <Button
               disabled={!this.state.name && "disabled"}
               type="submit"

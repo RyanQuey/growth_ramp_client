@@ -30,7 +30,7 @@ Flexbox.propTypes = {
   align: PropTypes.string,
   background: PropTypes.string,
   className: PropTypes.string,
-  children: PropTypes.node.isRequired,
+  children: PropTypes.node,
   direction: PropTypes.string,
   justify: PropTypes.string,
   flexWrap: PropTypes.string,

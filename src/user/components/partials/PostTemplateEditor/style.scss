@@ -9,41 +9,21 @@
   }
 }
 
-.postFields {
-  .textEditor {
-    textarea {
-      resize: none;
-      height: 150px;
-      width: 300px;
-    }
-
-    .dropImage {
-      height: 125px;
-      width: 125px;
-      margin: 10px;
-      cursor: pointer;
-    }
-  }
-}
-
 .utms {
-  width: 100%;
-  .utmHeader {
-    margin: .5rem;
+  div {
+    display: inline-block;
+  }
+  .utmCheckbox {
+    width: 200px;
+    text-align: left;
+
+    i {
+      width: 20px;
+    }
   }
   .utmField {
-    @include mq(xs) {
-      @include cols(6)
-    }
-    @include mq(sm) {
-      @include cols(3)
-    }
+    line-height: 1.7rem;
   }
 
-}
-.dropImage {
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position: center;
 }
 

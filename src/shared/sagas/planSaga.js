@@ -62,32 +62,32 @@ function* create(action) {
 
     let associatedCampaign = pld.associatedCampaign
 
-    let res
+    let res, newRecord
 
     if (associatedCampaign) {
       newPlan.associatedCampaign = associatedCampaign
 
       res = yield axios.post("/api/plans/createFromCampaign", newPlan) //eventually switch to socket
+      newRecord = res.data.newPlan
+      let updatedCampaign = res.data.updatedCampaign
+
+      store.dispatch({
+        type: UPDATE_CAMPAIGN_SUCCESS,
+        payload: Object.assign({}, updatedCampaign)
+      })
+      //posts on that campaign are currently outdated in that they have new plan id; have been updated in api, and returned to browser, but not doing anything in redux
+      //will get refreshed when campaign gets opened anyways.
 
     } else {
       res = yield axios.post("/api/plans", newPlan) //eventually switch to socket
-    }
-
-    const newRecord = res.data
-
-    if (associatedCampaign) {
-      store.dispatch({
-        type: UPDATE_CAMPAIGN_SUCCESS,
-        payload: Object.assign({}, associatedCampaign, {
-          planId: newRecord.id
-        }),
-      })
+      newRecord = res.data
     }
 
     yield all([
       put({ type: CREATE_PLAN_SUCCESS, payload: newRecord}),
       put({ type: SET_CURRENT_PLAN, payload: newRecord }),
     ])
+
     alertActions.newAlert({
       title: "Success!",
       message: "Successfully created plan",

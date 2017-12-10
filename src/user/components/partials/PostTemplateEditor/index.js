@@ -43,10 +43,9 @@ class PostTemplateDetails extends Component {
   toggleUtm(utmType, checked, e) {
     //update the postTemplate form
     let postTemplate = Object.assign({}, this.props.postTemplate)
-    let utmFields = Object.assign({}, Helpers.safeDataPath(this.props.formOptions, `${this.props.postTemplate.id}.utms`, {}))
 
-    utmFields[utmType].active = checked
     postTemplate.dirty = true
+    postTemplate[utmType].active = checked
 
     //formActions.setOptions("EditPlan", "postTemplates", {[this.props.postTemplate.id]: {utms: utmFields}})
     formActions.setParams("EditPlan", "postTemplates", {[postTemplate.id]: postTemplate})
@@ -92,11 +91,13 @@ class PostTemplateDetails extends Component {
                 return <div key={type} className={classes.utmField}>
                   {mode === "EDIT" ? (
                     <div>
-                      <Checkbox
-                        value={active}
-                        onChange={this.toggleUtm.bind(this, type)}
-                        label={`${label.titleCase()} UTM`}
-                      />&nbsp;
+                      <div className={classes.utmCheckbox}>
+                        <Checkbox
+                          value={active}
+                          onChange={this.toggleUtm.bind(this, type)}
+                          label={`${label.titleCase()} UTM`}
+                        />&nbsp;
+                      </div>
 
                       {active && <Input
                         placeholder={`${label.titleCase()} utm for this template`}

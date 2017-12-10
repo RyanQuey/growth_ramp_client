@@ -96,7 +96,7 @@ console.log("now setting",postTemplate);
           {providers.map((provider) => {
             let providerPostTemplates = sortedPostTemplates[provider]
             return (
-              <Flexbox key={provider} className={classes.providerColumn} direction="column" >
+              <Flexbox key={provider} className={classes.providerColumn} direction="column" align="center">
                 <h3>{PROVIDERS[provider].name}</h3>
 
                 {providerPostTemplates.map((postTemplate) => {

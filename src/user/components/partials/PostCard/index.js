@@ -42,7 +42,7 @@ class PostCard extends Component {
           )}
 
           <div><strong>Text:</strong>&nbsp;{post.text || "(none)"}</div>
-          {showLink && <div><strong>Short Link:</strong>&nbsp;{post.shortUrl}</div>}
+          {showLink && <div><strong>Short Link:</strong>&nbsp;{post.shortUrl || "(none)"}</div>}
 
           {showImages && <Flexbox>
             {post.uploadedContent && post.uploadedContent.map((upload) => {

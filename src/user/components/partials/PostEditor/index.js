@@ -184,7 +184,6 @@ class PostEditor extends Component {
                 />}
 
                 {post.uploadedContent && post.uploadedContent.map((upload) => {
-//console.log(upload);
                   return <Flexbox key={upload.url} direction="column">
                     <a
                       target="_blank"
@@ -214,8 +213,8 @@ class PostEditor extends Component {
                         onChange={this.toggleUtm.bind(this, type)}
                         label={`${label.titleCase()} UTM`}
                       />&nbsp;
-
                     </div>
+
                     {active && <Input
                       placeholder={false ? `${label.titleCase()} utm for this template` : ""}
                       onChange={this.updateUtm.bind(this, type, false)}

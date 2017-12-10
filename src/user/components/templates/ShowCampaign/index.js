@@ -51,7 +51,6 @@ class ShowCampaign extends Component {
       //this action doesn't yet support any criteria
       this.setState({pending: true})
       const getAnalytics = !currentCampaign || currentCampaign.status === "PUBLISHED"
-console.log(getAnalytics, currentCampaign);
       this.props.fetchCurrentCampaign(campaignId, {getAnalytics})
 
     } else {
@@ -74,7 +73,10 @@ console.log(getAnalytics, currentCampaign);
     let links = {}
 
     for (let post of posts) {
-      if (!links[post.shortUrl]) {
+      if (!post.shortUrl) {
+        continue
+
+      } else if (!links[post.shortUrl]) {
         links[post.shortUrl] = {
           shortUrl: post.shortUrl,
           analytics: post.analytics,
@@ -94,13 +96,15 @@ console.log(getAnalytics, currentCampaign);
 
   render (){
     const currentCampaign = this.props.currentCampaign || {}
-    let links = currentCampaign.posts && _.values(this.extractCampaignLinks(currentCampaign.posts))
+    const campaignPlanName = Helpers.safeDataPath(this.props, `plans.${currentCampaign.planId}.name`, false)
 
+    let links = currentCampaign.posts && _.values(this.extractCampaignLinks(currentCampaign.posts))
     return (
       <div>
         <h1>{currentCampaign.name}{currentCampaign.status === "DRAFT" && "(Draft)"}</h1>
-          <div><strong>Content Url:</strong>&nbsp;{currentCampaign.contentUrl}</div>
-          {links &&
+        <div className={classes.content}>
+          <h2>Content Url:</h2>&nbsp;{currentCampaign.contentUrl || "(none)"}
+          {links && links.length > 0 &&
             <Flexbox direction="column">
               <h2>Analytics</h2>
               {links.map((link) =>
@@ -119,7 +123,7 @@ console.log(getAnalytics, currentCampaign);
           }
           {currentCampaign.posts && currentCampaign.posts.length ? (
             <div className={classes.posts}>
-              <h2>Campaign Posts</h2>
+              <h2>Campaign Posts:</h2>
               <Flexbox flexWrap="wrap" >
                 {currentCampaign.posts.map((post) =>
                   <PostCard
@@ -157,7 +161,7 @@ console.log(getAnalytics, currentCampaign);
           ) : (
             <Button onClick={this.editCampaign}>Continue working on campaign</Button>
           )}
-
+        </div>
       </div>
     )
   }
@@ -178,6 +182,7 @@ const mapStateToProps = (state) => {
   return {
     campaigns: state.campaigns,
     currentCampaign: state.currentCampaign,
+    plans: state.plans,
   }
 }
 
