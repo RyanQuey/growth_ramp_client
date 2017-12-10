@@ -8,7 +8,7 @@ import {
   EditCampaignFooter
 } from 'user/components/partials'
 import { Navbar } from 'shared/components/elements'
-import { FETCH_CURRENT_CAMPAIGN_REQUEST, SET_CURRENT_CAMPAIGN, CREATE_CAMPAIGN_REQUEST } from 'constants/actionTypes'
+import { FETCH_CURRENT_CAMPAIGN_REQUEST, SET_CURRENT_CAMPAIGN, CREATE_CAMPAIGN_REQUEST, SET_CURRENT_POST } from 'constants/actionTypes'
 import theme from 'theme'
 import { formActions } from 'shared/actions'
 
@@ -30,13 +30,13 @@ class EditCampaign extends Component {
     this.switchTo = this.switchTo.bind(this)
     this.setCampaign = this.setCampaign.bind(this)
     this._setInitialView = this._setInitialView.bind(this)
+    this.resetComposeView = this.resetComposeView.bind(this)
   }
 
  componentDidMount() {
     //set current campaign based on the url params, no matter what it was before
     const campaignId = this.props.match.params.campaignId
     this.setCampaign(campaignId)
-
   }
 
   componentWillUnmount() {
@@ -48,7 +48,6 @@ class EditCampaign extends Component {
       //editing a new campaign, without remounting.
       //this would happen if click "New Campaign" while editing a different one
       this.setCampaign(props.match.params.campaignId)
-
     }
 
     //give popup if tries to leave while dirty
@@ -66,7 +65,13 @@ class EditCampaign extends Component {
     }
   }
 
+  //basically unsets currentPost and makes sure not adding post, in case we left the view dirty from before
+  resetComposeView () {
+    this.props.setCurrentPost(null)
+  }
+
   _setInitialView (currentCampaign) {
+    this.resetComposeView()
 
     //is already published or is archived, don't let them try to edit from using browser link.
     //will disable link to edit elsewhere if published too
@@ -140,6 +145,7 @@ console.log(currentCampaign);
               pending={this.state.pending}
               switchTo={this.switchTo}
               initialOpening={this.state.initialOpening}
+              resetComposeView={this.resetComposeView}
             />
           ) : (
             <div>No campaign with id {this.props.match.params.campaignId} found</div>
@@ -168,6 +174,7 @@ const mapDispatchToProps = (dispatch) => {
     //createCampaignRequest: (data) => dispatch({type: CREATE_CAMPAIGN_REQUEST, payload: data}),
     fetchCurrentCampaign: (data, cb) => dispatch({type: FETCH_CURRENT_CAMPAIGN_REQUEST, payload: data, cb}),
     setCurrentCampaign: (data) => dispatch({type: SET_CURRENT_CAMPAIGN, payload: data}),
+    setCurrentPost: (payload, options) => dispatch({type: SET_CURRENT_POST, payload, options}),
   }
 }
 

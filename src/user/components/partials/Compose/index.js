@@ -74,6 +74,10 @@ class Compose extends Component {
     const persistedPosts = this.props.currentCampaign.posts || []
 
     const cb = () => {
+      //Was only reseting when currentPost was not saved, since it got a new Id and was just a big mess. But...just do all the time
+      //if (this.props.currentPost && typeof this.props.currentPost.id === "string") {
+        this.props.setCurrentPost(false)
+      //}
       formActions.matchCampaignStateToRecord()
     }
 
@@ -185,11 +189,13 @@ const mapStateToProps = state => {
   return {
     user: state.user,
     currentPlan: state.currentPlan,
+    currentPost: state.currentPost,
     providerAccounts: state.providerAccounts,
     currentCampaign: state.currentCampaign,
     campaignPostsForm: Helpers.safeDataPath(state.forms, "EditCampaign.posts", {}),
     uploadedFiles: Helpers.safeDataPath(state.forms, "EditCampaign.uploadedFiles", []),
     formOptions: Helpers.safeDataPath(state.forms, "EditCampaign.posts.options", {}),
+
   }
 }
 const mapDispatchToProps = (dispatch) => {

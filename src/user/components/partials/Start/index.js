@@ -72,15 +72,16 @@ class Start extends Component {
 
       alertActions.newAlert({
         title: "Failed to save:",
-        message: "Name is required",
+        message: "Campaign name is required",
         level: "DANGER",
       })
       return
     }
 
-    const done = () => {
-      this.props.switchTo("Compose")
+    const cb = () => {
+      this.props.resetComposeView()
       formActions.matchCampaignStateToRecord()
+      this.props.switchTo("Compose")
     }
 
     if (this.props.dirty) {
@@ -93,7 +94,7 @@ class Start extends Component {
         contentUrl: campaignParams.contentUrl && campaignParams.contentUrl.toString().trim(),
       }
 
-      this.props.updateCampaignRequest(params, options, done)
+      this.props.updateCampaignRequest(params, options, cb)
 
     } else {
       this.props.switchTo("Compose")

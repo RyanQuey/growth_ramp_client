@@ -25,7 +25,7 @@ class UserSidebar extends Component {
     e.preventDefault()
     switch(menuItem) {
       case "providerAccounts":
-        this.setState({providerAccounts: true})
+        this.setState({providerAccounts: !this.state.providerAccounts})
         break
     }
   }

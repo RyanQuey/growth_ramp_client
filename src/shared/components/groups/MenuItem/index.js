@@ -29,7 +29,7 @@ const MenuItem = ({ text, children, icon, link, nav, onClick, location, badge, h
         </Link>
       }
       {!link &&
-        <div className={`${classes.noLink} ${selected ? classes.navActive : ""}`}>{content}</div>
+        <div className={`${classes.noLink} ${false && selected ? classes.navActive : ""}`}>{content}</div>
       }
       {(location.pathname.includes(link) || selected) && children}
     </li>
