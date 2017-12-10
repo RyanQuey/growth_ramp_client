@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 import {
   Start,
-  Send,
+  //Send,
   Compose,
   EditCampaignFooter
 } from 'user/components/partials'
@@ -15,7 +15,7 @@ import { formActions } from 'shared/actions'
 const sections = {
   Start,
   Compose,
-  Send,
+  //Send,
 }
 
 class EditCampaign extends Component {
@@ -151,10 +151,10 @@ console.log(currentCampaign);
             <div>No campaign with id {this.props.match.params.campaignId} found</div>
           )}
         </div>
-        <EditCampaignFooter
+        {false && <EditCampaignFooter
           switchTo={this.switchTo}
           currentSection={this.state.currentSection}
-        />
+        />}
       </div>
     );
   }

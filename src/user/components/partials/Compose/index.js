@@ -7,14 +7,17 @@ import {
   UPDATE_POST_REQUEST,
   SET_CURRENT_MODAL,
   SET_CURRENT_POST,
+  PUBLISH_CAMPAIGN_REQUEST,
 } from 'constants/actionTypes'
 import { Icon, Button } from 'shared/components/elements'
-import { Select } from 'shared/components/groups'
+import { Select, ConfirmationPopup } from 'shared/components/groups'
 import { SocialLogin } from 'shared/components/partials'
 import { ProviderAccountsDetails, PostEditor, AddPost, PostPicker, CampaignPostWrapper } from 'user/components/partials'
-import {formActions} from 'shared/actions'
+import {formActions, alertActions} from 'shared/actions'
+import { withRouter } from 'react-router-dom'
 import {PROVIDERS} from 'constants/providers'
 import theme from 'theme'
+import classes from './style.scss'
 
 class Compose extends Component {
   constructor(props) {
@@ -34,11 +37,15 @@ class Compose extends Component {
       //currentAccount,//will be account obj
       //currentChannel: "",//will be obj
       addingPost: false,
+      publishing: false,
     }
 
     this.handleLinkProvider = this.handleLinkProvider.bind(this)
     this.saveCampaignPosts = this.saveCampaignPosts.bind(this)
     this.toggleAdding = this.toggleAdding.bind(this)
+    this.togglePublishing = this.togglePublishing.bind(this)
+    this.publish = this.publish.bind(this)
+    this._canPublish = this._canPublish.bind(this)
   }
 
   componentWillReceiveProps(props) {
@@ -128,6 +135,47 @@ class Compose extends Component {
     this.props.setCurrentModal("LinkProviderAccountModal")
   }
 
+  //make sure posts have either contentUrl or text
+  _canPublish() {
+    const campaignPosts = this.props.currentCampaign.posts || []
+    return (
+      this.props.currentCampaign.contentUrl ||
+      campaignPosts.every((post) =>
+        post.text
+      )
+    )
+  }
+
+  togglePublishing(value = !this.state.publishing) {
+    //make sure all posts have text or contentUrl or image
+    const canPublish = this._canPublish()
+    if (!canPublish) {
+      alertActions.newAlert({
+        title: "Content required for all posts:",
+        message: "Please either add a url for your content, or add text to your posts",
+        level: "DANGER",
+      })
+
+    } else {
+      this.setState({publishing: value})
+console.log("now publishing")
+    }
+  }
+
+  publish() {
+    this.setState({pending: true})
+    const cb = () => {
+      this.setState({
+        pending: false,
+        //mode: "savePlan",
+      })
+
+      this.props.history.push(`/campaigns/${this.props.currentCampaign.id}`)
+    }
+
+    this.props.campaignPublishRequest(this.props.currentCampaign, cb)
+  }
+
   render() {
     if (this.props.hide) {
       return null
@@ -135,6 +183,7 @@ class Compose extends Component {
 
     const dirty = this.props.campaignPostsForm.dirty
     const {currentAccount, currentProvider, currentChannel} = this.state
+    const campaignPosts = this.props.currentCampaign.posts || []
 
     //let accountsNotOnPlan = accountsForProvider //when implementing, make array of indices in reverse; remove starting from back to not mess up indicies while removing.
 
@@ -180,6 +229,18 @@ class Compose extends Component {
           />
         </div>
 
+        <Button onClick={this.props.switchTo.bind(this, "Start")}>Back</Button>
+        {campaignPosts.length > 0 && <div className={classes.publishButtonWrapper}>
+          <Button disabled={dirty} onClick={this.togglePublishing.bind(this, true)}>Publish All Posts</Button>
+
+          {this.state.publishing &&
+            <ConfirmationPopup
+              onConfirm={this.publish}
+              onCancel={this.togglePublishing.bind(this, false)}
+              pending={this.state.pending}
+            />
+          }
+        </div>}
       </div>
     );
   }
@@ -205,9 +266,10 @@ const mapDispatchToProps = (dispatch) => {
     updatePostRequest: (payload, cb) => {dispatch({type: UPDATE_POST_REQUEST, payload, cb})},
     destroyPostRequest: (payload, cb) => {dispatch({type: DESTROY_POST_REQUEST, payload, cb})},
     createPostRequest: (payload, cb) => {dispatch({type: CREATE_POST_REQUEST, payload, cb})},
-    setCurrentModal: (payload, modalOptions) => dispatch({type: SET_CURRENT_MODAL, payload, options: modalOptions})
+    setCurrentModal: (payload, modalOptions) => dispatch({type: SET_CURRENT_MODAL, payload, options: modalOptions}),
+    campaignPublishRequest: (payload, cb) => dispatch({type: PUBLISH_CAMPAIGN_REQUEST, payload, cb}),
   }
 }
 
-const ConnectedCompose = connect(mapStateToProps, mapDispatchToProps)(Compose)
+const ConnectedCompose = withRouter(connect(mapStateToProps, mapDispatchToProps)(Compose))
 export default ConnectedCompose

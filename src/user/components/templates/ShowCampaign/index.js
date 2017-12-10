@@ -1,7 +1,7 @@
 import { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-import { FETCH_CURRENT_CAMPAIGN_REQUEST, } from 'constants/actionTypes'
+import { FETCH_CURRENT_CAMPAIGN_REQUEST, SET_CURRENT_CAMPAIGN} from 'constants/actionTypes'
 import { SavePlanFromCampaign, PostCard } from 'user/components/partials'
 import { Button, Form, Card, Flexbox, Icon } from 'shared/components/elements'
 import { ButtonGroup } from 'shared/components/groups'
@@ -46,17 +46,19 @@ class ShowCampaign extends Component {
 
   setCampaign (campaignId) {
     const currentCampaign = this.props.campaigns[campaignId]
+    //UPDATE just reload it; maybe optimize later
+    //makes sure not showing it as draft when just published, etc
     //check if need to retrieve and/or populate posts
-    if (!currentCampaign || !currentCampaign.posts) {
+    //if (!currentCampaign || !currentCampaign.posts) {
       //this action doesn't yet support any criteria
       this.setState({pending: true})
       const getAnalytics = !currentCampaign || currentCampaign.status === "PUBLISHED"
       this.props.fetchCurrentCampaign(campaignId, {getAnalytics})
 
-    } else {
-      this.props.setCurrentCampaign(currentCampaign)
+    //} else {
+      //this.props.setCurrentCampaign(currentCampaign)
 
-    }
+    //}
   }
 
   editCampaign (e) {

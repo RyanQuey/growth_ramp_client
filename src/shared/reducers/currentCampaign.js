@@ -25,7 +25,7 @@ console.log(pld);
       }
 
     case PUBLISH_CAMPAIGN_SUCCESS:
-      campaign = pld
+      campaign = pld.campaign
       if (campaign.id === state.id) {
         return Object.assign({}, state, {[campaign.id]: campaign})
 

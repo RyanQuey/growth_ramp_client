@@ -12,7 +12,6 @@ import {
   withRouter,
 } from 'react-router-dom'
 
-
 import classes from './style.scss'
 
 class PlanTable extends Component {

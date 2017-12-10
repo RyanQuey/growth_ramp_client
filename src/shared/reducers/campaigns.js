@@ -17,18 +17,20 @@ const campaignsReducer = (state = {}, action) => {
   switch (action.type) {
 
     case SET_CURRENT_CAMPAIGN:
-      campaign = action.payload
-      return Object.assign({}, state, {[campaign.id]: action.payload})
+      if (!pld) return state
+
+      campaign = pld
+      return Object.assign({}, state, {[campaign.id]: campaign})
 
     case FETCH_CAMPAIGN_SUCCESS:
-      return Object.assign({}, action.payload)
+      return Object.assign({}, pld)
 
     case CREATE_CAMPAIGN_SUCCESS:
       return Object.assign({}, state, {[pld.id]: pld})
 
     //assumes only updating one campaign
     case UPDATE_CAMPAIGN_SUCCESS:
-      campaign = action.payload
+      campaign = pld
       return Object.assign({}, state, {[campaign.id]: campaign})
 
     case PUBLISH_CAMPAIGN_SUCCESS:
