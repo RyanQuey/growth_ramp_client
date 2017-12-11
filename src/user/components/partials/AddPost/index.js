@@ -114,7 +114,7 @@ console.log("now handling", option);
       userId: this.props.user.id,
       providerAccountId: this.state.currentAccount.id,
       provider: this.state.currentAccount.provider,
-      postingAs: this.state.currentPostingAsType,
+      postingAs: this.state.currentPostingAsType || "SELF",
     }
 
     //set fields to active and params to active for each type

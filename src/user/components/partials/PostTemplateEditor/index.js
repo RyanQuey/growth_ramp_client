@@ -27,33 +27,67 @@ class PostTemplateDetails extends Component {
   updateUtm(utmType, settingKey = false, value, e) {
     //set the param
     let postTemplate = Object.assign({}, this.props.postTemplate)
+//TODO test
+    const required = utmType.requiredIfUtmsEnabled && Object.keys(postTemplate).some((key) => {
+      const isActive = key !== utmType.type && key.includes("Utm") && postTemplate[key].active && postTemplate[key].active !== "false"
+      return isActive
+    })
 
-    if (settingKey) {
-      postTemplate[utmType].key = value
+    if (required && !checked) {
+      alertActions.newAlert({
+        title: `${utmType.label} is required:`,
+        message: "Please remove all other utms before removing source.",
+        level: "DANGER",
+      })
+
 
     } else {
-      postTemplate[utmType].value = value
-    }
 
-    postTemplate.dirty = true
-    //update the postTemplate form
-    formActions.setParams("EditPlan", "postTemplates", {[postTemplate.id]: postTemplate})
+
+      if (settingKey) {
+        postTemplate[utmType].key = value
+
+      } else {
+        postTemplate[utmType].value = value
+      }
+
+      postTemplate.dirty = true
+      //update the postTemplate form
+      formActions.setParams("EditPlan", "postTemplates", {[postTemplate.id]: postTemplate})
+    }
   }
 
   toggleUtm(utmType, checked, e) {
     //update the postTemplate form
     let postTemplate = Object.assign({}, this.props.postTemplate)
+//TODO test
+    const required = utmType.requiredIfUtmsEnabled && Object.keys(postTemplate).some((key) => {
+      const isActive = key !== utmType.type && key.includes("Utm") && postTemplate[key].active && postTemplate[key].active !== "false"
+      return isActive
+    })
 
-    postTemplate.dirty = true
-    postTemplate[utmType].active = checked
+    if (required && !checked) {
+      alertActions.newAlert({
+        title: `${utmType.label} is required:`,
+        message: "Please remove all other utms before removing source.",
+        level: "DANGER",
+      })
 
-    //formActions.setOptions("EditPlan", "postTemplates", {[this.props.postTemplate.id]: {utms: utmFields}})
-    formActions.setParams("EditPlan", "postTemplates", {[postTemplate.id]: postTemplate})
+
+    } else {
+
+      postTemplate.dirty = true
+      postTemplate[utmType].active = checked
+
+      //formActions.setOptions("EditPlan", "postTemplates", {[this.props.postTemplate.id]: {utms: utmFields}})
+      formActions.setParams("EditPlan", "postTemplates", {[postTemplate.id]: postTemplate})
+    }
   }
 
   //TODO debounce
   handleText(value) {
     //set the param
+//TODO require the source thing
     let postTemplate = Object.assign({}, this.props.postTemplate)
     postTemplate.text = value
     postTemplate.dirty = true

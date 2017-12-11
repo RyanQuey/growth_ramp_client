@@ -33,9 +33,12 @@ class PostEditor extends Component {
     //set the param
     let post = Object.assign({}, this.props.post)
     //if this type is required if any other exists, and some other exists
-    const required = utmType.requiredIfUtmsEnabled && Object.keys(post).some((key) => key !== utmType.type && key.includes("Utm") && post[key].active)
+    //TODO performance better if only check other values if this one is blank
+    const required = utmType.requiredIfUtmsEnabled && Object.keys(post).some((key) => {
+      const isActive = key !== utmType.type && key.includes("Utm") && post[key].active && post[key].active !== "false"
+      return isActive
+    })
 
-console.log(utmType);
     if (required && !value) {
       alertActions.newAlert({
         title: `${utmType.label} is required:`,
@@ -60,7 +63,10 @@ console.log(utmType);
   toggleUtm(utmType, checked, e) {
     //basically, source needs to exist if any other one exists
     const post = this.props.post
-    const required = utmType.requiredIfUtmsEnabled && Object.keys(post).some((key) => key.includes("Utm") && post[key].active)
+    const required = utmType.requiredIfUtmsEnabled && Object.keys(post).some((key) => {
+      const isActive = key !== utmType.type && key.includes("Utm") && post[key].active && post[key].active !== "false"
+      return isActive
+    })
 
     if (required && !checked) {
       alertActions.newAlert({
