@@ -19,6 +19,16 @@ module.exports = {
     "ARCHIVED"
   ],
 
+  //possible postingAsTypes requirements:
+  // NO_PHOTO:
+  // no posting photos allowed
+  //
+  // ROLES:
+  //
+  // array of roles that are allowed to create
+  // all in array are required (to keep consistent with requiredScopes)
+  // (could potentially separate requirement, POSSIBLE_ROLES if want to do any in list are allowed to post)
+
   //all possible providers that can be in the provider column
   PROVIDERS: {
     FACEBOOK: {
@@ -46,6 +56,23 @@ module.exports = {
           hasMultiple: true,
           maxImages: 4,
           maxCharacters: 63206 ,
+          //only putting this prop in constant if there's more than one type for now
+          postingAsTypes: {
+            SELF: {
+              label: "Yourself",
+              requirements: {
+                "NO_PHOTO": true, // TODO might just post photo on
+              }
+            },
+            PAGE: {
+              label: "Page",
+              requirements: {
+                "ROLES": [
+                  "CREATE_CONTENT",
+                ]
+              }
+            },
+          }
         },
         //"DARK_POST",
         //"BUSINESS_MESSAGE",

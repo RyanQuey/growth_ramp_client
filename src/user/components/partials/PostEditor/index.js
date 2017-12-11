@@ -177,6 +177,7 @@ console.log(utmType);
     const characterCount = Helpers.safeDataPath(post, "text", "").length + (post.contentUrl ? URL_LENGTH : 0)
 
     const postAccount = Helpers.accountFromPost(post)
+
     return (
       <Flexbox direction="column" >
         <h2>{Helpers.providerFriendlyName(post.provider)} {post.channelType.titleCase()}</h2>
@@ -184,6 +185,7 @@ console.log(utmType);
           <div key={postAccount.id} >
             <img alt="(No profile picture on file)" src={postAccount.photoUrl}/>
             <h5>{postAccount.userName} ({postAccount.email || "No email on file"})</h5>
+            {post.postingAs && <h5>(Posting as {post.postingAs.toLowerCase()})</h5>}
           </div>
         }
 

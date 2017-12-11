@@ -126,5 +126,7 @@ export default {
   //takes channel record and returns required scopes
   //either need channel or the other two
   channelTypeScopes: (channel, providerName, channelType) => PROVIDERS[providerName || channel.provider].channelTypes[channelType || channel.type].requiredScopes,
+
+  channelPostingAsTypes: (channel, providerName, channelType) => PROVIDERS[providerName || channel.provider].channelTypes[channelType || channel.type].postingAsTypes,
 }
 

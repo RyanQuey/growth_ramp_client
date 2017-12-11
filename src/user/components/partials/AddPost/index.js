@@ -27,6 +27,7 @@ class AddPost extends Component {
       currentProvider: "",// will just be the provider name
       currentAccount: false,//will be account obj
       currentChannelType: "",//will be obj
+      currentPostingAsType: false,//will be obj
     }
 
     //this.sortPostsByChannelType = this.sortPostsByChannelType.bind(this)
@@ -34,6 +35,7 @@ class AddPost extends Component {
     //this.handleChooseProvider = this.handleChooseProvider.bind(this)
     this.handleChooseAccount = this.handleChooseAccount.bind(this)
     this.handleChooseChannelType = this.handleChooseChannelType.bind(this)
+    this.handleChoosePostingAsType = this.handleChoosePostingAsType.bind(this)
     this.handleChooseChannel = this.handleChooseChannel.bind(this)
     this.openProviderModal = this.openProviderModal.bind(this)
   }
@@ -72,6 +74,7 @@ class AddPost extends Component {
       currentAccount: accountOption.value,
       currentChannelType: "",
       currentChannel: "",
+      currentPostingAsType: false,
     })
   }
 
@@ -79,12 +82,21 @@ class AddPost extends Component {
     this.setState({
       currentChannelType: channelTypeOption.value,
       currentChannel: "",
+      currentPostingAsType: false,
     })
   }
 
   handleChooseChannel(channelOption) {
     this.setState({
       currentChannel: channelOption.value,
+      currentPostingAsType: false,
+    })
+  }
+
+  handleChoosePostingAsType(option){
+console.log("now handling", option);
+    this.setState({
+      currentPostingAsType: option.value,
     })
   }
 
@@ -102,6 +114,7 @@ class AddPost extends Component {
       userId: this.props.user.id,
       providerAccountId: this.state.currentAccount.id,
       provider: this.state.currentAccount.provider,
+      postingAs: this.state.currentPostingAsType,
     }
 
     //set fields to active and params to active for each type
@@ -160,6 +173,16 @@ console.log();
     }
   }
 
+  postingAsTypeOption(key) {
+    const postingAsTypes = Helpers.channelPostingAsTypes(this.state.currentChannel)
+    const type = postingAsTypes[key]
+
+    return {
+      label: type.label,
+      value: key,
+    }
+  }
+
   /*sortPostsByChannelType(posts) {
     const sorted = {}
     for (let i = 0; i < posts.length; i++) {
@@ -183,7 +206,9 @@ console.log();
     if (this.props.hide) {
       return null
     }
-    let {currentAccount, currentChannelType, currentChannel} = this.state
+
+    //TODO move some of this logic into state, so doesn't get called on every rerender...
+    let {currentAccount, currentChannelType, currentChannel, currentPostingAsType} = this.state
     let currentProvider = this.props.currentProvider
 
     //get provider options
@@ -229,6 +254,13 @@ console.log();
 
     const placeholder = {label: "select", value: null}
     //let accountsNotOnPlan = accountsForProvider //when implementing, make array of indices in reverse; remove starting from back to not mess up indicies while removing.
+
+    //will most often be false
+    const postingAsTypes = currentChannel && Helpers.channelPostingAsTypes(currentChannel)
+    const postingAsTypeOptions = postingAsTypes && Object.keys(postingAsTypes).map((key) => (
+      this.postingAsTypeOption(key)
+    ))
+console.log(postingAsTypeOptions, postingAsTypes);
 
     return (
       <div>
@@ -276,7 +308,6 @@ console.log();
                   />
                 }
 
-
                 {currentChannelType && !channelTypeIsAllowed && (
                   <div>
                     <div>Growth Ramp needs your permission to make {currentChannelType ? currentChannelType.titleCase() : "post"}s for {PROVIDERS[currentProvider].name}</div>
@@ -296,6 +327,16 @@ console.log();
             onChange={this.handleChooseChannel}
             currentOption={currentChannel ? this.channelOption(currentChannel) : placeholder}
             name="select-channel"
+          />
+        )}
+
+        {currentChannel && postingAsTypes && (
+          <Select
+            label="Who do you want to post as?"
+            options={postingAsTypeOptions}
+            onChange={this.handleChoosePostingAsType}
+            currentOption={currentPostingAsType ? this.postingAsTypeOption(currentPostingAsType) : placeholder}
+            name="select-posting-as-type"
           />
         )}
 
