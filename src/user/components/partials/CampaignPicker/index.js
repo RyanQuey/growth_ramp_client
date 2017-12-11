@@ -62,6 +62,7 @@ class CampaignPicker extends Component {
     //reversing to put newest on top; since I think organized by id by default
     campaignIds.reverse()
 
+
     //TODO: set the title using props into the modal container (will do a modal...or just a show view?? for each campaign)
     //use flexbox. Assign consistent column lengths to still achieve tablelike look, but with control over spacing etc.
     return (
@@ -79,7 +80,7 @@ class CampaignPicker extends Component {
           const campaign = this.props.campaigns[campaignId]
           //not sure why this keeps on happening, but it does
           if (!campaign) {return null}
-!campaign.status && console.log(campaign)
+          !campaign.status && console.log(campaign)
 
           const plan = Helpers.safeDataPath(this.props, `plans.${campaign.planId}`, false)
           return (
@@ -101,11 +102,11 @@ class CampaignPicker extends Component {
                 )}
               </td>
               <td>
-                {campaign.publishedAt ? moment(campaign.publishedAt).format("MM-DD-YYYY h:mm a") : "Unpublished"}
+                {campaign.publishedAt  ? moment(campaign.publishedAt).format("MM-DD-YYYY h:mm a") : "n/a"}
               </td>
               <td>
                 <ButtonGroup vertical={true}>
-                  {campaign.status !== "PUBLISHED" && <Button onClick={this.editCampaign.bind(this, campaign)}>Edit Draft</Button>}
+                  {campaign.status !== "PUBLISHED" && <Button onClick={this.editCampaign.bind(this, campaign)}>Edit Campaign</Button>}
                   <Button onClick={this.showCampaign.bind(this, campaign)}>View Details</Button>
                   {campaign.status !== "PUBLISHED" && (
                     <div className={classes.popupWrapper}>

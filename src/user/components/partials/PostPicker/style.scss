@@ -21,6 +21,11 @@
     .postCard {
       width: 100%;
       //min-width: 200px;
+
+      &.publishedPost {
+        cursor: not-allowed;
+        background-color: gray;
+      }
     }
   }
 }

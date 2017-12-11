@@ -168,13 +168,21 @@ console.log("now publishing")
     const cb = () => {
       this.setState({
         pending: false,
+        publishing: false,
         //mode: "savePlan",
       })
 
       this.props.history.push(`/campaigns/${this.props.currentCampaign.id}`)
     }
 
-    this.props.campaignPublishRequest(this.props.currentCampaign, cb)
+    const onFailure = (response) => {
+      this.setState({
+        pending: false,
+        publishing: false,
+        //mode: "savePlan",
+      })
+    }
+    this.props.campaignPublishRequest(this.props.currentCampaign, cb, onFailure)
   }
 
   render() {
@@ -265,7 +273,7 @@ const mapDispatchToProps = (dispatch) => {
     destroyPostRequest: (payload, cb) => {dispatch({type: DESTROY_POST_REQUEST, payload, cb})},
     createPostRequest: (payload, cb) => {dispatch({type: CREATE_POST_REQUEST, payload, cb})},
     setCurrentModal: (payload, modalOptions) => dispatch({type: SET_CURRENT_MODAL, payload, options: modalOptions}),
-    campaignPublishRequest: (payload, cb) => dispatch({type: PUBLISH_CAMPAIGN_REQUEST, payload, cb}),
+    campaignPublishRequest: (payload, cb, onFailure) => dispatch({type: PUBLISH_CAMPAIGN_REQUEST, payload, cb, onFailure}),
   }
 }
 

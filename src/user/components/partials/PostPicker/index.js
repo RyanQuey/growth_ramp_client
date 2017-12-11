@@ -111,13 +111,14 @@ class PostPicker extends Component {
 
                   return <PostCard
                     key={post.id}
-                    className={`${classes.postCard}`}
+                    className={`${classes.postCard} ${post.publishedAt ? classes.publishedPost : ""}`}
+                    subtitle={post.publishedAt ? "Published" : ""}
                     post={post}
                     showText={true}
                     status={status}
                     height="150px"
                     maxWidth="95%"
-                    onClick={this.setCurrentPost.bind(this, post)}
+                    onClick={!post.publishedAt && this.setCurrentPost.bind(this, post)}
                     selected={this.props.currentPost && this.props.currentPost.id === post.id}
                   />
                 })}

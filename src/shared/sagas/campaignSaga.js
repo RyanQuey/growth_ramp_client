@@ -97,16 +97,14 @@ function* updateCampaign(action) {
     //not using currently
     //const currentRecord = store.getState().campaigns[campaignData.id]
 
-    //not using currently
-    //const options = action.options || {}
-
     const res = yield axios.put(`/api/campaigns/${campaignData.id}`, campaignData) //eventually switch to socket
+    const updatedRecord = Array.isArray(res.data) ? res.data[0] : res.data
 
     yield all([
       //assumes only updating one campaign
-      put({ type: UPDATE_CAMPAIGN_SUCCESS, payload: res.data[0]}),
+      put({ type: UPDATE_CAMPAIGN_SUCCESS, payload: updatedRecord}),
     ])
-    action.cb && action.cb(res)
+    action.cb && action.cb(updatedRecord)
 
   } catch (err) {
     console.log(`Error in update campaign Saga ${err}`)
@@ -171,20 +169,34 @@ function* publishCampaign(action) {
 
     //mark campaign as published
     const results = yield axios.post(`/api/campaigns/${campaign.id}/publish`)
+
+    //parse results:
+    const parsedResults = Helpers.parseCampaignResults(results.data)
+
+    //although, there might have been failures, successfully did everything in the api
     yield put({type: PUBLISH_CAMPAIGN_SUCCESS, payload: {
-      campaign: results.data,
-      posts: results.data.posts,
+      campaign: parsedResults.campaign,
+      posts: parsedResults.posts,
     }})
 
     //or something to trigger next phase, to prompt saving plan
     formActions.formPersisted("Send", "submit")
     alertActions.newAlert({
-      title: "Success!",
-      message: "Campaign successfully published",
-      level: "SUCCESS",
+      title: parsedResults.alertTitle,
+      message: parsedResults.alertMessage,
+      level: parsedResults.alertLevel,
+      options: {
+        timer: parsedResults.alertTimer,
+      }
     })
 
-    action.cb && action.cb(results.data)
+    if (parsedResults.failedPosts.length) {
+      action.onFailure && action.onFailure()
+
+    } else {
+      action.cb && action.cb(results.data)
+
+    }
 
   } catch (err) {
     console.log(`Error publishing campaign: ${err}`)
@@ -194,6 +206,8 @@ function* publishCampaign(action) {
       title: "Error publishing campaign",
       errorObject: err,
     })
+
+    action.onFailure && action.onFailure(err)
   }
 }
 
