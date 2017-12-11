@@ -46,13 +46,26 @@ class PostEditor extends Component {
   }
 
   toggleUtm(utmType, checked, e) {
-    //update the post form
-    let post = Object.assign({}, this.props.post)
-    //let utmField = Object.assign({}, Helpers.safeDataPath(this.props.postParams, `${this.props.post.id}.${utmType}`, {}))
-    post[utmType].active = checked
-    post.dirty = true
+    //basically, source needs to exist if any other one exists
+    const required = utmType.requiredIfUtmsEnabled && Object.keys(post).some((key) => key.includes("Utm") && post[key].active)
 
-    formActions.setParams("EditCampaign", "posts", {[post.id]: post})
+    if (required && !checked) {
+      alertActions.newAlert({
+        title: `${utmType.label} is required:`,
+        message: "Please remove all other utms before removing source.",
+        level: "DANGER",
+      })
+
+
+    } else {
+      //update the post form
+      let post = Object.assign({}, this.props.post)
+      //let utmField = Object.assign({}, Helpers.safeDataPath(this.props.postParams, `${this.props.post.id}.${utmType}`, {}))
+      post[utmType.type].active = checked
+      post.dirty = true
+
+      formActions.setParams("EditCampaign", "posts", {[post.id]: post})
+    }
   }
 
   //TODO debounce
@@ -114,6 +127,8 @@ class PostEditor extends Component {
     }
   }
 
+
+
   onUpload(result) {
     this.setState({pending: false})
     //is successful, a url
@@ -135,7 +150,6 @@ class PostEditor extends Component {
 
       formActions.setParams("EditCampaign", "posts", {[post.id]: post})
     }
-
   }
 
   render() {
@@ -149,9 +163,17 @@ class PostEditor extends Component {
     const maxCharacters = PROVIDERS[post.provider].channelTypes[post.channelType].maxCharacters
     const characterCount = Helpers.safeDataPath(post, "text", "").length + (post.contentUrl ? URL_LENGTH : 0)
 
+    const postAccount = Helpers.accountFromPost(post)
     return (
       <Flexbox direction="column" >
         <h2>{Helpers.providerFriendlyName(post.provider)} {post.channelType.titleCase()}</h2>
+        {postAccount &&
+          <div key={postAccount.id} >
+            <img alt="No profile picture on file" src={postAccount.photoUrl}/>
+            <h5>{postAccount.userName} ({postAccount.email || "No email on file"})</h5>
+          </div>
+        }
+
         {false && <div className={classes.disablePost}>
           <Checkbox
             value={post.active}
@@ -165,7 +187,7 @@ class PostEditor extends Component {
               <div>Maximum: {maxCharacters};&nbsp;Current Count: {characterCount} {post.contentUrl ? `(including ${URL_LENGTH} for the url length)` : ""}</div>
               <Input
                 textarea={true}
-                value={post.text}
+                value={post.text || ""}
                 placeholder={`Your post`}
                 onChange={this.handleText}
                 type="text"
@@ -208,12 +230,13 @@ class PostEditor extends Component {
                   const active = Helpers.safeDataPath(post, `${type}.active`, false)
                   const value = Helpers.safeDataPath(post, `${type}.value`, "")
                   const key = Helpers.safeDataPath(post, `${type}.key`, "")
+
                   return (
                     <div key={type} className={classes.utmField}>
                       <div className={classes.utmCheckbox}>
                         <Checkbox
                           value={active}
-                          onChange={this.toggleUtm.bind(this, type)}
+                          onChange={this.toggleUtm.bind(this, utmType)}
                           label={`${label.titleCase()} UTM`}
                         />&nbsp;
                       </div>

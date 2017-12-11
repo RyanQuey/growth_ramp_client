@@ -98,7 +98,7 @@ class Start extends Component {
 
     } else {
       this.props.switchTo("Compose")
-      done()
+      cb()
     }
   }
 

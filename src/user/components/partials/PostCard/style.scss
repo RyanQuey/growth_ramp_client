@@ -24,19 +24,19 @@
 }
 .toUpdate {
   border: blue solid 1.5px;
-  caption {
+  h5 {
     color: blue;
   }
 }
 .toCreate {
   border: green solid 1.5px;
-  caption {
+  h5 {
     color: green;
   }
 }
 .toDelete {
   border: red solid 1.5px;
-  caption {
+  h5 {
     color: red;
   }
 }

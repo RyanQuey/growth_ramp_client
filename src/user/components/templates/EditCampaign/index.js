@@ -127,7 +127,7 @@ console.log(currentCampaign);
 
     return (
       <div>
-        <Navbar className="" justify="space-around" background={theme.color.moduleGrayOne} color={theme.color.text}>
+        {false && <Navbar className="" justify="space-around" background={theme.color.moduleGrayOne} color={theme.color.text}>
           {Object.keys(sections).map((section) => (
             <div key={section} ref={section}>
               {this.state.currentSection === section ? (
@@ -137,7 +137,7 @@ console.log(currentCampaign);
               )}
             </div>
           ))}
-        </Navbar>
+        </Navbar>}
 
         <div>
           {currentCampaign ? (

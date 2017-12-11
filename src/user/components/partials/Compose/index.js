@@ -128,7 +128,6 @@ class Compose extends Component {
         this.props.updatePostRequest(post, cb)
       }
     }
-
   }
 
   handleLinkProvider() {
@@ -182,8 +181,9 @@ console.log("now publishing")
     }
 
     const dirty = this.props.campaignPostsForm.dirty
-    const {currentAccount, currentProvider, currentChannel} = this.state
+    const {currentProvider, currentChannel} = this.state
     const campaignPosts = this.props.currentCampaign.posts || []
+
 
     //let accountsNotOnPlan = accountsForProvider //when implementing, make array of indices in reverse; remove starting from back to not mess up indicies while removing.
 
@@ -191,7 +191,6 @@ console.log("now publishing")
       <div>
         <h1 className="display-3">Compose Your Posts</h1>
         {this.state.status === "PENDING" && <Icon name="spinner" className="fa-spin" />}
-
         {this.state.addingPost ? (
 
           <AddPost
@@ -203,16 +202,10 @@ console.log("now publishing")
         ) : (
 
           <div>
-            {currentAccount &&
-              <div key={currentAccount.id} >
-                <img alt="No profile picture on file" src={currentAccount.photoUrl}/>
-                <h5>{currentAccount.email || "No email on file"}</h5>
-              </div>
-            }
 
+            <hr/>
             <CampaignPostWrapper
               currentProvider={currentProvider}
-              currentAccount={currentAccount}
               currentChannel={currentChannel}
             />
 
@@ -235,10 +228,9 @@ console.log("now publishing")
             </Flexbox>
           </div>
         )}
-        <div>
-          <hr/>
+
+        <div className={this.state.hidePosts ? classes.hide : ""}>
           <PostPicker
-            account={currentAccount}
             channel={this.state.currentChannel}
             toggleAdding={this.toggleAdding}
             addingPost={this.state.addingPost}

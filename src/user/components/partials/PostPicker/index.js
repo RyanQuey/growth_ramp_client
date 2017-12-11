@@ -90,7 +90,7 @@ class PostPicker extends Component {
         <h2>Your Posts:</h2>
         {!Object.keys(sortedPosts).length && <div>No posts yet</div>}
 
-        <Flexbox className={classes.postMenu}>
+        <Flexbox className={classes.postMenu} flexWrap="wrap">
           {providers.map((provider) => {
             let providerPosts = sortedPosts[provider]
             return (

@@ -26,7 +26,7 @@ const CardHeader = ({
       {headerImgUrl && <img className={classes.headerImg} src={headerImgUrl} />}
       {icon && <Icon className={classes.icon} name={icon} size="3x" color={iconColor} />}
       <h2>{title}</h2>
-      <caption>{subtitle}</caption>
+      <h5>{subtitle}</h5>
     </div>
   )
 }
