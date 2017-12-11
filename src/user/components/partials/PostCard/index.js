@@ -32,17 +32,21 @@ class PostCard extends Component {
         break
     }
 
+    const hasMultiple = Helpers.channelTypeHasMultiple(null, post.provider, post.channelType)
+    const activeUtms = UTM_TYPES.filter((t) => post[t.type] && post[t.type].active && post[t.type].value)
     return (
       <Card selected={selected} onClick={onClick} height={height} maxWidth={maxWidth} className={`${className} ${classes[status]}`}>
         <CardHeader title={post.channelType.titleCase()} subtitle={subtitle} icon={showIcon && post.provider.toLowerCase()} iconColor={post.provider.toLowerCase()}/>
 
         <Flexbox direction="column" >
-          {PROVIDERS[post.provider].channelTypes[post.channelType].hasMultiple && post.channelId && (
-            <div><strong>Channel:</strong>&nbsp;{post.channelId.name}</div>
+          <div><span className={classes.cardLabel}>Account:</span>&nbsp;{(Helpers.accountFromPost(post) || {}).userName || "Error: Could not be found"}</div>
+          {hasMultiple && post.channelId && (
+            <div><span className={classes.cardLabel}>Channel:</span>&nbsp;{(Helpers.channelFromPost(post) || {}).name || "Error: Could not be found"}</div>
           )}
+          <br/>
 
-          <div><strong>Text:</strong>&nbsp;{post.text || "(none)"}</div>
-          {showLink && <div><strong>Short Link:</strong>&nbsp;{post.shortUrl || "(none)"}</div>}
+          <div><span className={classes.cardLabel}>Text:</span>&nbsp;{post.text || "(none)"}</div>
+          {showLink && <div><span className={classes.cardLabel}>Short Link:</span>&nbsp;{post.shortUrl || "(none)"}</div>}
 
           {showImages && <Flexbox>
             {post.uploadedContent && post.uploadedContent.map((upload) => {
@@ -56,14 +60,15 @@ class PostCard extends Component {
               </Flexbox>
             })}
           </Flexbox>}
+          <br/>
 
-          {showUtms && <Flexbox flexWrap="wrap" className={classes.utms}>
-            {UTM_TYPES.filter((t) => post.t).map((utmType) => {
+          {showUtms && <Flexbox className={classes.utms} justify="flex-start" align="flex-start" direction="column">
+            {activeUtms.map((utmType) => {
               //TODO want to extract for use with plan editor...if we have a plan editor
-              const type = utmType.value
+              const type = utmType.type
               const label = utmType.label.titleCase()
               return <div key={type} className={classes.utmField}>
-                <span>`${label} UTM`}:</span>&nbsp;<span>{post[type]}</span>
+                <span className={classes.cardLabel}>{label} UTM:</span>&nbsp;<span>{post[type].value}</span>
               </div>
             })}
           </Flexbox>}

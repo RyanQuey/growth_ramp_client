@@ -3,19 +3,13 @@
 .profilePic {
   width: 50px;
 }
-
+.cardLabel{
+  font-weight: bold;
+}
 .utms {
   width: 100%;
-  .utmHeader {
-    margin: .5rem;
-  }
   .utmField {
-    @include mq(xs) {
-      @include cols(6)
-    }
-    @include mq(sm) {
-      @include cols(3)
-    }
+    width: 100%;
   }
 
 }

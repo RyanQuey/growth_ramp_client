@@ -9,7 +9,7 @@ import {
   SET_CURRENT_POST,
   PUBLISH_CAMPAIGN_REQUEST,
 } from 'constants/actionTypes'
-import { Icon, Button } from 'shared/components/elements'
+import { Icon, Button, Flexbox } from 'shared/components/elements'
 import { Select, ConfirmationPopup } from 'shared/components/groups'
 import { SocialLogin } from 'shared/components/partials'
 import { ProviderAccountsDetails, PostEditor, AddPost, PostPicker, CampaignPostWrapper } from 'user/components/partials'
@@ -217,6 +217,22 @@ console.log("now publishing")
             />
 
             <Button style="inverted" disabled={!dirty} onClick={this.saveCampaignPosts}>{dirty ? "Save Changes" : "All drafts saved"}</Button>
+            <Flexbox justify="center">
+              <Button style="inverted" onClick={this.props.switchTo.bind(this, "Start")}>Back</Button>
+              {campaignPosts.length > 0 &&
+                <div className={classes.publishButtonWrapper}>
+                  <Button disabled={dirty} onClick={this.togglePublishing.bind(this, true)}>Publish All Posts</Button>
+
+                  {this.state.publishing &&
+                    <ConfirmationPopup
+                      onConfirm={this.publish}
+                      onCancel={this.togglePublishing.bind(this, false)}
+                      pending={this.state.pending}
+                    />
+                  }
+                </div>
+              }
+            </Flexbox>
           </div>
         )}
         <div>
@@ -229,18 +245,6 @@ console.log("now publishing")
           />
         </div>
 
-        <Button onClick={this.props.switchTo.bind(this, "Start")}>Back</Button>
-        {campaignPosts.length > 0 && <div className={classes.publishButtonWrapper}>
-          <Button disabled={dirty} onClick={this.togglePublishing.bind(this, true)}>Publish All Posts</Button>
-
-          {this.state.publishing &&
-            <ConfirmationPopup
-              onConfirm={this.publish}
-              onCancel={this.togglePublishing.bind(this, false)}
-              pending={this.state.pending}
-            />
-          }
-        </div>}
       </div>
     );
   }

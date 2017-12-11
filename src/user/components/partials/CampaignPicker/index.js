@@ -77,11 +77,11 @@ class CampaignPicker extends Component {
         </tr>
         {campaignIds.map((campaignId) => {
           const campaign = this.props.campaigns[campaignId]
-console.log(campaign)
           //not sure why this keeps on happening, but it does
           if (!campaign) {return null}
+!campaign.status && console.log(campaign)
 
-          const plan = Helpers.safeDataPath(this.props, `plans.${campaign.planId}.name`, false)
+          const plan = Helpers.safeDataPath(this.props, `plans.${campaign.planId}`, false)
           return (
             <tr key={campaignId}>
               <td>
@@ -95,7 +95,7 @@ console.log(campaign)
               </td>
               <td>
                 {campaign.planId ? (
-                  plan ? plan.name : "Plan has been archived"
+                  plan ? (plan.name || "(Plan has no name)"): "Plan has been archived"
                 ) : (
                   "No plan"
                 )}

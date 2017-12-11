@@ -114,21 +114,18 @@ class PostPicker extends Component {
                     className={`${classes.postCard}`}
                     post={post}
                     status={status}
-                    height="110px"
-                    maxWidth="220px"
+                    height="150px"
+                    maxWidth="95%"
                     onClick={this.setCurrentPost.bind(this, post)}
                     selected={this.props.currentPost && this.props.currentPost.id === post.id}
                   />
                 })}
 
-                <Card
+                <Button
                   onClick={this.props.toggleAdding.bind(this, provider)}
-                  height="110px"
-                  maxWidth="220px"
-                  className={classes.postCard}
                 >
                   Add a new post
-                </Card>
+                </Button>
 
               </Flexbox>
             )

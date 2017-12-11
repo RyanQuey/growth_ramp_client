@@ -198,36 +198,40 @@ class PostEditor extends Component {
             </Flexbox>
 
             <Flexbox className={classes.utms} justify="flex-start" align="flex-start" direction="column">
-              {UTM_TYPES.map((utmType) => {
-                //TODO want to extract for use with plan editor...if we have a plan editor
-                const type = utmType.type
-                const label = utmType.label
-                const active = Helpers.safeDataPath(post, `${type}.active`, false)
-                const value = Helpers.safeDataPath(post, `${type}.value`, "")
-                const key = Helpers.safeDataPath(post, `${type}.key`, "")
-                return (
-                  <div key={type} className={classes.utmField}>
-                    <div className={classes.utmCheckbox}>
-                      <Checkbox
-                        value={active}
-                        onChange={this.toggleUtm.bind(this, type)}
-                        label={`${label.titleCase()} UTM`}
-                      />&nbsp;
-                    </div>
+              {!post.contentUrl ? (
+                <div>(Utms cannot be set when there is no content URL)</div>
+              ) : (
+                UTM_TYPES.map((utmType) => {
+                  //TODO want to extract for use with plan editor...if we have a plan editor
+                  const type = utmType.type
+                  const label = utmType.label
+                  const active = Helpers.safeDataPath(post, `${type}.active`, false)
+                  const value = Helpers.safeDataPath(post, `${type}.value`, "")
+                  const key = Helpers.safeDataPath(post, `${type}.key`, "")
+                  return (
+                    <div key={type} className={classes.utmField}>
+                      <div className={classes.utmCheckbox}>
+                        <Checkbox
+                          value={active}
+                          onChange={this.toggleUtm.bind(this, type)}
+                          label={`${label.titleCase()} UTM`}
+                        />&nbsp;
+                      </div>
 
-                    {active && <Input
-                      placeholder={false ? `${label.titleCase()} utm for this template` : ""}
-                      onChange={this.updateUtm.bind(this, type, false)}
-                      value={value}
-                    />}
-                    {active && type === "customUtm" && <Input
-                      placeholder={`Key for this utm`}
-                      onChange={this.updateUtm.bind(this, type, "settingKey")}
-                      value={key}
-                    />}
-                  </div>
-                )
-              })}
+                      {active && <Input
+                        placeholder={false ? `${label.titleCase()} utm for this template` : ""}
+                        onChange={this.updateUtm.bind(this, type, false)}
+                        value={value}
+                      />}
+                      {active && type === "customUtm" && <Input
+                        placeholder={`Key for this utm`}
+                        onChange={this.updateUtm.bind(this, type, "settingKey")}
+                        value={key}
+                      />}
+                    </div>
+                  )
+                })
+              )}
             </Flexbox>
 
           </div>

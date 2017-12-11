@@ -9,9 +9,9 @@
     @include mq(2xs) {
       @include cols(12)
     }
-    @include mq(md) {
-      @include cols(6)
-    }
+    //@include mq(md) {
+    //  @include cols(6)
+    //}
     @include mq(lg) {
       @include cols(4)
     }

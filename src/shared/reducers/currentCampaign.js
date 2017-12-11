@@ -16,7 +16,6 @@ const currentCampaignReducer = (state = null, action) => {
   let pld = action.payload
   switch (action.type) {
     case UPDATE_CAMPAIGN_SUCCESS:
-console.log(pld);
       if (state && state.id === pld.id) {
         campaign = action.payload
         return Object.assign({}, campaign)

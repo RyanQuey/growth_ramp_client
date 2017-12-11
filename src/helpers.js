@@ -97,6 +97,19 @@ export default {
     return permittedChannelTypes
   },
 
+  accountFromPost: (post) => {
+    const providerAccounts = store.getState().providerAccounts[post.provider]
+    const postAccount = providerAccounts.find((account) => account.id === (post.providerAccountId.id || post.providerAccountId))
+    return postAccount
+  },
+
+  //only for when channel type has multiple
+  channelFromPost: (post) => {
+    const postAccount = Helpers.accountFromPost(post)
+    const channelRecord = postAccount.channels.find(channel => channel.id === (post.channelId.id || post.channelId))
+    return channelRecord
+  },
+
   //takes upper scored provider name and returns friendly name
   //either need channel or the other two
   providerFriendlyName: (providerName) => PROVIDERS[providerName].name,
@@ -107,6 +120,7 @@ export default {
 
   //takes channel record and returns whether the channel type normally has multiple channels for it
   //either need channel or the other two
+  //NOTE currently, ALL channel records have multiple, hence why they are channel records. Personal posts don't get a record.
   channelTypeHasMultiple: (channel, providerName, channelType) => PROVIDERS[providerName || channel.provider].channelTypes[channelType || channel.type].hasMultiple,
 
   //takes channel record and returns required scopes

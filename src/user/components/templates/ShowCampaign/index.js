@@ -48,7 +48,7 @@ class ShowCampaign extends Component {
     const currentCampaign = this.props.campaigns[campaignId]
     //UPDATE just reload it; maybe optimize later
     //makes sure not showing it as draft when just published, etc
-    //check if need to retrieve and/or populate posts
+    //Otherwise, latest clicks wouldn't register either, if they haven't closed app in awhile or something
     //if (!currentCampaign || !currentCampaign.posts) {
       //this action doesn't yet support any criteria
       this.setState({pending: true})
