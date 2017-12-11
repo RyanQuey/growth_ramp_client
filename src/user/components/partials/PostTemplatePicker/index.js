@@ -1,7 +1,7 @@
 import { Component } from 'react';
 import { connect } from 'react-redux'
 import { Flexbox, Button, Icon, Card } from 'shared/components/elements'
-import { PostTemplateCard, ProviderCard } from 'user/components/partials'
+import { PostCard, ProviderCard } from 'user/components/partials'
 import { SET_CURRENT_POST_TEMPLATE, SET_CURRENT_MODAL, UPDATE_PLAN_REQUEST  } from 'constants/actionTypes'
 import { PROVIDERS } from 'constants/providers'
 import {UTM_TYPES} from 'constants/posts'
@@ -110,25 +110,26 @@ console.log("now setting",postTemplate);
                     status = "toUpdate"
                   }
 
-                  return <PostTemplateCard
+                  return <PostCard
                     key={postTemplate.id}
                     className={`${classes.postTemplateCard}`}
-                    postTemplate={postTemplate}
-                    height="110px"
-                    maxWidth="220px"
+                    post={postTemplate}
+                    height="160px"
+                    maxWidth="95%"
                     onClick={this.setCurrentPostTemplate.bind(this, postTemplate)}
                     selected={this.props.currentPostTemplate && this.props.currentPostTemplate.id === postTemplate.id}
+                    showText={false}
                   />
                 })}
 
-                {mode === "EDIT" && <Card
+                {mode === "EDIT" && <Button
                   onClick={this.props.toggleAdding.bind(this, provider)}
                   height="110px"
                   maxWidth="220px"
                   className={classes.postTemplateCard}
                 >
                   Add a new post template
-                </Card>}
+                </Button>}
 
                 {mode === "SHOW" && providerPostTemplates.length === 0 && (
                   <div>No post templates so far</div>

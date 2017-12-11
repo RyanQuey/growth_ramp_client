@@ -113,6 +113,7 @@ class PostPicker extends Component {
                     key={post.id}
                     className={`${classes.postCard}`}
                     post={post}
+                    showText={true}
                     status={status}
                     height="150px"
                     maxWidth="95%"

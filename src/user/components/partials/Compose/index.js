@@ -45,7 +45,7 @@ class Compose extends Component {
     this.toggleAdding = this.toggleAdding.bind(this)
     this.togglePublishing = this.togglePublishing.bind(this)
     this.publish = this.publish.bind(this)
-    this._canPublish = this._canPublish.bind(this)
+    this._hasContent = this._hasContent.bind(this)
   }
 
   componentWillReceiveProps(props) {
@@ -135,7 +135,7 @@ class Compose extends Component {
   }
 
   //make sure posts have either contentUrl or text
-  _canPublish() {
+  _hasContent() {
     const campaignPosts = this.props.currentCampaign.posts || []
     return (
       this.props.currentCampaign.contentUrl ||
@@ -147,8 +147,9 @@ class Compose extends Component {
 
   togglePublishing(value = !this.state.publishing) {
     //make sure all posts have text or contentUrl or image
-    const canPublish = this._canPublish()
-    if (!canPublish) {
+    const hasContent = this._hasContent()
+
+    if (!hasContent) {
       alertActions.newAlert({
         title: "Content required for all posts:",
         message: "Please either add a url for your content, or add text to your posts",

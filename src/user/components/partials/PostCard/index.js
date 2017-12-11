@@ -16,7 +16,7 @@ class PostCard extends Component {
   }
 
   render () {
-    const { post, selected, status, onClick, height, maxWidth, className, showUtms, showIcon, showLink, showImages} = this.props
+    const { post, selected, status, onClick, height, maxWidth, className, showUtms, showIcon, showLink, showImages, showText = true} = this.props
     if (!post) {return null} //shouldn't happen, but whatever
 
     let subtitle
@@ -45,7 +45,7 @@ class PostCard extends Component {
           )}
           <br/>
 
-          <div><span className={classes.cardLabel}>Text:</span>&nbsp;{post.text || "(none)"}</div>
+          {showText && <div><span className={classes.cardLabel}>Text:</span>&nbsp;{post.text || "(none)"}</div>}
           {showLink && <div><span className={classes.cardLabel}>Short Link:</span>&nbsp;{post.shortUrl || "(none)"}</div>}
 
           {showImages && <Flexbox>
@@ -81,12 +81,10 @@ class PostCard extends Component {
 const mapStateToProps = state => {
   return {
     user: state.user,
-    providerPosts: state.providerPosts,
   }
 }
 const mapDispatchToProps = (dispatch) => {
   return {
-    setCurrentPost: (payload, options) => dispatch({type: SET_CURRENT_POST, payload, options}),
   }
 }
 

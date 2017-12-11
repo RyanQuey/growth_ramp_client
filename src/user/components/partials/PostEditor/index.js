@@ -10,7 +10,7 @@ import {
 } from 'constants/actionTypes'
 import { PROVIDERS } from 'constants/providers'
 import { UTM_TYPES, URL_LENGTH } from 'constants/posts'
-import {formActions} from 'shared/actions'
+import {formActions, alertActions} from 'shared/actions'
 import classes from './style.scss'
 
 //shows up as buttons in mobile, or sidebar in browser?
@@ -32,12 +32,23 @@ class PostEditor extends Component {
   updateUtm(utmType, settingKey = false, value, e) {
     //set the param
     let post = Object.assign({}, this.props.post)
+    const required = utmType.requiredIfUtmsEnabled && Object.keys(post).some((key) => key.includes("Utm") && post[key].active)
 
-    if (settingKey) {
-      post[utmType].key = value
+console.log(utmType);
+    if (required && !value) {
+      alertActions.newAlert({
+        title: `${utmType.label} is required:`,
+        message: "Please remove all other utms before removing this utm.",
+        level: "DANGER",
+      })
+
+      return
+
+    } else if (settingKey) {
+      post[utmType.type].key = value
 
     } else {
-      post[utmType].value = value
+      post[utmType.type].value = value
     }
 
     post.dirty = true
@@ -47,6 +58,7 @@ class PostEditor extends Component {
 
   toggleUtm(utmType, checked, e) {
     //basically, source needs to exist if any other one exists
+    const post = this.props.post
     const required = utmType.requiredIfUtmsEnabled && Object.keys(post).some((key) => key.includes("Utm") && post[key].active)
 
     if (required && !checked) {
@@ -169,7 +181,7 @@ class PostEditor extends Component {
         <h2>{Helpers.providerFriendlyName(post.provider)} {post.channelType.titleCase()}</h2>
         {postAccount &&
           <div key={postAccount.id} >
-            <img alt="No profile picture on file" src={postAccount.photoUrl}/>
+            <img alt="(No profile picture on file)" src={postAccount.photoUrl}/>
             <h5>{postAccount.userName} ({postAccount.email || "No email on file"})</h5>
           </div>
         }
@@ -243,12 +255,12 @@ class PostEditor extends Component {
 
                       {active && <Input
                         placeholder={false ? `${label.titleCase()} utm for this template` : ""}
-                        onChange={this.updateUtm.bind(this, type, false)}
+                        onChange={this.updateUtm.bind(this, utmType, false)}
                         value={value}
                       />}
                       {active && type === "customUtm" && <Input
                         placeholder={`Key for this utm`}
-                        onChange={this.updateUtm.bind(this, type, "settingKey")}
+                        onChange={this.updateUtm.bind(this, utmType, "settingKey")}
                         value={key}
                       />}
                     </div>
