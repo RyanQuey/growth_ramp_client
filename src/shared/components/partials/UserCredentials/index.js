@@ -21,29 +21,34 @@ class UserCredentials extends Component {
     this.handlePassword = this.handlePassword.bind(this)
   }
   componentWillReceiveProps(props) {
+    //what is this/
     if (props.errors && props.errors !== this.props.errors) {
-      this.props.setPending(false);
+      this.props.togglePending(false);
     }
   }
 
   handlePassword(value, e, errors) {
+    errorActions.clearErrors ("Login", "credentials")
+
     this.setState({
       password: value,
     })
   }
   handleEmail(value, e, errors) {
+    errorActions.clearErrors ("Login", "credentials")
+
     this.setState({
       email: value,
       validEmail: (!errors || errors.length === 0),
     })
   }
-  setPending() {
-    this.props.setPending(true);
+  togglePending() {
+    this.props.togglePending(true);
   }
 
   submit(e) {
     e.preventDefault()
-    this.props.setPending(true);
+    this.props.togglePending(true);
     alertActions.closeAlerts()
 
     let password = this.state.password
@@ -59,7 +64,7 @@ class UserCredentials extends Component {
 
     } else if (this.props.view === "RESETTING_PASSWORD") {
       cb = () => {
-        this.props.setPending(false)
+        this.props.togglePending(false)
         this.setState({
           //change view to login
         })
@@ -110,11 +115,10 @@ class UserCredentials extends Component {
         <Button
           disabled={(
             (!this.props.passwordOnly && !this.state.validEmail) ||
-            (view !== "RESETTING_PASSWORD" && !this.state.password) ||
-            this.props.pending
+            (view !== "RESETTING_PASSWORD" && !this.state.password)
           )}
           type="submit"
-
+          pending={this.props.pending}
         >
           {this.props.buttonText}
         </Button>

@@ -23,7 +23,7 @@ class SocialLogin extends Component {
 
     //TODO: eventually have pop-up logic etc. here
     //don't refresh page when button is disabled
-    this.props.setPending(e)
+    this.props.togglePending(true)
     this.setState({chosenProvider: providerName})
     this.props.disabled && e.preventDefault()
 

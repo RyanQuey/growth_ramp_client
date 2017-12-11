@@ -18,7 +18,7 @@ class Login extends Component {
     }
 
     this.toggleView = this.toggleView.bind(this)
-    this.setPending = this.setPending.bind(this)
+    this.togglePending = this.togglePending.bind(this)
     this.toggleResetPassword = this.toggleResetPassword.bind(this)
   }
   componentWillReceiveProps (props) {
@@ -45,8 +45,8 @@ class Login extends Component {
       }
     })
   }
-  setPending(e) {
-    this.setState({pending: true})
+  togglePending(value = !this.state.pending) {
+    this.setState({pending: value})
   }
 
   toggleResetPassword(e) {
@@ -95,7 +95,7 @@ class Login extends Component {
           buttonText={generalText}
           pending={this.state.pending}
           token={this.props.viewSettings.modalToken}
-          setPending={this.setPending}
+          togglePending={this.togglePending}
         />
         <br />
         <a onClick={this.toggleResetPassword}>{this.state.resettingPassword ? "Login or signup" : "Forget your password?"}</a>
@@ -105,7 +105,7 @@ class Login extends Component {
           <br/>
           <SocialLogin
             pending={this.state.pending}
-            setPending={this.setPending}
+            togglePending={this.togglePending}
           />
         </div>}
         <a
