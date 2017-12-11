@@ -207,7 +207,6 @@ const Helpers = {
       }
     }
 
-
     return userData
   },
 

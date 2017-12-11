@@ -306,7 +306,7 @@ console.log();
             <Button style="inverted" onClick={this.new}>Add a {currentChannelType.titleCase()}</Button>
         )}
 
-        <Button style="inverted" onClick={this.props.toggleAdding.bind(this, false, this.state.addingPost)}>Cancel</Button>
+        <Button style="inverted" onClick={this.props.toggleAdding.bind(this, false, this.state.addingPost, false)}>Cancel</Button>
       </div>
     );
   }

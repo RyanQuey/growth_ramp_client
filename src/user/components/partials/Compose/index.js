@@ -70,6 +70,7 @@ class Compose extends Component {
   toggleAdding(provider, value = !this.state.addingPost, currentPost = null) {
     //if provider is passed in, just starts making a post for that provider
     this.props.setCurrentPost(currentPost)
+    if (!value) {}
     this.setState({addingPost: provider || value})
   }
 

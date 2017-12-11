@@ -21,7 +21,7 @@ const currentPostReducer = (state = null, action) => {
 
     case SET_CURRENT_POST:
       post = action.payload
-      return Object.assign({}, post)
+      return post ? Object.assign({}, post) : null
 
     //case CREATE_POST_SUCCESS:
       //post = action.payload

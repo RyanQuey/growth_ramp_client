@@ -32,7 +32,8 @@ class PostEditor extends Component {
   updateUtm(utmType, settingKey = false, value, e) {
     //set the param
     let post = Object.assign({}, this.props.post)
-    const required = utmType.requiredIfUtmsEnabled && Object.keys(post).some((key) => key.includes("Utm") && post[key].active)
+    //if this type is required if any other exists, and some other exists
+    const required = utmType.requiredIfUtmsEnabled && Object.keys(post).some((key) => key !== utmType.type && key.includes("Utm") && post[key].active)
 
 console.log(utmType);
     if (required && !value) {
