@@ -1,0 +1,11 @@
+@import 'theme/_helpers';
+
+.publishButtonWrapper {
+  position: relative;
+  width: 160px;
+}
+.hide {
+  visibility: hidden;
+  opacity: 0;
+  @transition()//visibility 0s, opacity 0.5s linear)
+}
