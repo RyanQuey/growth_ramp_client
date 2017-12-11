@@ -108,13 +108,12 @@ class ShowAccount extends Component {
               {permittedChannelTypes.length ? (
                 <div>
                   {permittedChannelTypes.map((channelType) => {
-                    const channelName = PROVIDERS[provider].channelTypes[channelType].name
+                    const channelTypeName = Helpers.channelTypeFriendlyName(null, provider, channelType)
                     const channelsForType = channels.filter((c) => c.type === channelType)
-console.log(channelsForType);
-                    const canHaveMultiple = PROVIDERS[provider].channelTypes[channelType].hasMultiple
+                    const canHaveMultiple = Helpers.channelTypeHasMultiple(null, provider, channelType)
 
                     return <div key={channelType}>
-                      <h4>{channelName}</h4>
+                      <h4>{channelTypeName}</h4>
 
                       {channelsForType.length ? (
                         channelsForType.map((c) =>
@@ -128,11 +127,10 @@ console.log(channelsForType);
 
                       {canHaveMultiple &&
                         <Button onClick={this.refreshChannelType.bind(this, channelType)}>
-                          Refresh {channelName} channels
+                          Refresh {channelTypeName} channels
                         </Button>
                       }
 
-                      <hr/>
                     </div>
                   })}
                 </div>

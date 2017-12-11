@@ -18,6 +18,7 @@ const domain = env.CLIENT_URL || 'http://www.local.dev:5000'
 const callbackPath = '/provider_redirect'
 const callbackUrl = domain + callbackPath
 const apiUrl = process.env.API_URL || 'http://localhost:1337';
+const moment = require('moment')
 
 const uuid = require('uuid/v4');
 const $ = require('jquery');
@@ -39,7 +40,6 @@ const extractCookie = (allCookies) => {
     let keyAndValue = cookie.split("=")
     let key = keyAndValue[0]
     let value = keyAndValue[1]
-console.log(value);
     if (!value || !unescape(value) || value === "undefined") {return}
 
     try {
@@ -151,10 +151,18 @@ const Helpers = {
 
   // extracts the relevant passport profile data from the profile auth data received on login/request, and matches it to the database columns
   // only twitter has a tokenSecret so far
-  extractPassportData: (accessToken, refreshToken, passportProfile, accessTokenSecret, req) => {
+  // TODO not so many args, pass in an object
+  // clean up this mess of a func
+  extractPassportData: (accessToken, refreshToken, passportProfile, accessTokenSecret, req, params) => {
     let userData = _.pickBy(passportProfile, (value, key) => {
       return ["providerUserId", "email"].includes(key)
     })
+    userData.photoUrl = Helpers.safeDataPath(passportProfile, "photos.0.value", "")
+    userData.providerUserId = passportProfile.id
+    userData.accessToken = accessToken
+    userData.refreshToken = refreshToken
+    //only twitter sends; because oauth1 probably
+    userData.accessTokenSecret = accessTokenSecret
     userData.provider = passportProfile.provider.toUpperCase()
 
     if (userData.provider === "TWITTER") {
@@ -178,12 +186,13 @@ const Helpers = {
       userData.email = Helpers.safeDataPath(passportProfile, "emails.0.value", "")
 
     } else if (userData.provider === "LINKEDIN") {
-      if (!refreshToken) {
-        refreshToken = req.query.code//not sure if this is really the refreshtoken...might just be a temporary code that passport will use.
-      }
+      //no refresh token available
       userData.userName = passportProfile.displayName
       userData.profileUrl = passportProfile._json.publicProfileUrl
       userData.email = Helpers.safeDataPath(passportProfile, "emails.0.value", "")
+      expiresIn = params && params.expires_in
+      userData.accessTokenExpires = expiresIn && moment.utc().add(expiresIn, "seconds").format()
+
       //mapping to an object, with keys being the scope
       userData.scopes = {}
 
@@ -198,12 +207,6 @@ const Helpers = {
       }
     }
 
-    userData.photoUrl = Helpers.safeDataPath(passportProfile, "photos.0.value", "")
-    userData.providerUserId = passportProfile.id
-    userData.accessToken = accessToken
-    userData.refreshToken = refreshToken
-    //only twitter sends; because oauth1 probably
-    userData.accessTokenSecret = accessTokenSecret
 
     return userData
   },
@@ -235,6 +238,7 @@ const Helpers = {
     ],
     passReqToCallback: true,//to extract the code from the query...for some reason, passport doesn't get it by default. also to get cookies
     scope: ["publish_actions"],
+    enableProof: true,
   },
 
   linkedinOptions: {

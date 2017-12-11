@@ -37,14 +37,19 @@ const PROVIDERS = require('./src/constants/providers').PROVIDERS
 
 passport.use(new FacebookStrategy(
   Helpers.facebookOptions,
-  function(req, accessToken, refreshToken, profile, done) {
+  function(req, accessToken, refreshToken, params, profile, done) {
     //console.log(accessToken, refreshToken, profile);
     //console.log("***profile***");
     //console.log(profile);
-    const providerData = Helpers.extractPassportData(accessToken, refreshToken, profile, "", req)
+    const providerData = Helpers.extractPassportData(accessToken, refreshToken, profile, "", req, params)
 //console.log("providerData", providerData);
     const cookie = Helpers.extractCookie(req.headers.cookie)
 
+console.log("**************");
+console.log(params, profile);
+console.log("**************");
+console.log(accessToken, refreshToken);
+console.log("**************");
     return Helpers.tradeTokenForUser(providerData, cookie, done)
   }
 ))
@@ -52,10 +57,10 @@ passport.use(new FacebookStrategy(
 
 passport.use(new TwitterStrategy(
   Helpers.twitterOptions,
-  function(req, accessToken, tokenSecret, profile, done) {
+  function(req, accessToken, tokenSecret, params, profile, done) {
     //passing in the token secret as the refresh token for twitter
     //oauth1 is reason why, I think
-    const providerData = Helpers.extractPassportData(accessToken, "", profile, tokenSecret, req)
+    const providerData = Helpers.extractPassportData(accessToken, "", profile, tokenSecret, req, params)
     const cookie = Helpers.extractCookie(req.headers.cookie)
     //console.log("***profile***");
     //console.log(profile);
@@ -65,14 +70,13 @@ passport.use(new TwitterStrategy(
 
 passport.use(new LinkedInStrategy(
   Helpers.linkedinOptions,
-  function(req, accessToken, refreshToken, profile, done) {
-    if (!refreshToken) {
-      refreshToken = req.query.code//not sure if this is really the refreshtoken...might just be a temporary code that passport will use.
-    }
+  function(req, accessToken, refreshToken, params, profile, done) {
+    //if (!refreshToken) {
+    //  refreshToken = req.query.code//not sure if this is really the refreshtoken...might just be a temporary code that passport will use.
+    //}
     //console.log("***profile***");
     //    console.log(profile);
-
-    const providerData = Helpers.extractPassportData(accessToken, refreshToken, profile, "", req)
+    const providerData = Helpers.extractPassportData(accessToken, refreshToken, profile, "", req, params)
     const cookie = Helpers.extractCookie(req.headers.cookie)
 //console.log(req.body, req.params, req.query);
 
@@ -148,6 +152,7 @@ app.get(`${Helpers.callbackPath}/:provider`, (req, res, next) => {
     console.log("user and provider", raw, "info",info);*/
     console.log(err, raw, info);
 
+    //checks if user rejected or acceted, or there was an error
     const result = Helpers.parseProviderResponse[providerName](req, err, raw)
 
     switch (result) {
