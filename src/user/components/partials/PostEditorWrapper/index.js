@@ -82,9 +82,11 @@ console.log(channelPosts);*/
           </div>}
 
           <PostEditor
-            account={currentAccount}
-            channelType={currentChannel}
-            post={currentPostParams}
+            record={currentPostParams}
+            form="EditCampaign"
+            type="Post"
+            items="posts"
+            hasContent={true}
           />
           <Button style="danger" onClick={this.removePost.bind(this, currentPost)}>Delete Post</Button>
         </div>
@@ -98,6 +100,8 @@ const mapStateToProps = state => {
     currentPost: state.currentPost,
     user: state.user,
     campaignPosts: Helpers.safeDataPath(state.forms, "EditCampaign.posts.params", {}),
+    //uploadedFiles: Helpers.safeDataPath(state.forms, "EditCampaign.uploadedFiles", []),
+    postsParams: Helpers.safeDataPath(state.forms, "EditCampaign.posts.params", {}),
   }
 }
 const mapDispatchToProps = (dispatch) => {

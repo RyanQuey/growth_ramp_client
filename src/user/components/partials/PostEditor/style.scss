@@ -1,6 +1,6 @@
 @import 'theme/_helpers';
 
-.postMenu {
+.recordMenu {
   @include mq(xs) {
     @include cols(12)
   }
@@ -9,7 +9,7 @@
   }
 }
 
-.postFields {
+.recordFields {
   .textEditor {
     //TODO size by characters, depending on the maximum allowed for that post type
     textarea {

@@ -13,7 +13,7 @@ import {
 import { Icon, Button, Flexbox } from 'shared/components/elements'
 import { Select, ConfirmationPopup } from 'shared/components/groups'
 import { SocialLogin } from 'shared/components/partials'
-import { ProviderAccountsDetails, PostEditor, AddPost, PostPicker, CampaignPostWrapper } from 'user/components/partials'
+import { ProviderAccountsDetails, PostEditor, AddPost, PostPicker, PostEditorWrapper } from 'user/components/partials'
 import {formActions, alertActions} from 'shared/actions'
 import { withRouter } from 'react-router-dom'
 import {PROVIDERS} from 'constants/providers'
@@ -248,10 +248,7 @@ console.log("now publishing")
           <div>
 
             <hr/>
-            <CampaignPostWrapper
-              currentProvider={currentProvider}
-              currentChannel={currentChannel}
-            />
+            <PostEditorWrapper/>
 
             <Button style="inverted" disabled={!dirty} onClick={this.saveCampaignPosts}>{dirty ? "Save Changes" : "All drafts saved"}</Button>
             <Flexbox justify="center">

@@ -22,7 +22,6 @@ class PostTemplateDetails extends Component {
     }
 
     this.handleText = this.handleText.bind(this)
-    this.addVariable = this.addVariable.bind(this)
   }
 
   updateUtm(utmType, settingKey = false, value, e) {
@@ -85,26 +84,6 @@ class PostTemplateDetails extends Component {
     }
   }
 
-  addVariable(utmType) {
-    //currently only adding campaign name
-    const postTemplate = Object.assign({}, this.props.postTemplate)
-    let currentValue = postTemplate[utmType].value
-    let newValue = currentValue ? `${currentValue}-{{campaign.name}}` : "{{campaign.name}}"
-    this.updateUtm(utmType, false, newValue)
-  }
-
-  //TODO debounce
-  handleText(value) {
-    //set the param
-//TODO require the source thing
-    let postTemplate = Object.assign({}, this.props.postTemplate)
-    postTemplate.text = value
-    postTemplate.dirty = true
-
-    //update the postTemplate form
-    formActions.setParams("EditPlan", "postTemplates", {[postTemplate.id]: postTemplate})
-  }
-
   render() {
     const postTemplate = this.props.postTemplate
     if (!postTemplate) {return null} //shouldn't happen, but whatever
@@ -134,26 +113,6 @@ console.log(active);
                       />&nbsp;
                     </div>
 
-                    {active && <div>
-                      <Input
-                        placeholder={``}
-                        onChange={this.updateUtm.bind(this, type, false)}
-                        value={value}
-                      />
-                      {type === "customUtm" && <Input
-                        placeholder={``}
-                        onChange={this.updateUtm.bind(this, type, "settingKey")}
-                        value={key}
-                      />}
-                      <Button
-                        onClick={this.addVariable.bind(this, type, false)}
-                        style="inverted"
-                        small={true}
-                      >
-                        Add Campaign name to UTM
-                      </Button>
-
-                    </div>}
                   </div>
                 ) : (
                   <div>

@@ -1,7 +1,7 @@
 import { Component } from 'react';
 import { connect } from 'react-redux'
 import { Flexbox, Button, Icon } from 'shared/components/elements'
-import { PostTemplateCard, PostTemplateEditor } from 'user/components/partials'
+import { PostTemplateCard, PostEditor } from 'user/components/partials'
 import { SET_CURRENT_MODAL, UPDATE_POST_TEMPLATE_REQUEST, SET_CURRENT_POST_TEMPLATE,  } from 'constants/actionTypes'
 import { PROVIDERS } from 'constants/providers'
 import {formActions} from 'shared/actions'
@@ -84,9 +84,13 @@ console.log(channelPostTemplates);*/
             />&nbsp;Disable postTemplate
           </div>}
 
-          <PostTemplateEditor
-            postTemplate={currentPostTemplateParams}
-            mode={mode}
+          <PostEditor
+            record={currentPostTemplateParams}
+            mode={mode && "TODO not using this yet...maybe use a separate component, for basically just showing utms"}
+            form="EditPlan"
+            type="PostTemplate"
+            items="postTemplates"
+            hasContent={false}
           />
           <div className={classes.instructions}>
               <p>

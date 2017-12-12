@@ -22,7 +22,8 @@ class PostEditor extends Component {
     this.state = {
     }
 
-    this.handleText = this.handleText.bind(this)
+    this.addVariable = this.addVariable.bind(this)
+    this.handleContentText = this.handleContentText.bind(this)
     this.onDrop = this.onDrop.bind(this)
     this.onOverrideDrop = this.onOverrideDrop.bind(this)
     this.removeUpload = this.removeUpload.bind(this)
@@ -31,11 +32,11 @@ class PostEditor extends Component {
 
   updateUtm(utmType, settingKey = false, value, e) {
     //set the param
-    let post = Object.assign({}, this.props.post)
+    let record = Object.assign({}, this.props.record)
     //if this type is required if any other exists, and some other exists
     //TODO performance better if only check other values if this one is blank
-    const required = utmType.requiredIfUtmsEnabled && Object.keys(post).some((key) => {
-      const isActive = key !== utmType.type && key.includes("Utm") && post[key].active && post[key].active !== "false"
+    const required = utmType.requiredIfUtmsEnabled && Object.keys(record).some((key) => {
+      const isActive = key !== utmType.type && key.includes("Utm") && record[key].active && record[key].active !== "false"
       return isActive
     })
 
@@ -49,22 +50,22 @@ class PostEditor extends Component {
       return
 
     } else if (settingKey) {
-      post[utmType.type].key = value
+      record[utmType.type].key = value
 
     } else {
-      post[utmType.type].value = value
+      record[utmType.type].value = value
     }
 
-    post.dirty = true
-    //update the post form
-    formActions.setParams("EditCampaign", "posts", {[post.id]: post})
+    record.dirty = true
+    //update the record form
+    formActions.setParams(this.props.form, this.props.items, {[record.id]: record})
   }
 
   toggleUtm(utmType, checked, e) {
     //basically, source needs to exist if any other one exists
-    const post = this.props.post
-    const required = utmType.requiredIfUtmsEnabled && Object.keys(post).some((key) => {
-      const isActive = key !== utmType.type && key.includes("Utm") && post[key].active && post[key].active !== "false"
+    const record = this.props.record
+    const required = utmType.requiredIfUtmsEnabled && Object.keys(record).some((key) => {
+      const isActive = key !== utmType.type && key.includes("Utm") && record[key].active && record[key].active !== "false"
       return isActive
     })
 
@@ -77,25 +78,33 @@ class PostEditor extends Component {
 
 
     } else {
-      //update the post form
-      let post = Object.assign({}, this.props.post)
-      //let utmField = Object.assign({}, Helpers.safeDataPath(this.props.postParams, `${this.props.post.id}.${utmType}`, {}))
-      post[utmType.type].active = checked
-      post.dirty = true
+      //update the record form
+      let record = Object.assign({}, this.props.record)
+      record[utmType.type].active = checked
+      record.dirty = true
 
-      formActions.setParams("EditCampaign", "posts", {[post.id]: post})
+      formActions.setParams(this.props.form, this.props.items, {[record.id]: record})
     }
   }
 
-  //TODO debounce
-  handleText(value) {
-    //set the param
-    let post = Object.assign({}, this.props.post)
-    post.text = value
-    post.dirty = true
+  //adds a variable to the UTM
+  addVariable(utmType) {
+    //currently only adding campaign name
+    const record = Object.assign({}, this.props.record)
+    let currentValue = record[utmType.type].value
+    let newValue = currentValue ? `${currentValue}-{{campaign.name}}` : "{{campaign.name}}"
+    this.updateUtm(utmType, false, newValue)
+  }
 
-    const maxCharacters = PROVIDERS[post.provider].channelTypes[post.channelType].maxCharacters
-    const characterCount = Helpers.safeDataPath(post, "text", "").length + (post.contentUrl ? URL_LENGTH : 0)
+  //TODO debounce
+  handleContentText(value) {
+    //set the param
+    let record = Object.assign({}, this.props.record)
+    record.text = value
+    record.dirty = true
+
+    const maxCharacters = PROVIDERS[record.provider].channelTypes[record.channelType].maxCharacters
+    const characterCount = Helpers.safeDataPath(record, "text", "").length + (record.contentUrl ? URL_LENGTH : 0)
 
     if (characterCount.length > maxCharacters) {
       alertActions.newAlert({
@@ -105,8 +114,8 @@ class PostEditor extends Component {
       })
 
     } else {
-      //update the post form
-      formActions.setParams("EditCampaign", "posts", {[post.id]: post})
+      //update the record form
+      formActions.setParams(this.props.form, this.props.items, {[record.id]: record})
     }
   }
 
@@ -122,17 +131,17 @@ class PostEditor extends Component {
 
   removeUpload(oldFileUrl){
     //TODO also remove from b2
-    let uploadedFiles = [...this.props.uploadedFiles]
-    _.remove(uploadedFiles, (f) => f === oldFileUrl)
+    //let uploadedFiles = [...this.props.uploadedFiles]
+    //_.remove(uploadedFiles, (f) => f === oldFileUrl)
 
-    formActions.setParams("EditCampaign", "uploadedFiles", uploadedFiles)
+    //formActions.setParams(this.props.form, "uploadedFiles", uploadedFiles)
 
-    //update the post form
-    let post = Object.assign({}, this.props.post)
-    _.remove(post.uploadedContent, (c) => c.url === oldFileUrl)
-    post.dirty = true
-    formActions.setParams("EditCampaign", "posts", {[post.id]: post})
-//console.log(post);
+    //update the record form
+    let record = Object.assign({}, this.props.record)
+    _.remove(record.uploadedContent, (c) => c.url === oldFileUrl)
+    record.dirty = true
+    formActions.setParams(this.props.form, this.props.items, {[record.id]: record})
+//console.log(record);
   }
 
   onOverrideDrop(oldFileUrl, acceptedFile, rejectedFile) {
@@ -146,122 +155,120 @@ class PostEditor extends Component {
     }
   }
 
-
-
   onUpload(result) {
     this.setState({pending: false})
     //is successful, a url
     if (typeof result === "string") {
       const fileUrl = result
       //update the uploadedFiles list...which I could use to clear out unused files
-      let uploadedFiles = [...this.props.uploadedFiles]
-      uploadedFiles.push(fileUrl)
+      //let uploadedFiles = [...this.props.uploadedFiles]
+      //uploadedFiles.push(fileUrl)
 
-      formActions.setParams("EditCampaign", "uploadedFiles", uploadedFiles)
+      //formActions.setParams(this.props.form, "uploadedFiles", uploadedFiles)
 
-      //update the post form
-      let post = Object.assign({}, this.props.post)
-      if (!post.uploadedContent) {
-        post.uploadedContent = []
+      //update the record form
+      let record = Object.assign({}, this.props.record)
+      if (!record.uploadedContent) {
+        record.uploadedContent = []
       }
-      post.uploadedContent.push({url: fileUrl, type: "IMAGE"})
-      post.dirty = true
+      record.uploadedContent.push({url: fileUrl, type: "IMAGE"})
+      record.dirty = true
 
-      formActions.setParams("EditCampaign", "posts", {[post.id]: post})
+      formActions.setParams(this.props.form, this.props.items, {[record.id]: record})
     }
   }
 
   render() {
-    const post = this.props.post
-    if (!post) {return null} //shouldn't happen, but whatever
-    let utmFields = Object.assign({}, Helpers.safeDataPath(this.props.formOptions, `${post.id}.utms`, {}))
+    const record = this.props.record
+    if (!record) {return null} //shouldn't happen, but whatever
+    let utmFields = Object.assign({}, Helpers.safeDataPath(this.props.formOptions, `${record.id}.utms`, {}))
 
-    const maxImages = PROVIDERS[post.provider].channelTypes[post.channelType].maxImages
-    const imageCount = post.uploadedContent ? post.uploadedContent.length : 0
+    const maxImages = PROVIDERS[record.provider].channelTypes[record.channelType].maxImages
+    const imageCount = record.uploadedContent ? record.uploadedContent.length : 0
 
-    const maxCharacters = PROVIDERS[post.provider].channelTypes[post.channelType].maxCharacters
-    const characterCount = Helpers.safeDataPath(post, "text", "").length + (post.contentUrl ? URL_LENGTH : 0)
+    const maxCharacters = PROVIDERS[record.provider].channelTypes[record.channelType].maxCharacters
+    const characterCount = Helpers.safeDataPath(record, "text", "").length + (record.contentUrl ? URL_LENGTH : 0)
 
     return (
-      <Flexbox direction="column" >
-        <div className={classes.postFields}>
-          <div>
-            <Flexbox direction="column" justify="center" className={classes.textEditor}>
-              <div>Maximum: {maxCharacters};&nbsp;Current Count: {characterCount} {post.contentUrl ? `(including ${URL_LENGTH} for the url length)` : ""}</div>
-              <Input
-                textarea={true}
-                value={post.text || ""}
-                placeholder={`Your post`}
-                onChange={this.handleText}
-                type="text"
-                maxLength={maxCharacters - URL_LENGTH}
-             />
-
-              {imageCount > maxImages && <label>(No more images allowed for this kind of post)</label>}
-              <Flexbox>
-                {imageCount < maxImages && <DropImage
-                  user={this.props.user}
-                  label="Upload an image"
-                  onStart={this.onDrop}
-                  onSuccess={this.onUpload}
-                  onFailure={this.onUpload}
-                  className={classes.dropImage}
-                />}
-
-                {post.uploadedContent && post.uploadedContent.map((upload) => {
-                  return <Flexbox key={upload.url} direction="column">
-                    <a
-                      target="_blank"
-                      style={{backgroundImage: `url(${upload.url})`}}
-                      className={classes.dropImage}
-                      href={upload.url}
-                    />
-                    <Icon name="close" onClick={this.removeUpload.bind(this, upload.url)} />
-                  </Flexbox>
-                })}
-              </Flexbox>
+      <Flexbox direction="column" className={classes.recordFields}>
+          {this.props.hasContent && <Flexbox direction="column" justify="center" className={classes.textEditor}>
+            <div>Maximum: {maxCharacters};&nbsp;Current Count: {characterCount} {record.contentUrl ? `(including ${URL_LENGTH} for the url length)` : ""}</div>
+            <Input
+              textarea={true}
+              value={record.text || ""}
+              placeholder={`Your record`}
+              onChange={this.handleContentText}
+              type="text"
+              maxLength={maxCharacters - URL_LENGTH}
+           />
+            {imageCount > maxImages && <label>(No more images allowed for this kind of post)</label>}
+            <Flexbox>
+              {imageCount < maxImages && <DropImage
+                user={this.props.user}
+                label="Upload an image"
+                onStart={this.onDrop}
+                onSuccess={this.onUpload}
+                onFailure={this.onUpload}
+                className={classes.dropImage}
+              />}
+              {record.uploadedContent && record.uploadedContent.map((upload) => {
+                return <Flexbox key={upload.url} direction="column">
+                  <a
+                    target="_blank"
+                    style={{backgroundImage: `url(${upload.url})`}}
+                    className={classes.dropImage}
+                    href={upload.url}
+                  />
+                  <Icon name="close" onClick={this.removeUpload.bind(this, upload.url)} />
+                </Flexbox>
+              })}
             </Flexbox>
-
-            <Flexbox className={classes.utms} justify="flex-start" align="flex-start" direction="column">
-              {!post.contentUrl ? (
-                <div>(Utms cannot be set when there is no content URL)</div>
-              ) : (
-                UTM_TYPES.map((utmType) => {
-                  //TODO want to extract for use with plan editor...if we have a plan editor
-                  const type = utmType.type
-                  const label = utmType.label
-                  const active = [true, "true"].includes(Helpers.safeDataPath(post, `${type}.active`, false))
-                  const value = Helpers.safeDataPath(post, `${type}.value`, "")
-                  const key = Helpers.safeDataPath(post, `${type}.key`, "")
-
-                  return (
-                    <div key={type} className={classes.utmField}>
-                      <div className={classes.utmCheckbox}>
-                        <Checkbox
-                          value={active}
-                          onChange={this.toggleUtm.bind(this, utmType)}
-                          label={`${label.titleCase()} UTM`}
-                        />&nbsp;
-                      </div>
-
-                      {active && <Input
-                        placeholder={false ? `${label.titleCase()} utm for this template` : ""}
+          </Flexbox>}
+          <Flexbox className={classes.utms} justify="flex-start" align="flex-start" direction="column">
+            {this.props.hasContent && !record.contentUrl ? (
+              <div>(Utms cannot be set when there is no content URL)</div>
+            ) : (
+              UTM_TYPES.map((utmType) => {
+                //TODO want to extract for use with plan editor...if we have a plan editor
+                const type = utmType.type
+                const label = utmType.label
+                const active = [true, "true"].includes(Helpers.safeDataPath(record, `${type}.active`, false))
+                const value = Helpers.safeDataPath(record, `${type}.value`, "")
+                const key = Helpers.safeDataPath(record, `${type}.key`, "")
+                return (
+                  <div key={type} className={classes.utmField}>
+                    <div className={classes.utmCheckbox}>
+                      <Checkbox
+                        value={active}
+                        onChange={this.toggleUtm.bind(this, utmType)}
+                        label={`${label.titleCase()} UTM`}
+                      />&nbsp;
+                    </div>
+                    {active && <div>
+                      <Input
+                        placeholder={``}
                         onChange={this.updateUtm.bind(this, utmType, false)}
                         value={value}
-                      />}
-                      {active && type === "customUtm" && <Input
-                        placeholder={`Key for this utm`}
+                      />
+                      {type === "customUtm" && <Input
+                        placeholder={``}
                         onChange={this.updateUtm.bind(this, utmType, "settingKey")}
                         value={key}
                       />}
-                    </div>
-                  )
-                })
-              )}
-            </Flexbox>
+                      <Button
+                        onClick={this.addVariable.bind(this, utmType)}
+                        style="inverted"
+                        small={true}
+                      >
+                        Add Campaign name to UTM
+                      </Button>
+                    </div>}
+                  </div>
+                )
+              })
+            )}
+          </Flexbox>
 
-          </div>
-        </div>
       </Flexbox>
     )
   }
@@ -270,8 +277,6 @@ class PostEditor extends Component {
 const mapStateToProps = state => {
   return {
     user: state.user,
-    uploadedFiles: Helpers.safeDataPath(state.forms, "EditCampaign.uploadedFiles", []),
-    postsParams: Helpers.safeDataPath(state.forms, "EditCampaign.posts.params", {}),
   }
 }
 const mapDispatchToProps = (dispatch) => {
