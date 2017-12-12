@@ -7,6 +7,8 @@ import {
   REFRESH_CHANNEL_TYPE_SUCCESS,
   FETCH_CURRENT_ACCOUNT_REQUEST,
   FETCH_CURRENT_ACCOUNT_SUCCESS,
+  FETCH_PROVIDER_REQUEST,
+  FETCH_PROVIDER_SUCCESS,
 } from 'constants/actionTypes'
 import { USER_FIELDS_TO_PERSIST, PROVIDER_IDS_MAP  } from 'constants'
 
@@ -14,6 +16,26 @@ import { USER_FIELDS_TO_PERSIST, PROVIDER_IDS_MAP  } from 'constants'
 const providerInfo = {}
 
 //called when there is no provider in the store (e.g., initial store load), or expired provider in the store
+
+function* fetchAllAccounts(action) {
+  try {
+    const userId = store.getState().user.id
+    const res = yield axios.get(`/api/users/${userId}/providerAccounts`) //eventually switch to socket
+
+    //organize by provider
+    const sortedAccounts = Helpers.sortAccounts(res.data)
+
+    yield all([
+      put({type: FETCH_PROVIDER_SUCCESS, payload: sortedAccounts})
+    ])
+
+    action.cb && action.cb(res)
+
+  } catch (err) {
+    console.log('all accounts fetch failed', err.response || err)
+    // yield put(userFetchFailed(err.message))
+  }
+}
 
 //Gets all the populated data required for working on a single campaign
 function* fetchCurrentAccount(action) {
@@ -85,5 +107,6 @@ export default function* updateProviderSaga() {
   yield takeLatest(UPDATE_PROVIDER_REQUEST, updateData)
   yield takeLatest(REFRESH_CHANNEL_TYPE_REQUEST, refreshChannelType)
   yield takeLatest(FETCH_CURRENT_ACCOUNT_REQUEST, fetchCurrentAccount)
+  yield takeLatest(FETCH_PROVIDER_REQUEST, fetchAllAccounts)
 
 }

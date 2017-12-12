@@ -116,6 +116,25 @@ let Helpers = {
     allProviderAccounts = [].concat.apply([], allProviderAccounts)
     return allProviderAccounts
   },
+
+  //sorts accounts, grouping according to provider
+  sortAccounts: (accounts) => {
+    const providerNames = Object.keys(PROVIDERS)
+    const sorted = accounts.reduce((acc, account) => {
+      const providerName = account.provider
+      if (!acc[providerName]) {
+        acc[providerName] = [account]
+      } else {
+        acc[providerName].push(account)
+
+      }
+
+      return acc
+    }, {})
+
+    return sorted
+  },
+
 }
 
 Helpers = Object.assign(Helpers, campaignHelpers)

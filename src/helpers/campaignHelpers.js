@@ -1,3 +1,7 @@
+import {
+  FETCH_PROVIDER_REQUEST,
+} from 'constants/actionTypes'
+
 export default {
   parseCampaignResults: (data) => {
     const posts = data.posts
@@ -92,6 +96,9 @@ export default {
       const allProviderAccounts = Helpers.flattenProviderAccounts()
 console.log(allProviderAccounts);
       ret.accountsToReauthorize = ret.accountsToReauthorize.map((id) => allProviderAccounts.find((account) => account.id === id))
+
+      //refresh provider accounts, api probably changed them
+      store.dispatch({type: FETCH_PROVIDER_REQUEST})
     }
 
     if (ret.failedPosts.length ) {

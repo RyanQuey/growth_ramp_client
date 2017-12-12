@@ -149,6 +149,10 @@ class Compose extends Component {
   togglePublishing(value = !this.state.publishing) {
     //make sure all posts have text or contentUrl or image
     const hasContent = this._hasContent()
+    const campaignPosts = this.props.currentCampaign.posts || []
+    const postProviderAccountIds = campaignPosts.map((post) => post.providerAccountId)
+    const postProviderAccounts = Helpers.flattenProviderAccounts().filter((account) => postProviderAccountIds.includes(account.id))
+    const accountsMissingToken = postProviderAccounts.filter((account) => !account.accessToken)
 
     if (!hasContent) {
       alertActions.newAlert({
@@ -157,7 +161,27 @@ class Compose extends Component {
         level: "DANGER",
       })
 
+    } else if (accountsMissingToken.length) {
+      //to make sure we have access tokens
+
+      let messages = []
+      let accountNames = accountsMissingToken.map((account) => `${Helpers.providerFriendlyName(account.provider)} (${account.userName || account.email})`)
+
+      messages.push(`Please login to ${accountNames.join("; ")}`)
+      let alertMessage = messages.join("; ")
+      alertMessage += ". Then try publishing again."
+
+      alertActions.newAlert({
+        title: "Failure due to missing permissions:",
+        message: alertMessage,
+        level: "DANGER",
+        options: {
+          timer: false,
+        }
+      })
+
     } else {
+
       this.setState({publishing: value})
 console.log("now publishing")
     }
@@ -182,6 +206,7 @@ console.log("now publishing")
         //mode: "savePlan",
       })
     }
+
     this.props.campaignPublishRequest(this.props.currentCampaign, cb, onFailure)
   }
 
