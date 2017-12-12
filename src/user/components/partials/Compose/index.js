@@ -8,6 +8,7 @@ import {
   SET_CURRENT_MODAL,
   SET_CURRENT_POST,
   PUBLISH_CAMPAIGN_REQUEST,
+  FETCH_CURRENT_CAMPAIGN_REQUEST,
 } from 'constants/actionTypes'
 import { Icon, Button, Flexbox } from 'shared/components/elements'
 import { Select, ConfirmationPopup } from 'shared/components/groups'
@@ -209,6 +210,10 @@ console.log("now publishing")
         //mode: "savePlan",
       })
       formActions.matchCampaignStateToRecord()
+
+      //everything is a mess right now. Just reload the campaign for crying out loud
+      this.props.fetchCurrentCampaign(this.props.currentCampaign.id)
+
     }
 
     this.props.campaignPublishRequest(this.props.currentCampaign, cb, onFailure)
@@ -303,6 +308,7 @@ const mapDispatchToProps = (dispatch) => {
     createPostRequest: (payload, cb) => {dispatch({type: CREATE_POST_REQUEST, payload, cb})},
     setCurrentModal: (payload, modalOptions) => dispatch({type: SET_CURRENT_MODAL, payload, options: modalOptions}),
     campaignPublishRequest: (payload, cb, onFailure) => dispatch({type: PUBLISH_CAMPAIGN_REQUEST, payload, cb, onFailure}),
+    fetchCurrentCampaign: (data, cb) => dispatch({type: FETCH_CURRENT_CAMPAIGN_REQUEST, payload: data, cb}),
   }
 }
 

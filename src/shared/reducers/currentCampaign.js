@@ -80,10 +80,11 @@ const currentCampaignReducer = (state = null, action) => {
         campaign = Object.assign({}, state)
         campaignPosts = [...campaign.posts]
         postIndex = _.findIndex(campaignPosts, (p) => p.id === post.id)
-
-
+console.log(postIndex, post);
+console.log(campaignPosts[postIndex]);
         //removes that item in the array
-        campaignPosts.splice(postIndex, 1)
+        let deletedPost = campaignPosts.splice(postIndex, 1)
+console.log(deletedPost);
         campaign.posts = campaignPosts
 
         return Object.assign({}, state, campaign)

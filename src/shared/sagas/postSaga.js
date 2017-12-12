@@ -114,11 +114,11 @@ function* destroyPost(action) {
     //TODO: eventually they filter out posts that have already been sent
     const res = yield axios.delete(`/api/posts/${pld.id}`) //eventually switch to socket
     yield all([
-      put({type: DESTROY_POST_SUCCESS, payload: res}),
+      put({type: DESTROY_POST_SUCCESS, payload: res.data}),
     ])
 
     if (action.cb) {
-      action.cb(pld) //passing in destroyed record
+      action.cb(res.data) //passing in destroyed record
     }
 
   } catch (err) {

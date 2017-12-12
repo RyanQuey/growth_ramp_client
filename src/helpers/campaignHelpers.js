@@ -13,7 +13,7 @@ export default {
       failedPosts: [],
       //note: these also failed to publish, but failed even at the short-link phase
       //putting these posts in both
-      failedToShortenUrl: [],
+      duplicates: [],
       failedToPublish: [],
       requireReauthorization: [], //the posts
       accountsToReauthorize: [], //the accounts
@@ -71,6 +71,7 @@ export default {
 
           case "duplicate-post":
             ret.failedToPublish.push(post)
+            ret.duplicates.push(post)
             break
 
           case "published-but-failed-to-save":
@@ -117,7 +118,11 @@ console.log(ret.accountsToReauthorize);
         messages.push(`Please login to ${accountNames.join("; ")}`)
       }
 
-      ret.alertMessage = messages.join("; ")
+      if (ret.duplicates.length) {
+        messages.push(`Get rid of duplicate posts`)
+      }
+
+      ret.alertMessage = messages.join(". ")
       ret.alertMessage += ". Then try publishing again."
     }
 
