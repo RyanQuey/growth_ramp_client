@@ -64,22 +64,31 @@ class DropImage extends Component {
         this.props.onFailure && this.props.onFailure(err)
       })
       //clear url from browser memory to avoid memory leak
+      //TODO might not need; disabling preview
       window.URL.revokeObjectURL(acceptedFile.preview)
 
     }
+  }
+
+  onDragOver () {
+
   }
 
   render() {
     return (
       <Flexbox align="center" direction="column" justify="center" className={this.props.className || ""}>
         <Dropzone
+          activeClassName={classes.draggingOver}
           disabled={this.state.pending}
+          disablePreview={true}
           className={`${css(this.styles.dropzone)} ${classes.dropzone}`}
           multiple={false}
           onDrop={this.onDrop}
           style={this.props.style}
           maxSize={4*1000*1000} //4MB
+          onDragOver={this.onDragOver}
           accept="image/*"
+          preventDropOnDocument={true}
         >
           <Flexbox align="center" direction="column">
             <div>{this.props.label}</div>
