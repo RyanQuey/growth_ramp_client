@@ -44,7 +44,6 @@ Card.propTypes = {
     PropTypes.node
   ]),
   color: PropTypes.string,
-  onClick: PropTypes.func,
   border: PropTypes.string,
 }
 

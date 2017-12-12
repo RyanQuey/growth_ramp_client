@@ -23,8 +23,8 @@
       //min-width: 200px;
 
       &.publishedPost {
-        cursor: not-allowed;
-        background-color: gray;
+        cursor: not-allowed !important;
+        background-color: gray !important;
       }
     }
   }

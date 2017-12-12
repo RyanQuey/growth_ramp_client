@@ -1,4 +1,4 @@
-import { put, select, take, takeLatest, call, all } from 'redux-saga/effects'
+import { put, select, take, takeLatest, takeEvery, call, all } from 'redux-saga/effects'
 import { delay } from 'redux-saga'
 import {
   SIGN_IN_REQUEST,
@@ -146,10 +146,10 @@ function* fetchCurrentPost(action) {
 
 export default function* postSaga() {
   yield takeLatest(FETCH_POST_REQUEST, fetchPosts)
-  yield takeLatest(CREATE_POST_REQUEST, createPost)
-  yield takeLatest(UPDATE_POST_REQUEST, updatePost)
-  yield takeLatest(DESTROY_POST_REQUEST, destroyPost)
-  yield takeLatest(PUBLISH_POST_REQUEST, publishPost)
+  yield takeEvery(CREATE_POST_REQUEST, createPost)
+  yield takeEvery(UPDATE_POST_REQUEST, updatePost)
+  yield takeEvery(DESTROY_POST_REQUEST, destroyPost)
+  yield takeEvery(PUBLISH_POST_REQUEST, publishPost)
   //when setting as the current post, will want to populate several of the associations
   //yield takeLatest(SET_POST, populatePost)
 }

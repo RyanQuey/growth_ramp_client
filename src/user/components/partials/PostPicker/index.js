@@ -112,7 +112,7 @@ class PostPicker extends Component {
                   return <PostCard
                     key={post.id}
                     className={`${classes.postCard} ${post.publishedAt ? classes.publishedPost : ""}`}
-                    subtitle={post.publishedAt ? "Published" : ""}
+                    subtitle={post.publishedAt ? "Already Published" : ""}
                     post={post}
                     showText={true}
                     status={status}

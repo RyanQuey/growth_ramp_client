@@ -189,6 +189,8 @@ console.log("now publishing")
 
   publish() {
     this.setState({pending: true})
+    alertActions.closeAlerts()
+
     const cb = () => {
       this.setState({
         pending: false,

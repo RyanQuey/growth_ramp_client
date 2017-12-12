@@ -12,7 +12,7 @@ const currentPostReducer = (state = null, action) => {
   switch (action.type) {
 
     case UPDATE_POST_SUCCESS:
-      if (store.getState().currentPost.id === action.payload.id) {
+      if (state && state.id === action.payload.id) {
         post = action.payload
         return Object.assign({}, post)
       } else {

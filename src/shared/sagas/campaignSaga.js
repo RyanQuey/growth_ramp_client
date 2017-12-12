@@ -204,6 +204,7 @@ function* publishCampaign(action) {
       templateName: "Campaign",
       templatePart: "published",
       title: "Error publishing campaign",
+      level: "DANGER",
       errorObject: err,
     })
 

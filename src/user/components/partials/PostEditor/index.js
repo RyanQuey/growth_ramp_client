@@ -181,7 +181,7 @@ class PostEditor extends Component {
 
     const maxCharacters = PROVIDERS[post.provider].channelTypes[post.channelType].maxCharacters
     const characterCount = Helpers.safeDataPath(post, "text", "").length + (post.contentUrl ? URL_LENGTH : 0)
-
+    const channelTypeHasMultiple = Helpers.channelTypeHasMultiple(null, post.provider, post.channelType)
     const postAccount = Helpers.accountFromPost(post)
 
     return (
@@ -191,7 +191,7 @@ class PostEditor extends Component {
           <div key={postAccount.id} >
             <img alt="(No profile picture on file)" src={postAccount.photoUrl}/>
             <h5>{postAccount.userName} ({postAccount.email || "No email on file"})</h5>
-            {post.postingAs && <h5>(Posting as {post.postingAs.toLowerCase()})</h5>}
+            {channelTypeHasMultiple && post.postingAs && <h5>(Posting as {post.postingAs.toLowerCase()})</h5>}
           </div>
         }
 

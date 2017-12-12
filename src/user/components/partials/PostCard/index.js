@@ -16,19 +16,19 @@ class PostCard extends Component {
   }
 
   render () {
-    const { post, selected, status, onClick, height, maxWidth, className, showUtms, showIcon, showLink, showImages, showText = true} = this.props
+    const { post, selected, status, onClick, height, maxWidth, className, showUtms, showIcon, showLink, showImages, showText = true, subtitle} = this.props
     if (!post) {return null} //shouldn't happen, but whatever
 
-    let subtitle
+    let sub
     switch(status) {
       case "toDelete":
-        subtitle = "Ready to Delete"
+        sub = "Ready to Delete"
         break
       case "toCreate":
-        subtitle = "Ready to Create"
+        sub = "Ready to Create"
         break
       case "toUpdate":
-        subtitle = "Ready to Update"
+        sub = "Ready to Update"
         break
     }
 
@@ -36,7 +36,7 @@ class PostCard extends Component {
     const activeUtms = UTM_TYPES.filter((t) => post[t.type] && post[t.type].active && post[t.type].value)
     return (
       <Card selected={selected} onClick={onClick} height={height} maxWidth={maxWidth} className={`${className} ${classes[status]}`}>
-        <CardHeader title={post.channelType.titleCase()} subtitle={subtitle} icon={showIcon && post.provider.toLowerCase()} iconColor={post.provider.toLowerCase()}/>
+        <CardHeader title={post.channelType.titleCase()} subtitle={subtitle || sub} icon={showIcon && post.provider.toLowerCase()} iconColor={post.provider.toLowerCase()}/>
 
         <Flexbox direction="column" >
           <div><span className={classes.cardLabel}>Account:</span>&nbsp;{(Helpers.accountFromPost(post) || {}).userName || "Error: Could not be found"}</div>
