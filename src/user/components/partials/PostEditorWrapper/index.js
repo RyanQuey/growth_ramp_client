@@ -45,6 +45,7 @@ class CampaignPostWrapper extends Component {
   }
 
   render() {
+//TODO not using a lot of these
     const {currentAccount, currentProvider, currentChannel, currentPost, campaignPosts} = this.props
     if (this.props.hide || !currentPost || !Object.keys(currentPost).length ) {
       return null
@@ -52,8 +53,6 @@ class CampaignPostWrapper extends Component {
 
     //use the currentPost id, but that object reflects the persisted post. So use the form data
     let currentPostParams = currentPost && campaignPosts[currentPost.id]
-    const postAccount = Helpers.accountFromPost(currentPost)
-    const channelTypeHasMultiple = Helpers.channelTypeHasMultiple(null, currentPost.provider, currentPost.channelType)
 
     /*let channelPosts = []
     if (currentAccount && currentChannel) {
@@ -66,20 +65,6 @@ console.log(channelPosts);*/
     return (
       <div key={currentPost.id}>
         <h2>{Helpers.providerFriendlyName(currentPost.provider)} {currentPost.channelType.titleCase()}</h2>
-          {postAccount &&
-            <div key={postAccount.id} >
-              <img alt="(No profile picture on file)" src={postAccount.photoUrl}/>
-              <h5>{postAccount.userName} ({postAccount.email || "No email on file"})</h5>
-              {channelTypeHasMultiple && post.postingAs && <h5>(Posting as {post.postingAs.toLowerCase()})</h5>}
-            </div>
-          }
-
-          {false && <div className={classes.disablePost}>
-            <Checkbox
-              value={post.active}
-              onChange={this.disablePost}
-            />&nbsp;Disable post
-          </div>}
 
           <PostEditor
             record={currentPostParams}

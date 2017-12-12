@@ -188,9 +188,20 @@ class PostEditor extends Component {
 
     const maxCharacters = PROVIDERS[record.provider].channelTypes[record.channelType].maxCharacters
     const characterCount = Helpers.safeDataPath(record, "text", "").length + (record.contentUrl ? URL_LENGTH : 0)
+    const account = Helpers.accountFromPost(record)
+    const channelTypeHasMultiple = Helpers.channelTypeHasMultiple(null, record.provider, record.channelType)
 
     return (
       <Flexbox direction="column" className={classes.recordFields}>
+          <h2>{Helpers.providerFriendlyName(record.provider)} {record.channelType.titleCase()}</h2>
+          {account &&
+            <div key={account.id} >
+              <img alt="(No profile picture on file)" src={account.photoUrl}/>
+              <h5>{account.userName} ({account.email || "No email on file"})</h5>
+              {channelTypeHasMultiple && record.postingAs && <h5>(Posting as {record.postingAs.toLowerCase()})</h5>}
+            </div>
+          }
+
           {this.props.hasContent && <Flexbox direction="column" justify="center" className={classes.textEditor}>
             <div>Maximum: {maxCharacters};&nbsp;Current Count: {characterCount} {record.contentUrl ? `(including ${URL_LENGTH} for the url length)` : ""}</div>
             <Input
@@ -260,13 +271,40 @@ class PostEditor extends Component {
                         style="inverted"
                         small={true}
                       >
-                        Add Campaign name to UTM
+                        Add Campaign Name to UTM
                       </Button>
                     </div>}
                   </div>
                 )
               })
             )}
+          <div className={classes.instructions}>
+              <p>
+                <h4>Instructions:</h4>Use campaign data in the utm once gets created from this plan by putting variables inside of double-curly braces (e.g., <strong>"{"{{your-variable}}"}"</strong>). Spaces and most other punctuation will become automatically converted into hyphens. Note that variables can only be used like this in plans, not campaigns.
+              </p>
+              <p>
+                <h5>Available attributes:</h5>
+                <br/>
+                <Flexbox>
+                  <Flexbox className={classes.leftColumn} direction="column">
+                    <div>{"{{campaign.name}}"}</div>
+                    <div>{"{{campaign.id}}"}</div>
+                    {false && <div>{"{{platform.name}}"}</div>}
+                    {false && <div>{"{{channel.type}}"}</div>}
+                    {false && <div>{"{{channel.name}}"}</div>}
+                  </Flexbox>
+                  <Flexbox className={classes.rightColumn} direction="column">
+                    <div>The name of the campaign</div>
+                    <div>A unique id number Growth Ramp assigns to each of your campaigns</div>
+                    {false && <div>The name of the social media platform (e.g., "Facebook" or "Twitter")</div>}
+                    {false && <div>The type of channel the post is for (e.g., "Personal" or "Company-Page")</div>}
+                    {false && <div>The name of the channel if applicable (e.g., "My-Favorite-Group"). Will be blank if personal post</div>}
+                  </Flexbox>
+
+                </Flexbox>
+              </p>
+
+          </div>
           </Flexbox>
 
       </Flexbox>
