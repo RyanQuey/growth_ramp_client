@@ -80,12 +80,19 @@ const handleQuery = (rawQuery) => {
 
           case "alert":
             const alertType = value
-
+            //they rejected
             if (alertType === "canceledAuthorization") {
               alertActions.newAlert({
                 title: "Warning:",
                 message: "Permissions not granted",
-                level: "WARNING",
+                level: "DANGER",
+              })
+
+            } else if (alertType === "failedAuthorization") {
+              alertActions.newAlert({
+                title: "Unknown Error:",
+                message: "Failed to login. Please try again. If this continues to occur, please contact Growth Ramp",
+                level: "DANGER",
               })
             }
 

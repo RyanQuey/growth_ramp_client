@@ -26,7 +26,7 @@ const _ = require('lodash')
 
 //TODO can put back in objectr and just use Helpers.extractCookie
 const extractCookie = (allCookies) => {
-  const splitCookies = allCookies.split("; ")
+  const splitCookies = allCookies && allCookies.split("; ")
   //don't need all of this, only need the sessionUser!
   /*const cookiesObject = splitCookies.reduce((acc, cookie) => {
     let keyAndValue = cookie.split("=")
@@ -36,7 +36,8 @@ const extractCookie = (allCookies) => {
     return acc
   }, {})*/
   const ret = {}
-  const cookiesObject = splitCookies.forEach((cookie) => {
+
+  splitCookies && splitCookies.forEach((cookie) => {
     let keyAndValue = cookie.split("=")
     let key = keyAndValue[0]
     let value = keyAndValue[1]
@@ -64,7 +65,7 @@ const extractCookie = (allCookies) => {
 const Helpers = {
   extractCookie: extractCookie,
 
-  safeDataPath: function (object, keyString, def = null) {
+  safeDataPath: function (object, keyString = "", def = null) {
     let keys = keyString.split('.');
     let returnValue = def;
     let safeObject = object;
@@ -269,10 +270,14 @@ const Helpers = {
       return "success"
     },
     facebook: (req, err, raw) => {
+      console.log("Exception from Facebook:");
       console.log(err);
       //if the user rejected the permissions they just asked to give...
-      if (req.query && req.query.error === 'access_denied') {
+      if (err && err.code === 100) {
         //then, redirect back to app
+        return "invalid-code"
+
+      } else if (err && err.code === 10) {
         return "user-rejected"
 
       } else if (err || !raw){

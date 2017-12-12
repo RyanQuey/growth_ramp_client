@@ -146,7 +146,7 @@ app.get(`${Helpers.callbackPath}/:provider`, (req, res, next) => {
     //TODO if req.params.provider === "app.js", should redirect to home page
     next()
   }
-  const cookie = Helpers.extractCookie(req.headers.cookie)
+  const cookie = req.headers.cookie && Helpers.extractCookie(req.headers.cookie)
 
   const providerCallback = function(err, raw, info) {
     /*console.log(req.user, req.account);
@@ -165,10 +165,13 @@ app.get(`${Helpers.callbackPath}/:provider`, (req, res, next) => {
         //NOTE: currently not using the providerName part
         return res.redirect(`/?alert=canceledAuthorization&providerName=${providerName}`)
 
+      case "invalid-code":
+        return res.redirect(`/?alert=failedAuthorization`)
+
       case "unknown-error":
         //should never get here
         //next ... breaks the app, puts node err message on screen
-        return next(err);
+        return res.redirect(`/?alert=failedAuthorization`)
 
       case "success":
         //worked fine!
