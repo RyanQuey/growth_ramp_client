@@ -75,9 +75,9 @@ class EditCampaign extends Component {
 
     //is already published or is archived, don't let them try to edit from using browser link.
     //will disable link to edit elsewhere if published too
-    if (currentCampaign.status !== "DRAFT") {
-console.log(currentCampaign);
+    if (currentCampaign.status === "PUBLISHED") {
       this.props.history.push("/campaigns")
+
     } else {
       this.props.setCurrentCampaign(currentCampaign)
       //initializing to match persisted record
@@ -111,7 +111,7 @@ console.log(currentCampaign);
   }
 
   //can be called from the EditCampaignFooter or each of the 4 sections
-  //initial opening should only be called from the section's componentWillReceiveProps/componentDidMount
+  //initial opening should only be called from the section's componentWillReceiveProps/componentDidMount (and should be false, except once)
   switchTo(next, initialOpening) {
     //const ref = this.refs[next]
     this.setState({

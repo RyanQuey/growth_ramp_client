@@ -180,7 +180,6 @@ function* publishCampaign(action) {
     }})
 
     //or something to trigger next phase, to prompt saving plan
-    formActions.formPersisted("Send", "submit")
     alertActions.newAlert({
       title: parsedResults.alertTitle,
       message: parsedResults.alertMessage,

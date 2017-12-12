@@ -198,6 +198,7 @@ console.log("now publishing")
         //mode: "savePlan",
       })
 
+      formActions.matchCampaignStateToRecord()
       this.props.history.push(`/campaigns/${this.props.currentCampaign.id}`)
     }
 
@@ -207,6 +208,7 @@ console.log("now publishing")
         publishing: false,
         //mode: "savePlan",
       })
+      formActions.matchCampaignStateToRecord()
     }
 
     this.props.campaignPublishRequest(this.props.currentCampaign, cb, onFailure)

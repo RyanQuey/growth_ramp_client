@@ -36,13 +36,6 @@ class Start extends Component {
     //if page loads and at published campaign, don't edit it!!
   }
 
-  componentWillReceiveProps(props) {
-    //now switching after choosing a plan option
-    if (props.currentCampaign && props.currentCampaign.planId && props.initialOpening) {
-      this.props.switchTo("Compose")
-    }
-  }
-
   startFromScratch() {
     formActions.setParams("EditCampaign", "other", {planId: null})
   }

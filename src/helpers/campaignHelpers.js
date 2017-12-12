@@ -8,7 +8,7 @@ export default {
     let ret = {
       //campaign and posts will be set to the store no matter what, as is
       campaign: data,
-      posts: posts,
+      posts: [...posts],
       //this is for all
       failedPosts: [],
       //note: these also failed to publish, but failed even at the short-link phase
@@ -77,7 +77,7 @@ export default {
             ret.publishedButNotUpdated.push(post)
             break
           default:
-
+            break
         }
       }
     }

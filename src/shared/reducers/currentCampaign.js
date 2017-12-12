@@ -18,7 +18,8 @@ const currentCampaignReducer = (state = null, action) => {
     case UPDATE_CAMPAIGN_SUCCESS:
       if (state && state.id === pld.id) {
         campaign = action.payload
-        return Object.assign({}, campaign)
+        //merge into state, in case the new one doesn't have posts populated...which happens when create plan from campaign
+        return Object.assign({}, state, campaign)
       } else {
         return state
       }
