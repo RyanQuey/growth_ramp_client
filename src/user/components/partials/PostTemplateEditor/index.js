@@ -22,6 +22,7 @@ class PostTemplateDetails extends Component {
     }
 
     this.handleText = this.handleText.bind(this)
+    this.addVariable = this.addVariable.bind(this)
   }
 
   updateUtm(utmType, settingKey = false, value, e) {
@@ -84,6 +85,14 @@ class PostTemplateDetails extends Component {
     }
   }
 
+  addVariable(utmType) {
+    //currently only adding campaign name
+    const postTemplate = Object.assign({}, this.props.postTemplate)
+    let currentValue = postTemplate[utmType].value
+    let newValue = currentValue ? `${currentValue}-{{campaign.name}}` : "{{campaign.name}}"
+    this.updateUtm(utmType, false, newValue)
+  }
+
   //TODO debounce
   handleText(value) {
     //set the param
@@ -104,81 +113,57 @@ class PostTemplateDetails extends Component {
 
     return (
       <Flexbox direction="column" >
-        <h2>{PROVIDERS[postTemplate.provider].name} {postTemplate.channelType.titleCase()}</h2>
-        {false && <div className={classes.disablePostTemplate}>
-          <Checkbox
-            value={postTemplate.active}
-            onChange={this.disablePostTemplate}
-          />&nbsp;Disable postTemplate
-        </div>}
-
         <div className={classes.postTemplateFields}>
-          <div>
-            <Flexbox flexWrap="wrap" className={classes.utms}>
-              {UTM_TYPES.map((utmType) => {
-                //TODO want to extract for use with plan editor...if we have a plan editor
-                const type = utmType.type
-                const label = utmType.label
-                const active = Helpers.safeDataPath(postTemplate, `${type}.active`, false)
-                const value = Helpers.safeDataPath(postTemplate, `${type}.value`, "")
-                const key = Helpers.safeDataPath(postTemplate, `${type}.key`, "")
-                return <div key={type} className={classes.utmField}>
-                  {mode === "EDIT" ? (
-                    <div>
-                      <div className={classes.utmCheckbox}>
-                        <Checkbox
-                          value={active}
-                          onChange={this.toggleUtm.bind(this, type)}
-                          label={`${label.titleCase()} UTM`}
-                        />&nbsp;
-                      </div>
+          <Flexbox flexWrap="wrap" className={classes.utms}>
+            {UTM_TYPES.map((utmType) => {
+              //TODO want to extract for use with plan editor...if we have a plan editor
+              const type = utmType.type
+              const label = utmType.label
+              const active = [true, "true"].includes(Helpers.safeDataPath(postTemplate, `${type}.active`, false))
+              const value = Helpers.safeDataPath(postTemplate, `${type}.value`, "")
+              const key = Helpers.safeDataPath(postTemplate, `${type}.key`, "")
+console.log(active);
+              return <div key={type} className={classes.utmField}>
+                {mode === "EDIT" ? (
+                  <div>
+                    <div className={classes.utmCheckbox}>
+                      <Checkbox
+                        value={active}
+                        onChange={this.toggleUtm.bind(this, type)}
+                        label={`${label.titleCase()} UTM`}
+                      />&nbsp;
+                    </div>
 
-                      {active && <Input
-                        placeholder={`${label.titleCase()} utm for this template`}
+                    {active && <div>
+                      <Input
+                        placeholder={``}
                         onChange={this.updateUtm.bind(this, type, false)}
                         value={value}
-                      />}
-                      {active && type === "customUtm" && <Input
-                        placeholder={`Key for this utm`}
+                      />
+                      {type === "customUtm" && <Input
+                        placeholder={``}
                         onChange={this.updateUtm.bind(this, type, "settingKey")}
                         value={key}
                       />}
-                    </div>
-                  ) : (
-                    <div>
-                      <label>{label.titleCase()} UTM:</label>&nbsp;
-                      <span>{Helpers.safeDataPath(postTemplate, `${type}.value`, "None")}</span>
-                    </div>
-                  )}
-                </div>
-              })}
+                      <Button
+                        onClick={this.addVariable.bind(this, type, false)}
+                        style="inverted"
+                        small={true}
+                      >
+                        Add Campaign name to UTM
+                      </Button>
 
-              <p>
-                <strong>Instructions:</strong>&nbsp; Use campaign data in the utm once gets created from this plan by putting variables inside of double-curly braces (e.g., "{"{{your-variable}}"}"). Spaces and most other punctuation will become automatically converted into hyphens. Note that variables can only be used like this in plans, not campaigns.
-              </p>
-              <p>
-                <strong>Available attributes:</strong>&nbsp;
-                <Flexbox>
-                  <Flexbox direction="column">
-                    <div>{"{{campaign.name}}"}</div>
-                    <div>{"{{campaign.id}}"}</div>
-                    <div>{"{{platform.name}}"}</div>
-                    <div>{"{{channel.type}}"}</div>
-                    <div>{"{{channel.name}}"}</div>
-                  </Flexbox>
-                  <Flexbox direction="column">
-                    <div>The name of the campaign</div>
-                    <div>A unique id number Growth Ramp assigns to each of your campaigns</div>
-                    <div>The name of the social media platform (e.g., "Facebook" or "Twitter")</div>
-                    <div>The type of channel the post is for (e.g., "Personal" or "Company-Page")</div>
-                    <div>The name of the channel if applicable (e.g., "My-Favorite-Group"). Will be blank if personal post</div>
-                  </Flexbox>
-
-                </Flexbox>
-              </p>
-            </Flexbox>
-
-          </div>
+                    </div>}
+                  </div>
+                ) : (
+                  <div>
+                    <label>{label.titleCase()} UTM:</label>&nbsp;
+                    <span>{Helpers.safeDataPath(postTemplate, `${type}.value`, "None")}</span>
+                  </div>
+                )}
+              </div>
+            })}
+          </Flexbox>
         </div>
       </Flexbox>
     )

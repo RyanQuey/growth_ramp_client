@@ -235,6 +235,29 @@ class ShowPlan extends Component {
                 className={classes.nameInput}
               />
             )}
+
+            <PostTemplateWrapper
+              currentProvider={currentProvider}
+              currentAccount={currentAccount}
+              currentChannel={currentChannel}
+              mode={mode}
+            />
+
+            {mode === "EDIT" ? (
+              <div>
+                <Button style="inverted" disabled={!dirty} onClick={this.savePlan}>
+                  {dirty ? "Save changes" : "All drafts saved"}
+                </Button>
+                <Button style="inverted" onClick={this.toggleMode}>
+                  {dirty ? "Cancel edits" : "Finished editing"}
+                </Button>
+              </div>
+            ) : (
+              <Button style="inverted" onClick={this.toggleMode}>
+                Edit
+              </Button>
+            )}
+
             <div>
               <PostTemplatePicker
                 account={currentAccount}
@@ -263,27 +286,6 @@ class ShowPlan extends Component {
                   </div>
                 }
 
-                <PostTemplateWrapper
-                  currentProvider={currentProvider}
-                  currentAccount={currentAccount}
-                  currentChannel={currentChannel}
-                  mode={mode}
-                />
-
-                {mode === "EDIT" ? (
-                  <div>
-                    <Button style="inverted" disabled={!dirty} onClick={this.savePlan}>
-                      {dirty ? "Save changes" : "All drafts saved"}
-                    </Button>
-                    <Button style="inverted" onClick={this.toggleMode}>
-                      {dirty ? "Cancel edits" : "Finished editing"}
-                    </Button>
-                  </div>
-                ) : (
-                  <Button style="inverted" onClick={this.toggleMode}>
-                    Edit
-                  </Button>
-                )}
               </div>
             )}
           </div>

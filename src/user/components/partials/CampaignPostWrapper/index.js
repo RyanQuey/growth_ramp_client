@@ -9,7 +9,7 @@ import classes from './style.scss'
 
 //shows up as buttons in mobile, or sidebar in browser?
 //used in channels and send
-class CampaignPosts extends Component {
+class CampaignPostWrapper extends Component {
   constructor() {
     super()
 
@@ -52,6 +52,8 @@ class CampaignPosts extends Component {
 
     //use the currentPost id, but that object reflects the persisted post. So use the form data
     let currentPostParams = currentPost && campaignPosts[currentPost.id]
+    const postAccount = Helpers.accountFromPost(currentPost)
+    const channelTypeHasMultiple = Helpers.channelTypeHasMultiple(null, currentPost.provider, currentPost.channelType)
 
     /*let channelPosts = []
     if (currentAccount && currentChannel) {
@@ -62,8 +64,23 @@ class CampaignPosts extends Component {
 console.log(channelPosts);*/
 
     return (
+      <div key={currentPost.id}>
+        <h2>{Helpers.providerFriendlyName(currentPost.provider)} {currentPost.channelType.titleCase()}</h2>
+          {postAccount &&
+            <div key={postAccount.id} >
+              <img alt="(No profile picture on file)" src={postAccount.photoUrl}/>
+              <h5>{postAccount.userName} ({postAccount.email || "No email on file"})</h5>
+              {channelTypeHasMultiple && post.postingAs && <h5>(Posting as {post.postingAs.toLowerCase()})</h5>}
+            </div>
+          }
 
-        <div key={currentPost.id}>
+          {false && <div className={classes.disablePost}>
+            <Checkbox
+              value={post.active}
+              onChange={this.disablePost}
+            />&nbsp;Disable post
+          </div>}
+
           <PostEditor
             account={currentAccount}
             channelType={currentChannel}
@@ -91,6 +108,6 @@ const mapDispatchToProps = (dispatch) => {
   }
 }
 
-const ConnectedCampaignPosts = connect(mapStateToProps, mapDispatchToProps)(CampaignPosts)
-export default ConnectedCampaignPosts
+const ConnectedCampaignPostWrapper = connect(mapStateToProps, mapDispatchToProps)(CampaignPostWrapper)
+export default ConnectedCampaignPostWrapper
 
