@@ -2,10 +2,10 @@ import { Component } from 'react';
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 import {
-  PostTemplateEditor,
+  //PostTemplateEditor,
   AddPost, //shared with the CampaignEditor
   PostTemplatePicker,
-  PostTemplateWrapper
+  PostTemplateEditorWrapper
 } from 'user/components/partials'
 import { Navbar, Icon, Button, Input, Flexbox } from 'shared/components/elements'
 import {
@@ -112,7 +112,6 @@ class ShowPlan extends Component {
     } else {
       formActions.matchPlanStateToRecord()
       this.props.history.push(`/plans/${this.props.currentPlan.id}/edit`)
-
     }
   }
 
@@ -170,8 +169,6 @@ class ShowPlan extends Component {
         this.props.updatePostTemplateRequest(postTemplate, cb)
       }
     }
-
-
   }
 
   savePlan() {
@@ -206,7 +203,6 @@ class ShowPlan extends Component {
     } else {
       done()
     }
-
   }
 
   handleLinkProvider() {
@@ -236,7 +232,7 @@ class ShowPlan extends Component {
               />
             )}
 
-            <PostTemplateWrapper
+            <PostTemplateEditorWrapper
               currentProvider={currentProvider}
               currentAccount={currentAccount}
               currentChannel={currentChannel}

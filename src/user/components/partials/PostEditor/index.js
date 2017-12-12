@@ -190,10 +190,10 @@ class PostEditor extends Component {
     const characterCount = Helpers.safeDataPath(record, "text", "").length + (record.contentUrl ? URL_LENGTH : 0)
     const account = Helpers.accountFromPost(record)
     const channelTypeHasMultiple = Helpers.channelTypeHasMultiple(null, record.provider, record.channelType)
-
+    const type = this.props.type
     return (
       <Flexbox direction="column" className={classes.recordFields}>
-          <h2>{Helpers.providerFriendlyName(record.provider)} {record.channelType.titleCase()}</h2>
+          <h2>{Helpers.providerFriendlyName(record.provider)} {record.channelType.titleCase()}{type === "postTemplate" ? "Template" : ""}</h2>
           {account &&
             <div key={account.id} >
               <img alt="(No profile picture on file)" src={account.photoUrl}/>

@@ -64,17 +64,15 @@ console.log(channelPosts);*/
 
     return (
       <div key={currentPost.id}>
-        <h2>{Helpers.providerFriendlyName(currentPost.provider)} {currentPost.channelType.titleCase()}</h2>
-
-          <PostEditor
-            record={currentPostParams}
-            form="EditCampaign"
-            type="Post"
-            items="posts"
-            hasContent={true}
-          />
-          <Button style="danger" onClick={this.removePost.bind(this, currentPost)}>Delete Post</Button>
-        </div>
+        <PostEditor
+          record={currentPostParams}
+          form="EditCampaign"
+          type="Post"
+          items="posts"
+          hasContent={true}
+        />
+        <Button style="danger" onClick={this.removePost.bind(this, currentPost)}>Delete Post</Button>
+      </div>
     )
   }
 }

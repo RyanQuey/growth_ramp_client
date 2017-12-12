@@ -37,11 +37,11 @@ class ShowCampaign extends Component {
   }
 
   componentWillReceiveProps (props) {
-    if (props.match.params.campaignId !== this.props.match.params.campaignId) {
+    /*if (props.match.params.campaignId !== this.props.match.params.campaignId) {
       //editing a new campaign, without remounting.
       //this would happen if click "New Campaign" while editing a different one
       this.setCampaign(props.match.params.campaignId)
-    }
+    }*/
   }
 
   setCampaign (campaignId) {
@@ -52,8 +52,7 @@ class ShowCampaign extends Component {
     //if (!currentCampaign || !currentCampaign.posts) {
       //this action doesn't yet support any criteria
       this.setState({pending: true})
-      const getAnalytics = !currentCampaign || currentCampaign.status === "PUBLISHED"
-      this.props.fetchCurrentCampaign(campaignId, {getAnalytics})
+      this.props.fetchCurrentCampaign(campaignId, {getAnalytics: true})
 
     //} else {
       //this.props.setCurrentCampaign(currentCampaign)
@@ -103,7 +102,7 @@ class ShowCampaign extends Component {
     let links = currentCampaign.posts && _.values(this.extractCampaignLinks(currentCampaign.posts))
     return (
       <div>
-        <h1>{currentCampaign.name}{currentCampaign.status === "DRAFT" && "(Draft)"}</h1>
+        <h1>{currentCampaign.name}{currentCampaign.status === "DRAFT" && " (Draft)"}</h1>
         <div className={classes.content}>
           <h2>Content Url:</h2>&nbsp;{currentCampaign.contentUrl || "(none)"}
           {links && links.length > 0 &&

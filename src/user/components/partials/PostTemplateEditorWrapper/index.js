@@ -70,7 +70,7 @@ console.log(channelPostTemplates);*/
             record={currentPostTemplateParams}
             mode={mode && "TODO not using this yet...maybe use a separate component, for basically just showing utms"}
             form="EditPlan"
-            type="PostTemplate"
+            type="postTemplate"
             items="postTemplates"
             hasContent={false}
           />

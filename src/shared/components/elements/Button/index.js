@@ -47,14 +47,17 @@ const STYLES = {
     regular: {
       background: theme.color.darkRed,
       color: theme.color.white,
+      border: `none`,
       hover: theme.color.danger,
     },
     disabled: {
       background: theme.color.moduleGrayOne,
+      border: `none`,
       color: theme.color.primary,
     },
     selected: {
       background: theme.color.danger,
+      border: `none`,
       color: theme.color.white,
       hover: theme.color.danger,
     },

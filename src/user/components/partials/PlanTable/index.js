@@ -88,7 +88,7 @@ class PlanTable extends Component {
                   <Button onClick={this.editPlan.bind(this, plan)}>Edit Plan</Button>
                   <Button onClick={this.showPlan.bind(this, plan)}>View Details</Button>
                   <div className={classes.popupWrapper}>
-                    <Button onClick={this.toggleDeleting.bind(this, planId)}>Delete</Button>
+                    <Button style="danger" onClick={this.toggleDeleting.bind(this, planId)}>Delete</Button>
                     {this.state.deleting === planId &&
                       <ConfirmationPopup
                         onConfirm={this.removePlan.bind(this, plan)}

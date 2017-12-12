@@ -3,13 +3,13 @@ import { connect } from 'react-redux'
 import { FETCH_CAMPAIGN_REQUEST, CREATE_CAMPAIGN_REQUEST } from 'constants/actionTypes'
 import { Button, Flexbox } from 'shared/components/elements'
 import {
-  CampaignPicker
+  CampaignTable
 } from 'user/components/partials'
 import {
   withRouter,
 } from 'react-router-dom'
 
-class viewCampaigns extends Component {
+class ViewCampaigns extends Component {
   constructor() {
     super()
     this.state = {
@@ -55,7 +55,7 @@ class viewCampaigns extends Component {
         <h1>Campaigns</h1>
         {Object.keys(this.props.campaigns).length > 0 ? (
           <Flexbox justify="center">
-            <CampaignPicker />
+            <CampaignTable />
           </Flexbox>
         ) : (
           <div>
@@ -88,4 +88,4 @@ const mapStateToProps = state => {
     campaigns: state.campaigns,
   }
 }
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(viewCampaigns))
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(ViewCampaigns))

@@ -110,7 +110,7 @@ class CampaignPicker extends Component {
                   <Button onClick={this.showCampaign.bind(this, campaign)}>View Details</Button>
                   {campaign.status !== "PUBLISHED" && (
                     <div className={classes.popupWrapper}>
-                      <Button onClick={this.toggleDeleting.bind(this, campaign.id)}>Delete</Button>
+                      <Button style="danger" onClick={this.toggleDeleting.bind(this, campaign.id)}>Delete</Button>
                       {this.state.deleting === campaign.id &&
                         <ConfirmationPopup
                           onConfirm={this.removeCampaign.bind(this, campaign)}
