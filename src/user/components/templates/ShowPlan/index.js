@@ -128,6 +128,7 @@ class ShowPlan extends Component {
 
     const cb = () => {
       formActions.matchPlanStateToRecord()
+      this.props.setCurrentPostTemplate(null)
     }
 
     //should not update the postTemplate reducer on its success, just give me an alert if it fails
@@ -239,6 +240,27 @@ class ShowPlan extends Component {
               mode={mode}
             />
 
+            {this.state.addingPostTemplate ? (
+
+              <AddPost
+                toggleAdding={this.toggleAdding}
+                type="postTemplate"
+                currentProvider={this.state.addingPostTemplate}
+              />
+
+            ) : (
+
+              <div>
+                {currentAccount &&
+                  <div key={currentAccount.id} >
+                    <img alt="No profile picture on file" src={currentAccount.photoUrl}/>
+                    <h5>{currentAccount.email || "No email on file"}</h5>
+                  </div>
+                }
+
+              </div>
+            )}
+
             {mode === "EDIT" ? (
               <div>
                 <Button style="inverted" disabled={!dirty} onClick={this.savePlan}>
@@ -264,26 +286,6 @@ class ShowPlan extends Component {
               />
             </div>
 
-            {this.state.addingPostTemplate ? (
-
-              <AddPost
-                toggleAdding={this.toggleAdding}
-                type="postTemplate"
-                currentProvider={this.state.addingPostTemplate}
-              />
-
-            ) : (
-
-              <div>
-                {currentAccount &&
-                  <div key={currentAccount.id} >
-                    <img alt="No profile picture on file" src={currentAccount.photoUrl}/>
-                    <h5>{currentAccount.email || "No email on file"}</h5>
-                  </div>
-                }
-
-              </div>
-            )}
           </div>
         ) : (
           <Icon name="spinner" size="5x"/>
