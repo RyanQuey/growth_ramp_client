@@ -107,22 +107,21 @@ function* updatePostTemplate(action, cb) {
   }
 }
 
-function* destroyPostTemplate(action) {
+function* archive(action) {
   try {
     const pld = action.payload
 
-    //TODO: eventually they filter out postTemplates that have already been sent
-    const res = yield axios.delete(`/api/postTemplates/${pld.id}`) //eventually switch to socket
+    const res = yield axios.put(`/api/postTemplates/${pld.id}`, {userId: pld.userId, status: "ARCHIVED"}) //eventually switch to socket
+
     yield all([
-      put({type: DESTROY_POST_TEMPLATE_SUCCESS, payload: res.data}),
+      put({ type: DESTROY_POST_TEMPLATE_SUCCESS, payload: res.data}),
     ])
 
-    if (action.cb) {
-      action.cb(pld) //passing in destroyed record
-    }
+    action.cb && action.cb(res.data)
 
   } catch (err) {
     console.log('postTemplates destroy failed', err)
+    console.log(err.response || err)
   }
 }
 
@@ -148,7 +147,7 @@ export default function* postTemplateSaga() {
   yield takeLatest(FETCH_POST_TEMPLATE_REQUEST, fetchPostTemplates)
   yield takeLatest(CREATE_POST_TEMPLATE_REQUEST, createPostTemplate)
   yield takeLatest(UPDATE_POST_TEMPLATE_REQUEST, updatePostTemplate)
-  yield takeLatest(DESTROY_POST_TEMPLATE_REQUEST, destroyPostTemplate)
+  yield takeLatest(DESTROY_POST_TEMPLATE_REQUEST, archive)
   yield takeLatest(PUBLISH_POST_TEMPLATE_REQUEST, publishPostTemplate)
   //when setting as the current postTemplate, will want to populate several of the associations
   //yield takeLatest(SET_POST_TEMPLATE, populatePostTemplate)

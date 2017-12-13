@@ -98,9 +98,11 @@ class Login extends Component {
           togglePending={this.togglePending}
         />
         <br />
-        <a onClick={this.toggleResetPassword}>{this.state.resettingPassword ? "Login or signup" : "Forget your password?"}</a>
+        {view === "LOGIN"  &&
+          <a href="#" onClick={this.toggleResetPassword}>{this.state.resettingPassword ? "Login or signup" : "Forget your password?"}</a>
+        }
 
-        {!credentialsOnly && !resettingPassword && <div>
+        {!credentialsOnly && !resettingPassword && view === "LOGIN" && <div>
           <h3>Or {socialText.toLowerCase()} through one of your social networks:</h3>
           <br/>
           <SocialLogin

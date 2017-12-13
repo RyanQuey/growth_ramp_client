@@ -122,7 +122,8 @@ console.log(ret.accountsToReauthorize);
         messages.push(`Get rid of duplicate posts`)
       }
 
-      ret.alertMessage = messages.join(". ")
+
+      ret.alertMessage = messages.length ? messages.join(". ") : "Unknown error. Please refresh the page"
       ret.alertMessage += ". Then try publishing again."
     }
 

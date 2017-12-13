@@ -115,6 +115,7 @@ console.log("now setting",postTemplate);
                     className={`${classes.postTemplateCard}`}
                     post={postTemplate}
                     height="160px"
+                    status={status}
                     maxWidth="95%"
                     onClick={this.setCurrentPostTemplate.bind(this, postTemplate)}
                     selected={this.props.currentPostTemplate && this.props.currentPostTemplate.id === postTemplate.id}

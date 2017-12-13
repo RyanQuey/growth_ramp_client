@@ -211,8 +211,9 @@ console.log("now publishing")
       })
       formActions.matchCampaignStateToRecord()
 
+      const callback = () => (formActions.matchCampaignStateToRecord())
       //everything is a mess right now. Just reload the campaign for crying out loud
-      this.props.fetchCurrentCampaign(this.props.currentCampaign.id)
+      this.props.fetchCurrentCampaign(this.props.currentCampaign.id, callback)
 
     }
 
@@ -226,6 +227,7 @@ console.log("now publishing")
 
     const dirty = this.props.campaignPostsForm.dirty
     const {currentProvider, currentChannel} = this.state
+    //note: these reflected persisted records. Not used throughout the whole form though
     const campaignPosts = this.props.currentCampaign.posts || []
 
 

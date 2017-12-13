@@ -50,7 +50,9 @@ class PostPicker extends Component {
       //iterate backwards so indices work
       for (let i = postsArray.length -1; i > -1; i--) {
         let post = postsArray[i]
-        if (accountsIdsForProvider.includes(post.providerAccountId)) {
+        //in case it's populated
+        let postAccountId = post.providerAccountId.id || post.providerAccountId
+        if (accountsIdsForProvider.includes(postAccountId)) {
           sorted[provider].push(post)
           //so don't have to iterate over again
           postsArray.splice(i, 1)
@@ -82,7 +84,7 @@ class PostPicker extends Component {
       return null
     }
 
-    const sortedPosts = this.sortPostsByProvider(this.props.campaignPosts || [])
+    const sortedPosts = this.sortPostsByProvider(this.props.campaignPostsParams || [])
     const providers = Object.keys(sortedPosts)
 
     return (
@@ -142,7 +144,7 @@ class PostPicker extends Component {
 const mapStateToProps = state => {
   return {
     //really is campaign posts params
-    campaignPosts: Helpers.safeDataPath(state.forms, "EditCampaign.posts.params", {}),
+    campaignPostsParams: Helpers.safeDataPath(state.forms, "EditCampaign.posts.params", {}),
     user: state.user,
     providerAccounts: state.providerAccounts,
     currentPost: state.currentPost,

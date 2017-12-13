@@ -148,7 +148,7 @@ function* fetchCurrentPlan(action) {
   try {
     const planId = action.payload
 
-    let res = yield axios.get(`/api/plans/${planId}?populate=postTemplates&populate=campaigns`)
+    let res = yield axios.get(`/api/plans/fetchPopulatedPlan/${planId}/`) //?populate=postTemplates&populate=campaigns`)
 
     yield all([
       put({type: SET_CURRENT_PLAN, payload: res.data})
