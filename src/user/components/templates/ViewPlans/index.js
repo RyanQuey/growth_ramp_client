@@ -11,7 +11,7 @@ import {
   CREATE_PLAN_REQUEST,
   ARCHIVE_PLAN_REQUEST,
 } from 'constants/actionTypes'
-
+import classes from './style.scss'
 
 class Plans extends Component {
   constructor() {
@@ -82,7 +82,7 @@ class Plans extends Component {
           </form>
 
         ) : (
-          <Button onClick={this.toggleAdding}>New Plan</Button>
+          <Button className={classes.topNewPlanButton} onClick={this.toggleAdding}>New Plan</Button>
         )}
         {Object.keys(plans).length > 0 ? (
           <Flexbox justify="center">

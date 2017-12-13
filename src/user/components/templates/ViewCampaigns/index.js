@@ -8,6 +8,7 @@ import {
 import {
   withRouter,
 } from 'react-router-dom'
+import classes from './style.scss'
 
 class ViewCampaigns extends Component {
   constructor() {
@@ -55,7 +56,7 @@ class ViewCampaigns extends Component {
         <h1>Campaigns</h1>
         {Object.keys(this.props.campaigns).length > 0 ? (
           <div>
-            <Button onClick={this.createCampaign}>New campaign</Button>
+            <Button className={classes.topNewCampaignButton} onClick={this.createCampaign}>New campaign</Button>
 
             <Flexbox justify="center">
               <CampaignTable />

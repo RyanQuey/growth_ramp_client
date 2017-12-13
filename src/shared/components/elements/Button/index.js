@@ -89,12 +89,12 @@ const styles = (style, disabled, selected) => {
 
 }
 
-const Button = ({ style = 'primary', children, onClick, disabled, selected, type, pending, small, rectangle }) => {
+const Button = ({ style = 'primary', children, onClick, disabled, selected, type, pending, small, rectangle, className }) => {
   disabled = disabled || disabled == 'disabled' ? true : false
 
   return (
     <button
-      className={`${css(styles(style, disabled, selected).button)} ${classes.button} ${disabled ? classes.disabled : ""} ${small ? classes.small : ""} ${rectangle ? classes.rectangle : ""}`}
+      className={`${css(styles(style, disabled, selected).button)} ${classes.button} ${className || ""} ${disabled ? classes.disabled : ""} ${small ? classes.small : ""} ${rectangle ? classes.rectangle : ""}`}
       onClick={onClick}
       disabled={disabled || pending}
       type={type || "button"}
