@@ -11,6 +11,7 @@ import {
 
 import classes from './style.scss'
 
+//currently not using
 class PlanPicker extends Component {
   constructor(props) {
     super(props)
@@ -20,6 +21,7 @@ class PlanPicker extends Component {
   render() {
     const plans = this.props.plans
     //TODO: set the title using props into the modal container
+    //TODO populate plan post templates, so can list out how many of each provider they have ??
     return (
 
       <Flexbox flexWrap="wrap">

@@ -5,6 +5,7 @@ import {
   UPDATE_CAMPAIGN_REQUEST,
 } from 'constants/actionTypes'
 import { Input, Button, Card, Flexbox } from 'shared/components/elements'
+import { ButtonGroup } from 'shared/components/groups'
 import { PlanPicker } from 'user/components/partials'
 import { formActions, alertActions } from 'shared/actions'
 
@@ -104,7 +105,7 @@ class Start extends Component {
     const userId = user.id
 
 //TODO get this on the form store too
-    const keys = plans && Object.keys(plans)
+    const planIds = plans && Object.keys(plans)
     const campaignPlan = currentCampaign && plans[currentCampaign.planId] || {}
     //only can switch plans if not saved yet OR there are no posts saved yet
     const canSwitchPlans = !currentCampaign.planId && (!currentCampaign.posts || !currentCampaign.posts.length)
@@ -131,7 +132,7 @@ class Start extends Component {
           handleErrors={this.handleErrors}
         />
 
-        {Object.keys(plans).length === 0 ? (
+        {planIds.length === 0 ? (
           <div>
             <h4>You don't have any plans yet. We'll just start from scratch</h4>
           </div>
@@ -145,15 +146,43 @@ class Start extends Component {
           ) : (
             <div>
               <h4>
-                Select one of your plans to use or start from scratch.
+                Select one of your plans to use:
               </h4>
 
-              <PlanPicker
+              {false && <PlanPicker
                 onPick={this.handleClickPlan}
                 selectedId={campaignParams.planId}
                 startFromScratch={this.startFromScratch}
                 blankPlan={true}
-              />
+              />}
+
+              <ButtonGroup>
+                {planIds.map((planId) => {
+                  let plan = plans[planId]
+
+                  return (
+                    <Button
+                      key={plan}
+                      selected={planId == campaignParams.planId}
+                      onClick={this.handleClickPlan.bind(this, plan)}
+                      style="inverted"
+                    >
+                      {plan.name}
+                    </Button>
+                  )
+                })}
+              </ButtonGroup>
+              <h4>
+                Or just start from scratch:
+              </h4>
+              <Button
+                selected={!campaignParams.planId}
+                onClick={this.startFromScratch}
+                style="inverted"
+                rectangle={true}
+              >
+                Start From Scratch
+              </Button>
             </div>
           )
         )}
