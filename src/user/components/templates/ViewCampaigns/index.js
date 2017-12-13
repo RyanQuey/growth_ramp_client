@@ -54,16 +54,22 @@ class ViewCampaigns extends Component {
       <div>
         <h1>Campaigns</h1>
         {Object.keys(this.props.campaigns).length > 0 ? (
-          <Flexbox justify="center">
-            <CampaignTable />
-          </Flexbox>
+          <div>
+            <Button onClick={this.createCampaign}>New campaign</Button>
+
+            <Flexbox justify="center">
+              <CampaignTable />
+            </Flexbox>
+          </div>
         ) : (
           <div>
             <h3>No campaigns yet.</h3>
             <div>Let's create a new one</div>
           </div>
         )}
-        <Button onClick={this.createCampaign}>New campaign</Button>
+        {Object.keys(this.props.campaigns).length > 4 && (
+          <Button onClick={this.createCampaign}>New campaign</Button>
+        )}
       </div>
     )
   }

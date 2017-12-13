@@ -52,12 +52,9 @@ function* create(action) {
     const pld = action.payload
 
     const newPlan = {
-      postTemplates: [],
-      providers: [],
-      createdAt: moment().format(),
       name: pld.name || "",
       utmOptions: {},
-      userId: pld.userId,
+      userId: store.getState().user.id,
     }
 
     let associatedCampaign = pld.associatedCampaign
@@ -85,7 +82,6 @@ function* create(action) {
 
     yield all([
       put({ type: CREATE_PLAN_SUCCESS, payload: newRecord}),
-      put({ type: SET_CURRENT_PLAN, payload: newRecord }),
     ])
 
     alertActions.newAlert({
@@ -96,6 +92,13 @@ function* create(action) {
     action.cb && action.cb(newRecord)
 
   } catch (err) {
+    alertActions.newAlert({
+      title: "Error:",
+      message: "Failed to create plan",
+      level: "DANGER",
+    })
+
+    action.onFailure && action.onFailure(err)
     console.log(`Error in Create plan Saga:`)
     console.log(err.response || err)
   }
