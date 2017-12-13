@@ -21,7 +21,8 @@ class UserContent extends Component {
     return (
       <main className={classes.userContent}>
         <Flexbox className={classes.rightColumn} direction="column">
-          {alerts && !modalOpen && alerts.map((alert) => {
+          {alerts && alerts.map((alert) => {
+            if (!modalOpen && alert.options.forComponent !== Helpers.safeDataPath(this.props.location.pathname)) {}
             return <Alert key={alert.id} alert={alert} />
           })}
 

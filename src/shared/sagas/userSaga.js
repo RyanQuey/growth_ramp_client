@@ -65,6 +65,12 @@ function* signIn(action) {
       yield put({type: FETCH_PLAN_SUCCESS, payload: userPlans})
       yield put({type: FETCH_PROVIDER_SUCCESS, payload: providerAccounts})
 
+      alertActions.newAlert({
+        title: "Welcome!",
+        level: "SUCCESS",
+        options: {forComponent: "/campaigns"}
+      })
+
     } else {
       //no user found
       //TODO: make a separate action for the error
@@ -77,18 +83,30 @@ console.log("no user or error returned...");
       })
     }
 
-
-    return " all done"
   } catch (err) {
     yield put({type: SIGN_IN_FAILURE})
-
-    if (err && Helpers.safeDataPath(err, "response.status", 500) === 403) {
+    let httpStatus = err && Helpers.safeDataPath(err, "response.status", 500)
+    //these are codes from our api
+    let errorCode = err && Helpers.safeDataPath(err, "response.data.originalError.code", 500)
+    let errorMessage = err && Helpers.safeDataPath(err, "response.data.originalError.message", 500)
+console.log(errorCode, errorMessage, err.response.data);
+    if (httpStatus === 403) {
       alertActions.newAlert({
-        title: "Invalid credentials",
+        title: "Invalid email or password",
         message: "Please try again",
         level: "WARNING",
-        timer: false,
+        options: {timer: false},
       })
+
+    } else if (errorCode === "unregistered-email" ){
+      //not in our api to be accepted
+      alertActions.newAlert({
+        title: "Your account has not been registered in our system: ",
+        message: "Please contact us at jdquey@gmail.com to register and then try again.",
+        level: "DANGER",
+        options: {timer: false},
+      })
+
 
     } else {
       console.log('Error signing in/signing up', err)
@@ -101,6 +119,9 @@ console.log("no user or error returned...");
         useInvalidAttributeMessage: true,
       })
     }
+
+    action.onFailure && action.onFailure(err)
+
   }
 }
 

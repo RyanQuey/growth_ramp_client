@@ -27,6 +27,8 @@ console.log(alert);
 
   if (!alert.options) {
     alert.options = {timer: true}
+  } else if (!alert.options.timer !== false) {
+    alert.options.timer = true
   }
 
   let lastAlertId

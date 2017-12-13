@@ -56,6 +56,7 @@ class UserCredentials extends Component {
     let token = this.props.viewSettings.modalToken
     let cb
 
+
     if (this.props.view === "SET_CREDENTIALS") {
       this.props.updateUser({
         password,
@@ -79,9 +80,13 @@ class UserCredentials extends Component {
         signInType = 'SIGN_IN_WITH_EMAIL'
       }
 
+      let onFailure = () => {
+        this.props.togglePending(false)
+      }
+
       const credentials = {email, password}
       //not a login token, but any other token that needs a logged in user for it to operate
-      this.props.signInRequest(signInType, credentials, token)
+      this.props.signInRequest(signInType, credentials, token, onFailure)
     }
   }
 
@@ -130,7 +135,11 @@ class UserCredentials extends Component {
 const mapDispatchToProps = (dispatch) => {
   return {
     updateUser: (userData) => store.dispatch({type: UPDATE_USER_REQUEST, payload: userData}),
-    signInRequest: (signInType, credentials, token) => store.dispatch({type: SIGN_IN_REQUEST, payload: {signInType, credentials, token}}),
+    signInRequest: (signInType, credentials, token, onFailure) => store.dispatch({
+      type: SIGN_IN_REQUEST,
+      payload: {signInType, credentials, token},
+      onFailure,
+    }),
     resetPasswordRequest: (email) => store.dispatch({type: RESET_PASSWORD_REQUEST, payload: email}),
   }
 }

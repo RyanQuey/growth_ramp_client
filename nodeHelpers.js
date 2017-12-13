@@ -277,9 +277,10 @@ const Helpers = {
         //then, redirect back to app
         return "invalid-code"
 
-      } else if (err && err.code === 10) {
+      //I'm actually getting a 200 code with this
+      //provider_redirect/facebook?error=access_denied&error_code=200&error_description=Permissions+error&error_reason=user_denied#_=_
+      } else if (err && err.code === 10 || req.query.error === "access_denied") {
         return "user-rejected"
-
       } else if (raw) {
         try {
           //note: raw might be good data from provider
