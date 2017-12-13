@@ -168,16 +168,18 @@ app.get(`${Helpers.callbackPath}/:provider`, (req, res, next) => {
       case "invalid-code":
         return res.redirect(`/?alert=failedAuthorization`)
 
+      case "forbidden-oauth-signup":
+        return res.redirect(`/?alert=failedOauthSignup`)
+
       case "unknown-error":
         //should never get here
         //next ... breaks the app, puts node err message on screen
         return res.redirect(`/?alert=failedAuthorization`)
-
       case "success":
         //worked fine!
 
       default:
-        //worked fine!
+        //worked fine!...or couldn't handle it (probably because our api errors will be passed in as `raw`)
     }
 
     if (err || !raw) {

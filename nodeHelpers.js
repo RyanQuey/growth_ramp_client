@@ -270,7 +270,7 @@ const Helpers = {
       return "success"
     },
     facebook: (req, err, raw) => {
-      console.log("Exception from Facebook:");
+      console.log("Exception from Facebook:"); //could be from our api, if decided to throw something too :) (if so, expect it in the raw)
       console.log(err);
       //if the user rejected the permissions they just asked to give...
       if (err && err.code === 100) {
@@ -279,6 +279,20 @@ const Helpers = {
 
       } else if (err && err.code === 10) {
         return "user-rejected"
+
+      } else if (raw) {
+        try {
+          //note: raw might be good data from provider
+          let data = JSON.parse(raw)
+          if (data.code && data.code === "no-sign-up-with-oauth") {
+            //we're not allowing it right now. Logging in, not signing up
+            return "forbidden-oauth-signup"
+          }
+
+        } catch (err) {
+          //because...not sure what else to do
+          return "success"
+        }
 
       } else if (err || !raw){
         console.log("should never get here (FB)");

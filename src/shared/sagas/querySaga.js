@@ -93,6 +93,15 @@ const handleQuery = (rawQuery) => {
                 title: "Unknown Error:",
                 message: "Failed to login. Please try again. If this continues to occur, please contact Growth Ramp",
                 level: "DANGER",
+                options: {timer: false}
+              })
+
+            } else if (alertType === "failedOauthSignup") {
+              alertActions.newAlert({
+                title: "Failed to Register Account:",
+                message: "Signup using social networks is currently not allowed. Please signup using email and password.",
+                level: "DANGER",
+                options: {timer: false}
               })
             }
 
