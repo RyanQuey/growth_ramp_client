@@ -25,6 +25,80 @@ const rules = {
       return 'Please check email format'
     },
   },
+  lengthTwo: {
+    test: (value) => {
+      const base = value.toString().trim()
+      return base.length === 2
+    },
+    hint: (fieldName = "this field") => {
+      return `${fieldName} must be 2 characters long`
+    },
+  },
+  lengthFive: {
+    test: (value) => {
+      const base = value.toString().trim()
+      return base.length === 5
+    },
+    hint: (fieldName = "This field") => {
+      return `${fieldName} must be 5 characters long`
+    },
+  },
+  lengthEight: {
+    test: (value) => {
+      const base = value.toString().trim()
+      return base.length === 8
+    },
+    hint: (fieldName = "This field") => {
+      return `${fieldName} must be 8 characters long`
+    },
+  },
+  //will want to use bind
+  length: {
+    test: (requiredLength = 8, type = "minimum", value) => {
+      const base = value.toString().trim()
+      if (type === "minimum") {
+        return base.length >= requiredLength
+      } else if (type === "exact") {
+        return base.length == requiredLength
+      } else { //if (type === "maximum") {
+        return base.length <= requiredLength
+      }
+    },
+    hint: (fieldName = "this field") => {
+      return `Please check the length of ${fieldName}`
+    },
+  },
+  creditCard: {
+    test: (value) => {
+      const base = value.toString().trim().replace(/-|\/|\(|\)|\s/g, "")
+      const re = /^(?:4[0-9]{12}(?:[0-9]{3})?|[25][1-7][0-9]{14}|6(?:011|5[0-9][0-9])[0-9]{12}|3[47][0-9]{13}|3(?:0[0-5]|[68][0-9])[0-9]{11}|(?:2131|1800|35\d{3})\d{11})$/
+
+      return re.test(base)
+    },
+    hint: () => {
+      return 'Please check credit card format'
+    },
+  },
+  cvv: {
+    test: (value) => {
+      const base = value.toString().trim()
+      return [3,4].includes(base.length)
+    },
+    hint: () => {
+      return `CVV must be 3 or 4 characters long`
+    },
+  },
+  phone: {
+    test: (value) => {
+      const base = value.toString().trim().replace(/-|\/|\(|\)|\s/g, "")
+      const re = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im
+
+      return re.test(base)
+    },
+    hint: () => {
+      return 'Please check phone number format'
+    },
+  },
   newPassword: {
     test: (value) => {
       const base = value.toString().trim()

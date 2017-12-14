@@ -2,7 +2,7 @@ import { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { errorActions, alertActions } from 'shared/actions'
-import { Button, Flexbox, Input } from 'shared/components/elements'
+import { Button, Flexbox, Input, Checkbox } from 'shared/components/elements'
 import { SIGN_IN_REQUEST, UPDATE_USER_REQUEST, RESET_PASSWORD_REQUEST } from 'constants/actionTypes'
 
 import classes from './style.scss'
@@ -14,11 +14,14 @@ class UserCredentials extends Component {
       email: '',
       validEmail: false,
       view: props.initialView || 'LOGIN',
+      acceptedTerms: false,
     }
 
     this.submit = this.submit.bind(this)
     this.handleEmail = this.handleEmail.bind(this)
     this.handlePassword = this.handlePassword.bind(this)
+    this.togglePending = this.togglePending.bind(this)
+    this.toggleTos = this.toggleTos.bind(this)
   }
   componentWillReceiveProps(props) {
     //what is this/
@@ -44,6 +47,10 @@ class UserCredentials extends Component {
   }
   togglePending() {
     this.props.togglePending(true);
+  }
+
+  toggleTos(value) {
+    this.setState({acceptedTerms: value})
   }
 
   submit(e) {
@@ -92,6 +99,7 @@ class UserCredentials extends Component {
 
   render() {
     const view = this.props.view
+console.log(view);
     //TODO: set the title using props into the modal container
     return (
       <form onSubmit={this.submit}>
@@ -117,10 +125,22 @@ class UserCredentials extends Component {
           />
         }
 
+        {view === "SIGN_UP" &&
+          <div>
+            <Checkbox
+              value={this.state.acceptedTerms}
+              onChange={this.toggleTos}
+              label="I have read and agree to the"
+            />&nbsp;
+            <a href="/files/growth-ramp-terms-of-service.pdf" target="_blank">Terms of Service</a>
+
+          </div>
+        }
         <Button
           disabled={(
             (!this.props.passwordOnly && !this.state.validEmail) ||
-            (view !== "RESETTING_PASSWORD" && !this.state.password)
+            (view !== "RESETTING_PASSWORD" && !this.state.password) ||
+            (view === "SIGN_UP" && !this.state.acceptedTerms)
           )}
           type="submit"
           pending={this.props.pending}
