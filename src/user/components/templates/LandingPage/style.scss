@@ -1,52 +1,79 @@
 @import 'theme/_helpers';
 
-.landingPageCtn {
+.landingPage {
   width: 100%;
   h1 {
-    @include cols(12);
+    margin-top: 0;
+    width: 100%;
   }
   h2 {
     display: inline-block;
     padding: 0 5px;
   }
+  p, li {
+    margin-top: 0;
+    font-size: 1.2rem;
+  }
 }
+//for the whole header row
+//replaces teh layerCtn for the header.
 .headerCtn {
   width: 100%;
   padding-top: 20px;
   overflow: hidden;
-
+  background-color: $white;
+  //puts some padding etc. For all the stuff inside the header
   .headerContentCtn {
-    max-width: 960px;
-    margin: 0 auto;
-    overflow: hidden;
-
     img {
       height: 250px;
     }
   }
 }
+//is a whole layer, all the way left to all the way right.
 .layerCtn {
+  width: 100%;
+  overflow: auto;
+  padding: 15px;
+}
+
+//to alternate colors for middleContentCtns. will be on a layerCtn, so whole layer gets the color
+.oddCtn {
+  background-color: $primary;
+  color: $white;
+}
+.evenCtn {
+  background-color: $light-gray-bg;
+}
+
+//holds the content for the middle containers, making sure they don't go too big
+.contentCtn {
   max-width: 960px;
   margin-right: auto;
   margin-left: auto;
-  padding: 20px 0;
 }
-.introCtn {
-
-}
-.middleCtn {
-  background-color: $light-gray-bg;
-}
+//to divide left and right of the middle containers
 .leftSection {
   @include cols(6);
+  padding: 0 20px;
 }
 .rightSection {
   @include cols(6);
+  padding: 0 20px;
+
   img {
     float: right;
   }
 }
+
 .imageCtn {
+  background: transparent;
+  overflow: hidden;
+
+  img {
+  }
+}
+//I think this is for full-sized images?
+.fullImageCtn {
   margin: 0 0 -320px 0;
   text-align: center;
   padding: 20px 0;
@@ -59,13 +86,11 @@
     border: $white 3px solid;
   }
 }
+.textCtn {
+  text-align: left;
+  margin-top: 10px;
+}
 .bottomCtn {
-  //padding-top: 320px;
-  background-color: $primary;
-  color: $white;
-  p {
-    @include rems(24);
-  }
   button {
     margin: 0 auto;
   }

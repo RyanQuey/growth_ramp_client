@@ -8,6 +8,7 @@ import {
 } from 'react-router-dom'
 import { Alert, Flexbox } from 'shared/components/elements'
 import { Home, ViewPlans, ShowPlan, ShowCampaign, EditCampaign, ViewCampaigns, Providers, ShowProvider, Workgroups } from 'user/components/templates'
+import { Footer } from 'user/components/groups'
 import requireAuthenticated from 'lib/requireAuthenticated'
 import forbidAuthenticated from 'lib/forbidAuthenticated'
 import { connect } from 'react-redux'
@@ -38,6 +39,8 @@ class UserContent extends Component {
             {false && <Route path="/workgroups" component={Workgroups} />}
           </Switch>
         </Flexbox>
+
+        <Footer />
       </main>
     )
   }
