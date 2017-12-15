@@ -17,11 +17,12 @@ import grFullLogoUrl from 'images/growth-ramp-logos/GR_logo.jpg'
 //other images
 import laptopAnalyticsUrl from 'images/landing-page/laptop-with-analytics.jpg'
 import organizedDeskUrl from 'images/landing-page/organized-desk.jpg'
-import coffeeMeetingUrl from 'images/landing-page/people-coffee-meeting.jpg'
-import phoneGraphsUrl from 'images/landing-page/phone-with-graphs-printed.jpg'
-import planningJournalUrl from 'images/landing-page/planning-journal.jpg'
-import womanWorkingUrl from 'images/landing-page/woman-working-at-computer.jpg'
-import workingAtDeskUrl from 'images/landing-page/working-at-desk.jpg'
+//import coffeeMeetingUrl from 'images/landing-page/people-coffee-meeting.jpg'
+//import phoneGraphsUrl from 'images/landing-page/phone-with-graphs-printed.jpg'
+//import planningJournalUrl from 'images/landing-page/planning-journal.jpg'
+//import womanWorkingUrl from 'images/landing-page/woman-working-at-computer.jpg'
+//import workingAtDeskUrl from 'images/landing-page/working-at-desk.jpg'
+import menAtWhiteboardUrl from 'images/landing-page/men-at-whiteboard.jpg'
 
 class LandingPage extends Component {
   constructor(props) {
@@ -53,28 +54,25 @@ class LandingPage extends Component {
 
         <div className={`${classes.layerCtn} ${classes.oddCtn}`}>
           <div className={`${classes.contentCtn}`}>
-            <h1>Simple Time-Saving Promotion Plans</h1>
-            <Flexbox flexWrap="wrap" justify="center" align="flex-start" className={``}>
+            <Flexbox flexWrap="wrap" justify="center" align="center" className={classes.contentWrapper}>
+              <div className={`${classes.leftSection} ${classes.textCtn}`}>
+                <h1>Simple Time-Saving Promotion Plans</h1>
+                <p>Create promotion plans to <strong>systematically promote your content</strong>, clients’ content, or personal guest posts.</p>
+                <p>This allows you to remove the annoying “busywork” of knowing where to promote your content by creating ready-to-use plans for buyer personas, multiple clients, and for guest posts in one simple step.</p>
+              </div>
               <div className={classes.rightSection}>
                 <img src={organizedDeskUrl} style={{ maxWidth: '100%' }} />
               </div>
 
-              <div className={`${classes.leftSection} ${classes.textCtn}`}>
-                <p>Create promotion plans to <strong>systematically promote your content</strong>, clients’ content, or personal guest posts.</p>
-                <p>This allows you to remove the annoying “busywork” of knowing where to promote your content by creating ready-to-use plans for buyer personas, multiple clients, and for guest posts in one simple step.</p>
-              </div>
             </Flexbox>
           </div>
         </div>
 
         <div className={`${classes.layerCtn} ${classes.evenCtn}`}>
           <div className={`${classes.contentCtn}`}>
-            <Flexbox flexWrap="wrap" justify="center" align="center" className={classes.layerCtn}>
-              <h1>Eliminate Dark Traffic</h1>
-              <div className={`${classes.leftSection} ${classes.imageCtn}`}>
-                <img src={womanWorkingUrl} alt="logo" />
-              </div>
+            <Flexbox flexWrap="wrap" justify="center" align="center" direction="row-reverse" className={classes.contentWrapper}>
               <div className={`${classes.rightSection} ${classes.textCtn}`}>
+                <h1>Eliminate Dark Traffic</h1>
                 <p>Get better insight on the success of your traffic sources with <strong>UTM tracking links that auto-magically attach to every promotion channel </strong>you share your content in.</p>
                 <p>UTMs will allow you to quickly see what’s working:</p>
                 <ul>
@@ -84,20 +82,25 @@ class LandingPage extends Component {
                 </ul>
                 <p>Additionally, you will begin to discover new platforms and audiences you wouldn't have considered before.</p>
               </div>
+
+              <div className={`${classes.leftSection} ${classes.imageCtn}`}>
+                <img src={menAtWhiteboardUrl}/>
+              </div>
             </Flexbox>
           </div>
         </div>
 
         <div className={`${classes.layerCtn} ${classes.oddCtn}`}>
           <div className={`${classes.contentCtn}`}>
-            <h1>Coming Soon: ROI Dashboard</h1>
-            <Flexbox flexWrap="wrap" justify="center" align="center">
-              <div className={classes.rightSection}>
-                <img src={laptopAnalyticsUrl} />
-              </div>
+            <Flexbox flexWrap="wrap" justify="center" align="center" className={classes.contentWrapper}>
               <div className={`${classes.leftSection} ${classes.textCtn}`}>
+                <h1>Coming Soon: ROI Dashboard</h1>
                 <p>Get traffic estimates in a simple dashboard to <strong>quickly tell you what promotion channels work.</strong></p>
                 <p>This allows you you to know <strong>how to improve your content promotion process </strong>and know where to focus your time for future campaigns.</p>
+              </div>
+
+              <div className={classes.rightSection}>
+                <img src={laptopAnalyticsUrl} />
               </div>
             </Flexbox>
           </div>
@@ -105,12 +108,14 @@ class LandingPage extends Component {
 
         <div className={`${classes.layerCtn} ${classes.evenCtn}`}>
           <div className={`${classes.contentCtn}`}>
+            <Flexbox direction="column" flexWrap="wrap" justify="center" align="center" className={classes.bottomContentWrapper}>
               <h1>Pricing</h1>
               <p>Unlimited promotion plans</p>
               <p>Automatic UTM Tracking</p>
               <p>ROI Dashboard (when available)</p>
               <p><strong>$49 per month</strong></p>
               <Button onClick={this.openLoginModal}>Get Started</Button>
+            </Flexbox>
           </div>
         </div>
 
