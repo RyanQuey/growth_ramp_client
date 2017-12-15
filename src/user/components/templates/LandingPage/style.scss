@@ -53,11 +53,21 @@
 }
 //to divide left and right of the middle containers
 .leftSection {
-  @include cols(6);
+  @include mq(xs) {
+    @include cols(12)
+  }
+  @include mq(sm) {
+    @include cols(6);
+  }
   padding: 0 20px;
 }
 .rightSection {
-  @include cols(6);
+  @include mq(xs) {
+    @include cols(12)
+  }
+  @include mq(sm) {
+    @include cols(6);
+  }
   padding: 0 20px;
 
   img {

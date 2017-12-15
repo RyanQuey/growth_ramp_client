@@ -55,13 +55,13 @@ class LandingPage extends Component {
           <div className={`${classes.contentCtn}`}>
             <h1>Simple Time-Saving Promotion Plans</h1>
             <Flexbox flexWrap="wrap" justify="center" align="flex-start" className={``}>
+              <div className={classes.rightSection}>
+                <img src={organizedDeskUrl} style={{ maxWidth: '100%' }} />
+              </div>
 
               <div className={`${classes.leftSection} ${classes.textCtn}`}>
                 <p>Create promotion plans to <strong>systematically promote your content</strong>, clients’ content, or personal guest posts.</p>
                 <p>This allows you to remove the annoying “busywork” of knowing where to promote your content by creating ready-to-use plans for buyer personas, multiple clients, and for guest posts in one simple step.</p>
-              </div>
-              <div className={classes.rightSection}>
-                <img src={organizedDeskUrl} style={{ maxWidth: '100%' }} />
               </div>
             </Flexbox>
           </div>
@@ -92,12 +92,12 @@ class LandingPage extends Component {
           <div className={`${classes.contentCtn}`}>
             <h1>Coming Soon: ROI Dashboard</h1>
             <Flexbox flexWrap="wrap" justify="center" align="center">
+              <div className={classes.rightSection}>
+                <img src={laptopAnalyticsUrl} />
+              </div>
               <div className={`${classes.leftSection} ${classes.textCtn}`}>
                 <p>Get traffic estimates in a simple dashboard to <strong>quickly tell you what promotion channels work.</strong></p>
                 <p>This allows you you to know <strong>how to improve your content promotion process </strong>and know where to focus your time for future campaigns.</p>
-              </div>
-              <div className={classes.rightSection}>
-                <img src={laptopAnalyticsUrl} />
               </div>
             </Flexbox>
           </div>

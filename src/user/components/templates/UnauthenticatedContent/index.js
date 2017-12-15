@@ -6,6 +6,7 @@ import {
   Switch,
 } from 'react-router-dom'
 import { Alert, Flexbox } from 'shared/components/elements'
+import { Footer } from 'user/components/groups'
 import { LandingPage } from 'user/components/templates'
 import requireAuthenticated from 'lib/requireAuthenticated'
 import forbidAuthenticated from 'lib/forbidAuthenticated'
@@ -28,6 +29,7 @@ class UnauthenticatedContent extends Component {
             <Route path="/" component={LandingPage} />
           </Switch>
         </Flexbox>
+        <Footer />
       </main>
     )
   }

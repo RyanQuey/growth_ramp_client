@@ -4,6 +4,9 @@
 main.unauthenticatedContent {
   width: 100%;
   text-align: center;
+  position: relative;
+  padding-bottom: 30px;
+  background-color: $light-gray-bg;
 
   h1 {
     @include rems(45);

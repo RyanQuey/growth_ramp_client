@@ -3,7 +3,6 @@ import PropTypes from 'prop-types'
 import { Flexbox, Navbar } from 'shared/components/elements'
 import classes from './style.scss'
 import { UserLoginModal, UserNavbar, UserSidebar, UserContent } from 'user/components/partials'
-import { Footer } from 'user/components/groups'
 import { withRouter } from 'react-router-dom'
 import { UnauthenticatedContent } from 'user/components/templates'
 
@@ -19,13 +18,12 @@ class Unauthenticated extends Component {
 
   render() {
     return (
-      <div style={{position: "relative", "padding-bottom": "30px"}}>
+      <div>
         <Flexbox direction="column">
           <UserNavbar userSettingsOnly={true}/>
           <UnauthenticatedContent />
         </Flexbox>
 
-        <Footer />
         <UserLoginModal />
       </div>
     )
