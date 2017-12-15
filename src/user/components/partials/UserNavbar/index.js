@@ -34,13 +34,13 @@ class UserNavbar extends Component {
     this.props.createCampaignRequest(cb)
   }
 
-  openLoginModal(e) {
-    e.preventDefault()
+  openLoginModal(initialMode, e) {
+    e && e.preventDefault()
     this.props.setCurrentModal("UserLoginModal")
   }
 
   render() {
-    const { user, userSettingsOnly } = this.props
+    const { user, userSettingsOnly, forLandingPage } = this.props
 
     return (
       <Navbar className={classes.header}>
@@ -60,12 +60,23 @@ class UserNavbar extends Component {
           </Flexbox>
 
           <Flexbox className={classes.rightNav} align="center" justify="space-between">
+            {forLandingPage && (
+              <div>
+                <a href="#features">Features</a>
+                <a href="#pricing">Pricing</a>
+              </div>
+            )}
 
             {user ? (
               <AccountMenu />
             ) : (
-              <a href="#" onClick={this.openLoginModal}>Login</a>
+              <div>
+                <a href="#" onClick={this.openLoginModal.bind(this, "login")}>Login</a>
+                {false && "will add later.." && <a href="#" onClick={this.openLoginModal.bind(this, "signup")}>Signup</a>}
+              </div>
+
             )}
+
           </Flexbox>
         </Flexbox>
       </Navbar>

@@ -53,6 +53,7 @@ class LandingPage extends Component {
         </div>
 
         <div className={`${classes.layerCtn} ${classes.oddCtn}`}>
+          <a name="features" />
           <div className={`${classes.contentCtn}`}>
             <Flexbox flexWrap="wrap" justify="center" align="center" className={classes.contentWrapper}>
               <div className={`${classes.leftSection} ${classes.textCtn}`}>
@@ -109,7 +110,7 @@ class LandingPage extends Component {
         <div className={`${classes.layerCtn} ${classes.evenCtn}`}>
           <div className={`${classes.contentCtn}`}>
             <Flexbox direction="column" flexWrap="wrap" justify="center" align="center" className={classes.bottomContentWrapper}>
-              <h1>Pricing</h1>
+              <a name="pricing" /><h1>Pricing</h1>
               <p>Unlimited promotion plans</p>
               <p>Automatic UTM Tracking</p>
               <p>ROI Dashboard (when available)</p>
