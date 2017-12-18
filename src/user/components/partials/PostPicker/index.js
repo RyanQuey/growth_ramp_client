@@ -128,7 +128,7 @@ class PostPicker extends Component {
                 <Button
                   onClick={this.props.toggleAdding.bind(this, provider)}
                 >
-                  Add a new post
+                  {<Icon name={provider.toLowerCase()} className={classes.icon}/>}&nbsp;&nbsp;Add a post
                 </Button>
 
               </Flexbox>
