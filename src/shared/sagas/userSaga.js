@@ -7,6 +7,7 @@ import {
   FETCH_PLAN_SUCCESS,
   FETCH_PROVIDER_SUCCESS,
   HANDLE_ERRORS,
+  REFRESH_CHANNEL_TYPE_REQUEST,
   RESET_PASSWORD_REQUEST,
   RESET_PASSWORD_SUCCESS,
   SIGN_IN_POPUP_CLOSED,
@@ -139,7 +140,7 @@ function* fetchUser(action, options = {}) {
     yield Helpers.notifyOfAPIError(e)
   }
 }
-//should only be called on initial login, or retreating from cookies, etc.
+//should only be called on initial login, or retrieving from cookies, etc.
 function* fetchCurrentUser(action) {
   try {
     const userData = action.payload
@@ -149,20 +150,47 @@ function* fetchCurrentUser(action) {
     //no reason to restart the socket here; this event should only occur is already retrieving the user data from the cookie, which means that API token and headers already are set correctly.
 
     Cookie.set('sessionUser', result.user)
+    //TODO yield all might be faster? prob same though
     yield put({type: FETCH_CURRENT_USER_SUCCESS, payload: result.user})
     yield put({type: FETCH_PROVIDER_SUCCESS, payload: result.providerAccounts})
     yield put({type: FETCH_PLAN_SUCCESS, payload: result.plans})
 
     action.cb && action.cb(result.user)
 
+    //refresh all channel lists
+    //doesn't need to succeed; so don't raise error if doesn't necesarily, and make sure everything just moves forward
+    //Also don't want this to slow down getting initial user, or cause it to fail, so don't want to do this in api as part of initialUserData call
+    const providers = Object.keys(result.providerAccounts)
+    const allAccounts = Helpers.flattenProviderAccounts()
+    for (let account of allAccounts) {
+      //map out channels
+      //TODO make an api endpoint for refreshing all
+      let permittedChannels = Helpers.permittedChannelTypes(account)
+      permittedChannels.forEach((channelType) => {
+        const hasMultiple = Helpers.channelTypeHasMultiple(null, account.provider, channelType)
+        if (hasMultiple) {
+          store.dispatch({
+            type: REFRESH_CHANNEL_TYPE_REQUEST,
+            payload: {
+              channelType: channelType,
+              account,
+            },
+          })
+        }
+      })
+    }
+
+
   } catch (err) {
     errorActions.handleErrors({
       templateName: "Login",
       templatePart: "fetch",
-      title: "Error fetching user",
+      title: "Error while initializing",
       errorObject: err,
     })
   }
+
+
 }
 
 function* signUserOut() {

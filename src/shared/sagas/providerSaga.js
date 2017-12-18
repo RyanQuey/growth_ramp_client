@@ -105,7 +105,7 @@ function* refreshChannelType(action) {
 
 export default function* updateProviderSaga() {
   yield takeLatest(UPDATE_PROVIDER_REQUEST, updateData)
-  yield takeLatest(REFRESH_CHANNEL_TYPE_REQUEST, refreshChannelType)
+  yield takeEvery(REFRESH_CHANNEL_TYPE_REQUEST, refreshChannelType)
   yield takeLatest(FETCH_CURRENT_ACCOUNT_REQUEST, fetchCurrentAccount)
   yield takeLatest(FETCH_PROVIDER_REQUEST, fetchAllAccounts)
 

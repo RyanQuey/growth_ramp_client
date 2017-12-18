@@ -207,7 +207,7 @@ class PostEditor extends Component {
             <Input
               textarea={true}
               value={record.text || ""}
-              placeholder={`Your record`}
+              placeholder={`Your message`}
               onChange={this.handleContentText}
               type="text"
               maxLength={maxCharacters - URL_LENGTH}

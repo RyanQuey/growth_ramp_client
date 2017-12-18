@@ -26,7 +26,7 @@ class UserCredentials extends Component {
   componentWillReceiveProps(props) {
     //what is this/
     if (props.errors && props.errors !== this.props.errors) {
-      this.props.togglePending(false);
+      this.props.togglePending && this.props.togglePending(false);
     }
   }
 
