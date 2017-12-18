@@ -28,7 +28,7 @@ class LinkProviderAccount extends Component {
 
     this.onSuccess = this.onSuccess.bind(this)
     this.handleClose = this.handleClose.bind(this)
-    this.setPending = this.setPending.bind(this)
+    this.togglePending = this.togglePending.bind(this)
     this.chooseProvider = this.chooseProvider.bind(this)
     this.chosenScopes = this.chosenScopes.bind(this)
     this.chooseChannel = this.chooseChannel.bind(this)
@@ -65,8 +65,8 @@ class LinkProviderAccount extends Component {
       this.props.onSuccess();
     }
   }
-  setPending(e) {
-    this.setState({pending: true})
+  togglePending(value = !this.state.pending) {
+    this.setState({pending: value})
   }
 
   chosenScopes() {
@@ -154,7 +154,7 @@ class LinkProviderAccount extends Component {
               )}
               <SocialLogin
                 pending={this.state.pending}
-                setPending={this.setPending}
+                togglePending={this.togglePending}
                 providers={{[currentProvider]: PROVIDERS[currentProvider]}}
                 scopes={this.chosenScopes()}
                 disabled={false}

@@ -103,7 +103,7 @@ console.log(errorCode, errorMessage, err.response.data);
       //not in our api to be accepted
       alertActions.newAlert({
         title: "Your account has not been registered in our system: ",
-        message: "Please contact us at jdquey@gmail.com to register and then try again.",
+        message: "Please contact us at hello@growthramp.io to register and then try again.",
         level: "DANGER",
         options: {timer: false},
       })

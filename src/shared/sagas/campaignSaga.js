@@ -171,6 +171,7 @@ function* publishCampaign(action) {
     const results = yield axios.post(`/api/campaigns/${campaign.id}/publish`)
 
     //parse results:
+console.log("now parsing results");
     const parsedResults = Helpers.parseCampaignResults(results.data)
 
     //although, there might have been failures, successfully did everything in the api

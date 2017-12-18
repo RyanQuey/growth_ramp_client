@@ -209,6 +209,7 @@ console.log("now publishing")
         publishing: false,
         //mode: "savePlan",
       })
+console.log("on failure getting called");
       formActions.matchCampaignStateToRecord()
 
       const callback = () => (formActions.matchCampaignStateToRecord())

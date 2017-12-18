@@ -13,6 +13,7 @@ import { AccountCard } from 'user/components/partials'
 import { Button, Form, Card, Flexbox } from 'shared/components/elements'
 import { ButtonGroup } from 'shared/components/groups'
 import { PROVIDERS } from 'constants/providers'
+import { alertActions } from 'shared/actions'
 import classes from './style.scss'
 
 
@@ -72,6 +73,10 @@ class ShowAccount extends Component {
     this.setState({pending: true})
     const cb = () => {
       this.setState({pending: false})
+      alertActions.newAlert({
+        title: "Successfully refreshed channels",
+        level: "SUCCESS",
+      })
     }
 
     this.props.refreshChannelType(channelType, this.props.currentAccount, cb)
