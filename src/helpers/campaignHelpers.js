@@ -95,7 +95,6 @@ export default {
 
       //now array of records
       const allProviderAccounts = Helpers.flattenProviderAccounts()
-console.log(allProviderAccounts);
       ret.accountsToReauthorize = ret.accountsToReauthorize.map((id) => allProviderAccounts.find((account) => account.id === id))
 
       //refresh provider accounts, api probably changed them
@@ -112,7 +111,7 @@ console.log(allProviderAccounts);
 
       let messages = []
       if (ret.accountsToReauthorize.length) {
-console.log(ret.accountsToReauthorize);
+console.log("To reauthorize: ", ret.accountsToReauthorize);
         let accountNames = ret.accountsToReauthorize.map((account) => `${Helpers.providerFriendlyName(account.provider)} (${account.userName || account.email})`)
 
         messages.push(`Please login to ${accountNames.join("; ")}`)

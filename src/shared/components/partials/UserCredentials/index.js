@@ -20,7 +20,6 @@ class UserCredentials extends Component {
     this.submit = this.submit.bind(this)
     this.handleEmail = this.handleEmail.bind(this)
     this.handlePassword = this.handlePassword.bind(this)
-    this.togglePending = this.togglePending.bind(this)
     this.toggleTos = this.toggleTos.bind(this)
   }
   componentWillReceiveProps(props) {
@@ -44,9 +43,6 @@ class UserCredentials extends Component {
       email: value,
       validEmail: (!errors || errors.length === 0),
     })
-  }
-  togglePending() {
-    this.props.togglePending(true);
   }
 
   toggleTos(value) {

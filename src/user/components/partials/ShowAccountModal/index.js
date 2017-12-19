@@ -101,7 +101,7 @@ class ShowAccount extends Component {
       <ModalContainer
         visible={visible}
         onClose={this.handleClose}
-        title={`${account.userName || account.email}'s ${providerName} account`}
+        title={`${account.userName || account.email}'s ${providerName} Account`}
         headerImgUrl={account.photoUrl}
       >
         <ModalBody>

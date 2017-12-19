@@ -15,7 +15,7 @@ const handleQuery = (rawQuery) => {
   //TODO: if I ever set other variables, change the way that these variables get passed around , so I don't have to parse more than once
   if (rawQuery) {
 
-    let cb
+    let cb, user
     const variables = rawQuery.replace(/^\?/, "").split('&')
     for (let i = 0; i < variables.length; i++) {
       try {
@@ -39,10 +39,10 @@ const handleQuery = (rawQuery) => {
               return
             }
 
-            const user = userData.user ? userData.user : userData
-            const userPlans = userData.plans ? userData.plans : null
+            user = userData.user ? userData.user : userData
+            const userPlans = userData.plans ? userData.plans : null//not using
             cb = () => {
-              let cu = Cookie.get('sessionUser');
+              //let cu = Cookie.get('sessionUser');
               alertActions.newAlert({
                 title: "Success!",
                 //TODO would send this even on signing in...eventually, be able to distinguish signing in and adding permissions for the message.
@@ -50,10 +50,7 @@ const handleQuery = (rawQuery) => {
                 level: "SUCCESS",
               })
             }
-            //setup the session
-            setupSession(user)
-            store.dispatch({type: FETCH_CURRENT_USER_REQUEST, payload: user, cb})
-
+            validUserReceived(user, cb)
             break;
 
           case "token":
@@ -62,9 +59,19 @@ const handleQuery = (rawQuery) => {
             //retrieve the token data and handle
             axios.post(`/api/tokens/${token}/useToken`)
             .then((result) => {
-              console.log(result);
-              if (result.data.result.code === "promptLogin") {
+              let resultCode = Helpers.safeDataPath(result, "data.code", false)
+              let tokenType = Helpers.safeDataPath(result, "data.tokenType", false)
+              console.log(result && result.data);
+              //token might have worked; but user needs to login
+              if (resultCode === "promptLogin") {
                 store.dispatch({type: SET_CURRENT_MODAL, payload: "UserLoginModal", token: result.data.token, options: {credentialsOnly: true}})
+              } else if (tokenType === "resetPassword") {
+                //successfully reset password
+                user = result.data.user
+                validUserReceived(user, false)
+console.log("SUCCESSFUL");
+              } else {
+                throw {code: 400}
               }
             })
             .catch((err) => {
@@ -74,10 +81,18 @@ const handleQuery = (rawQuery) => {
                 console.log("for better");
                 //prompt login
               }
+
+              alertActions.newAlert({
+                title: "Invalid Token:",
+                message: "Please try again. If problem persists, please contact support",
+                level: "DANGER",
+                options: {timer: false},
+              })
             })
 
             break;
 
+          //front end server's way of posting an alert
           case "alert":
             const alertType = value
             //they rejected
@@ -125,6 +140,13 @@ const handleQuery = (rawQuery) => {
   }
 }
 
+//if data in query indicates a valid user is received
+//will get rest of user's data etc
+function validUserReceived (user, cb) {
+  //setup the session
+  setupSession(user)
+  store.dispatch({type: FETCH_CURRENT_USER_REQUEST, payload: user, cb})
+}
 
 export default function* handleQuerySaga() {
   //TODO only need to listen on initial page load
