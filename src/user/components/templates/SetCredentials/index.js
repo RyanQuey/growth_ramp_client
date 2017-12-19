@@ -14,11 +14,11 @@ class SetCredentials extends Component {
     this.state = {
       pending: false
     }
-    this.setPending = this.setPending.bind(this)
+    this.togglePending = this.togglePending.bind(this)
   }
 
-  setPending() {
-    this.setState({pending: true})
+  togglePending(value = !this.state.pending) {
+    this.setState({pending: value})
   }
 
   render (){
@@ -37,7 +37,7 @@ class SetCredentials extends Component {
           buttonText="Set credentials"
           passwordOnly={this.props.user.email}
           view="SET_CREDENTIALS"
-          setPending={this.setPending}
+          togglePending={this.togglePending}
         />
       </main>
     )

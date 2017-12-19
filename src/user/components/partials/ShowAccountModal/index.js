@@ -29,7 +29,7 @@ class ShowAccount extends Component {
 
     this.onSuccess = this.onSuccess.bind(this)
     this.handleClose = this.handleClose.bind(this)
-    this.setPending = this.setPending.bind(this)
+    this.togglePending = this.togglePending.bind(this)
     this.chosenScopes = this.chosenScopes.bind(this)
     this.chooseChannel = this.chooseChannel.bind(this)
     this.refreshChannelType = this.refreshChannelType.bind(this)
@@ -50,8 +50,8 @@ class ShowAccount extends Component {
       this.props.onSuccess();
     }
   }
-  setPending() {
-    this.setState({loginPending: true})
+  togglePending(value = !this.state.loginPending) {
+    this.setState({loginPending: value})
   }
 
   chosenScopes() {

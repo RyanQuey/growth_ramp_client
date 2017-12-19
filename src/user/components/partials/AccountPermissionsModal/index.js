@@ -29,7 +29,7 @@ class AccountPermissions extends Component {
 
     this.onSuccess = this.onSuccess.bind(this)
     this.handleClose = this.handleClose.bind(this)
-    this.setPending = this.setPending.bind(this)
+    this.togglePending = this.togglePending.bind(this)
     this.chosenScopes = this.chosenScopes.bind(this)
     this.chooseChannel = this.chooseChannel.bind(this)
   }
@@ -57,7 +57,7 @@ class AccountPermissions extends Component {
       this.props.onSuccess();
     }
   }
-  setPending() {
+  togglePending(value = !this.state.loginPending) {
     this.setState({loginPending: true})
   }
 
