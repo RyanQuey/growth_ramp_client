@@ -59,7 +59,7 @@ class ModalContainer extends Component {
 
     //convert to array
     //don't make children part of this array, or when the alerts rerender, might cause the children to rerender (key might solve it)
-    const alerts = _.values(this.props.alerts)
+    /*const alerts = _.values(this.props.alerts)
     if (alerts) {
       alerts.forEach((alert) => {
         const alertForModal = Helpers.safeDataPath(alert, `options.forComponent`, false) === this.props.currentModal
@@ -68,7 +68,7 @@ class ModalContainer extends Component {
           innerContent.push(<Alert key={`alert-${alert.id}`} alert={alert} />)
         }
       })
-    }
+    }*/
 
     return (
       <div className={[modal || ""].join(" ")}>

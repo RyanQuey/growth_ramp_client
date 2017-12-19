@@ -17,9 +17,7 @@ class App extends Component {
     const query = this.props.location.search
     //right now, this is only returning user and provider
     if (query) {
-console.log("beginning.");
       const cb = (options) => {
-console.log("options",options);
         if (options.sendHome) {
           this.props.history.push("/")
         } else {

@@ -1,14 +1,14 @@
 import { Component } from 'react'
 import { Authenticated, Unauthenticated } from 'user/components/yields'
 import { connect } from 'react-redux'
+import { Alerts } from 'shared/components/groups'
 import { withRouter } from 'react-router-dom'
 
 class User extends Component {
-  componentDidMount() {
-  }
   render() {
     return (
       <div>
+        <Alerts />
         {this.props.user ? (
           <Authenticated />
         ) : (

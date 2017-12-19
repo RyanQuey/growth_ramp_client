@@ -22,14 +22,8 @@ class SetCredentials extends Component {
   }
 
   render (){
-    const alerts = _.values(this.props.alerts)
-    const modalOpen = this.props.currentModal
-
     return (
       <main>
-        {alerts && !modalOpen && alerts.map((alert) => {
-          return <Alert key={alert.id} alert={alert} />
-        })}
 
         <h1 color="primary">Welcome</h1>
         <h4>Please set your credentials before continuing:</h4>
@@ -48,7 +42,6 @@ const mapStateToProps = (state) => {
   return {
     errors: state.errors,
     user: state.user,
-    alerts: state.alerts,
   }
 }
 

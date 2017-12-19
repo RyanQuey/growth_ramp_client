@@ -29,7 +29,7 @@ this.props.setCurrentModal("ShowAccountModal", {currentAccount: this.props.accou
 
     return (
       <Card selected={selected} onClick={onClick} height={height}>
-        <CardHeader title={account.userName} subtitle={account.email} headerImgUrl={account.photoUrl}/>
+        <CardHeader title={account.userName} subtitle={account.email || "(no email on file)"} headerImgUrl={account.photoUrl}/>
 
         <div>
           <h4>Current Channel Types:</h4>
