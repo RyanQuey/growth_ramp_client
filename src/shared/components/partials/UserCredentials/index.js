@@ -59,12 +59,12 @@ class UserCredentials extends Component {
     let token = this.props.viewSettings.modalToken
     let cb
 
-
     if (this.props.view === "SET_CREDENTIALS") {
-      this.props.updateUser({
-        password,
-        email,
-      })
+      let params = {}
+      if (password) {params.password = password}
+      if (email) {params.email = email}
+
+      this.props.updateUser(params)
 
     } else if (this.props.view === "RESETTING_PASSWORD") {
       cb = () => {
