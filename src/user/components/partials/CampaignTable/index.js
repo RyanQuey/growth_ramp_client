@@ -12,7 +12,6 @@ import {
   SET_CURRENT_MODAL,
 } from 'constants/actionTypes'
 
-
 import classes from './style.scss'
 
 class CampaignPicker extends Component {
@@ -65,8 +64,9 @@ class CampaignPicker extends Component {
 
     //TODO: set the title using props into the modal container (will do a modal...or just a show view?? for each campaign)
     //use flexbox. Assign consistent column lengths to still achieve tablelike look, but with control over spacing etc.
+
     return (
-      <table>
+      <table className={classes.table}>
         <tbody>
         <tr>
           <th>Name</th>
@@ -76,15 +76,17 @@ class CampaignPicker extends Component {
           <th>Date Published</th>
           <th></th>
         </tr>
-        {campaignIds.map((campaignId) => {
+        {campaignIds.map((campaignId, index) => {
           const campaign = this.props.campaigns[campaignId]
           //not sure why this keeps on happening, but it does
           if (!campaign) {return null}
           !campaign.status && console.log(campaign)
+          //makes every other class
+          let className = (index % 2) == 1 ? "oddRow" : "evenRow"
 
           const plan = Helpers.safeDataPath(this.props, `plans.${campaign.planId}`, false)
           return (
-            <tr key={campaignId}>
+            <tr key={campaignId} className={classes[className]}>
               <td>
                 {campaign.name || "No name"}
               </td>

@@ -70,13 +70,14 @@ class PlanTable extends Component {
           <th>Date Created</th>
           <th></th>
         </tr>
-        {planIds.map((planId) => {
+        {planIds.map((planId, index) => {
           const plan = this.props.plans[planId]
           //not sure why this keeps on happening, but it does
           if (!plan) {return null}
+          let className = (index % 2) == 1 ? "oddRow" : "evenRow"
 
           return (
-            <tr key={planId}>
+            <tr key={planId} className={classes[className]}>
               <td>
                 {plan.name || "No name"}
               </td>

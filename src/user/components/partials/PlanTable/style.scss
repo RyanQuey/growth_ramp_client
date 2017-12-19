@@ -10,11 +10,18 @@
   }
 }
 .table {
-  border-spacing: 40px 5px;
+  border-spacing: 0;
   th, td {
-    padding: 5px;
+    padding: 10px 25px;
   }
 }
+.evenRow {
+  background: $even-lighter-purple-gray;
+}
+.oddRow {
+  //background: $light-purple-gray;
+}
+
 .popupWrapper {
   position: relative;
 }

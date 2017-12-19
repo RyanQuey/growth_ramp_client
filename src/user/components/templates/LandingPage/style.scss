@@ -20,11 +20,12 @@
 //replaces teh layerCtn for the header.
 .headerCtn {
   width: 100%;
-  padding-top: 20px;
   overflow: hidden;
   background-color: $white;
   //puts some padding etc. For all the stuff inside the header
   .headerContentCtn {
+    height: calc(100vh - 50px);
+    padding-top: 20px;
     img {
       max-height: 250px;
     }

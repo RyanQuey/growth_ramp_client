@@ -278,34 +278,36 @@ class PostEditor extends Component {
                 )
               })
             )}
-          <div className={classes.instructions}>
-              <p>
-                <h4>Instructions:</h4>Use campaign data in the utm once gets created from this plan by putting variables inside of double-curly braces (e.g., <strong>"{"{{your-variable}}"}"</strong>). Spaces and most other punctuation will become automatically converted into hyphens. Note that variables can only be used like this in plans, not campaigns.
-              </p>
-              <p>
-                <h5>Available attributes:</h5>
-                <br/>
-                <Flexbox>
-                  <Flexbox className={classes.leftColumn} direction="column">
-                    <div>{"{{campaign.name}}"}</div>
-                    <div>{"{{campaign.id}}"}</div>
-                    {false && <div>{"{{platform.name}}"}</div>}
-                    {false && <div>{"{{channel.type}}"}</div>}
-                    {false && <div>{"{{channel.name}}"}</div>}
-                  </Flexbox>
-                  <Flexbox className={classes.rightColumn} direction="column">
-                    <div>The name of the campaign</div>
-                    <div>A unique id number Growth Ramp assigns to each of your campaigns</div>
-                    {false && <div>The name of the social media platform (e.g., "Facebook" or "Twitter")</div>}
-                    {false && <div>The type of channel the post is for (e.g., "Personal" or "Company-Page")</div>}
-                    {false && <div>The name of the channel if applicable (e.g., "My-Favorite-Group"). Will be blank if personal post</div>}
-                  </Flexbox>
+            {this.props.hasContent && record.contentUrl && (
+              <div className={classes.instructions}>
+                <p>
+                  <h4>Instructions:</h4><strong>"{"{{campaign.name}}"}"</strong> will use the campaign name in the utm once the campaign gets published. Spaces and most other punctuation will become automatically converted into hyphens.
+                </p>
 
-                </Flexbox>
-              </p>
+                {false && <p>
+                  <h5>Available attributes:</h5>
+                  <br/>
+                  <Flexbox>
+                    <Flexbox className={classes.leftColumn} direction="column">
+                      <div>{"{{campaign.name}}"}</div>
+                      <div>{"{{campaign.id}}"}</div>
+                      {false && <div>{"{{platform.name}}"}</div>}
+                      {false && <div>{"{{channel.type}}"}</div>}
+                      {false && <div>{"{{channel.name}}"}</div>}
+                    </Flexbox>
+                    <Flexbox className={classes.rightColumn} direction="column">
+                      <div>The name of the campaign</div>
+                      <div>A unique id number Growth Ramp assigns to each of your campaigns</div>
+                      {false && <div>The name of the social media platform (e.g., "Facebook" or "Twitter")</div>}
+                      {false && <div>The type of channel the post is for (e.g., "Personal" or "Company-Page")</div>}
+                      {false && <div>The name of the channel if applicable (e.g., "My-Favorite-Group"). Will be blank if personal post</div>}
+                    </Flexbox>
 
-          </div>
-          </Flexbox>
+                  </Flexbox>
+                </p>}
+              </div>
+            )}
+        </Flexbox>
 
       </Flexbox>
     )

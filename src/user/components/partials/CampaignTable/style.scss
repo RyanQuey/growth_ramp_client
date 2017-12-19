@@ -12,3 +12,13 @@
 .popupWrapper {
   position: relative;
 }
+.table {
+  border-spacing: 0px;
+}
+.evenRow {
+  background: $even-lighter-purple-gray;
+}
+.oddRow {
+  //background: $light-purple-gray;
+}
+

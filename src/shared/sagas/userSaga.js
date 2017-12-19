@@ -75,7 +75,7 @@ function* signIn(action) {
     } else {
       //no user found
       //TODO: make a separate action for the error
-console.log("no user or error returned...");
+      console.log("no user or error returned...");
       yield put({type: SIGN_IN_FAILURE})
       errorActions.handleErrors({
         templateName: "Login",

@@ -27,14 +27,14 @@ export const UTM_TYPES = [
     type: "mediumUtm",
     requiredIfUtmsEnabled: false,
     defaultActive: true,
-    defaultValue: (account, channel) => {
+    defaultValue: (account, channel, campaign, channelType) => {
       //if neither channel nor account exist, should throw error
       //if not personal post, needs channel
       let providerName = account ? account.provider : channel.provider
 
       let ret
 
-      if (channel.type === "PERSONAL_POST") {
+      if (channelType === "PERSONAL_POST") {
         //just using user name, so Facebook-Ryan-Quey
         //no channel record exists for personal posts
         let providerAccountId = account ? account.id : channel.providerAccountId
@@ -61,7 +61,7 @@ export const UTM_TYPES = [
     requiredIfUtmsEnabled: false,
     defaultActive: true,
     //if no campaign, should be a plan. In that case, let users use strings which will get converted
-    defaultValue: (account, channel, campaign) => (campaign ? campaign.name : "{{campaign.name}}")
+    defaultValue: (account, channel, campaign) => (campaign ? "{{campaign.name}}" : "")
   },
   {
     label: "Content",
