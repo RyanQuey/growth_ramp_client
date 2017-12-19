@@ -281,7 +281,7 @@ class PostEditor extends Component {
             {this.props.hasContent && record.contentUrl && (
               <div className={classes.instructions}>
                 <p>
-                  <h4>Instructions:</h4><strong>"{"{{campaign.name}}"}"</strong> will use the campaign name in the utm once the campaign gets published. Spaces and most other punctuation will become automatically converted into hyphens.
+                  <h4>Instructions:</h4><strong>"{"{{campaign.name}}"}"</strong> will use the campaign name in the utm once the campaign gets published.
                 </p>
 
                 {false && <p>
