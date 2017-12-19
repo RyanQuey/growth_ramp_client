@@ -251,7 +251,7 @@ function* resetPassword(action) {
       level: "SUCCESS",
       options: {timer: false},
     })
-    action.cb && action.cb(result.user)
+    action.cb && action.cb(res.user)
 
   } catch (err) {
     errorActions.handleErrors({
