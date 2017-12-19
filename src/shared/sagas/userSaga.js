@@ -249,7 +249,7 @@ function* resetPassword(action) {
       title: "Successfully reset password:",
       message: "Please check your e-mail for instructions to set your new password",
       level: "SUCCESS",
-      timer: false,
+      options: {timer: false},
     })
     action.cb && action.cb(result.user)
 

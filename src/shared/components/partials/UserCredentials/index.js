@@ -77,7 +77,7 @@ class UserCredentials extends Component {
           //change view to login
         })
       }
-      this.props.resetPasswordRequest(email)
+      this.props.resetPasswordRequest(email, cb)
 
     } else {
       let signInType
@@ -160,7 +160,7 @@ const mapDispatchToProps = (dispatch) => {
       payload: {signInType, credentials, token},
       onFailure,
     }),
-    resetPasswordRequest: (email) => store.dispatch({type: RESET_PASSWORD_REQUEST, payload: email}),
+    resetPasswordRequest: (email, cb) => store.dispatch({type: RESET_PASSWORD_REQUEST, payload: email, cb}),
   }
 }
 const mapStateToProps = (state) => {
