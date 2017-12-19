@@ -40,14 +40,14 @@ class ShowProvider extends Component {
 
           <Flexbox>
             {currentAccounts.map((account) => (
-                <AccountCard
-                  key={account.providerUserId}
-                  account={account}
-                  detailsButton={true}
-                />
+              <AccountCard
+                key={account.providerUserId}
+                account={account}
+                detailsButton={true}
+              />
             ))}
           </Flexbox>
-          <Button style="inverted" onClick={this.openProviderModal}>Add a new account or add permissions to a current account</Button>
+          <Button style="inverted" onClick={this.openProviderModal}>Add New Account or Add Permissions</Button>
         </div>
       </div>
     )

@@ -10,12 +10,14 @@ import {
 import { errorActions, alertActions } from 'shared/actions'
 import { setupSession } from 'lib/socket'
 
-const handleQuery = (rawQuery) => {
+const handleQuery = (action) => {
   //pulls a global variable from the HTML file, what was dynamically rendered via the front end server
   //TODO: if I ever set other variables, change the way that these variables get passed around , so I don't have to parse more than once
+  const rawQuery = action.payload
+
   if (rawQuery) {
 
-    let cb, user
+    let cb, user, doneOptions = {}
     const variables = rawQuery.replace(/^\?/, "").split('&')
     for (let i = 0; i < variables.length; i++) {
       try {
@@ -68,8 +70,8 @@ const handleQuery = (rawQuery) => {
               } else if (tokenType === "resetPassword") {
                 //successfully reset password
                 user = result.data.user
+                doneOptions.sendHome = true
                 validUserReceived(user, false)
-console.log("SUCCESSFUL");
               } else {
                 throw {code: 400}
               }
@@ -123,6 +125,8 @@ console.log("SUCCESSFUL");
             break;
         }
 
+        action.cb && action.cb(doneOptions)
+
       } catch (err) {
         //TODO make an alert
         //I really just want to make provider stuff a popup...
@@ -150,8 +154,10 @@ function validUserReceived (user, cb) {
 
 export default function* handleQuerySaga() {
   //TODO only need to listen on initial page load
-  while (true) {
+  let listen = true
+  while (listen) {
     const action = yield take(HANDLE_QUERY)
-    handleQuery(action.payload)
+    handleQuery(action)
+    listen = false
   }
 }

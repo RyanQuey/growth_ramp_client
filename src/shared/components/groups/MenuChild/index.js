@@ -14,8 +14,13 @@ const MenuChild = ({ text, children, link, icon, nav, badge, onClick, hoverType,
     </div>
   )
 
+  const clickWrapper = (e) => {
+    e && e.stopPropagation()
+    onClick && onClick(e)
+  }
+
   return (
-    <li className={classes.menuChild} onClick={onClick} >
+    <li className={classes.menuChild} onClick={clickWrapper} >
       {link && nav &&
         <NavLink to={link} exact={exact} activeClassName={`${classes.navActive} ${hoverType ? classes[hoverType] : ""}`}>
           {content}

@@ -18,7 +18,7 @@ const styles = StyleSheet.create({
 class MySelect extends Component {
 
   render() {
-    const { currentOption, onChange, handleSubmit, options, name, submitButton, label, labelAfter, asynchronous, loadOptions, className } = this.props
+    const { currentOption, onChange, handleSubmit, options, name, submitButton, label, labelAfter, asynchronous, loadOptions, className, clearable = false } = this.props
 
 
     return (
@@ -33,6 +33,7 @@ class MySelect extends Component {
               onChange={onChange}
               loadOptions={loadOptions}
               value={currentOption}
+              clearable={clearable}
             />
           ) : (
             <Select
@@ -42,6 +43,7 @@ class MySelect extends Component {
               onChange={onChange}
               options={options}
               value={currentOption}
+              clearable={clearable}
             />
           )}
         </div>

@@ -24,7 +24,7 @@ this.props.setCurrentModal("ShowAccountModal", {currentAccount: this.props.accou
   }
 
   render () {
-    const { account, selected, onClick, height, detailsButton } = this.props
+    const { account, selected, onClick, height = "230px", detailsButton } = this.props
     const permittedChannelTypes = Helpers.permittedChannelTypes(account)
 
     return (

@@ -127,7 +127,7 @@ class ShowAccount extends Component {
                           </div>
                         )
                       ) : (
-                        canHaveMultiple ? <div>None so far</div> : null
+                        canHaveMultiple ? <div>(None so far)</div> : null
                       )}
 
                       {canHaveMultiple &&
@@ -135,7 +135,7 @@ class ShowAccount extends Component {
                           Refresh {channelTypeName} channels
                         </Button>
                       }
-
+                    <hr/>
                     </div>
                   })}
                 </div>

@@ -4,7 +4,7 @@ import uuidv4 from 'uuid/v4'
 import {
   SET_CURRENT_MODAL,
 } from 'constants/actionTypes'
-import { Navbar, Icon, Button } from 'shared/components/elements'
+import { Navbar, Icon, Button, Flexbox } from 'shared/components/elements'
 import { Select } from 'shared/components/groups'
 import { SocialLogin } from 'shared/components/partials'
 import {formActions} from 'shared/actions'
@@ -12,6 +12,7 @@ import { ProviderAccountsDetails, PostEditor } from 'user/components/partials'
 import {PROVIDERS} from 'constants/providers'
 import {UTM_TYPES} from 'constants/posts'
 import theme from 'theme'
+import classes from './style.scss'
 
 ////////////////////////////////////
 // NOTE for posts and postTemplates, depending on this.props.type
@@ -260,7 +261,6 @@ console.log();
     const postingAsTypeOptions = postingAsTypes && Object.keys(postingAsTypes).map((key) => (
       this.postingAsTypeOption(key)
     ))
-console.log(postingAsTypeOptions, postingAsTypes);
 
     return (
       <div>
@@ -273,9 +273,10 @@ console.log(postingAsTypeOptions, postingAsTypes);
           </div>
 
         ) : (
-          <div>
+          <Flexbox className={classes.fields} direction="column" justify="center" align="center">
             <h2>Select where to send this {PROVIDERS[currentProvider].name} post to make</h2>
             {false && !(typeof this.props.addingPost === "string") && <Select
+              className={classes.select}
               label="Platform"
               options={providerOptions}
               onChange={this.handleChooseProvider}
@@ -292,6 +293,7 @@ console.log(postingAsTypeOptions, postingAsTypes);
               <div>
                 <Select
                   label="Account"
+                  className={classes.select}
                   options={accountOptions}
                   onChange={this.handleChooseAccount}
                   currentOption={currentAccount ? this.accountOption(currentAccount) : placeholder}
@@ -301,6 +303,7 @@ console.log(postingAsTypeOptions, postingAsTypes);
                 {currentAccount &&
                   <Select
                     label="Channel Type"
+                    className={classes.select}
                     options={channelTypeOptions}
                     onChange={this.handleChooseChannelType}
                     currentOption={currentChannelType ? this.channelTypeOption(currentChannelType) : placeholder}
@@ -316,30 +319,32 @@ console.log(postingAsTypeOptions, postingAsTypes);
 
                 )}
 
+                {currentChannelType && channelTypeIsAllowed && channelTypeHasMultiple && (
+                  <Select
+                    label={channelTypeName}
+                    className={classes.select}
+                    options={channelOptions}
+                    onChange={this.handleChooseChannel}
+                    currentOption={currentChannel ? this.channelOption(currentChannel) : placeholder}
+                    name="select-channel"
+                  />
+                )}
+
+                {currentChannel && postingAsTypes && (
+                  <Select
+                    label="Who do you want to post as?"
+                    className={classes.select}
+                    options={postingAsTypeOptions}
+                    onChange={this.handleChoosePostingAsType}
+                    currentOption={currentPostingAsType ? this.postingAsTypeOption(currentPostingAsType) : placeholder}
+                    name="select-posting-as-type"
+                  />
+                )}
+
               </div>
             )}
-          </div>
+          </Flexbox>
         )}
-        {currentChannelType && channelTypeIsAllowed && channelTypeHasMultiple && (
-          <Select
-            label={channelTypeName}
-            options={channelOptions}
-            onChange={this.handleChooseChannel}
-            currentOption={currentChannel ? this.channelOption(currentChannel) : placeholder}
-            name="select-channel"
-          />
-        )}
-
-        {currentChannel && postingAsTypes && (
-          <Select
-            label="Who do you want to post as?"
-            options={postingAsTypeOptions}
-            onChange={this.handleChoosePostingAsType}
-            currentOption={currentPostingAsType ? this.postingAsTypeOption(currentPostingAsType) : placeholder}
-            name="select-posting-as-type"
-          />
-        )}
-
         {(
           (currentChannelType && channelTypeIsAllowed && !channelTypeHasMultiple) ||
           currentChannel
