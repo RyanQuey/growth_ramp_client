@@ -21,13 +21,12 @@ export const closeAlerts = (alerts = 'all') => {
  * }
  */
 export const newAlert = (alert) => {
-console.log(alert);
   const currentState = store.getState()
   const alertState = currentState.alerts
 
   if (!alert.options) {
     alert.options = {timer: true}
-  } else if (!alert.options.timer !== false) {
+  } else if (alert.options.timer !== false) { //in case there are options, but not for timer
     alert.options.timer = true
   }
 
