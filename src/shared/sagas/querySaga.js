@@ -67,14 +67,19 @@ const handleQuery = (action) => {
               //token might have worked; but user needs to login
               if (resultCode === "promptLogin") {
                 store.dispatch({type: SET_CURRENT_MODAL, payload: "UserLoginModal", token: result.data.token, options: {credentialsOnly: true}})
+
               } else if (tokenType === "resetPassword") {
                 //successfully reset password
                 user = result.data.user
                 doneOptions.sendHome = true
                 validUserReceived(user, false)
               } else {
+
                 throw {code: 400}
               }
+
+              action.cb && action.cb(doneOptions)
+
             })
             .catch((err) => {
               console.error(err);
@@ -125,7 +130,6 @@ const handleQuery = (action) => {
             break;
         }
 
-        action.cb && action.cb(doneOptions)
 
       } catch (err) {
         //TODO make an alert
@@ -157,6 +161,7 @@ export default function* handleQuerySaga() {
   let listen = true
   while (listen) {
     const action = yield take(HANDLE_QUERY)
+console.log(action);
     handleQuery(action)
     listen = false
   }

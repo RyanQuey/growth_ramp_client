@@ -95,7 +95,6 @@ class UserCredentials extends Component {
 
   render() {
     const view = this.props.view
-console.log(view);
     //TODO: set the title using props into the modal container
     return (
       <form onSubmit={this.submit}>

@@ -17,15 +17,22 @@ class App extends Component {
     const query = this.props.location.search
     //right now, this is only returning user and provider
     if (query) {
+console.log("beginning.");
       const cb = (options) => {
+console.log("options",options);
         if (options.sendHome) {
           this.props.history.push("/")
         } else {
-          //turned this back on for when I can retrieve from the cookies
+          //strips off the query string
           this.props.history.push(this.props.location.pathname)
         }
       }
-      store.dispatch({type: HANDLE_QUERY, payload: query, cb})
+
+      store.dispatch({
+        type: HANDLE_QUERY,
+        payload: query,
+        cb,
+      })
 
     }
   }
