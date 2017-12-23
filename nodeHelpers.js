@@ -237,7 +237,7 @@ const Helpers = {
       'permissions', //this app 's current permissions
     ],
     passReqToCallback: true,//to extract the code from the query...for some reason, passport doesn't get it by default. also to get cookies
-    scope: ["publish_actions"],
+    scope: ["publish_actions", "email"],
     enableProof: true,
   },
 

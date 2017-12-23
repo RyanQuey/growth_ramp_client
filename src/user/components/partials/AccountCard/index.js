@@ -44,7 +44,7 @@ this.props.setCurrentModal("ShowAccountModal", {currentAccount: this.props.accou
           )}
         </div>
 
-        {detailsButton &&
+        {false && detailsButton &&
           <div>
             <Button onClick={this.viewModal}>View Details</Button>
           </div>
