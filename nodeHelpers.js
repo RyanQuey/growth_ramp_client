@@ -312,7 +312,7 @@ const Helpers = {
         return "user-rejected"
 
       } else if (err || !raw) {
-        console.log("should never get here (FB)");
+        console.log("should never get here (Twitter)");
         console.log("ERROR: Unknown");
         console.log(err);
 

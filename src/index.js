@@ -38,4 +38,5 @@ ReactDOM.render(
   </Provider>, root
 );
 
-registerServiceWorker();
+//creates differences between development and production so...maybe later
+//registerServiceWorker();
