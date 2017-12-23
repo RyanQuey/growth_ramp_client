@@ -41,7 +41,7 @@ console.log("now sending");
       message: this.state.message,
     })
     .then(() => {
-      this.setState({pending: false})
+      this.setState({pending: false, message: "", open: false})
     })
     .catch((err) => {
       console.log(err);
