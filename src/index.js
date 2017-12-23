@@ -7,7 +7,7 @@ import {
 } from 'react-router-dom'
 
 import App from './App';
-import registerServiceWorker from './registerServiceWorker';
+//import registerServiceWorker from './registerServiceWorker';
 // redux stuff
 import { Provider } from 'react-redux';
 import store from 'shared/reducers'

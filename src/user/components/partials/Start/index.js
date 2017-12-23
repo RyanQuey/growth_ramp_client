@@ -20,6 +20,7 @@ class Start extends Component {
       errors: [],
       pending: false,
       dirty: false,
+      planChosen: false, //requires users to either click start from scratch or a plan before continuing; rather than just defaulting to starting from scratch
     }
 
     this.handleClickPlan = this.handleClickPlan.bind(this)
@@ -39,10 +40,12 @@ class Start extends Component {
 
   startFromScratch() {
     formActions.setParams("EditCampaign", "other", {planId: null})
+    this.setState({planChosen: true})
   }
 
   handleClickPlan(plan) {
     formActions.setParams("EditCampaign", "other", {planId: plan.id})
+    this.setState({planChosen: true})
   }
 
   handleUrl (value, e, errors) {
@@ -176,7 +179,7 @@ class Start extends Component {
                 Or just start from scratch:
               </h4>
               <Button
-                selected={!campaignParams.planId}
+                selected={!campaignParams.planId && this.state.planChosen}
                 onClick={this.startFromScratch}
                 style="inverted"
                 rectangle={true}
@@ -186,7 +189,7 @@ class Start extends Component {
             </div>
           )
         )}
-        <Button type="submit" disabled={this.state.errors && this.state.errors.length }>{this.props.dirty && "Save and "}Continue</Button>
+        <Button type="submit" disabled={!this.state.planChosen || this.state.errors && this.state.errors.length }>{this.props.dirty && "Save and "}Continue</Button>
 
       </form>
     );
