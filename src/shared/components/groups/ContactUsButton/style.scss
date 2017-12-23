@@ -1,0 +1,30 @@
+@import 'theme/_helpers';
+
+//****
+//NOTE make sure is sibling with target, and parent div is position: relative
+//if not sibling to target, hovering gets weird. so Make sibling of target
+//****
+
+.container {
+  position: fixed;
+  cursor: pointer;
+  bottom: 15px;
+  right: 15px;
+
+  .wrapper {
+    position: relative;
+  }
+}
+
+.contactUsButton {
+  background: #276862;
+  border-radius: 10px;
+  padding: 0 7px;
+  color: $white;
+  z-index: 100;
+  @include rems(24);
+}
+.formContainer {
+  border: 1px solid #d6d6d6;
+  padding: 5px;
+}

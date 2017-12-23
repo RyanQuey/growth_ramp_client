@@ -35,20 +35,26 @@ const styles = (style, disabled, selected) => {
 
 }
 
+
+
 //use containerClass to define padding etc on container
-const Popup = ({ style = 'primary', children, onClick, type, className, body = "left", float = "right", containerClass }) => {
+const Popup = ({ style = 'primary', children, onClick, type, className, body = "left", float = "right", side = "bottom", containerClass }) => {
+  const scrim = (
+    <div className={`${classes.scrim}`}>
+      <span className={`${css(styles(style).popup)} ${classes.caret}`}/>
+    </div>
+  )
 
   return (
     <div
-      className={`${classes.popup} ${classes[`float-${body}`]}  ${classes[`body-${body}`]} ${className}`}
+      className={`${classes.popup} ${classes[`float-${body}`]} ${classes[`body-${body}`]} ${classes[`side-${side}`]} ${className}`}
       onClick={onClick}
     >
-      <div className={`${classes.scrim}`}>
-        <span className={`${css(styles(style).popup)} ${classes.caret}`}/>
-      </div>
+      {side === "bottom" && scrim}
       <div className={`${css(styles(style).popup)}  ${classes.container} ${containerClass}`}>
         {children}
       </div>
+      {side === "top" && scrim}
     </div>
   )
 }
