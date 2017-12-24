@@ -12,6 +12,7 @@ class UserCredentials extends Component {
     super(props)
     this.state = {
       email: '',
+      password: "",
       validEmail: false,
       view: props.initialView || 'LOGIN',
       acceptedTerms: false,
@@ -30,14 +31,12 @@ class UserCredentials extends Component {
   }
 
   handlePassword(value, e, errors) {
-    errorActions.clearErrors ("Login", "credentials")
 
     this.setState({
       password: value,
     })
   }
   handleEmail(value, e, errors) {
-    errorActions.clearErrors ("Login", "credentials")
 
     this.setState({
       email: value,
@@ -95,6 +94,8 @@ class UserCredentials extends Component {
 
   render() {
     const view = this.props.view
+    let passwordValidations = ['required']
+    if (view === "SIGN_UP") {passwordValidations.push("newPassword")}
     //TODO: set the title using props into the modal container
     return (
       <form onSubmit={this.submit}>
@@ -106,6 +107,7 @@ class UserCredentials extends Component {
             type="email"
             value={this.state.email}
             validations={['required', 'email']}
+            handleErrors={errors => errorActions.handleErrors(errors, "Login", "credentials", {alert: false})}
           />
         )}
 
@@ -116,7 +118,8 @@ class UserCredentials extends Component {
             placeholder="password"
             type="password"
             value={this.state.password}
-            validations={['required', 'newPassword']}
+            validations={passwordValidations}
+            handleErrors={errors => errorActions.handleErrors(errors, "Login", "credentials", {alert: false})}
           />
         }
 
@@ -134,7 +137,7 @@ class UserCredentials extends Component {
         <Button
           disabled={(
             (!this.props.passwordOnly && !this.state.validEmail) ||
-            (view !== "RESETTING_PASSWORD" && !this.state.password) ||
+            (view !== "RESETTING_PASSWORD" && this.props.errors && this.props.errors.length) ||
             (view === "SIGN_UP" && !this.state.acceptedTerms)
           )}
           type="submit"
@@ -156,6 +159,7 @@ const mapDispatchToProps = (dispatch) => {
       onFailure,
     }),
     resetPasswordRequest: (email, cb) => store.dispatch({type: RESET_PASSWORD_REQUEST, payload: email, cb}),
+
   }
 }
 const mapStateToProps = (state) => {

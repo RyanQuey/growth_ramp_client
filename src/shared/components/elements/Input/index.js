@@ -140,7 +140,7 @@ class Input extends Component {
     const errors = _.debounce(c.validate, 500)(value)
     //index in case this is a series of inputs...probably don't want that functionality
     //TODO errors not getting set, presumably because of debounce
-    this.props.onChange(value, e, errors, this.props.index)
+    this.props.onChange(value, e, this.props.index)
   }
 
   validate(value) {
@@ -157,7 +157,7 @@ class Input extends Component {
     }
     //return errors can't get it to return from the debounce for some reason
     if (this.props.handleErrors) {
-      this.props.handleErrors(errors, this.props.name)
+      this.props.handleErrors(errors)
     }
 
   }

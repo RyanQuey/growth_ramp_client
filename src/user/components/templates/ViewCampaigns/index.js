@@ -68,7 +68,7 @@ class ViewCampaigns extends Component {
             <div>Let's create a new one</div>
           </div>
         )}
-        {Object.keys(this.props.campaigns).length > 4 && (
+        {Object.keys(this.props.campaigns).length === 0 || Object.keys(this.props.campaigns).length > 4 && (
           <Button onClick={this.createCampaign}>New campaign</Button>
         )}
       </div>

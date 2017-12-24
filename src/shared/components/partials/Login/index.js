@@ -33,6 +33,7 @@ class Login extends Component {
       this.props.onSuccess();
     }
 
+//TODO just use a callback in the action
     errors && errors.forEach((err) => {
       if (err.type === errorTypes.RECORD_ALREADY_EXISTS.type) {
         let toReturn = {
@@ -97,14 +98,13 @@ class Login extends Component {
           token={this.props.viewSettings.modalToken}
           togglePending={this.togglePending}
         />
-        <br />
         {view === "LOGIN"  &&
           <a href="#" onClick={this.toggleResetPassword}>{this.state.resettingPassword ? "Login or signup" : "Forget your password?"}</a>
         }
 
+        <br/>
         {!credentialsOnly && !resettingPassword && view === "LOGIN" && <div>
-          <h3>Or {socialText.toLowerCase()} through one of your social networks:</h3>
-          <br/>
+          <h3>{socialText} through one of your social networks:</h3>
           <SocialLogin
             pending={this.state.pending}
             togglePending={this.togglePending}

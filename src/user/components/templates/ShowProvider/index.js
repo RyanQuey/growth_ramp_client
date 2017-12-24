@@ -47,7 +47,7 @@ class ShowProvider extends Component {
               />
             ))}
           </Flexbox>
-          <Button style="inverted" onClick={this.openProviderModal}>Add New Account or Add Permissions</Button>
+          <Button onClick={this.openProviderModal}>Add New Account or Add Permissions</Button>
         </div>
       </div>
     )
