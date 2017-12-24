@@ -181,9 +181,9 @@ class Input extends Component {
           onBlur={this.props.onBlur}
           onChange={this.handleChange}
           placeholder={this.props.placeholder}
-          style={{ border: (
-            (this.props.color && this.state.errors.length === 0) && `2px solid ${theme.color[this.props.color]}`
-          ) }}
+          style={{
+            border: ((this.props.color && this.state.errors.length === 0) && `2px solid ${theme.color[this.props.color]}`),
+          }}
           type={this.props.type}
           value={this.props.value}
           maxLength={this.props.maxLength ? this.props.maxLength.toString() : false}

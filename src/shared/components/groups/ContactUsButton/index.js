@@ -68,13 +68,11 @@ console.log("now sending");
             body="left"
             side="top"
           >
-            <h3>Send us an email:</h3>
+            <h3>Send us an email</h3>
             <form className={``} onSubmit={this.submit} >
-              <label>Please provide details of your comment/question:</label>
+              <label>Please provide details of your comment/question</label>
               <Input
                 textarea={true}
-                height="150px"
-                width="400px"
                 value={this.state.message || ""}
                 placeholder={`Your message`}
                 onChange={this.handleText}
@@ -83,8 +81,8 @@ console.log("now sending");
 
 
               <div className={classes.buttonSet}>
-                <Button type="submit" pending={this.state.pending}>Send</Button>
-                <Button style="inverted" onClick={this.closeForm} disabled={this.state.pending}>Cancel</Button>
+                <Button style="inverted" small={true} onClick={this.closeForm} disabled={this.state.pending}>Cancel</Button>
+                <Button type="submit" small={true} pending={this.state.pending}>Send</Button>
               </div>
             </form>
           </Popup>}
