@@ -274,7 +274,7 @@ console.log();
 
         ) : (
           <Flexbox className={classes.fields} direction="column" justify="center" align="center">
-            <h2>Select where to send this {PROVIDERS[currentProvider].name} post to make</h2>
+            <h2>Select where to send this {PROVIDERS[currentProvider].name} post</h2>
             {false && !(typeof this.props.addingPost === "string") && <Select
               className={classes.select}
               label="Platform"

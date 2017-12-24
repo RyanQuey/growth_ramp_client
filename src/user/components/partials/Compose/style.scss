@@ -2,10 +2,9 @@
 
 .publishButtonWrapper {
   position: relative;
-  width: 160px;
-}
-.hide {
-  visibility: hidden;
-  opacity: 0;
-  @transition()//visibility 0s, opacity 0.5s linear)
+  width: 320px;
+  .saveStatus {
+    display: inline-block;
+    color: $primary;
+  }
 }

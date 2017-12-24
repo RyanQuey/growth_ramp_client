@@ -1,31 +1,65 @@
 @import 'theme/_helpers';
+.container {
+  visibility: visible;
+  opacity: 1;
+  max-height: 2000px ;
+  @include transition(max-height, .8s, ease);
+  overflow-y: hidden;
 
-.postMenu {
+  &.hidden {
+    max-height: 0;
+    overflow-y: hidden;
+  }
+}
+.table {
   border-right: 1px solid $black;
   border-left: 1px solid $black;
 
-
   .providerColumn {
-    @include mq(2xs) {
+    @include mq(sm2) {
       @include cols(12);
     }
     @include mq(xs) {
       @include cols(12);
     }
-    @include mq(md) {
+    @include mq(lg) {
       @include cols(4);
     }
     border-right: 1px solid $black;
     border-left: 1px solid $black;
+    border-top: 2px solid $black;
+    border-bottom: 2px solid $black;
 
+    h2 {
+      margin: 0;
+    }
+    //flexbox likes to shrink its children if it has overflow, rather than just adding a scrollbar. Min height stops that from happening
+    button {
+      min-height: 38px;
+      padding: 10px 15px;
+    }
+
+    .postList {
+      overflow-y: auto;
+      overflow-x: visible;
+      max-height: 300px;
+      width: 100%;
+      min-width: 100%;
+    }
     .postCard {
       width: 100%;
+      min-height: 126px;
+      max-height: 126px;
+      overflow: hidden;
+      margin: 0 10px 10px 10px;
       //min-width: 200px;
 
       &.publishedPost {
         cursor: not-allowed !important;
         background-color: gray !important;
       }
+
     }
   }
+
 }

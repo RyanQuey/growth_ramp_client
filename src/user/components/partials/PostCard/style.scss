@@ -1,5 +1,28 @@
 @import 'theme/_helpers';
 
+.small {
+  padding: 5px;
+  font-size: 12px;
+  .contentSection.truncated {
+    display: flex;
+    .cardLabel{
+    }
+
+    span.text {
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      display: inline-block;
+      width: 70%;
+    }
+  }
+}
+.smallHeader {
+  h2 {
+    @include rems(16);
+  }
+  padding-bottom: 0 !important;
+}
 .profilePic {
   width: 50px;
 }

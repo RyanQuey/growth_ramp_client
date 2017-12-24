@@ -66,6 +66,7 @@ class PostPicker extends Component {
   setCurrentPost(post) {
     //turn off adding a post when click on a card
     this.props.toggleAdding(false, false)
+    this.props.toggleHidePosts(true)
     this.props.setCurrentPost(post)
 
     //make sure utms are enabled if post has those utms
@@ -80,57 +81,54 @@ class PostPicker extends Component {
   }
 
   render() {
-    if (this.props.hide) {
-      return null
-    }
-
     const sortedPosts = this.sortPostsByProvider(this.props.campaignPostsParams || [])
     const providers = Object.keys(sortedPosts)
 
     return (
-      <div >
-        <h2>Your Posts:</h2>
+      <div className={`${classes.container} ${this.props.hidden ? classes.hidden : ""}`}>
+        <h2>Current Posts:</h2>
         {!Object.keys(sortedPosts).length && <div>No posts yet</div>}
 
-        <Flexbox className={classes.postMenu} flexWrap="wrap">
+        <Flexbox className={classes.table} flexWrap="wrap">
           {providers.map((provider) => {
             let providerPosts = sortedPosts[provider]
             return (
               <Flexbox key={provider} className={classes.providerColumn} direction="column" align="center">
-                <h3>{PROVIDERS[provider].name}</h3>
-
-                {providerPosts.map((post) => {
-
-                  let status
-                  if (post.toDelete) {
-                    status = "toDelete"
-                  } else if (typeof post.id === "string") {
-                    status = "toCreate"
-
-                  } else if (post.dirty){
-                    status = "toUpdate"
-                  }
-
-                  return <PostCard
-                    key={post.id}
-                    className={`${classes.postCard} ${post.publishedAt ? classes.publishedPost : ""}`}
-                    subtitle={post.publishedAt ? "Already Published" : ""}
-                    post={post}
-                    showText={true}
-                    status={status}
-                    height="150px"
-                    maxWidth="95%"
-                    onClick={!post.publishedAt && this.setCurrentPost.bind(this, post)}
-                    selected={this.props.currentPost && this.props.currentPost.id === post.id}
-                  />
-                })}
+                <h2>{PROVIDERS[provider].name}</h2>
 
                 <Button
                   onClick={this.props.toggleAdding.bind(this, provider)}
                 >
-                  {<Icon name={provider.toLowerCase()} className={classes.icon}/>}&nbsp;&nbsp;Add a post
+                  {<Icon name={provider.toLowerCase()} className={classes.icon}/>}&nbsp;&nbsp;Add post
                 </Button>
 
+                <div className={classes.postList}>
+                  {providerPosts.map((post) => {
+
+                    let status
+                    if (post.toDelete) {
+                      status = "toDelete"
+                    } else if (typeof post.id === "string") {
+                      status = "toCreate"
+
+                    } else if (post.dirty){
+                      status = "toUpdate"
+                    }
+
+                    return <PostCard
+                      key={post.id}
+                      className={`${classes.postCard} ${post.publishedAt ? classes.publishedPost : ""}`}
+                      subtitle={post.publishedAt ? "Already Published" : ""}
+                      post={post}
+                      showText={true}
+                      status={status}
+                      maxWidth="95%"
+                      onClick={!post.publishedAt && this.setCurrentPost.bind(this, post)}
+                      selected={this.props.currentPost && this.props.currentPost.id === post.id}
+                      small={true}
+                    />
+                  })}
+                </div>
               </Flexbox>
             )
 

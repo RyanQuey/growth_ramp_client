@@ -114,20 +114,23 @@ class Start extends Component {
     const canSwitchPlans = !currentCampaign.planId && (!currentCampaign.posts || !currentCampaign.posts.length)
 
     const campaignParams = this.props.campaignParams
+    //if has a name, then has gotten past Start view before, and has chosen Start from Scratch, so no need to force it again
+    const planChosen = this.state.planChosen || currentCampaign.name
 
     return (
       <form onSubmit={this.saveOrContinue} >
-        <h1 className="display-3">Start</h1>
+        {false && <h1 className="display-3">Start</h1>}
+        <h4>Campaign Name:</h4>
         <Input
           value={campaignParams.name}
           placeholder="e.g., Awesome blog post"
-          label="Campaign name:"
           validations={["required"]}
           onChange={this.handleChangeName}
         />
+        <br/>
+        <h4>What would you like to promote?</h4>
         <Input
           value={campaignParams.contentUrl || ""}
-          label="What would you like to promote?"
           placeholder="e.g., https://www.website.com/awesome-blog-post"
           disabled={currentCampaign.status !== "DRAFT"}
           validations={["url"]}
@@ -142,7 +145,7 @@ class Start extends Component {
         ) : (
           !canSwitchPlans ? (
             <div>
-              <h4>Campaign plan:</h4>
+              <h4>Campaign Plan:</h4>
               <div>{campaignPlan.name}</div>
               <div>Cannot change plan after posts have been worked on</div>
             </div>
@@ -179,7 +182,7 @@ class Start extends Component {
                 Or just start from scratch:
               </h4>
               <Button
-                selected={!campaignParams.planId && this.state.planChosen}
+                selected={!campaignParams.planId && planChosen}
                 onClick={this.startFromScratch}
                 style="inverted"
                 rectangle={true}
@@ -189,7 +192,8 @@ class Start extends Component {
             </div>
           )
         )}
-        <Button type="submit" disabled={(planIds.length > 0 && !this.state.planChosen) || this.state.errors && this.state.errors.length }>{this.props.dirty && "Save and "}Continue</Button>
+        <br/>
+        <Button type="submit" disabled={(planIds.length > 0 && !planChosen) || this.state.errors && this.state.errors.length }>{this.props.dirty && "Save and "}Continue</Button>
 
       </form>
     );

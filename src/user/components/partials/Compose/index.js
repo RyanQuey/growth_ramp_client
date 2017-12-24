@@ -39,12 +39,14 @@ class Compose extends Component {
       //currentChannel: "",//will be obj
       addingPost: false,
       publishing: false,
+      hidePosts: false,
     }
 
     this.handleLinkProvider = this.handleLinkProvider.bind(this)
     this.saveCampaignPosts = this.saveCampaignPosts.bind(this)
     this.toggleAdding = this.toggleAdding.bind(this)
     this.togglePublishing = this.togglePublishing.bind(this)
+    this.toggleHidePosts = this.toggleHidePosts.bind(this)
     this.publish = this.publish.bind(this)
     this._hasContent = this._hasContent.bind(this)
   }
@@ -72,7 +74,17 @@ class Compose extends Component {
     //if provider is passed in, just starts making a post for that provider
     //clears current post
     this.props.setCurrentPost(currentPost)
-    this.setState({addingPost: provider || value})
+    this.setState({
+      addingPost: provider || value,
+      hidePosts: provider || value,
+    })
+  }
+
+  toggleHidePosts (value, e) {
+    e && e.preventDefault()
+    this.setState({
+      hidePosts: value,
+    })
   }
 
   //persist images here
@@ -236,10 +248,21 @@ console.log("on failure getting called");
 
     return (
       <div>
-        <h1 className="display-3">Compose Your Posts</h1>
+        {false && <h1 className="display-3">Compose Your Posts</h1>}
         {this.state.status === "PENDING" && <Icon name="spinner" className="fa-spin" />}
-        {this.state.addingPost ? (
 
+        <div>
+          <PostPicker
+            channel={this.state.currentChannel}
+            toggleAdding={this.toggleAdding}
+            addingPost={this.state.addingPost}
+            hidden={this.state.hidePosts}
+            toggleHidePosts={this.toggleHidePosts}
+          />
+          {(this.state.addingPost || this.props.currentPost) && <a href="#" onClick={this.toggleHidePosts.bind(this, !this.state.hidePosts)}>{this.state.hidePosts ? "Show" : "Hide"} Current Posts</a>}
+        </div>
+
+        {this.state.addingPost ? (
           <AddPost
             toggleAdding={this.toggleAdding}
             type="post"
@@ -253,33 +276,29 @@ console.log("on failure getting called");
             <hr/>
             <PostEditorWrapper/>
 
-            <Button style="inverted" disabled={!dirty} onClick={this.saveCampaignPosts}>{dirty ? "Save Changes" : "All drafts saved"}</Button>
             <Flexbox justify="center">
               <Button style="inverted" onClick={this.props.switchTo.bind(this, "Start")}>Back</Button>
-              {campaignPosts.length > 0 &&
-                <div className={classes.publishButtonWrapper}>
-                  <Button disabled={dirty} onClick={this.togglePublishing.bind(this, true)}>Publish All Posts</Button>
+              {dirty ? (
+                <Button onClick={this.saveCampaignPosts}>Save Changes</Button>
+              ) : (
+                campaignPosts.length > 0 && (
+                  <div className={classes.publishButtonWrapper}>
+                    <Button disabled={dirty} onClick={this.togglePublishing.bind(this, true)}>Publish All Posts</Button>
 
-                  {this.state.publishing &&
-                    <ConfirmationPopup
-                      onConfirm={this.publish}
-                      onCancel={this.togglePublishing.bind(this, false)}
-                      pending={this.state.pending}
-                    />
-                  }
-                </div>
-              }
+                    {this.state.publishing &&
+                      <ConfirmationPopup
+                        onConfirm={this.publish}
+                        onCancel={this.togglePublishing.bind(this, false)}
+                        pending={this.state.pending}
+                      />
+                    }
+                    <div className={classes.saveStatus}>All drafts saved</div>
+                  </div>
+                )
+              )}
             </Flexbox>
           </div>
         )}
-
-        <div className={this.state.hidePosts ? classes.hide : ""}>
-          <PostPicker
-            channel={this.state.currentChannel}
-            toggleAdding={this.toggleAdding}
-            addingPost={this.state.addingPost}
-          />
-        </div>
 
       </div>
     );

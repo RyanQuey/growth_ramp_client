@@ -109,6 +109,9 @@
 
 @mixin transition($what: all, $length: 1s, $easing: ease-in-out) {
   transition: $what $length $easing;
+  -webkit-transition: $what $length $easing;
+  -moz-transition: $what $length $easing;
+  -o-transition: $what $length $easing;
 }
 
 @mixin mar($mt: 0, $mr: 0, $mb: 0, $ml: 0) {
