@@ -115,18 +115,20 @@ class PostPicker extends Component {
                       status = "toUpdate"
                     }
 
-                    return <PostCard
-                      key={post.id}
-                      className={`${classes.postCard} ${post.publishedAt ? classes.publishedPost : ""}`}
-                      subtitle={post.publishedAt ? "Already Published" : ""}
-                      post={post}
-                      showText={true}
-                      status={status}
-                      maxWidth="95%"
-                      onClick={!post.publishedAt && this.setCurrentPost.bind(this, post)}
-                      selected={this.props.currentPost && this.props.currentPost.id === post.id}
-                      small={true}
-                    />
+                    return <div className={classes.cardWrapper}>
+                      <PostCard
+                        key={post.id}
+                        className={`${classes.postCard} ${post.publishedAt ? classes.publishedPost : ""}`}
+                        subtitle={post.publishedAt ? "Already Published" : ""}
+                        post={post}
+                        showText={true}
+                        status={status}
+                        maxWidth="200px"
+                        onClick={!post.publishedAt && this.setCurrentPost.bind(this, post)}
+                        selected={this.props.currentPost && this.props.currentPost.id === post.id}
+                        small={true}
+                      />
+                    </div>
                   })}
                 </div>
               </Flexbox>

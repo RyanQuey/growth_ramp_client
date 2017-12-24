@@ -50,6 +50,12 @@
       width: 100%;
       min-width: 100%;
     }
+    .cardWrapper {
+      max-width: 95%;
+      width: 200px;
+      margin: 0 auto 10px auto;
+      overflow: auto;
+    }
     .postCard {
       width: 100%;
       overflow: hidden;
