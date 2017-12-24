@@ -196,7 +196,7 @@ class PostEditor extends Component {
           <h2>{Helpers.providerFriendlyName(record.provider)} {record.channelType.titleCase()}{type === "postTemplate" ? "Template" : ""}</h2>
           {account &&
             <div key={account.id} >
-              <img alt="(No profile picture on file)" src={account.photoUrl}/>
+              {account.photoUrl ? <img src={account.photoUrl}/> : <div>(No profile picture on file)</div>}
               <h5>{account.userName} ({account.email || "No email on file"})</h5>
               {channelTypeHasMultiple && record.postingAs && <h5>(Posting as {record.postingAs.toLowerCase()})</h5>}
             </div>

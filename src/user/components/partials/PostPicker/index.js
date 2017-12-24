@@ -82,7 +82,7 @@ class PostPicker extends Component {
 
   render() {
     const sortedPosts = this.sortPostsByProvider(this.props.campaignPostsParams || [])
-    const providers = Object.keys(sortedPosts)
+    const providers = Object.keys(PROVIDERS)
 
     return (
       <div className={`${classes.container} ${this.props.hidden ? classes.hidden : ""}`}>

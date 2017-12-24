@@ -100,6 +100,7 @@ class Compose extends Component {
         this.props.setCurrentPost(false)
       //}
       formActions.matchCampaignStateToRecord()
+      this.toggleHidePosts(false)
     }
 
     //should not update the post reducer on its success, just give me an alert if it fails
@@ -196,7 +197,6 @@ class Compose extends Component {
     } else {
 
       this.setState({publishing: value})
-console.log("now publishing")
     }
   }
 
@@ -248,7 +248,7 @@ console.log("on failure getting called");
 
     return (
       <div>
-        {false && <h1 className="display-3">Compose Your Posts</h1>}
+        <h1 className="display-3">{this.props.currentCampaign.name}</h1>
         {this.state.status === "PENDING" && <Icon name="spinner" className="fa-spin" />}
 
         <div>
@@ -259,23 +259,7 @@ console.log("on failure getting called");
             hidden={this.state.hidePosts}
             toggleHidePosts={this.toggleHidePosts}
           />
-          {(this.state.addingPost || this.props.currentPost) && <a href="#" onClick={this.toggleHidePosts.bind(this, !this.state.hidePosts)}>{this.state.hidePosts ? "Show" : "Hide"} Current Posts</a>}
-        </div>
-
-        {this.state.addingPost ? (
-          <AddPost
-            toggleAdding={this.toggleAdding}
-            type="post"
-            currentProvider={this.state.addingPost}
-          />
-
-        ) : (
-
-          <div>
-
-            <hr/>
-            <PostEditorWrapper/>
-
+          {!this.state.hidePosts && (
             <Flexbox justify="center">
               <Button style="inverted" onClick={this.props.switchTo.bind(this, "Start")}>Back</Button>
               {dirty ? (
@@ -297,6 +281,27 @@ console.log("on failure getting called");
                 )
               )}
             </Flexbox>
+          )}
+
+          {(this.state.addingPost || this.props.currentPost) && <a href="#" onClick={this.toggleHidePosts.bind(this, !this.state.hidePosts)}>{this.state.hidePosts ? "Show" : "Hide"} Current Posts</a>}
+        </div>
+
+        {this.state.addingPost ? (
+          <AddPost
+            toggleAdding={this.toggleAdding}
+            type="post"
+            currentProvider={this.state.addingPost}
+          />
+
+        ) : (
+
+          <div>
+
+            <hr/>
+            <PostEditorWrapper
+              toggleHidePosts={this.toggleHidePosts}
+            />
+
           </div>
         )}
 

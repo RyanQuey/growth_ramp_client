@@ -18,6 +18,7 @@ class CampaignPostWrapper extends Component {
 
     this.channelPosts = this.channelPosts.bind(this)
     this.removePost = this.removePost.bind(this)
+    this.done = this.done.bind(this)
   }
 
   removePost(post) {
@@ -32,6 +33,7 @@ class CampaignPostWrapper extends Component {
 
     formActions.setParams("EditCampaign", "posts", {[post.id]: post})
     this.props.setCurrentPost(null)
+    this.props.toggleHidePosts(false)
   }
 
   //takes posts from all providers and accounts and organizes by channelType
@@ -42,6 +44,11 @@ class CampaignPostWrapper extends Component {
     ))
 
     return channelPosts*/
+  }
+
+  done(){
+    this.props.setCurrentPost(null)
+    this.props.toggleHidePosts(false)
   }
 
   render() {
@@ -72,6 +79,7 @@ console.log(channelPosts);*/
           hasContent={true}
         />
         <Button style="danger" onClick={this.removePost.bind(this, currentPost)}>Delete Post</Button>
+        <Button onClick={this.done}>Done</Button>
       </div>
     )
   }
