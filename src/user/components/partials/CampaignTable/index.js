@@ -107,12 +107,12 @@ class CampaignPicker extends Component {
                 {campaign.publishedAt  ? moment(campaign.publishedAt).format("MM-DD-YYYY h:mm a") : "n/a"}
               </td>
               <td>
-                <ButtonGroup vertical={true}>
-                  {campaign.status !== "PUBLISHED" && <Button onClick={this.editCampaign.bind(this, campaign)}>Edit Campaign</Button>}
-                  <Button onClick={this.showCampaign.bind(this, campaign)}>View Details</Button>
+                <div className={classes.buttonStack}>
+                  {campaign.status !== "PUBLISHED" && <Button onClick={this.editCampaign.bind(this, campaign)} small={true}>Edit</Button>}
+                  <Button onClick={this.showCampaign.bind(this, campaign)} small={true}>Details</Button>
                   {campaign.status !== "PUBLISHED" && (
                     <div className={classes.popupWrapper}>
-                      <Button style="danger" onClick={this.toggleDeleting.bind(this, campaign.id)}>Delete</Button>
+                      <Button style="danger" onClick={this.toggleDeleting.bind(this, campaign.id)} small={true}>Delete</Button>
                       {this.state.deleting === campaign.id &&
                         <ConfirmationPopup
                           onConfirm={this.removeCampaign.bind(this, campaign)}
@@ -123,7 +123,7 @@ class CampaignPicker extends Component {
                       }
                     </div>
                   )}
-                </ButtonGroup>
+                </div>
               </td>
             </tr>
           )

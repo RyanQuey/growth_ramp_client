@@ -22,3 +22,10 @@
   //background: $light-purple-gray;
 }
 
+.buttonStack {
+  margin: 15px 0;
+  button {
+    margin: 2px !important;
+    width: 120px;
+  }
+}

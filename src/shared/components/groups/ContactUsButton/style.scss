@@ -23,6 +23,11 @@
   color: $white;
   z-index: 100;
   @include rems(24);
+
+  &:hover {
+    background: #428d86;
+    transition: background .5s;
+  }
 }
 .formContainer {
   border: 1px solid #d6d6d6;

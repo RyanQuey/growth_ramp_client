@@ -85,11 +85,11 @@ class PlanTable extends Component {
                 {moment(plan.createdAt).format("MM-DD-YYYY h:mm a")}
               </td>
               <td>
-                <ButtonGroup vertical={true}>
-                  <Button onClick={this.editPlan.bind(this, plan)}>Edit Plan</Button>
-                  <Button onClick={this.showPlan.bind(this, plan)}>View Details</Button>
+                <div className={classes.buttonStack}>
+                  <Button onClick={this.editPlan.bind(this, plan)} small={true}>Edit</Button>
+                  <Button onClick={this.showPlan.bind(this, plan)} small={true}>Details</Button>
                   <div className={classes.popupWrapper}>
-                    <Button style="danger" onClick={this.toggleDeleting.bind(this, planId)}>Delete</Button>
+                    <Button style="danger" onClick={this.toggleDeleting.bind(this, planId)} small={true}>Delete</Button>
                     {this.state.deleting === planId &&
                       <ConfirmationPopup
                         onConfirm={this.removePlan.bind(this, plan)}
@@ -99,7 +99,7 @@ class PlanTable extends Component {
                       />
                     }
                   </div>
-                </ButtonGroup>
+                </div>
               </td>
             </tr>
           )

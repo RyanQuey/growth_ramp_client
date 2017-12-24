@@ -24,5 +24,6 @@ export default {
     linkedin: 'rgb(0, 119, 181)',
     danger: '#da513d',
     darkRed: '#7d2e23',
+    ghostRed: '#cb4e4e',
   }
 }

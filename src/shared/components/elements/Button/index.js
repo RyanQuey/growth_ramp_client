@@ -45,7 +45,7 @@ const STYLES = {
   },
   danger: {
     regular: {
-      background: theme.color.darkRed,
+      background: theme.color.ghostRed,
       color: theme.color.white,
       border: `none`,
       hover: theme.color.danger,
