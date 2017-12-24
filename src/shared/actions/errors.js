@@ -32,8 +32,6 @@ console.log(options);
         options.alert = errors.alert
       }
 
-      console.error(errors.errorObject)
-
       //axios often has response property, but you wouldn't see it if don't ask for it
       if (errors.errorObject && errors.errorObject.response) {
         console.error(errors.errorObject.response)
@@ -76,7 +74,7 @@ console.log(options);
   if (options.method === "addToExisting") {
     errors = store.getState().errors[templateName].concat(errors)
   }
-  if (!options.noAlert && errors.length > 0) {
+  if (options.alert && errors.length > 0) {
     if (options.combineAlerts) {
       newAlert({
         title: options.combinedTitle || "Several errors occurred",
