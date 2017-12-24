@@ -189,7 +189,7 @@ class Start extends Component {
             </div>
           )
         )}
-        <Button type="submit" disabled={!this.state.planChosen || this.state.errors && this.state.errors.length }>{this.props.dirty && "Save and "}Continue</Button>
+        <Button type="submit" disabled={(planIds.length > 0 && !this.state.planChosen) || this.state.errors && this.state.errors.length }>{this.props.dirty && "Save and "}Continue</Button>
 
       </form>
     );
