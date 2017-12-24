@@ -256,7 +256,7 @@ const Helpers = {
     //TODO implement for other platforms
     linkedin: (req, err, raw) => {
       //if the user rejected the permissions they just asked to give...
-      if (err && err.code === 'user_cancelled_authorize') {
+      if (err && (err.code === 'user_cancelled_authorize' || err.code === "user_cancelled_login")) {
         return "user-rejected"
 
       } else if (err || !raw) {
