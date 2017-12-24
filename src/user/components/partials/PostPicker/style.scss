@@ -12,8 +12,8 @@
   }
 }
 .table {
-  border-right: 1px solid $black;
-  border-left: 1px solid $black;
+  border-right: .5px solid $black;
+  border-left: .5px solid $black;
 
   .providerColumn {
     @include mq(sm2) {
@@ -25,13 +25,14 @@
     @include mq(lg) {
       @include cols(4);
     }
-    border-right: 1px solid $black;
+    border-right: .5px solid $black;
     border-left: 1px solid $black;
-    border-top: 2px solid $black;
-    border-bottom: 2px solid $black;
+    border-top: 1px solid $black;
+    border-bottom: 1px solid $black;
 
     h2 {
       margin: 0;
+      font-weight: normal;
     }
     //flexbox likes to shrink its children if it has overflow, rather than just adding a scrollbar. Min height stops that from happening
     button {
@@ -48,10 +49,7 @@
     }
     .postCard {
       width: 100%;
-      min-height: 126px;
-      max-height: 126px;
       overflow: hidden;
-      margin: 0 10px 10px 10px;
       //min-width: 200px;
 
       &.publishedPost {

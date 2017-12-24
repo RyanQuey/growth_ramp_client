@@ -1,7 +1,10 @@
 //these helpers only need to be imported once
 
 String.prototype.capitalize = function () {
-    return this.charAt(0).toUpperCase() + this.slice(1);
+  return this.charAt(0).toUpperCase() + this.slice(1);
+};
+String.prototype.truncate = function (maxLength = 100) {
+  return (this.length > maxLength) ? (this.substring(0,maxLength) + "...") : this
 };
 
 String.prototype.titleCase = function () {

@@ -2,26 +2,30 @@
 
 .small {
   padding: 5px;
+  margin: 0 10px 10px 10px;
   font-size: 12px;
-  .contentSection.truncated {
-    display: flex;
-    .cardLabel{
-    }
+  min-height: 80px;
+  max-height: 80px;
+  .contentSection {
+    //display: flex;
+    //.cardLabel{
+    //}
 
+    white-space: nowrap;
     span.text {
-      white-space: nowrap;
-      text-overflow: ellipsis;
-      overflow: hidden;
-      display: inline-block;
-      width: 70%;
+    //  white-space: nowrap;
+    //  text-overflow: ellipsis;
+    //  overflow: hidden;
+    //  display: inline-block;
+    //  width: 70%;
     }
   }
-}
-.smallHeader {
-  h2 {
-    @include rems(16);
+  .smallHeader {
+    h2 {
+      @include rems(16);
+    }
+    padding-bottom: 0 !important;
   }
-  padding-bottom: 0 !important;
 }
 .profilePic {
   width: 50px;

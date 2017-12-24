@@ -34,17 +34,21 @@ class PostCard extends Component {
 
     const hasMultiple = Helpers.channelTypeHasMultiple(null, post.provider, post.channelType)
     const activeUtms = UTM_TYPES.filter((t) => post[t.type] && post[t.type].active && post[t.type].value)
+    const userName = (Helpers.accountFromPost(post) || {}).userName
+    const channelName = (Helpers.channelFromPost(post) || {}).name
+
+
     return (
       <Card selected={selected} onClick={onClick} height={height} maxWidth={maxWidth} className={`${className} ${classes[status]} ${small ? classes.small : ""}`}>
         <CardHeader className={small ? classes.smallHeader : ""} title={post.channelType.titleCase()} subtitle={subtitle || sub} icon={showIcon && post.provider.toLowerCase()} iconColor={post.provider.toLowerCase()} />
 
         <Flexbox direction="column" >
-          <div className={classes.contentSection}><span className={classes.cardLabel}>Account:</span>&nbsp;{(Helpers.accountFromPost(post) || {}).userName || "Error: Could not be found"}</div>
+          <div className={classes.contentSection}><span className={classes.cardLabel}>Account:</span>&nbsp;{userName ? userName.truncate(19) : "Error: Could not be found"}</div>
           {hasMultiple && post.channelId && (
-            <div className={classes.contentSection}><span className={classes.cardLabel}>Channel:</span>&nbsp;{(Helpers.channelFromPost(post) || {}).name || "Error: Could not be found"}</div>
+            <div className={classes.contentSection}><span className={classes.cardLabel}>Channel:</span>&nbsp;{channelName ? channelName.truncate(19) : "Error: Could not be found"}</div>
           )}
           {!small && <br/>}
-          {showText && <div className={`${classes.contentSection} ${classes.truncated}`}><span className={classes.cardLabel}>Text:</span>&nbsp;<span className={classes.text}>{post.text || "(none)"}</span></div>}
+          {showText && <div className={`${classes.contentSection}`}><span className={classes.cardLabel}>Text:</span>&nbsp;<span className={classes.text}>{post.text ? post.text.truncate(24) : "(none)"}</span></div>}
           {showLink && <div className={classes.contentSection}><span className={classes.cardLabel}>Short Link:</span>&nbsp;{post.shortUrl || "(none)"}</div>}
 
           {showImages && <Flexbox  className={classes.contentSection}>
@@ -79,7 +83,6 @@ class PostCard extends Component {
 
 const mapStateToProps = state => {
   return {
-    user: state.user,
   }
 }
 const mapDispatchToProps = (dispatch) => {
