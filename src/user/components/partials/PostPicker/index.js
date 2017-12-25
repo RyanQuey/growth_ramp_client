@@ -91,7 +91,7 @@ class PostPicker extends Component {
 
         <Flexbox className={classes.table} flexWrap="wrap">
           {providers.map((provider) => {
-            let providerPosts = sortedPosts[provider]
+            let providerPosts = sortedPosts[provider] || []
             return (
               <Flexbox key={provider} className={classes.providerColumn} direction="column" align="center">
                 <h2>{PROVIDERS[provider].name}</h2>

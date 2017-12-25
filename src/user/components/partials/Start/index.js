@@ -138,7 +138,7 @@ class Start extends Component {
           handleErrors={this.handleErrors}
         />
 
-        {planIds.length === 0 ? (
+        {!planIds || planIds.length === 0 ? (
           <div>
             <h4>You don't have any plans yet. We'll just start from scratch</h4>
           </div>
