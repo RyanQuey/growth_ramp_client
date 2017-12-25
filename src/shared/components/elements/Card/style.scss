@@ -1,7 +1,6 @@
 @import 'theme/_helpers';
-
-.card {
-  //can easily be overridden by just nesting two or more classes
+.wrapper {
+  overflow: hidden;
   @include mq(2xs) {
     @include cols(12)
   }
@@ -11,6 +10,10 @@
   @include mq(lg) {
     @include cols(4)
   }
+}
+
+.card {
+  //can easily be overridden by just nesting two or more classes
   text-align: left;
   box-sizing: border-box;
   border-radius: 3px;

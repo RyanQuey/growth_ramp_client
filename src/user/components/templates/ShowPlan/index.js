@@ -173,7 +173,6 @@ class ShowPlan extends Component {
   }
 
   savePlan() {
-
     //save plan metadata
     let planParams = this.props.planParams
     const persistedRecord =  this.props.currentPlan
@@ -187,6 +186,7 @@ class ShowPlan extends Component {
       return
     }
 
+    //save the templates after updating the plan. Unless plan doesn't need to be updated at all
     const done = () => {
       this._savePostTemplates()
     }
@@ -215,8 +215,7 @@ class ShowPlan extends Component {
     const {currentPlan, planParams, planPostTemplatesForm} = this.props
     const mode = Helpers.safeDataPath(this.props, "match.params.editing", false) ? "EDIT" : "SHOW"
     const dirty = this.props.dirty
-    const {currentAccount, currentProvider, currentChannel} = this.state
-
+    const {currentAccount} = this.state
 
     return (
       <div>
@@ -234,9 +233,6 @@ class ShowPlan extends Component {
             )}
 
             <PostTemplateEditorWrapper
-              currentProvider={currentProvider}
-              currentAccount={currentAccount}
-              currentChannel={currentChannel}
               mode={mode}
             />
 
@@ -279,7 +275,6 @@ class ShowPlan extends Component {
             <div>
               <PostTemplatePicker
                 account={currentAccount}
-                channel={this.state.currentChannel}
                 toggleAdding={this.toggleAdding}
                 addingPostTemplate={this.state.addingPostTemplate}
                 mode={mode}

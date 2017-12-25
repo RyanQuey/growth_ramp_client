@@ -52,6 +52,7 @@ function* createCampaign(action) {
       templatePart: "create",
       title: "Error creating campaign",
       errorObject: err,
+      alert: true,
     })
   }
 }
@@ -85,6 +86,7 @@ function* fetchCampaigns(action) {
       templatePart: "fetch",
       title: "Error fetcing campaign(s)",
       errorObject: err,
+      alert: true,
     })
     // yield put(userFetchFailed(err.message))
   }
@@ -113,6 +115,7 @@ function* updateCampaign(action) {
       templatePart: "update",
       title: "Error updating campaign",
       errorObject: err,
+      alert: true,
     })
   }
 }
@@ -206,6 +209,7 @@ console.log("now parsing results");
       title: "Error publishing campaign",
       level: "DANGER",
       errorObject: err,
+      alert: true,
     })
 
     action.onFailure && action.onFailure(err)

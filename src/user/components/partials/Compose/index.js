@@ -221,7 +221,7 @@ class Compose extends Component {
         publishing: false,
         //mode: "savePlan",
       })
-console.log("on failure getting called");
+      console.log("Failed to publish at least one:");
       formActions.matchCampaignStateToRecord()
 
       const callback = () => (formActions.matchCampaignStateToRecord())
@@ -273,6 +273,7 @@ console.log("on failure getting called");
                       <ConfirmationPopup
                         onConfirm={this.publish}
                         onCancel={this.togglePublishing.bind(this, false)}
+                        side="top"
                         pending={this.state.pending}
                       />
                     }

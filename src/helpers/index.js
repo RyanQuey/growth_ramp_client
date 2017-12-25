@@ -86,10 +86,11 @@ let Helpers = {
 
   //only for when channel type has multiple; otherwise there is no channel record
   channelFromPost: (post) => {
-console.log(post);
+//console.log("post or postTemplate: ",post);
     if (!Helpers.channelTypeHasMultiple(null, post.provider, post.channelType)) {return false}
     const postAccount = Helpers.accountFromPost(post)
-console.log(postAccount);
+//console.log("account for post: ", postAccount);
+    //NOTE for old posts, before I changed out the post.channelId thing, they don't have a channelId, so breaks
     const channelRecord = postAccount.channels.find(channel => channel.id === (post.channelId.id || post.channelId))
     return channelRecord
   },

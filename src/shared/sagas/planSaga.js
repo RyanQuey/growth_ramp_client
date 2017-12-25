@@ -112,7 +112,7 @@ function* update(action) {
     const res = yield axios.put(`/api/plans/${planData.id}`, planData) //eventually switch to socket
 
     yield all([
-      put({ type: UPDATE_PLAN_SUCCESS, payload: planData}),
+      put({ type: UPDATE_PLAN_SUCCESS, payload: res.data}),
     ])
     alertActions.newAlert({
       title: "Success!",
@@ -120,7 +120,7 @@ function* update(action) {
       level: "SUCCESS",
     })
 
-    action.cb && action.cb(planData)
+    action.cb && action.cb(res.data)
   } catch (err) {
     console.log(`Error in update plan Saga`)
     console.log(err.response || err)

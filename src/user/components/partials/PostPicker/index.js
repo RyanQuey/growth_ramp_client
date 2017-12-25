@@ -115,7 +115,7 @@ class PostPicker extends Component {
                       status = "toUpdate"
                     }
 
-                    return <div className={classes.cardWrapper}>
+                    return (
                       <PostCard
                         key={post.id}
                         className={`${classes.postCard} ${post.publishedAt ? classes.publishedPost : ""}`}
@@ -127,8 +127,9 @@ class PostPicker extends Component {
                         onClick={!post.publishedAt && this.setCurrentPost.bind(this, post)}
                         selected={this.props.currentPost && this.props.currentPost.id === post.id}
                         small={true}
+                        wrapperClass={classes.cardWrapper}
                       />
-                    </div>
+                    )
                   })}
                 </div>
               </Flexbox>

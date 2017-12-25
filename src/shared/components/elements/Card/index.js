@@ -13,6 +13,7 @@ const Card = ({
   hover,
   maxWidth,
   height = '300px', //defaults to 300px;
+  wrapperClass,
 }) => {
 
   const styles = StyleSheet.create({
@@ -28,11 +29,13 @@ const Card = ({
     },
   })
   return (
-    <div
-      className={`${className} ${css(styles.card)} ${classes.card} ${selected ? classes.selected : ""}`}
-      onClick={onClick}
-    >
-      {children}
+    <div className={`${classes.wrapper} ${wrapperClass || ""}`}>
+      <div
+        className={`${className} ${css(styles.card)} ${classes.card} ${selected ? classes.selected : ""}`}
+        onClick={onClick}
+      >
+        {children}
+      </div>
     </div>
   )
 }

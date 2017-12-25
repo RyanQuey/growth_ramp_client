@@ -193,7 +193,7 @@ class PostEditor extends Component {
     const type = this.props.type
     return (
       <Flexbox direction="column" className={classes.recordFields}>
-          <h2>{Helpers.providerFriendlyName(record.provider)} {record.channelType.titleCase()}{type === "postTemplate" ? "Template" : ""}</h2>
+          <h2>{Helpers.providerFriendlyName(record.provider)} {record.channelType.titleCase()}{type === "postTemplate" ? " Template" : ""}</h2>
           {account &&
             <div key={account.id} >
               {account.photoUrl ? <img src={account.photoUrl}/> : <div>(No profile picture on file)</div>}
