@@ -258,6 +258,10 @@ class Compose extends Component {
             addingPost={this.state.addingPost}
             hidden={this.state.hidePosts}
             toggleHidePosts={this.toggleHidePosts}
+            postsParams={this.props.campaignPostsForm.params}
+            currentPost={this.props.currentPost}
+            form="EditCampaign"
+            items="posts"
           />
           {!this.state.hidePosts && (
             <Flexbox justify="center">
@@ -294,19 +298,14 @@ class Compose extends Component {
             currentProvider={this.state.addingPost}
             toggleHidePosts={this.toggleHidePosts}
           />
-
         ) : (
-
           <div>
-
             <hr/>
             <PostEditorWrapper
               toggleHidePosts={this.toggleHidePosts}
             />
-
           </div>
         )}
-
       </div>
     );
   }
@@ -320,7 +319,6 @@ const mapStateToProps = state => {
     providerAccounts: state.providerAccounts,
     currentCampaign: state.currentCampaign,
     campaignPostsForm: Helpers.safeDataPath(state.forms, "EditCampaign.posts", {}),
-    uploadedFiles: Helpers.safeDataPath(state.forms, "EditCampaign.uploadedFiles", []),
     formOptions: Helpers.safeDataPath(state.forms, "EditCampaign.posts.options", {}),
 
   }

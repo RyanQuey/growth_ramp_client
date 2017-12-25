@@ -66,6 +66,7 @@ class PostTemplatePicker extends Component {
     this.props.toggleAdding(false, false)
 console.log("now setting",postTemplate);
     this.props.setCurrentPostTemplate(postTemplate)
+    this.props.toggleHidePosts(true)
 
     //make sure utms are enabled if postTemplate has those utms
     let utmKeys = UTM_TYPES.map((t) => t.value)
@@ -84,44 +85,36 @@ console.log("now setting",postTemplate);
     }
 
     const sortedPostTemplates = this.sortPostTemplatesByProvider(this.props.planPostTemplates || [])
-    const providers = Object.keys(sortedPostTemplates)
+    const providers = Object.keys(PROVIDERS)
     const mode = this.props.mode
 
     return (
       <div >
-        <h3>Your Post Templates:</h3>
+        <h3>Current Post Templates:</h3>
         {!Object.keys(sortedPostTemplates).length && <div>No post templates yet</div>}
 
-        <Flexbox className={classes.postTemplateMenu}>
+        <Flexbox className={classes.table}>
           {providers.map((provider) => {
             let providerPostTemplates = sortedPostTemplates[provider]
             return (
               <Flexbox key={provider} className={classes.providerColumn} direction="column" align="center">
                 <h3>{PROVIDERS[provider].name}</h3>
 
-                {providerPostTemplates.map((postTemplate) => {
-                  let status
-                  if (postTemplate.toDelete) {
-                    status = "toDelete"
-                  } else if (typeof postTemplate.id === "string") {
-                    status = "toCreate"
-
-                  } else if (postTemplate.dirty){
-                    status = "toUpdate"
-                  }
-
-                  return <PostCard
-                    key={postTemplate.id}
-                    className={`${classes.postTemplateCard}`}
-                    post={postTemplate}
-                    height="160px"
-                    status={status}
-                    maxWidth="95%"
-                    onClick={this.setCurrentPostTemplate.bind(this, postTemplate)}
-                    selected={this.props.currentPostTemplate && this.props.currentPostTemplate.id === postTemplate.id}
-                    showText={false}
-                  />
-                })}
+                <div className={classes.postList}>
+                  {providerPostTemplates.map((postTemplate) => {
+                    return <PostCard
+                      key={postTemplate.id}
+                      className={`${classes.postCard}`}
+                      post={postTemplate}
+                      maxWidth="200px"
+                      onClick={this.setCurrentPostTemplate.bind(this, postTemplate)}
+                      selected={this.props.currentPostTemplate && this.props.currentPostTemplate.id === postTemplate.id}
+                      showText={false}
+                      small={true}
+                      wrapperClass={classes.cardWrapper}
+                    />
+                  })}
+                </div>
 
                 {mode === "EDIT" && <Button
                   onClick={this.props.toggleAdding.bind(this, provider)}

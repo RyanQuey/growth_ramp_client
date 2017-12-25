@@ -1,0 +1,107 @@
+@import 'theme/_helpers';
+/*
+.postTemplateMenu {
+  border-right: 1px solid $black;
+  border-left: 1px solid $black;
+
+
+  .providerColumn {
+    @include mq(2xs) {
+      @include cols(12)
+    }
+    @include mq(md) {
+      @include cols(6)
+    }
+    @include mq(lg) {
+      @include cols(4)
+    }
+    border-right: 1px solid $black;
+    border-left: 1px solid $black;
+
+    .postTemplateCard {
+      width: 100%;
+      &.dirty {
+        border: blue solid;
+      }
+      &.toCreate {
+        border: green solid;
+      }
+      &.toDelete {
+        border: red solid;
+      }
+    }
+  }
+}
+*/
+.container {
+  visibility: visible;
+  opacity: 1;
+  max-height: 2000px ;
+  @include transition(max-height, .8s, ease);
+  overflow-y: hidden;
+
+  &.hidden {
+    max-height: 0;
+    overflow-y: hidden;
+  }
+}
+.table {
+  border-right: .5px solid $black;
+  border-left: .5px solid $black;
+  h2 {
+    margin-top: 0;
+  }
+
+  .providerColumn {
+    @include mq(sm2) {
+      @include cols(12);
+    }
+    @include mq(xs) {
+      @include cols(12);
+    }
+    @include mq(lg) {
+      @include cols(4);
+    }
+    border-right: .5px solid $black;
+    border-left: 1px solid $black;
+    border-top: 1px solid $black;
+    border-bottom: 1px solid $black;
+
+    h2 {
+      margin-bottom: 0;
+      font-weight: normal;
+    }
+    //flexbox likes to shrink its children if it has overflow, rather than just adding a scrollbar. Min height stops that from happening
+    button {
+      min-height: 38px;
+      padding: 10px 15px;
+    }
+
+    .postList {
+      overflow-y: auto;
+      overflow-x: visible;
+      max-height: 300px;
+      width: 100%;
+      min-width: 100%;
+    }
+    .cardWrapper {
+      max-width: 95%;
+      width: 200px;
+      margin: 0 auto 10px auto;
+      overflow: auto;
+      float: none;
+    }
+    .postCard {
+      width: 100%;
+      overflow: hidden;
+      //min-width: 200px;
+
+      &.publishedPost {
+        cursor: not-allowed !important;
+        background-color: gray !important;
+      }
+
+    }
+  }
+
+}

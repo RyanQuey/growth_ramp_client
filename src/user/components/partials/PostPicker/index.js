@@ -2,7 +2,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux'
 import { Flexbox, Button, Icon, Card } from 'shared/components/elements'
 import { PostCard, ProviderCard } from 'user/components/partials'
-import { SET_CURRENT_POST, SET_CURRENT_MODAL, UPDATE_PLAN_REQUEST  } from 'constants/actionTypes'
+import { SET_CURRENT_POST_TEMPLATE, SET_CURRENT_POST, SET_CURRENT_MODAL, UPDATE_PLAN_REQUEST  } from 'constants/actionTypes'
 import { PROVIDERS } from 'constants/providers'
 import {UTM_TYPES} from 'constants/posts'
 import {formActions} from 'shared/actions'
@@ -67,7 +67,7 @@ class PostPicker extends Component {
     //turn off adding a post when click on a card
     this.props.toggleAdding(false, false)
     this.props.toggleHidePosts(true)
-    this.props.setCurrentPost(post)
+    this.props.setCurrentPost(post, this.props.items)
 
     //make sure utms are enabled if post has those utms
     let utmKeys = UTM_TYPES.map((t) => t.value)
@@ -77,17 +77,15 @@ class PostPicker extends Component {
       utmFields[key] = post[key] ? true : false
     }
 
-    formActions.setOptions("EditCampaign", "posts", {[post.id]: {utms: utmFields}})
+    formActions.setOptions(this.props.form, this.props.items, {[post.id]: {utms: utmFields}})
   }
 
   render() {
-    const sortedPosts = this.sortPostsByProvider(this.props.campaignPostsParams || [])
+    const sortedPosts = this.sortPostsByProvider(this.props.postsParams || {})
     const providers = Object.keys(PROVIDERS)
-
     return (
       <div className={`${classes.container} ${this.props.hidden ? classes.hidden : ""}`}>
-        <h2>Current Posts:</h2>
-        {!Object.keys(sortedPosts).length && <div>No posts yet</div>}
+        <h2>Current Post{this.props.items === "postTemplates" ? " Template" : ""}s:</h2>
 
         <Flexbox className={classes.table} flexWrap="wrap">
           {providers.map((provider) => {
@@ -104,25 +102,13 @@ class PostPicker extends Component {
 
                 <div className={classes.postList}>
                   {providerPosts.map((post) => {
-
-                    let status
-                    if (post.toDelete) {
-                      status = "toDelete"
-                    } else if (typeof post.id === "string") {
-                      status = "toCreate"
-
-                    } else if (post.dirty){
-                      status = "toUpdate"
-                    }
-
                     return (
                       <PostCard
                         key={post.id}
                         className={`${classes.postCard} ${post.publishedAt ? classes.publishedPost : ""}`}
                         subtitle={post.publishedAt ? "Already Published" : ""}
                         post={post}
-                        showText={true}
-                        status={status}
+                        showText={this.props.items === "posts"}
                         maxWidth="200px"
                         onClick={!post.publishedAt && this.setCurrentPost.bind(this, post)}
                         selected={this.props.currentPost && this.props.currentPost.id === post.id}
@@ -145,7 +131,6 @@ class PostPicker extends Component {
 const mapStateToProps = state => {
   return {
     //really is campaign posts params
-    campaignPostsParams: Helpers.safeDataPath(state.forms, "EditCampaign.posts.params", {}),
     user: state.user,
     providerAccounts: state.providerAccounts,
     currentPost: state.currentPost,
@@ -154,8 +139,11 @@ const mapStateToProps = state => {
 const mapDispatchToProps = (dispatch) => {
   return {
     setCurrentModal: (payload) => dispatch({type: SET_CURRENT_MODAL, payload}),
-    setCurrentPost: (payload, options) => dispatch({type: SET_CURRENT_POST, payload, options}),
-    updatePlanRequest: (payload) => {dispatch({type: UPDATE_PLAN_REQUEST, payload})},
+    setCurrentPost: (payload, items, options) => {
+      let type = items === "posts" ? SET_CURRENT_POST : SET_CURRENT_POST_TEMPLATE
+      dispatch({type, payload, options})
+
+    },
   }
 }
 

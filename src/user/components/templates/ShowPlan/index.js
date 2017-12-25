@@ -4,7 +4,7 @@ import { withRouter } from 'react-router-dom'
 import {
   //PostTemplateEditor,
   AddPost, //shared with the CampaignEditor
-  PostTemplatePicker,
+  PostPicker,
   PostTemplateEditorWrapper
 } from 'user/components/partials'
 import { Navbar, Icon, Button, Input, Flexbox } from 'shared/components/elements'
@@ -28,16 +28,17 @@ class ShowPlan extends Component {
     super()
     this.state = {
       addingPostTemplate: false,
+      hidePosts: false,
     }
 
     this.handleLinkProvider = this.handleLinkProvider.bind(this)
     this.savePlan = this.savePlan.bind(this)
     this._savePostTemplates = this._savePostTemplates.bind(this)
     this.toggleAdding = this.toggleAdding.bind(this)
+    this.toggleHidePosts = this.toggleHidePosts.bind(this)
     this.toggleMode = this.toggleMode.bind(this)
     this.setPlan = this.setPlan.bind(this)
     this.handleChangeName = this.handleChangeName.bind(this)
-
   }
 
  componentDidMount() {
@@ -96,7 +97,6 @@ class ShowPlan extends Component {
     formActions.setParams("EditPlan", "other", {name: value})
   }
 
-
   openNewProviderModal(provider) {
     //provider will be the only provider they add an account for
     this.props.setCurrentModal("LinkProviderAccountModal", {provider})
@@ -115,6 +115,13 @@ class ShowPlan extends Component {
     }
   }
 
+  toggleHidePosts (value, e) {
+    e && e.preventDefault()
+    this.setState({
+      hidePosts: value,
+    })
+  }
+
   toggleAdding(provider, value = !this.state.addingPostTemplate, currentPostTemplate = null) {
     //if provider is passed in, just starts making a postTemplate for that provider
     this.props.setCurrentPostTemplate(currentPostTemplate)
@@ -122,7 +129,6 @@ class ShowPlan extends Component {
   }
 
   _savePostTemplates() {
-
     const planPostTemplatesFormArray = _.values(this.props.planPostTemplatesForm.params)
     const persistedPostTemplates = this.props.currentPlan.postTemplates || []
 
@@ -215,77 +221,73 @@ class ShowPlan extends Component {
     const {currentPlan, planParams, planPostTemplatesForm} = this.props
     const mode = Helpers.safeDataPath(this.props, "match.params.editing", false) ? "EDIT" : "SHOW"
     const dirty = this.props.dirty
-    const {currentAccount} = this.state
 
     return (
-      <div>
-        {currentPlan ? (
-          <div>
-            {mode === "SHOW" ? (
-              <h1>{currentPlan.name}</h1>
-            ) : (
-              <Input
-                value={planParams.name}
-                placeholder="Plan Name"
-                onChange={this.handleChangeName}
-                className={classes.nameInput}
-              />
-            )}
+      currentPlan ? (
+        <div>
+          {mode === "SHOW" ? (
+            <h1>{currentPlan.name}</h1>
+          ) : (
+            <Input
+              value={planParams.name}
+              placeholder="Plan Name"
+              onChange={this.handleChangeName}
+              className={classes.nameInput}
+            />
+          )}
 
-            <PostTemplateEditorWrapper
+          <div>
+            <PostPicker
+              toggleAdding={this.toggleAdding}
+              addingPost={this.state.addingPostTemplate}
               mode={mode}
+              toggleHidePosts={this.toggleHidePosts}
+              hidden={this.state.hidePosts}
+              form="EditPlan"
+              items="postTemplates"
+              postsParams={this.props.planPostTemplatesForm.params}
+              currentPost={this.props.currentPostTemplate}
             />
 
-            {this.state.addingPostTemplate ? (
-
-              <AddPost
-                toggleAdding={this.toggleAdding}
-                type="postTemplate"
-                currentProvider={this.state.addingPostTemplate}
-              />
-
-            ) : (
-
-              <div>
-                {currentAccount &&
-                  <div key={currentAccount.id} >
-                    <img alt="No profile picture on file" src={currentAccount.photoUrl}/>
-                    <h5>{currentAccount.email || "No email on file"}</h5>
-                  </div>
-                }
-
-              </div>
-            )}
-
-            {mode === "EDIT" ? (
-              <div>
-                <Button style="inverted" disabled={!dirty} onClick={this.savePlan}>
-                  {dirty ? "Save changes" : "All drafts saved"}
-                </Button>
+            {!this.state.hidePosts && (
+              mode === "EDIT" ? (
+                <div>
+                  <Button style="inverted" disabled={!dirty} onClick={this.savePlan}>
+                    {dirty ? "Save changes" : "All drafts saved"}
+                  </Button>
+                  <Button style="inverted" onClick={this.toggleMode}>
+                    {dirty ? "Cancel edits" : "Finished editing"}
+                  </Button>
+                </div>
+              ) : (
                 <Button style="inverted" onClick={this.toggleMode}>
-                  {dirty ? "Cancel edits" : "Finished editing"}
+                  Edit
                 </Button>
-              </div>
-            ) : (
-              <Button style="inverted" onClick={this.toggleMode}>
-                Edit
-              </Button>
+              )
             )}
+            {(this.state.addingPost || this.props.currentPost) && <a href="#" onClick={this.toggleHidePosts.bind(this, !this.state.hidePosts)}>{this.state.hidePosts ? "Show" : "Hide"} Current Posts</a>}
+          </div>
 
+          {this.state.addingPostTemplate ? (
+            <AddPost
+              toggleAdding={this.toggleAdding}
+              type="postTemplate"
+              currentProvider={this.state.addingPostTemplate}
+              toggleHidePosts={this.toggleHidePosts}
+            />
+          ) : (
             <div>
-              <PostTemplatePicker
-                account={currentAccount}
-                toggleAdding={this.toggleAdding}
-                addingPostTemplate={this.state.addingPostTemplate}
+              <hr/>
+              <PostTemplateEditorWrapper
                 mode={mode}
+                toggleHidePosts={this.toggleHidePosts}
               />
             </div>
-
-          </div>
-        ) : (
-          <Icon name="spinner" size="5x"/>
-        )}
-      </div>
+          )}
+        </div>
+      ) : (
+        <Icon name="spinner" size="5x"/>
+      )
     );
   }
 }
@@ -295,6 +297,7 @@ const mapStateToProps = state => {
     user: state.user,
     plans: state.plans,
     currentPlan: state.currentPlan,
+    currentPostTemplate: state.currentPostTemplate,
     //if either form is dirty
     planPostTemplatesForm: Helpers.safeDataPath(state.forms, "EditPlan.postTemplates", {}),
     formOptions: Helpers.safeDataPath(state.forms, "EditPlan.postTemplates.options", {}),

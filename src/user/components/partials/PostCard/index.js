@@ -16,13 +16,21 @@ class PostCard extends Component {
   }
 
   render () {
-    const { post, selected, status, onClick, height, maxWidth, className, showUtms, showIcon, showLink, showImages, showText = true, subtitle, small, wrapperClass} = this.props
+    const { post, selected, onClick, height, maxWidth, className, showUtms, showIcon, showLink, showImages, showText = true, subtitle, small, wrapperClass} = this.props
     if (!post) {return null} //shouldn't happen, but whatever
+
+    let status
+    if (post.toDelete) {
+      status = "toDelete"
+    } else if (typeof post.id === "string") {
+      status = "toCreate"
+    } else if (post.dirty){
+      status = "toUpdate"
+    }
 
     let sub
     switch(status) {
       case "toDelete":
-        sub = "Ready to Delete"
         break
       case "toCreate":
         sub = "Ready to Create"
