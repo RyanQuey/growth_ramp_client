@@ -266,7 +266,7 @@ console.log();
       <div>
         {!currentProvider || this.props.status === "PENDING" && <Icon name="spinner" className="fa-spin" />}
 
-        {!this.props.providerAccounts || !this.props.providerAccounts[currentProvider].length ? (
+        {!this.props.providerAccounts || !Helpers.safeDataPath(this.props, `providerAccounts.${currentProvider}.length`, 0) ? (
           <div>
             <div>Growth Ramp needs your permission to make posts for {PROVIDERS[currentProvider].name}</div>
             <Button style="inverted" onClick={this.openProviderModal}>Grant Permission to Continue</Button>
