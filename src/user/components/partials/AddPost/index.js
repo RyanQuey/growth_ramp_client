@@ -128,7 +128,6 @@ console.log("now handling", option);
       //if (t === "customUtm") {newParams[t.value].key = ""} //disabled customUtm
     })
 
-console.log();
     if (this.props.type === "post") {
       newParams.campaignId = this.props.currentCampaign.id
       newParams.contentUrl = this.props.currentCampaign.contentUrl
