@@ -131,7 +131,7 @@ class ShowCampaign extends Component {
                     key={post.id}
                     post={post}
                     className={classes.postCard}
-                    height="250px"
+                    height="260px"
                     showIcon={true}
                     showImages={true}
                     showUtms={true}

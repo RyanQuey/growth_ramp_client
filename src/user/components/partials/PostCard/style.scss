@@ -28,18 +28,22 @@
     padding-bottom: 0 !important;
   }
 }
-.profilePic {
-  width: 50px;
-}
 .cardLabel{
   font-weight: bold;
 }
-.utms {
+.content {
   width: 100%;
-  .utmField {
-    width: 100%;
-  }
 
+  .profilePic {
+    width: 50px;
+  }
+  .utms {
+    width: 100%;
+    .utmField {
+      width: 100%;
+    }
+
+  }
 }
 .imageLink {
   background-repeat: no-repeat;

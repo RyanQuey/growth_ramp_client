@@ -47,7 +47,7 @@ class PostCard extends Component {
       <Card selected={selected} onClick={onClick} height={height} maxWidth={maxWidth} wrapperClass={wrapperClass} className={`${className} ${classes[status]} ${small ? classes.small : ""}`}>
         <CardHeader className={small ? classes.smallHeader : ""} title={post.channelType.titleCase()} subtitle={subtitle || sub} icon={showIcon && post.provider.toLowerCase()} iconColor={post.provider.toLowerCase()} />
 
-        <Flexbox direction="column" >
+        <Flexbox direction="column" className={classes.content}>
           <div className={classes.contentSection}><span className={classes.cardLabel}>Account:</span>&nbsp;{userName ? userName : "Error: Could not be found"}</div>
           {hasMultiple && post.channelId && (
             <div className={classes.contentSection}><span className={classes.cardLabel}>Channel:</span>&nbsp;{channelName ? channelName : "Error: Could not be found"}</div>
