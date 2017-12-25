@@ -292,6 +292,7 @@ class Compose extends Component {
             toggleAdding={this.toggleAdding}
             type="post"
             currentProvider={this.state.addingPost}
+            toggleHidePosts={this.toggleHidePosts}
           />
 
         ) : (

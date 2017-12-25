@@ -143,6 +143,7 @@ console.log();
     }
 
     this.props.toggleAdding(false, false, newParams)
+    this.props.toggleHidePosts(true)
   }
 
   providerOption(provider) {
