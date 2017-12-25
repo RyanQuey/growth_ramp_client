@@ -1,7 +1,7 @@
 @import 'theme/_helpers';
 
 .nameInput {
-  @include rems(45);
-  margin: 1.5rem 0;
+  @include rems(36);
+  margin: 1.5rem 0 0 0;
   text-align: center;
 }

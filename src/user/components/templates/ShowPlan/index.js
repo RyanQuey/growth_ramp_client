@@ -29,11 +29,12 @@ class ShowPlan extends Component {
     this.state = {
       addingPostTemplate: false,
       hidePosts: false,
+      name: "",
     }
 
     this.handleLinkProvider = this.handleLinkProvider.bind(this)
-    this.savePlan = this.savePlan.bind(this)
-    this._savePostTemplates = this._savePostTemplates.bind(this)
+    this.savePlanName = this.savePlanName.bind(this)
+    this.savePostTemplates = this.savePostTemplates.bind(this)
     this.toggleAdding = this.toggleAdding.bind(this)
     this.toggleHidePosts = this.toggleHidePosts.bind(this)
     this.toggleMode = this.toggleMode.bind(this)
@@ -95,6 +96,7 @@ class ShowPlan extends Component {
 
   handleChangeName (value, e, errors) {
     formActions.setParams("EditPlan", "other", {name: value})
+    //this.setState({name: value})
   }
 
   openNewProviderModal(provider) {
@@ -128,7 +130,7 @@ class ShowPlan extends Component {
     this.setState({addingPostTemplate: provider || value})
   }
 
-  _savePostTemplates() {
+  savePostTemplates() {
     const planPostTemplatesFormArray = _.values(this.props.planPostTemplatesForm.params)
     const persistedPostTemplates = this.props.currentPlan.postTemplates || []
 
@@ -178,12 +180,12 @@ class ShowPlan extends Component {
     }
   }
 
-  savePlan() {
+  savePlanName() {
     //save plan metadata
     let planParams = this.props.planParams
-    const persistedRecord =  this.props.currentPlan
+    //let name = this.state.name
+    const persistedRecord = this.props.currentPlan
     if (!planParams.name) {
-
       alertActions.newAlert({
         title: "Failed to save:",
         message: "Name is required",
@@ -194,10 +196,9 @@ class ShowPlan extends Component {
 
     //save the templates after updating the plan. Unless plan doesn't need to be updated at all
     const done = () => {
-      this._savePostTemplates()
+      formActions.matchPlanStateToRecord()
     }
 
-    if (this.props.dirty && planParams.name !== persistedRecord.name) {
       const options = {} //can't remember why i have this..maybe just that, I coudl use if needed?
       const params = {
         id: persistedRecord.id,
@@ -207,9 +208,6 @@ class ShowPlan extends Component {
 
       this.props.updatePlanRequest(params, options, done)
 
-    } else {
-      done()
-    }
   }
 
   handleLinkProvider() {
@@ -235,6 +233,9 @@ class ShowPlan extends Component {
               className={classes.nameInput}
             />
           )}
+          <Button style="inverted" disabled={planParams.name === currentPlan.name} onClick={this.savePlanName}>
+            {planParams.name !== currentPlan.name ? "Save name" : "Name is up to date"}
+          </Button>
 
           <div>
             <PostPicker
@@ -250,14 +251,14 @@ class ShowPlan extends Component {
             />
 
             {!this.state.hidePosts && (
-              mode === "EDIT" ? (
+              true || mode === "EDIT" ? (
                 <div>
-                  <Button style="inverted" disabled={!dirty} onClick={this.savePlan}>
+                  <Button style="inverted" disabled={!dirty} onClick={this.savePostTemplates}>
                     {dirty ? "Save changes" : "All drafts saved"}
                   </Button>
-                  <Button style="inverted" onClick={this.toggleMode}>
+                  {false && <Button style="inverted" onClick={this.toggleMode}>
                     {dirty ? "Cancel edits" : "Finished editing"}
-                  </Button>
+                  </Button>}
                 </div>
               ) : (
                 <Button style="inverted" onClick={this.toggleMode}>
@@ -265,7 +266,7 @@ class ShowPlan extends Component {
                 </Button>
               )
             )}
-            {(this.state.addingPost || this.props.currentPost) && <a href="#" onClick={this.toggleHidePosts.bind(this, !this.state.hidePosts)}>{this.state.hidePosts ? "Show" : "Hide"} Current Posts</a>}
+            {(this.state.addingPost || this.props.currentPostTemplate || this.state.hidePosts) && <a href="#" onClick={this.toggleHidePosts.bind(this, !this.state.hidePosts)}>{this.state.hidePosts ? "Show" : "Hide"} Current Post Templates</a>}
           </div>
 
           {this.state.addingPostTemplate ? (

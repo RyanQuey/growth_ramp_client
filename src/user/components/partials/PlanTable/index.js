@@ -24,14 +24,15 @@ class PlanTable extends Component {
     }
 
     this.editPlan = this.editPlan.bind(this)
-    this.showPlan = this.showPlan.bind(this)
+    //this.showPlan = this.showPlan.bind(this)
     this.removePlan = this.removePlan.bind(this)
     this.toggleDeleting = this.toggleDeleting.bind(this)
   }
 
+  /*
   showPlan (plan, e) {
     this.props.history.push(`/plans/${plan.id}`)
-  }
+  }*/
 
   editPlan (plan, e) {
     //will fetch anyways when we get there, since have to if user goes direcly from the url bar
@@ -87,7 +88,7 @@ class PlanTable extends Component {
               <td>
                 <div className={classes.buttonStack}>
                   <Button onClick={this.editPlan.bind(this, plan)} small={true}>Edit</Button>
-                  <Button onClick={this.showPlan.bind(this, plan)} small={true}>Details</Button>
+                  {false && <Button onClick={this.showPlan.bind(this, plan)} small={true}>Details</Button>}
                   <div className={classes.popupWrapper}>
                     <Button style="danger" onClick={this.toggleDeleting.bind(this, planId)} small={true}>Delete</Button>
                     {this.state.deleting === planId &&

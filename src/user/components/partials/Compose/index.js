@@ -288,7 +288,7 @@ class Compose extends Component {
             </Flexbox>
           )}
 
-          {(this.state.addingPost || this.props.currentPost) && <a href="#" onClick={this.toggleHidePosts.bind(this, !this.state.hidePosts)}>{this.state.hidePosts ? "Show" : "Hide"} Current Posts</a>}
+          {(this.state.addingPost || this.props.currentPost || this.state.hidePosts) && <a href="#" onClick={this.toggleHidePosts.bind(this, !this.state.hidePosts)}>{this.state.hidePosts ? "Show" : "Hide"} Current Posts</a>}
         </div>
 
         {this.state.addingPost ? (
