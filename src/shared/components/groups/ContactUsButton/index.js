@@ -34,7 +34,7 @@ class ContactUsButton extends Component {
 
   submit (e) {
     e.preventDefault()
-console.log("now sending");
+
     this.setState({pending: true})
     axios.post("/api/notifications/contactUs", {
       userId: store.getState().user.id, //if no user, should throw error right now
@@ -42,6 +42,11 @@ console.log("now sending");
     })
     .then(() => {
       this.setState({pending: false, message: "", open: false})
+
+      alertActions.newAlert({
+        title: "Thanks for your feedback!",
+        level: "SUCCESS",
+      })
     })
     .catch((err) => {
       console.log(err);

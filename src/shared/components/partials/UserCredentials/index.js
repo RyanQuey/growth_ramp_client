@@ -60,10 +60,16 @@ class UserCredentials extends Component {
 
     if (this.props.view === "SET_CREDENTIALS") {
       let params = {}
+      cb = () => {
+        alertActions.newAlert({
+          title: "Credentials successfully updated",
+          level: "SUCCESS",
+        })
+      }
       if (password) {params.password = password}
       if (email) {params.email = email}
 
-      this.props.updateUser(params)
+      this.props.updateUser(params, cb)
 
     } else if (this.props.view === "RESETTING_PASSWORD") {
       cb = () => {
@@ -152,7 +158,7 @@ class UserCredentials extends Component {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    updateUser: (userData) => store.dispatch({type: UPDATE_USER_REQUEST, payload: userData}),
+    updateUser: (userData, cb) => store.dispatch({type: UPDATE_USER_REQUEST, payload: userData, cb}),
     signInRequest: (signInType, credentials, token, onFailure) => store.dispatch({
       type: SIGN_IN_REQUEST,
       payload: {signInType, credentials, token},

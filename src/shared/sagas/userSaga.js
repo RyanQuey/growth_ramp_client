@@ -60,7 +60,6 @@ function* signIn(action) {
 
     if (user) {
       setupSession(user)
-      //might make an alert here
       yield put({type: SIGN_IN_SUCCESS, payload: user})
 
       yield put({type: FETCH_PLAN_SUCCESS, payload: userPlans})
@@ -226,6 +225,8 @@ function* updateUser(action) {
     //const res = yield api.put(`/api/users/${userData.id}`, userData)
     const returnedUser = res.data
     yield put({type: UPDATE_USER_SUCCESS, payload: returnedUser})
+
+    action.cb && action.cb(res.user)
 
   } catch (err) {
     errorActions.handleErrors({
