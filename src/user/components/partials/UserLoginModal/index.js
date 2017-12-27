@@ -32,10 +32,15 @@ class UserLogin extends Component {
       <ModalContainer
         visible={this.props.currentModal === "UserLoginModal"}
         onClose={this.handleClose}
-        >
-          <ModalBody>
-            <Login modal={true} onSuccess={this.onSuccess} onCancel={this.handleClose} />
-          </ModalBody>
+      >
+        <ModalBody>
+          <Login
+            modal={true}
+            onSuccess={this.onSuccess}
+            onCancel={this.handleClose}
+            initialView={this.props.initialView}
+          />
+        </ModalBody>
       </ModalContainer>
     )
   }
@@ -47,8 +52,9 @@ const mapDispatchToProps = (dispatch) => {
     closeModal: (payload) => dispatch({type: CLOSE_MODAL, payload})
   }
 }
-const mapStateToProps = (state) => {
-  return { currentModal: state.viewSettings.currentModal }
-}
+const mapStateToProps = (state) => ({
+  currentModal: state.viewSettings.currentModal,
+  initialView: Helpers.safeDataPath(state, "viewSettings.modalOptions.initialView", "LOGIN"),
+})
 
 export default connect(mapStateToProps, mapDispatchToProps)(UserLogin)

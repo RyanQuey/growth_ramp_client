@@ -8,8 +8,14 @@
     text-align: center;
   }
   h2 {
+    margin-top: 0;
+    width: 100%;
+    text-align: center;
+  }
+  h3 {
     display: inline-block;
     padding: 0 5px;
+    @include rems(24)
   }
   p, li {
     margin-top: 0;
@@ -24,10 +30,16 @@
   background-color: $white;
   //puts some padding etc. For all the stuff inside the header
   .headerContentCtn {
-    height: calc(100vh - 50px);
+    min-height: calc(100vh - 50px);
     padding-top: 20px;
     img {
       max-height: 250px;
+    }
+    .headerContentBtnCtn {
+      flex: 30 0 auto;
+      @include mq(md) {
+        margin-top: 100px;
+      }
     }
   }
 }

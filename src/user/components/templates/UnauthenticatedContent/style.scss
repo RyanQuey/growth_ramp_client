@@ -11,6 +11,9 @@ main.unauthenticatedContent {
   h1 {
     @include rems(45);
   }
+  h2 {
+    @include rems(36);
+  }
   h4 {
     @include rems(18);
     margin: 2rem 0 1rem 0;

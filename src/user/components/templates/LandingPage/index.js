@@ -33,7 +33,7 @@ class LandingPage extends Component {
 
   openLoginModal(e) {
     e.preventDefault()
-    this.props.setCurrentModal("UserLoginModal")
+    this.props.setCurrentModal("UserLoginModal", {initialView: "SIGN_UP"})
   }
 
   render() {
@@ -45,9 +45,11 @@ class LandingPage extends Component {
           <div className={`${classes.contentCtn} ${classes.headerContentCtn}`}>
             <img src={grTextUrl} alt="Growth Ramp" style={{ maxWidth: '100%' }} />
             <Flexbox flexWrap="wrap" justify="center" align="center" className={`${classes.introCtn} ${classes.layerCtn}`}>
-              <h1>A simple solution to save time on content promotion</h1>
-              <h2>Promote content systematically, reach new audiences, and get actionable data to take your content marketing to the next level.</h2>
-              <Button onClick={this.openLoginModal}>Signup Now</Button>
+              <h2>A simple solution to save time on content promotion</h2>
+              <h3>Promote content systematically, reach new audiences, and get actionable data to take your content marketing to the next level</h3>
+              <div className={classes.headerContentBtnCtn}>
+                <Button onClick={this.openLoginModal}>Signup Now</Button>
+              </div>
             </Flexbox>
           </div>
         </div>
@@ -127,7 +129,7 @@ class LandingPage extends Component {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    setCurrentModal: (payload) => dispatch({type: SET_CURRENT_MODAL, payload}),
+    setCurrentModal: (payload, options) => dispatch({type: SET_CURRENT_MODAL, payload, options}),
   }
 }
 
