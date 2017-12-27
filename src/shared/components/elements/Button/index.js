@@ -94,7 +94,7 @@ const Button = ({ style = 'primary', children, onClick, disabled, selected, type
 
   return (
     <button
-      className={`${css(styles(style, disabled, selected).button)} ${classes.button} ${className || ""} ${disabled ? classes.disabled : ""} ${small ? classes.small : ""} ${rectangle ? classes.rectangle : ""}`}
+      className={`${css(styles(style, disabled, selected).button)} ${classes.button} ${className || ""} ${(disabled || pending) ? classes.disabled : ""} ${small ? classes.small : ""} ${rectangle ? classes.rectangle : ""}`}
       onClick={onClick}
       disabled={disabled || pending}
       type={type || "button"}

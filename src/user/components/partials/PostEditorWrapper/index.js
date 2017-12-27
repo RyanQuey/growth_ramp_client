@@ -14,11 +14,13 @@ class CampaignPostWrapper extends Component {
     super()
 
     this.state = {
+      pending: false,
     }
 
     this.channelPosts = this.channelPosts.bind(this)
     this.removePost = this.removePost.bind(this)
     this.done = this.done.bind(this)
+    this.togglePending = this.togglePending.bind(this)
   }
 
   removePost(post) {
@@ -51,6 +53,10 @@ class CampaignPostWrapper extends Component {
     this.props.toggleHidePosts(false)
   }
 
+  togglePending(value = !this.state.pending) {
+    this.setState({pending: value})
+  }
+
   render() {
 //TODO not using a lot of these
     const {currentAccount, currentProvider, currentChannel, currentPost, campaignPosts} = this.props
@@ -77,9 +83,10 @@ console.log(channelPosts);*/
           type="Post"
           items="posts"
           hasContent={true}
+          togglePending={this.togglePending}
         />
         <Button style="danger" onClick={this.removePost.bind(this, currentPost)}>Delete Post</Button>
-        <Button onClick={this.done}>Done</Button>
+        <Button onClick={this.done} pending={this.state.pending}>Done</Button>
       </div>
     )
   }

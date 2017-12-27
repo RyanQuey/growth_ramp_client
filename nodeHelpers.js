@@ -14,15 +14,23 @@ if (process.env.NODE_ENV !== 'production') {
   env = process.env
 }
 //TODO use path.resolve or whatever...these extra slashes are killing me
-const domain = env.CLIENT_URL || 'http://www.local.test:5000'
-const callbackPath = '/provider_redirect'
-const callbackUrl = domain + callbackPath
 const apiUrl = process.env.API_URL || 'http://localhost:1337';
+const B2 = require('backblaze-b2')
 const moment = require('moment')
 
 const uuid = require('uuid/v4');
 const $ = require('jquery');
 const _ = require('lodash')
+
+const b2 = new B2({
+  accountId: process.env.B2_ACCOUNT_ID,
+  applicationKey: process.env.B2_APPLICATION_KEY,
+})
+
+const bucketId = process.env.B2_BUCKET_ID
+const domain = env.CLIENT_URL || 'http://www.local.test:5000'
+const callbackPath = '/provider_redirect'
+const callbackUrl = domain + callbackPath
 
 //TODO can put back in objectr and just use Helpers.extractCookie
 const extractCookie = (allCookies) => {
@@ -63,6 +71,7 @@ const extractCookie = (allCookies) => {
 }
 
 const Helpers = {
+  //TODO put this back into the object
   extractCookie: extractCookie,
 
   safeDataPath: function (object, keyString = "", def = null) {
@@ -113,6 +122,91 @@ const Helpers = {
 
   callbackPath: callbackPath,
   callbackUrl: callbackUrl,
+
+
+  initializeB2: () => {
+    return new Promise((resolve, reject) => {
+      let uploadUrl, authToken, downloadUrl
+      //authorize each time, token expires every 24 hours
+      //might be able to optimize this somehow
+      b2.authorize()
+      .then((result) => {
+        console.log(result.data);
+        downloadUrl = result.data.downloadUrl
+        //NOTE: don't use this auth token, use the one returned from getUploadUrl, they are different, and this one will be outdated
+        //want multiple of these, for faster uploads
+        //maybe not one per upload...will see
+        return b2.getUploadUrl(bucketId)
+      })
+      .then((result) => {
+        console.log(result.data);
+        uploadUrl = result.data.uploadUrl
+        authToken = result.data.authorizationToken
+
+        return resolve({uploadUrl, authToken, downloadUrl})
+      })
+    })
+  },
+
+  //doesn't reject until t ms, which is helpful for async retries
+  //use in a catch cb
+  b2Upload: (file, uploadUrl, authToken, maxRetries = 3) => {
+    let keepTrying = true
+    let tries = 0
+
+    const rejectDelay = (err, t = 500) => {
+      console.log("Failure to upload: ", err);
+      return new Promise((resolve, reject) => {
+        //TODO list errors that don't want to retry. Otherwise, keep going
+        //make sure that err.code === "service_unavailable" does retry a few times though
+        if (err === "no-retry") {
+          keepTrying = false
+          console.log("Not retrying");
+          reject(err)
+        } else {
+          console.log("Now retrying in ", t, " ms");
+          setTimeout(reject.bind(null, err), t)
+        }
+      })
+    }
+
+    const attempt = () => {
+      tries ++
+      console.log("Attempt #", tries);
+
+      return b2.uploadFile({
+        uploadUrl: uploadUrl,
+        uploadAuthToken: authToken,
+        filename: file.originalname,
+        mime: file.mimetype, //defaults to b2-auto if not provided, which might be more resilient
+        data: file.buffer,
+        onUploadProgress: (event) => {
+          console.log(event);
+        }
+      })
+    }
+
+    //https://stackoverflow.com/questions/38213668/promise-retry-design-patterns
+    let p = Promise.reject()
+    for (let i = 0; i < maxRetries; i++) {
+      if (keepTrying) {
+        //if it fails, will set p as a rejected promise, and then run again. Hence, why it needs to start as a rejected promise in the first place
+        //if succeeds, will quickly loop through remaining retries and since catch is never called after that, will just return the successful p
+        p = p.catch(attempt).catch(rejectDelay, 500 + 500*i)
+      }
+    }
+    //after success and finishing looping, goes here
+    p = p.then((result) => {
+      return result.data
+    })
+    .catch((err) => {
+      return Promise.reject(err.response || err)
+    })
+
+    //basically returns a huge promise chain like
+    //p.catch(...).catch(...).catch(...).catch(...).catch(...).catch(...).then(...).catch(...)
+    return p
+  },
 
   //also persists the new provider data
   tradeTokenForUser: ((providerData, cookie, done) => {

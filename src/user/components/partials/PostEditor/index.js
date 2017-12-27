@@ -25,7 +25,7 @@ class PostEditor extends Component {
     this.addVariable = this.addVariable.bind(this)
     this.handleContentText = this.handleContentText.bind(this)
     this.onDrop = this.onDrop.bind(this)
-    this.onOverrideDrop = this.onOverrideDrop.bind(this)
+    //this.onOverrideDrop = this.onOverrideDrop.bind(this)
     this.removeUpload = this.removeUpload.bind(this)
     this.onUpload = this.onUpload.bind(this)
   }
@@ -123,7 +123,7 @@ class PostEditor extends Component {
   //Just upload here
   onDrop(acceptedFile, rejectedFile) {
     if (acceptedFile) {
-      this.setState({pending: true})
+      this.props.togglePending(true)
     } else {
       console.log("failed to drop file");
     }
@@ -144,19 +144,20 @@ class PostEditor extends Component {
 //console.log(record);
   }
 
-  onOverrideDrop(oldFileUrl, acceptedFile, rejectedFile) {
+  //not using
+  /*onOverrideDrop(oldFileUrl, acceptedFile, rejectedFile) {
     //remove the old file
     this.removeUpload(oldFileUrl)
 
     if (acceptedFile) {
-      this.setState({pending: true})
+      this.props.togglePending(true)
     } else {
       console.log("failed to drop file");
     }
-  }
+  }*/
 
   onUpload(result) {
-    this.setState({pending: false})
+    this.props.togglePending(false)
     //is successful, a url
     if (typeof result === "string") {
       const fileUrl = result

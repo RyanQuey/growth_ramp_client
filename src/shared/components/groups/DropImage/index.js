@@ -53,10 +53,11 @@ class DropImage extends Component {
     } else {
       this.setState({pending: true})
       this.props.onStart && this.props.onStart(acceptedFile, rejectedFile)
+
       formActions.uploadFile(acceptedFile)
       .then((result) => {
         this.setState({pending: false})
-        this.props.onSuccess && this.props.onSuccess(result.imageUrl)
+        this.props.onSuccess && this.props.onSuccess(result.fileUrl)
       })
       .catch((err) => {
         console.log("b2 error: ");

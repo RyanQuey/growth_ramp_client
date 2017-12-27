@@ -6,7 +6,6 @@ process.on('uncaughtException', function (exception) {
 });
 
 const multer = require('multer')
-const B2 = require('backblaze-b2')
 const express = require('express');
 const session = require("express-session")// passport with providers require sessions. https://github.com/jaredhanson/passport-twitter/issues/43
 const path = require('path');
@@ -248,64 +247,7 @@ console.log("now contacting API");
 });
 
 
-const b2 = new B2({
-  accountId: process.env.B2_ACCOUNT_ID,
-  applicationKey: process.env.B2_APPLICATION_KEY,
-})
-
-const bucketId = process.env.B2_BUCKET_ID
-
-const initializeB2 = () => {
-  return new Promise((resolve, reject) => {
-    let uploadUrl, authToken, downloadUrl
-    //authorize each time, token expires every 24 hours
-    //might be able to optimize this somehow
-    b2.authorize()
-    .then((result) => {
-      console.log(result.data);
-      downloadUrl = result.data.downloadUrl
-      //NOTE: don't use this auth token, use the one returned from getUploadUrl, they are different, and this one will be outdated
-      //want multiple of these, for faster uploads
-      //maybe not one per upload...will see
-      return b2.getUploadUrl(bucketId)
-    })
-    .then((result) => {
-      console.log(result.data);
-      uploadUrl = result.data.uploadUrl
-      authToken = result.data.authorizationToken
-
-      return resolve({uploadUrl, authToken, downloadUrl})
-    })
-  })
-}
-
 const extractForm = multer()
-
-const upload = (file, uploadUrl, authToken) => {
-  return new Promise((resolve, reject) => {
-    b2.uploadFile({
-      uploadUrl: uploadUrl,
-      uploadAuthToken: authToken,
-      filename: file.originalname,
-      mime: file.mimetype, //defaults to b2-auto if not provided, which might be more resilient
-      data: file.buffer,
-      onUploadProgress: (event) => {
-        console.log(event);
-      }
-    })
-    .then((result) => {
-      console.log("finished uploading");
-      return resolve(result.data)
-    })
-    .catch((err) => {
-      console.log("failure uploading to b2");
-      console.log(err.response);
-      //TODO allow other uploads to continue by just resolving
-      return reject(err.response)
-    })
-  })
-}
-
 
 //not currently using
 /*const localStorage = multer.diskStorage({
@@ -318,60 +260,35 @@ const tempUpload = multer({ storage: localStorage });
 app.post('/upload', extractForm.single('fileToUpload'), function(req, res, next) {
   //if there were any other fields sent with the upload
   //maybe to save user id or something with the file?
-  let formData = req.body
+  //let formData = req.body
 
   if (!req.file) {
     res.status(500)
     res.send('no files uploaded')
   }
 
-  let downloadUrl, uploadUrl, file, authToken
+  let downloadUrl
 
-  initializeB2()
+  Helpers.initializeB2()
   .then((data) => {
-    //console.log("finished initializing");
-    //console.log(data);
-    //console.log("file and body");
-    //console.log(req.file, req.body);
-
     downloadUrl = data.downloadUrl
-    uploadUrl = data.uploadUrl
-    file = req.file
-    authToken = data.authToken
 
-    return upload(file, uploadUrl, authToken)
+    return Helpers.b2Upload(req.file, data.uploadUrl, data.authToken)
   })
   .then((results) => {
-    console.log("results");
+    console.log("finished uploading");
+    console.log("results: ");
     console.log(results);
     const fullDownloadUrl = `${downloadUrl}/file/${process.env.B2_BUCKET_NAME || 'growth-ramp-user-uploads'}/${results.fileName}`
 
-    res.send({imageUrl: fullDownloadUrl})
+    res.send({fileUrl: fullDownloadUrl})
   })
   .catch((err) => {
     console.log("ERROR UPLOADING TO B2: ");
     console.log(err);
 
-    console.log("TRYING_AGAIN:")
-    //hacky retry function:
-    if (file, uploadUrl, authToken) {
-      return upload(file, uploadUrl, authToken)
-      .then((results) => {
-        console.log("results");
-        console.log(results);
-        const fullDownloadUrl = `${downloadUrl}/file/${process.env.B2_BUCKET_NAME || 'growth-ramp-user-uploads'}/${results.fileName}`
-
-        res.send({imageUrl: fullDownloadUrl})
-      })
-      .catch((err2) => {
-        res.status(500)
-        res.send({error: err2.code, originalError: err2})
-      })
-
-    } else {
-      res.status(500)
-      res.send({error: err.code, originalError: err})
-    }
+    res.status(500)
+    res.send({error: err.code, originalError: err})
   })
 })
 
