@@ -32,7 +32,7 @@ const MenuChild = ({ text, children, link, icon, nav, badge, onClick, hoverType,
         </Link>
       }
       {!link &&
-        content
+        <a className={`${classes.noLink} ${false && selected ? classes.navActive : ""}`} onClick={e => e.preventDefault()}>{content}</a>
       }
       {location.pathname.includes(link) && children}
     </li>
@@ -42,7 +42,6 @@ const MenuChild = ({ text, children, link, icon, nav, badge, onClick, hoverType,
 
 MenuChild.propTypes = {
   children: PropTypes.node,
-  link: PropTypes.string,
   nav: PropTypes.bool,
 }
 

@@ -17,6 +17,7 @@ import {
   SIGN_OUT_REQUEST,
   SIGN_OUT_SUCCESS,
   SET_CURRENT_USER,
+  SET_CURRENT_MODAL,
   UPDATE_USER_REQUEST,
   UPDATE_USER_SUCCESS,
 }  from 'constants/actionTypes'
@@ -164,6 +165,11 @@ function* fetchCurrentUser(action) {
     yield put({type: FETCH_PLAN_SUCCESS, payload: result.plans})
 
     action.cb && action.cb(result.user)
+
+console.log(Helpers.allChannels());
+    if (!Helpers.allChannels().length) {
+      yield put({type: SET_CURRENT_MODAL, payload: "LinkProviderAccountModal"})
+    }
 
     //refresh all channel lists
     //doesn't need to succeed; so don't raise error if doesn't necesarily, and make sure everything just moves forward

@@ -47,7 +47,7 @@ class UserSidebar extends Component {
                 {Object.keys(this.props.providerAccounts).map((providerName) => (
                   <MenuChild key={providerName} text={PROVIDERS[providerName].name} link={`/providerAccounts/${providerName.toLowerCase()}`} nav={true} icon={providerName.toLowerCase()}/>
                 ))}
-                <MenuChild text="New Account" onClick={this.openNewProviderModal} link={`/providerAccounts`} icon="plus-circle"/>
+                <MenuChild text="New Account" onClick={this.openNewProviderModal} link={false && `/providerAccounts`} icon="plus-circle"/>
               </ul>
             </MenuItem>
             {false && <MenuItem link="/workgroups" text="Workgroups" nav={true} icon="users"/>}

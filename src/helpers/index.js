@@ -95,6 +95,13 @@ let Helpers = {
     return channelRecord
   },
 
+  //all available channels for all accounts that a user can post to
+  allChannels: () => {
+    let allChannels = Helpers.flattenProviderAccounts().map((account) => Helpers.permittedChannelTypes(account))
+    allChannels = [].concat.apply([], allChannels)
+    return allChannels
+  },
+
   //takes upper scored provider name and returns friendly name
   //either need channel or the other two
   providerFriendlyName: (providerName) => PROVIDERS[providerName].name,
