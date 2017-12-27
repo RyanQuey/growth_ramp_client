@@ -1,7 +1,7 @@
 @import 'theme/_helpers';
 .wrapper {
   overflow: visible;
-  padding: 0 15px 20px 15px;
+  padding: 0 5px 20px 5px;
   box-sizing: border-box;
 
   @include mq(2xs) {

@@ -121,10 +121,15 @@ let Helpers = {
 
   channelPostingAsTypes: (channel, providerName, channelType) => PROVIDERS[providerName || channel.provider].channelTypes[channelType || channel.type].postingAsTypes,
 
+  //flattens array of arrays one level
+  flatten: (array) => {
+    return [].concat.apply([], array)
+  },
+
   //flattening to a single array
   flattenProviderAccounts: () => {
     let allProviderAccounts = _.values(Helpers.safeDataPath(store.getState(), `providerAccounts`, {}))
-    allProviderAccounts = [].concat.apply([], allProviderAccounts)
+    allProviderAccounts = Helpers.flatten(allProviderAccounts)
     return allProviderAccounts
   },
 

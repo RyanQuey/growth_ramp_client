@@ -107,12 +107,28 @@ function* create(action) {
 //NOTE: make sure to always attach the userId to the payload, for all updates. Saves a roundtrip for the api  :)
 function* update(action) {
   try {
-    const planData = action.payload
+    const pld = action.payload
+    const planData = pld
+    let associatedCampaign = pld.associatedCampaign
+    delete pld.associatedCampaign
 
-    const res = yield axios.put(`/api/plans/${planData.id}`, planData) //eventually switch to socket
+    let updatedRecord, res
+
+
+    if (associatedCampaign) {
+      //saving over campaign's plan. Only changes the postTemplates
+      planData.associatedCampaign = associatedCampaign
+
+      res = yield axios.post("/api/plans/updateFromCampaign", planData)
+      updatedRecord = res.data.plan
+
+    } else {
+      res = yield axios.put(`/api/plans/${planData.id}`, planData)
+      updatedRecord = res.data
+    }
 
     yield all([
-      put({ type: UPDATE_PLAN_SUCCESS, payload: res.data}),
+      put({ type: UPDATE_PLAN_SUCCESS, payload: updatedRecord}),
     ])
     alertActions.newAlert({
       title: "Success!",
