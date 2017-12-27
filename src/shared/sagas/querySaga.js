@@ -73,6 +73,15 @@ const handleQuery = (action) => {
                 user = result.data.user
                 doneOptions.sendHome = true
                 validUserReceived(user, false)
+              } else if (tokenType === "confirmation") {
+                //tell api email is confirmed
+
+                doneOptions.sendHome = true
+                alertActions.newAlert({
+                  title: "Your email has been confirmed!",
+                  level: "SUCCESS",
+                })
+
               } else {
 
                 throw {code: 400}

@@ -314,7 +314,7 @@ console.log("now handling", option);
                 {currentChannelType && !channelTypeIsAllowed && (
                   <div>
                     <div>Growth Ramp needs your permission to make {currentChannelType ? currentChannelType.titleCase() : "post"}s for {PROVIDERS[currentProvider].name}</div>
-                    <Button style="inverted" onClick={this.openProviderModal}>Grant Provider to continue</Button>
+                    <Button style="inverted" onClick={this.openProviderModal}>Grant Permission to Continue</Button>
                   </div>
 
                 )}

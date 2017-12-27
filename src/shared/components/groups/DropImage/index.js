@@ -54,13 +54,29 @@ class DropImage extends Component {
       this.setState({pending: true})
       this.props.onStart && this.props.onStart(acceptedFile, rejectedFile)
       formActions.uploadFile(acceptedFile)
-      .then((fileUrl) => {
+      .then((result) => {
         this.setState({pending: false})
-        this.props.onSuccess && this.props.onSuccess(fileUrl)
+        this.props.onSuccess && this.props.onSuccess(result.imageUrl)
       })
       .catch((err) => {
+        console.log("b2 error: ");
         console.log(err);
         this.setState({pending: false})
+
+        let code = Helpers.safeDataPath(err, "error.code", "")
+        let message
+        if (code === "service_unavailable") { //b2 temporarily overloaded
+          message = "Uploading temporarily unavailable; please try again in a couple seconds"
+        } else {
+          message = "Unknown error; please refresh page and try again"
+        }
+
+        alertActions.newAlert({
+          title: "Failed to upload:",
+          message: message,
+          level: "DANGER",
+        })
+
         this.props.onFailure && this.props.onFailure(err)
       })
       //clear url from browser memory to avoid memory leak

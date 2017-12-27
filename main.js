@@ -325,28 +325,54 @@ app.post('/upload', extractForm.single('fileToUpload'), function(req, res, next)
     res.send('no files uploaded')
   }
 
-  let downloadUrl
+  let downloadUrl, uploadUrl, file, authToken
 
   initializeB2()
   .then((data) => {
-    downloadUrl = data.downloadUrl
-console.log("finished initializing");
-console.log(data);
-console.log("file and body");
-console.log(req.file, req.body);
+    //console.log("finished initializing");
+    //console.log(data);
+    //console.log("file and body");
+    //console.log(req.file, req.body);
 
-    let file = req.file
-    return upload(file, data.uploadUrl, data.authToken)
+    downloadUrl = data.downloadUrl
+    uploadUrl = data.uploadUrl
+    file = req.file
+    authToken = data.authToken
+
+    return upload(file, uploadUrl, authToken)
   })
   .then((results) => {
     console.log("results");
-console.log(results);
+    console.log(results);
     const fullDownloadUrl = `${downloadUrl}/file/${process.env.B2_BUCKET_NAME || 'growth-ramp-user-uploads'}/${results.fileName}`
 
-    res.send(fullDownloadUrl)
-
+    res.send({imageUrl: fullDownloadUrl})
   })
-  .catch((err) => {console.log(err);})
+  .catch((err) => {
+    console.log("ERROR UPLOADING TO B2: ");
+    console.log(err);
+
+    console.log("TRYING_AGAIN:")
+    //hacky retry function:
+    if (file, uploadUrl, authToken) {
+      return upload(file, uploadUrl, authToken)
+      .then((results) => {
+        console.log("results");
+        console.log(results);
+        const fullDownloadUrl = `${downloadUrl}/file/${process.env.B2_BUCKET_NAME || 'growth-ramp-user-uploads'}/${results.fileName}`
+
+        res.send({imageUrl: fullDownloadUrl})
+      })
+      .catch((err2) => {
+        res.status(500)
+        res.send({error: err2.code, originalError: err2})
+      })
+
+    } else {
+      res.status(500)
+      res.send({error: err.code, originalError: err})
+    }
+  })
 })
 
 /*app.post('/temp-upload', tempUpload.single("file"), function(req, res, next) {

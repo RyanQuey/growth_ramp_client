@@ -107,6 +107,14 @@ console.log(errorCode, errorMessage, err.response.data);
         options: {timer: false},
       })
 
+    } else if (errorCode == "23505" ){ //original error.constraint should be "users_email_unique". Works because there are no other unique constraints sent by this form
+      alertActions.newAlert({
+        title: "Email already exists: ",
+        message: "Please try logging in instead, or reset your password if you have forgotten it.",
+        level: "DANGER",
+        options: {timer: false},
+      })
+
 
     } else {
       console.log('Error signing in/signing up', err)
@@ -115,11 +123,12 @@ console.log(errorCode, errorMessage, err.response.data);
         templatePart: "credentials",
         title: "Error signing in:",
         errorObject: err,
+        alert: true,
       }, null, null, {
         useInvalidAttributeMessage: true,
       })
     }
-
+console.log(action.onFailure, "should run");
     action.onFailure && action.onFailure(err)
 
   }
