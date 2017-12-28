@@ -192,6 +192,12 @@ class PostEditor extends Component {
     const account = Helpers.accountFromPost(record)
     const channelTypeHasMultiple = Helpers.channelTypeHasMultiple(null, record.provider, record.channelType)
     const type = this.props.type
+
+    let warningMessage
+    if (record.provider === "LINKEDIN" && !record.contentUrl && record.uploadedContent && record.uploadedContent.length) {
+      warningMessage = "WARNING: Growth Ramp allows but does not recommend posting to LinkedIn with an image but without a link. Due to a flaw in LinkedIn's system, the posts will be displayed in an irregular way. We are currently working with LinkedIn to find a solution. In the meantime, please add a link to your blog for the post to be displayed normally"
+    }
+
     return (
       <Flexbox direction="column" className={classes.recordFields}>
           <h2>{Helpers.providerFriendlyName(record.provider)} {record.channelType.titleCase()}{type === "postTemplate" ? " Template" : ""}</h2>
@@ -212,7 +218,8 @@ class PostEditor extends Component {
               onChange={this.handleContentText}
               type="text"
               maxLength={maxCharacters - URL_LENGTH}
-           />
+            />
+            {warningMessage && <div className={classes.warningMessage}>{warningMessage}</div>}
             {imageCount > maxImages && <label>(No more images allowed for this kind of post)</label>}
             <Flexbox>
               {imageCount < maxImages && <DropImage
