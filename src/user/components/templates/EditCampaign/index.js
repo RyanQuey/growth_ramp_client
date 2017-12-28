@@ -31,12 +31,26 @@ class EditCampaign extends Component {
     this.setCampaign = this.setCampaign.bind(this)
     this._setInitialView = this._setInitialView.bind(this)
     this.resetComposeView = this.resetComposeView.bind(this)
+    this.handleUnload = this.handleUnload.bind(this)
   }
 
  componentDidMount() {
     //set current campaign based on the url params, no matter what it was before
     const campaignId = this.props.match.params.campaignId
     this.setCampaign(campaignId)
+    window.onbeforeunload = this.handleUnload//TODO maybe use window.addEventListener("beforeunload") instead. Make sure to do for plans and campaign
+  }
+
+  componentWillUnmount () {
+    window.onbeforeunload = null
+  }
+
+  handleUnload(e) {
+    if (this.props.dirty) {
+      var dialogText = 'Form not saved; Are you sure you want to leave?';//doesn't seem to show in Chrome at least
+      e.returnValue = dialogText;
+      return dialogText;
+    }
   }
 
   componentWillReceiveProps (props) {
@@ -106,11 +120,10 @@ class EditCampaign extends Component {
     const c = this;
     const Tag = sections[this.state.currentSection]
     const currentCampaign = this.props.currentCampaign //campaigns[this.props.match.params.campaignId]
-    const dirty = this.props.dirty
 
     return (
       <div>
-        <Prompt when={dirty} message={(location) => 'Form not saved; Are you sure you want to leave?'}/>
+        <Prompt when={this.props.dirty} message={(location) => 'Form not saved; Are you sure you want to leave?'}/>
         {false && <Navbar className="" justify="space-around" background={theme.color.moduleGrayOne} color={theme.color.text}>
           {Object.keys(sections).map((section) => (
             <div key={section} ref={section}>

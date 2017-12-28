@@ -40,12 +40,26 @@ class ShowPlan extends Component {
     //this.toggleMode = this.toggleMode.bind(this)
     this.setPlan = this.setPlan.bind(this)
     this.handleChangeName = this.handleChangeName.bind(this)
+    this.handleUnload = this.handleUnload.bind(this)
   }
 
   componentDidMount() {
     //set current plan based on the url params, no matter what it was before
     const planId = this.props.match.params.planId
     this.setPlan(planId)
+    window.onbeforeunload = this.handleUnload//TODO maybe use window.addEventListener("beforeunload") instead. Make sure to do for plans and campaign
+  }
+
+  componentWillUnmount () {
+    window.onbeforeunload = null
+  }
+
+  handleUnload(e) {
+    if (this.props.dirty) {
+      var dialogText = 'Form not saved; Are you sure you want to leave?';//doesn't seem to show in Chrome at least
+      e.returnValue = dialogText;
+      return dialogText;
+    }
   }
 
   componentWillReceiveProps (props) {
