@@ -113,7 +113,7 @@ const rules = {
     test: (value) => {
       const base = value.toString().trim()
       const re = urlRegEx
-      return re.test(base)
+      return !value || re.test(base)
     },
     hint: () => {
       return 'Please check url format (be sure to include "http://" or "https://")'
