@@ -1,6 +1,6 @@
 import { Component } from 'react';
 import { connect } from 'react-redux'
-import { withRouter } from 'react-router-dom'
+import { withRouter, Prompt } from 'react-router-dom'
 import {
   Start,
   //Send,
@@ -39,29 +39,11 @@ class EditCampaign extends Component {
     this.setCampaign(campaignId)
   }
 
-  componentWillUnmount() {
-    window.onbeforeunload = null
-  }
-
   componentWillReceiveProps (props) {
     if (props.match.params.campaignId !== this.props.match.params.campaignId) {
       //editing a new campaign, without remounting.
       //this would happen if click "New Campaign" while editing a different one
       this.setCampaign(props.match.params.campaignId)
-    }
-
-    //give popup if tries to leave while dirty
-    //don't set multiple by only setting if doesn't exist yet
-    if (props.dirty && !window.onbeforeunload) {
-      window.onbeforeunload = function(e) {
-        var dialogText = 'Form not saved; Are you sure you want to leave?';
-        e.returnValue = dialogText;
-        return dialogText;
-      };
-
-    } else if (!props.dirty && this.props.dirty) {
-      //remove listener
-      window.onbeforeunload = null
     }
   }
 
@@ -124,9 +106,11 @@ class EditCampaign extends Component {
     const c = this;
     const Tag = sections[this.state.currentSection]
     const currentCampaign = this.props.currentCampaign //campaigns[this.props.match.params.campaignId]
+    const dirty = this.props.dirty
 
     return (
       <div>
+        <Prompt when={dirty} message={(location) => 'Form not saved; Are you sure you want to leave?'}/>
         {false && <Navbar className="" justify="space-around" background={theme.color.moduleGrayOne} color={theme.color.text}>
           {Object.keys(sections).map((section) => (
             <div key={section} ref={section}>

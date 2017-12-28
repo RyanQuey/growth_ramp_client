@@ -100,7 +100,7 @@ class Compose extends Component {
         this.props.setCurrentPost(false)
       //}
       formActions.matchCampaignStateToRecord()
-      this.toggleHidePosts(false)
+      this.toggleHidePosts(false) //should already be not hidden, but whatever
     }
 
     //should not update the post reducer on its success, just give me an alert if it fails

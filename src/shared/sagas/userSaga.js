@@ -166,7 +166,6 @@ function* fetchCurrentUser(action) {
 
     action.cb && action.cb(result.user)
 
-console.log(Helpers.allChannels());
     if (!Helpers.allChannels().length) {
       yield put({type: SET_CURRENT_MODAL, payload: "LinkProviderAccountModal"})
     }

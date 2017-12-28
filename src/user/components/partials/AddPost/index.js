@@ -95,7 +95,6 @@ class AddPost extends Component {
   }
 
   handleChoosePostingAsType(option){
-console.log("now handling", option);
     this.setState({
       currentPostingAsType: option.value,
     })

@@ -21,7 +21,7 @@ const currentPostTemplateReducer = (state = null, action) => {
 
     case SET_CURRENT_POST_TEMPLATE:
       postTemplate = action.payload
-      return Object.assign({}, postTemplate)
+      return postTemplate ? Object.assign({}, postTemplate) : null
 
     //case CREATE_POST_TEMPLATE_SUCCESS:
       //postTemplate = action.payload

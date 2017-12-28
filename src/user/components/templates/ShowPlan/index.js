@@ -1,6 +1,6 @@
 import { Component } from 'react';
 import { connect } from 'react-redux'
-import { withRouter } from 'react-router-dom'
+import { withRouter, Prompt } from 'react-router-dom'
 import {
   //PostTemplateEditor,
   AddPost, //shared with the CampaignEditor
@@ -37,19 +37,15 @@ class ShowPlan extends Component {
     this.savePostTemplates = this.savePostTemplates.bind(this)
     this.toggleAdding = this.toggleAdding.bind(this)
     this.toggleHidePosts = this.toggleHidePosts.bind(this)
-    this.toggleMode = this.toggleMode.bind(this)
+    //this.toggleMode = this.toggleMode.bind(this)
     this.setPlan = this.setPlan.bind(this)
     this.handleChangeName = this.handleChangeName.bind(this)
   }
 
- componentDidMount() {
+  componentDidMount() {
     //set current plan based on the url params, no matter what it was before
     const planId = this.props.match.params.planId
     this.setPlan(planId)
-  }
-
-  componentWillUnmount() {
-    window.onbeforeunload = null
   }
 
   componentWillReceiveProps (props) {
@@ -59,21 +55,6 @@ class ShowPlan extends Component {
       this.setPlan(props.match.params.planId)
 
     }
-
-    //give popup if tries to leave while dirty
-    //don't set multiple by only setting if doesn't exist yet
-    if (props.dirty && !window.onbeforeunload) {
-      window.onbeforeunload = function(e) {
-        var dialogText = 'Form not saved; Are you sure you want to leave?';
-        e.returnValue = dialogText;
-        return dialogText;
-      };
-
-    } else if (!props.dirty && this.props.dirty) {
-      //remove listener
-      window.onbeforeunload = null
-    }
-
   }
 
   setPlan (planId) {
@@ -104,7 +85,8 @@ class ShowPlan extends Component {
     this.props.setCurrentModal("LinkProviderAccountModal", {provider})
   }
 
-  toggleMode() {
+  // not using toggle mode right now; will probablywant again later
+  /*toggleMode() {
     const mode = Helpers.safeDataPath(this.props, "match.params.editing", false) ? "EDIT" : "SHOW"
 
     if (mode === "EDIT") {
@@ -115,7 +97,7 @@ class ShowPlan extends Component {
       formActions.matchPlanStateToRecord()
       this.props.history.push(`/plans/${this.props.currentPlan.id}/edit`)
     }
-  }
+  }*/
 
   toggleHidePosts (value, e) {
     e && e.preventDefault()
@@ -128,6 +110,7 @@ class ShowPlan extends Component {
     //if provider is passed in, just starts making a postTemplate for that provider
     this.props.setCurrentPostTemplate(currentPostTemplate)
     this.setState({addingPostTemplate: provider || value})
+    this.toggleHidePosts(provider || value)
   }
 
   savePostTemplates() {
@@ -137,6 +120,7 @@ class ShowPlan extends Component {
     const cb = () => {
       formActions.matchPlanStateToRecord()
       this.props.setCurrentPostTemplate(null)
+      this.toggleHidePosts(false) //should already be not hidden, but whatever
     }
 
     //should not update the postTemplate reducer on its success, just give me an alert if it fails
@@ -223,6 +207,7 @@ class ShowPlan extends Component {
     return (
       currentPlan ? (
         <div>
+          <Prompt when={dirty} message={(location) => 'Form not saved; Are you sure you want to leave?'}/>
           {mode === "SHOW" ? (
             <h1>{currentPlan.name}</h1>
           ) : (

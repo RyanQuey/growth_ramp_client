@@ -16,6 +16,7 @@ class PostTemplateWrapper extends Component {
     this.state = {
     }
 
+    this.done = this.done.bind(this)
     this.channelPostTemplates = this.channelPostTemplates.bind(this)
     this.removePostTemplate = this.removePostTemplate.bind(this)
   }
@@ -32,6 +33,11 @@ class PostTemplateWrapper extends Component {
 
     formActions.setParams("EditPlan", "postTemplates", {[postTemplate.id]: postTemplate})
     this.props.setCurrentPostTemplate(null)
+  }
+
+  done(){
+    this.props.setCurrentPostTemplate(null)
+    this.props.toggleHidePosts(false)
   }
 
   //takes postTemplates from all providers and accounts and organizes by channelType
@@ -60,7 +66,7 @@ class PostTemplateWrapper extends Component {
     }
     //channel postTemplates besides the current postTemplate
     const otherPostTemplateWrapper = channelPostTemplates.filter((p) => !currentPostTemplate || p.id !== currentPostTemplate.id)
-console.log(channelPostTemplates);*/
+  */
     const mode = this.props.mode
 
     return (
@@ -75,6 +81,7 @@ console.log(channelPostTemplates);*/
             hasContent={false}
           />
           <Button style="danger" onClick={this.removePostTemplate.bind(this, currentPostTemplate)}>Delete Post Template</Button>
+          <Button onClick={this.done} pending={this.state.pending}>Done</Button>
         </div>
     )
   }

@@ -29,9 +29,7 @@ class SocialLogin extends Component {
 
     //works because this runs before the link is followed
     //so I can retrieve it upon return
-console.log("should set cookie");
     if (providerName.toUpperCase() === "LINKEDIN") {
-console.log("=setting cookie");
       const scopes = ['r_emailaddress', 'r_basicprofile'].concat(this.props.scopes || [])
       Cookie.set("requestedScopes", scopes)
     }
