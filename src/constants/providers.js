@@ -63,7 +63,7 @@ module.exports = {
               requirements: {
                 "NO_PHOTO": true, // TODO might just post photo on
               }
-            },
+            },*/
             PAGE: {
               label: "Page",
               requirements: {
@@ -72,7 +72,7 @@ module.exports = {
                 ]
               }
             },
-          }*/
+          }
         },
         //"DARK_POST",
         //"BUSINESS_MESSAGE",

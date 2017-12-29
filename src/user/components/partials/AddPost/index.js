@@ -88,10 +88,19 @@ class AddPost extends Component {
   }
 
   handleChooseChannel(channelOption) {
-    this.setState({
+    const newState = {
       currentChannel: channelOption.value,
       currentPostingAsType: false,
-    })
+    }
+    //if only one postingAsType, set that as the current state
+    const postingAsTypes = Helpers.channelPostingAsTypes(option.value) || {}
+    const typeKeys = Object.keys(postingAsTypes)
+    if (typeKeys && typeKeys.length === 1) {
+      newState.currentPostingAsType = typeKeys[0]
+    }
+    this.setState(
+      newState
+    )
   }
 
   handleChoosePostingAsType(option){
@@ -256,8 +265,8 @@ class AddPost extends Component {
     //let accountsNotOnPlan = accountsForProvider //when implementing, make array of indices in reverse; remove starting from back to not mess up indicies while removing.
 
     //will most often be false
-    const postingAsTypes = currentChannel && Helpers.channelPostingAsTypes(currentChannel)
-    const postingAsTypeOptions = postingAsTypes && Object.keys(postingAsTypes).map((key) => (
+    let postingAsTypes = currentChannel && Helpers.channelPostingAsTypes(currentChannel)
+    const postingAsTypeOptions = postingAsTypes && Object.keys(postingAsTypes).length > 1 && Object.keys(postingAsTypes).map((key) => (
       this.postingAsTypeOption(key)
     ))
 
@@ -329,7 +338,7 @@ class AddPost extends Component {
                   />
                 )}
 
-                {currentChannel && postingAsTypes && (
+                {currentChannel && postingAsTypeOptions && (
                   <Select
                     label="Who do you want to post as?"
                     className={classes.select}
