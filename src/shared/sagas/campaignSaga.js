@@ -46,7 +46,7 @@ function* createCampaign(action) {
     }
 
   } catch (err) {
-    console.log(`Error in Create campaign Saga ${err}`)
+    console.error(`Error in Create campaign Saga ${err}`)
     errorActions.handleErrors({
       templateName: "Campaign",
       templatePart: "create",
@@ -80,7 +80,7 @@ function* fetchCampaigns(action) {
     ])
 
   } catch (err) {
-    console.log('campaigns fetch failed', err)
+    console.error('campaigns fetch failed', err)
     errorActions.handleErrors({
       templateName: "Campaign",
       templatePart: "fetch",
@@ -109,7 +109,7 @@ function* updateCampaign(action) {
     action.cb && action.cb(updatedRecord)
 
   } catch (err) {
-    console.log(`Error in update campaign Saga ${err}`)
+    console.error(`Error in update campaign Saga ${err}`)
     errorActions.handleErrors({
       templateName: "Campaign",
       templatePart: "update",
@@ -134,7 +134,7 @@ function* destroyCampaign(action) {
 
     action.cb && action.cb(res)
   } catch (err) {
-    console.log('campaigns destroy failed', err)
+    console.error('campaigns destroy failed', err)
   }
 }
 
@@ -158,7 +158,7 @@ function* fetchCurrentCampaign(action) {
     action.cb && action.cb(res.data)
 
   } catch (err) {
-    console.log('current campaign fetch failed', err.response || err)
+    console.error('current campaign fetch failed', err.response || err)
     // yield put(userFetchFailed(err.message))
   }
 }
@@ -202,7 +202,7 @@ console.log("now parsing results");
     }
 
   } catch (err) {
-    console.log(`Error publishing campaign: ${err}`)
+    console.error(`Error publishing campaign: ${err}`)
     errorActions.handleErrors({
       templateName: "Campaign",
       templatePart: "published",

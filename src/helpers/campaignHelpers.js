@@ -87,7 +87,8 @@ export default {
     if (ret.requireReauthorization.length) {
 
       for (let post of ret.requireReauthorization) {
-        let accountId = post.providerAccountId
+        //in case the data is populated, which it should be
+        let accountId = post.providerAccountId && post.providerAccountId.id || post.providerAccountId
         if (!ret.accountsToReauthorize.includes(accountId)) {
           ret.accountsToReauthorize.push(accountId)
         }
