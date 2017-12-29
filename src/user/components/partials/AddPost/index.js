@@ -93,7 +93,7 @@ class AddPost extends Component {
       currentPostingAsType: false,
     }
     //if only one postingAsType, set that as the current state
-    const postingAsTypes = Helpers.channelPostingAsTypes(option.value) || {}
+    const postingAsTypes = Helpers.channelPostingAsTypes(channelOption.value) || {}
     const typeKeys = Object.keys(postingAsTypes)
     if (typeKeys && typeKeys.length === 1) {
       newState.currentPostingAsType = typeKeys[0]
