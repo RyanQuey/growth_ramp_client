@@ -57,7 +57,7 @@ module.exports = {
           maxImages: 4,
           maxCharacters: 63206 ,
           //only putting this prop in constant if there's more than one type for now
-          postingAsTypes: {
+          /*postingAsTypes: { //jq said we'd never need
             SELF: {
               label: "Yourself",
               requirements: {
@@ -72,7 +72,7 @@ module.exports = {
                 ]
               }
             },
-          }
+          }*/
         },
         //"DARK_POST",
         //"BUSINESS_MESSAGE",
