@@ -19,6 +19,7 @@ export default {
       accountsToReauthorize: [], //the accounts
       //most dangerous; published, but our db isn't reflecting it
       publishedButNotUpdated: [],
+      needsToChangeFBSettings: [],
 
       alertMessage: "",  //for the alert
       alertTitle: "Successfully Published Posts!",      //
@@ -55,6 +56,10 @@ export default {
             ret.requireReauthorization.push(post) //the posts
             break
 
+          case "change-facebook-app-visibility-settings":
+            ret.failedToPublish.push(post)
+            ret.needsToChangeFBSettings.push(post) //the posts
+            break
           //this is scope issue; but still prompting same thing for now
           case "insufficient-permissions":
             ret.failedToPublish.push(post)
@@ -112,10 +117,23 @@ export default {
 
       let messages = []
       if (ret.accountsToReauthorize.length) {
-console.log("To reauthorize: ", ret.accountsToReauthorize);
-        let accountNames = ret.accountsToReauthorize.map((account) => `${Helpers.providerFriendlyName(account.provider)} (${account.userName || account.email})`)
+        console.log("To reauthorize: ", ret.accountsToReauthorize);
+        if (ret.accountsToReauthorize.some((account) => !account || typeof account !== "object")) {
+          //something wrong happened, and GR messed up getting acct
+          console.error("failed to retrieve failed accounts:", ret.accountsToReauthorize);
+          messages.push(`One or more of your accounts need reauthorization`)
 
-        messages.push(`Please login to ${accountNames.join("; ")}`)
+        } else {
+          let accountNames = ret.accountsToReauthorize.map((account) => `${Helpers.providerFriendlyName(account.provider)} (${account.userName || account.email})`)
+
+          messages.push(`Please login to ${accountNames.join("; ")}`)
+        }
+      }
+
+      if (ret.needsToChangeFBSettings.length) {
+        let fbAccountNames = ret.accountsToReauthorize.map((account) => `${Helpers.providerFriendlyName(account.provider)} (${account.userName || account.email})`)
+        messages.push(`The following accounts require you to go to your app settings in Facebook (Settings > Apps > Growth Ramp) and change "App visibility and post audience" to public:  ${fbAccountNames.join("; ")}`)
+
       }
 
       if (ret.duplicates.length) {
