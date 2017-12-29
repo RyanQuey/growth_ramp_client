@@ -57,8 +57,8 @@ module.exports = {
           maxImages: 4,
           maxCharacters: 63206 ,
           //only putting this prop in constant if there's more than one type for now
-          /*postingAsTypes: { //jq said we'd never need
-            SELF: {
+          postingAsTypes: { //jq said we'd never need
+            /*SELF: {
               label: "Yourself",
               requirements: {
                 "NO_PHOTO": true, // TODO might just post photo on
