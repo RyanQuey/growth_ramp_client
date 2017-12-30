@@ -265,7 +265,7 @@ class Compose extends Component {
           />
           {!this.state.hidePosts && (
             <Flexbox justify="center">
-              <Button style="inverted" disabled={dirty} title={dirty ? "Save changes before continuing"} onClick={this.props.switchTo.bind(this, "Start")}>Back</Button>
+              <Button style="inverted" disabled={dirty} title={dirty ? "Save changes before continuing" : ""} onClick={this.props.switchTo.bind(this, "Start")}>Back</Button>
               {dirty ? (
                 <Button onClick={this.saveCampaignPosts}>Save Changes</Button>
               ) : (
