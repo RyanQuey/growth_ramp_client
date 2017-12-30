@@ -14,12 +14,13 @@ export default {
       //note: these also failed to publish, but failed even at the short-link phase
       //putting these posts in both
       duplicates: [],
-      failedToPublish: [],
+      failedToPublish: [], //if
+      publishedButNotUpdated: [],
       requireReauthorization: [], //the posts
       accountsToReauthorize: [], //the accounts
       //most dangerous; published, but our db isn't reflecting it
-      publishedButNotUpdated: [],
-      needsToChangeFBSettings: [],
+      needsToChangeFBSettings: [], //the posts
+      fbAccountsToChangeSettings: [], //the accounts
 
       alertMessage: "",  //for the alert
       alertTitle: "Successfully Published Posts!",      //
@@ -90,24 +91,18 @@ export default {
 
     //extract accounts requiring reauthorization
     if (ret.requireReauthorization.length) {
+      ret.accountsToReauthorize = Helpers.extractAccountsFromPosts(ret.requireReauthorization)
+    }
 
-      for (let post of ret.requireReauthorization) {
-        //in case the data is populated, which it should be
-        let accountId = post.providerAccountId && post.providerAccountId.id || post.providerAccountId
-        if (!ret.accountsToReauthorize.includes(accountId)) {
-          ret.accountsToReauthorize.push(accountId)
-        }
-      }
-
-      //now array of records
-      const allProviderAccounts = Helpers.flattenProviderAccounts()
-      ret.accountsToReauthorize = ret.accountsToReauthorize.map((id) => allProviderAccounts.find((account) => account.id === id))
-
-      //refresh provider accounts, api probably changed them
-      store.dispatch({type: FETCH_PROVIDER_REQUEST})
+    //extract accounts requiring changed settings
+    if (ret.needsToChangeFBSettings.length) {
+      ret.fbAccountsToChangeSettings = Helpers.extractAccountsFromPosts(ret.requireReauthorization)
     }
 
     if (ret.failedPosts.length ) {
+
+      //refresh provider accounts, api probably changed them TODO find better way
+      store.dispatch({type: FETCH_PROVIDER_REQUEST})
 
       if (ret.failedPosts.length === posts.length ) {
         ret.alertTitle = "All posts failed to publish:"
@@ -130,8 +125,8 @@ export default {
         }
       }
 
-      if (ret.needsToChangeFBSettings.length) {
-        let fbAccountNames = ret.needsToChangeFBSettings.map((account) => `${Helpers.providerFriendlyName(account.provider)} (${account.userName || account.email})`)
+      if (ret.fbAccountsToChangeSettings.length) {
+        let fbAccountNames = ret.fbAccountsToChangeSettings.map((account) => `${Helpers.providerFriendlyName(account.provider)} (${account.userName || account.email})`)
         messages.push(`The following accounts require you to go to your app settings in Facebook (Settings > Apps > Growth Ramp) and change "App visibility and post audience" to friends or public:  ${fbAccountNames.join("; ")}`)
 
       }

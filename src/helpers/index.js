@@ -151,6 +151,24 @@ let Helpers = {
     return sorted
   },
 
+  //extracts unique accounts from array of posts
+  extractAccountsFromPosts: (posts) => {
+    const accountIds = []
+
+    for (let post of posts) {
+      //in case the data is populated, which it should be
+      let accountId = post.providerAccountId && post.providerAccountId.id || post.providerAccountId
+      if (!accountIds.includes(accountId)) {
+        accountIds.push(accountId)
+      }
+    }
+
+    //now array of records
+    const allProviderAccounts = Helpers.flattenProviderAccounts()
+    const accounts = accountIds.map((id) => allProviderAccounts.find((account) => account.id === id))
+    return accounts
+  },
+
 }
 
 Helpers = Object.assign(Helpers, campaignHelpers)
