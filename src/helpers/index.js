@@ -166,6 +166,7 @@ let Helpers = {
     //now array of records
     const allProviderAccounts = Helpers.flattenProviderAccounts()
     const accounts = accountIds.map((id) => allProviderAccounts.find((account) => account.id === id))
+
     return accounts
   },
 

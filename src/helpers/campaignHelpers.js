@@ -89,15 +89,7 @@ export default {
       }
     }
 
-    //extract accounts requiring reauthorization
-    if (ret.requireReauthorization.length) {
-      ret.accountsToReauthorize = Helpers.extractAccountsFromPosts(ret.requireReauthorization)
-    }
 
-    //extract accounts requiring changed settings
-    if (ret.needsToChangeFBSettings.length) {
-      ret.fbAccountsToChangeSettings = Helpers.extractAccountsFromPosts(ret.requireReauthorization)
-    }
 
     if (ret.failedPosts.length ) {
 
@@ -111,6 +103,10 @@ export default {
       }
 
       let messages = []
+      //extract accounts requiring reauthorization
+      if (ret.requireReauthorization.length) {
+        ret.accountsToReauthorize = Helpers.extractAccountsFromPosts(ret.requireReauthorization)
+      }
       if (ret.accountsToReauthorize.length) {
         console.log("To reauthorize: ", ret.accountsToReauthorize);
         if (ret.accountsToReauthorize.some((account) => !account || typeof account !== "object")) {
@@ -125,6 +121,10 @@ export default {
         }
       }
 
+      //extract accounts requiring changed settings
+      if (ret.needsToChangeFBSettings.length) {
+        ret.fbAccountsToChangeSettings = Helpers.extractAccountsFromPosts(ret.needsToChangeFBSettings)
+      }
       if (ret.fbAccountsToChangeSettings.length) {
         let fbAccountNames = ret.fbAccountsToChangeSettings.map((account) => `${Helpers.providerFriendlyName(account.provider)} (${account.userName || account.email})`)
         messages.push(`The following accounts require you to go to your app settings in Facebook (Settings > Apps > Growth Ramp) and change "App visibility and post audience" to friends or public:  ${fbAccountNames.join("; ")}`)
