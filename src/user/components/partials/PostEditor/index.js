@@ -195,7 +195,7 @@ class PostEditor extends Component {
 
     let warningMessage
     if (record.provider === "LINKEDIN" && !record.contentUrl && record.uploadedContent && record.uploadedContent.length) {
-      warningMessage = "WARNING: Growth Ramp allows but does not recommend posting to LinkedIn with an image but without a link. Due to a flaw in LinkedIn's system, the posts will be displayed in an irregular way. We are currently working with LinkedIn to find a solution. In the meantime, please add a link to your blog for the post to be displayed normally"
+      warningMessage = "WARNING: Growth Ramp allows, but does not recommend, posting to LinkedIn with an image but without a link. Due to a flaw in LinkedIn's system, the post will be displayed in an irregular way. We are currently working with LinkedIn to find a solution. Thanks"
     }
 
     return (

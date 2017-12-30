@@ -68,7 +68,11 @@ class UserNavbar extends Component {
             )}
 
             {user ? (
-              <AccountMenu />
+
+              <div>
+                {user.email}&nbsp;
+                <AccountMenu />
+              </div>
             ) : (
               <div>
                 <a href="#" onClick={this.openLoginModal.bind(this, "login")}>Login</a>
