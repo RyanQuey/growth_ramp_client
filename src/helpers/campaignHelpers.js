@@ -131,8 +131,8 @@ export default {
       }
 
       if (ret.needsToChangeFBSettings.length) {
-        let fbAccountNames = ret.accountsToReauthorize.map((account) => `${Helpers.providerFriendlyName(account.provider)} (${account.userName || account.email})`)
-        messages.push(`The following accounts require you to go to your app settings in Facebook (Settings > Apps > Growth Ramp) and change "App visibility and post audience" to public:  ${fbAccountNames.join("; ")}`)
+        let fbAccountNames = ret.needsToChangeFBSettings.map((account) => `${Helpers.providerFriendlyName(account.provider)} (${account.userName || account.email})`)
+        messages.push(`The following accounts require you to go to your app settings in Facebook (Settings > Apps > Growth Ramp) and change "App visibility and post audience" to friends or public:  ${fbAccountNames.join("; ")}`)
 
       }
 

@@ -40,7 +40,7 @@
     //flexbox likes to shrink its children if it has overflow, rather than just adding a scrollbar. Min height stops that from happening
     button {
       min-height: 38px;
-      padding: 10px 15px;
+      //padding: 10px 15px; //was spazzing out, flipping back and forth between the paddings, so just forget it
     }
 
     .postList {
