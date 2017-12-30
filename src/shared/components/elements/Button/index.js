@@ -89,7 +89,7 @@ const styles = (style, disabled, selected) => {
 
 }
 
-const Button = ({ style = 'primary', children, onClick, disabled, selected, type, pending, small, rectangle, className }) => {
+const Button = ({ style = 'primary', children, onClick, disabled, selected, type, pending, small, rectangle, className, title }) => {
   disabled = disabled || disabled == 'disabled' ? true : false
 
   return (
@@ -98,6 +98,7 @@ const Button = ({ style = 'primary', children, onClick, disabled, selected, type
       onClick={onClick}
       disabled={disabled || pending}
       type={type || "button"}
+      title={title}
     >
       {!pending ? children : <Icon name="spinner" /> }
     </button>
