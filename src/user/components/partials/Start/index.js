@@ -117,6 +117,8 @@ class Start extends Component {
     //if has a name, then has gotten past Start view before, and has chosen Start from Scratch, so no need to force it again
     const planChosen = this.state.planChosen || currentCampaign.name
 
+    const disableContinue = (planIds.length > 0 && !planChosen) || this.state.errors && this.state.errors.length
+
     return (
       <form onSubmit={this.saveOrContinue} >
         {false && <h1 className="display-3">Start</h1>}
@@ -193,7 +195,7 @@ class Start extends Component {
           )
         )}
         <br/>
-        <Button type="submit" disabled={(planIds.length > 0 && !planChosen) || this.state.errors && this.state.errors.length }>{this.props.dirty && "Save and "}Continue</Button>
+        <Button type="submit" disabled={disableContinue} title={disableContinue ? "Resolve all errors and pick a campaign name and select a plan or decide to start from scratch" : ""}>{this.props.dirty && "Save and "}Continue</Button>
 
       </form>
     );

@@ -40,6 +40,7 @@ function* find(action) {
       put({type: FETCH_PLAN_SUCCESS, payload: plans}),
     ])
 
+    action.cb && action.cb(plans)
   } catch (err) {
     console.log('plans fetch failed')
     console.log(err.response || err)
@@ -173,7 +174,7 @@ function* fetchCurrentPlan(action) {
       put({type: SET_CURRENT_PLAN, payload: res.data})
     ])
 
-    action.cb && action.cb(res)
+    action.cb && action.cb(res.data)
     formActions.matchPlanStateToRecord()
 
   } catch (err) {

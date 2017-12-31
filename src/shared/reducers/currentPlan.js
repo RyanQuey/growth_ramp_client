@@ -38,7 +38,7 @@ const currentPlanReducer = (state = null, action) => {
       }
 
     case UPDATE_POST_TEMPLATE_SUCCESS:
-      if (state && state.currentPlan.id === action.payload.planId) {
+      if (state && state.id === action.payload.planId) {
         postTemplate = action.payload
         plan = Object.assign({}, state)
         oldPostTemplates = plan.postTemplates || []

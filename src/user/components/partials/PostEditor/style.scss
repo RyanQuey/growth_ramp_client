@@ -1,6 +1,6 @@
 @import 'theme/_helpers';
 
-.recordMenu {
+.paramsMenu {
   @include mq(xs) {
     @include cols(12)
   }
@@ -9,7 +9,18 @@
   }
 }
 
-.recordFields {
+.paramsFields {
+  h2 {
+    margin: 0;
+  }
+  .accountInfo {
+    margin: .5rem 0 15px;
+  }
+  .profilePic {
+    position: absolute;
+    right: 30px;
+    width: 50px;
+  }
   .textEditor {
     //TODO size by characters, depending on the maximum allowed for that post type
     textarea {
@@ -40,6 +51,7 @@
   }
   .utmField {
     line-height: 1.7rem;
+    text-align: left;
   }
 
 }
@@ -71,4 +83,7 @@
 }
 .warningMessage {
   color: $danger;
+}
+.popupWrapper {
+  position: relative;
 }

@@ -25,6 +25,7 @@ class Plans extends Component {
   }
 
   toggleAdding (value = !this.state.adding) {
+console.log(value, this.state.adding);
     this.setState({adding: value})
   }
 
@@ -71,7 +72,7 @@ class Plans extends Component {
               placeholder="Plan name"
             />
 
-            <Button style="inverted" onClick={this.toggleAdding}>Cancel</Button>
+            <Button style="inverted" onClick={this.toggleAdding.bind(this, false)}>Cancel</Button>
             <Button
               disabled={!this.state.name}
               type="submit"
@@ -82,7 +83,7 @@ class Plans extends Component {
           </form>
 
         ) : (
-          <Button className={classes.topNewPlanButton} onClick={this.toggleAdding}>New Plan</Button>
+          <Button className={classes.topNewPlanButton} onClick={this.toggleAdding.bind(this, true)}>New Plan</Button>
         )}
         {Object.keys(plans).length > 0 ? (
           <Flexbox justify="center">

@@ -1,8 +1,10 @@
 import { Component } from 'react';
 import { connect } from 'react-redux'
 import { Flexbox, Button, Icon } from 'shared/components/elements'
+import { ConfirmationPopup } from 'shared/components/groups'
 import { PostTemplateCard, PostEditor } from 'user/components/partials'
-import { SET_CURRENT_MODAL, UPDATE_POST_TEMPLATE_REQUEST, SET_CURRENT_POST_TEMPLATE,  } from 'constants/actionTypes'
+import { DESTROY_POST_TEMPLATE_REQUEST, SET_CURRENT_MODAL, UPDATE_POST_TEMPLATE_REQUEST, SET_CURRENT_POST_TEMPLATE,  } from 'constants/actionTypes'
+
 import { PROVIDERS } from 'constants/providers'
 import {formActions} from 'shared/actions'
 import classes from './style.scss'
@@ -14,13 +16,18 @@ class PostTemplateWrapper extends Component {
     super()
 
     this.state = {
+      pending: false,
+      deleting: false,
+      deletePending: false,
     }
 
     this.done = this.done.bind(this)
     this.channelPostTemplates = this.channelPostTemplates.bind(this)
     this.removePostTemplate = this.removePostTemplate.bind(this)
+    this.toggleDeleting = this.toggleDeleting.bind(this)
   }
 
+  /*this was when just marking as deleting
   removePostTemplate(postTemplate) {
     if (this.props.currentPostTemplate.id === postTemplate.id) {
       this.props.setCurrentPostTemplate(null)
@@ -33,6 +40,28 @@ class PostTemplateWrapper extends Component {
 
     formActions.setParams("EditPlan", "postTemplates", {[postTemplate.id]: postTemplate})
     this.props.setCurrentPostTemplate(null)
+  }*/
+
+  removePostTemplate() {
+    this.setState({deletePending: true})
+
+    const cb = () => {
+      this.setState({deletePending: false})
+      this.toggleDeleting(false)
+      this.props.setCurrentPostTemplate(null)
+      this.props.toggleHidePosts(false)
+    }
+
+    if (typeof this.props.currentPostTemplate.id === "string") {
+      cb()
+
+    } else {
+      this.props.destroyPostTemplateRequest(this.props.currentPostTemplate, cb)
+    }
+  }
+
+  toggleDeleting (value = !this.state.deleting) {
+    this.setState({deleting: value})
   }
 
   done(){
@@ -52,7 +81,7 @@ class PostTemplateWrapper extends Component {
 
   render() {
     //might use some of these props as a filter, to not show certain PostTemplates? but would probably want to do that in the picker?
-    const {currentAccount, currentProvider, currentChannel, currentPostTemplate, planPostTemplates} = this.props
+    const {currentAccount, currentProvider, currentChannel, currentPostTemplate, planPostTemplates, dirty, mode} = this.props
     if (this.props.hide || !currentPostTemplate || !Object.keys(currentPostTemplate).length ) {
       return null
     }
@@ -67,21 +96,39 @@ class PostTemplateWrapper extends Component {
     //channel postTemplates besides the current postTemplate
     const otherPostTemplateWrapper = channelPostTemplates.filter((p) => !currentPostTemplate || p.id !== currentPostTemplate.id)
   */
-    const mode = this.props.mode
 
     return (
 
         <div key={currentPostTemplate.id}>
           <PostEditor
-            record={currentPostTemplateParams}
+            params={currentPostTemplateParams}
             mode={mode && "TODO not using this yet...maybe use a separate component, for basically just showing utms"}
             form="EditPlan"
             type="postTemplate"
             items="postTemplates"
             hasContent={false}
+            saveAllPosts={this.saveAllPosts}
+            togglePending={this.props.togglePending}
           />
-          <Button style="danger" onClick={this.removePostTemplate.bind(this, currentPostTemplate)}>Delete Post Template</Button>
-          <Button onClick={this.done} pending={this.state.pending}>Done</Button>
+          <Button style="inverted" disabled={!dirty} title={dirty ? "" : "No changes to undo"} onClick={formActions.matchPlanStateToRecord}>
+            Undo Changes
+          </Button>
+
+          <Button disabled={this.props.pending} onClick={dirty ? this.props.saveAllPosts : this.done}>
+            {dirty ? "Save changes" : "Done"}
+          </Button>
+          <div className={classes.popupWrapper}>
+            <Button style="danger"  onClick={this.toggleDeleting.bind(this, true)} >Delete Post Template</Button>
+            {this.state.deleting &&
+              <ConfirmationPopup
+                onConfirm={this.removePlan}
+                onCancel={this.toggleDeleting.bind(this, false)}
+                pending={this.state.deletePending}
+                dangerous={true}
+                side="top"
+              />
+            }
+          </div>
         </div>
     )
   }
@@ -100,6 +147,7 @@ const mapDispatchToProps = (dispatch) => {
     setCurrentModal: (payload, provider) => dispatch({type: SET_CURRENT_MODAL, payload, options: {oneProviderOnly: provider}}),
     setCurrentPostTemplate: (payload) => dispatch({type: SET_CURRENT_POST_TEMPLATE, payload}),
     updatePostTemplateRequest: (payload) => {dispatch({type: UPDATE_POST_TEMPLATE_REQUEST, payload})},
+    destroyPostTemplateRequest: (payload, cb) => dispatch({type: DESTROY_POST_TEMPLATE_REQUEST, payload, cb}),
   }
 }
 

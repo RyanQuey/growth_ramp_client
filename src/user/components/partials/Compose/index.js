@@ -40,6 +40,7 @@ class Compose extends Component {
       addingPost: false,
       publishing: false,
       hidePosts: false,
+      pending: false,
     }
 
     this.handleLinkProvider = this.handleLinkProvider.bind(this)
@@ -47,6 +48,7 @@ class Compose extends Component {
     this.toggleAdding = this.toggleAdding.bind(this)
     this.togglePublishing = this.togglePublishing.bind(this)
     this.toggleHidePosts = this.toggleHidePosts.bind(this)
+    this.togglePending = this.togglePending.bind(this)
     this.publish = this.publish.bind(this)
     this._hasContent = this._hasContent.bind(this)
   }
@@ -87,6 +89,10 @@ class Compose extends Component {
     })
   }
 
+  togglePending(value = !this.state.pending) {
+    this.setState({pending: value})
+  }
+
   //persist images here
   //if before, might be persisting several images they never actually use. Might not be a big deal, especially if can clean up well later. BUt there is cost issue
   //
@@ -106,11 +112,12 @@ class Compose extends Component {
     //should not update the post reducer on its success, just give me an alert if it fails
 
     //check if need to update or create each post
+    //(note that otherwise, might switch to different
     for (let i = 0; i < campaignPostsFormArray.length; i++) {
       let post = Object.assign({}, campaignPostsFormArray[i])
       let utmFields = Object.assign({}, Helpers.safeDataPath(this.props.formOptions, `${post.id}.utms`, {}))
 
-      // TO DESTROY
+      // TO DESTROY TODO don't need this here anymore; just deleting immediately
       if (post.toDelete) {
         //if not persisted yet, don't need to save anything
         if (typeof post.id === "string") {
@@ -303,6 +310,10 @@ class Compose extends Component {
             <hr/>
             <PostEditorWrapper
               toggleHidePosts={this.toggleHidePosts}
+              togglePending={this.props.togglePending}
+              saveAllPosts={this.saveCampaignPosts}
+              dirty={dirty}
+              pending={this.state.pending}
             />
           </div>
         )}

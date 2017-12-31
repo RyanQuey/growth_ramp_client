@@ -32,11 +32,12 @@ class PostEditor extends Component {
 
   updateUtm(utmType, settingKey = false, value, e) {
     //set the param
-    let record = Object.assign({}, this.props.record)
+    let params = Object.assign({}, this.props.params)
+
     //if this type is required if any other exists, and some other exists
     //TODO performance better if only check other values if this one is blank
-    const required = utmType.requiredIfUtmsEnabled && Object.keys(record).some((key) => {
-      const isActive = key !== utmType.type && key.includes("Utm") && record[key].active && record[key].active !== "false"
+    const required = utmType.requiredIfUtmsEnabled && Object.keys(params).some((key) => {
+      const isActive = key !== utmType.type && key.includes("Utm") && params[key].active && params[key].active !== "false"
       return isActive
     })
 
@@ -50,22 +51,22 @@ class PostEditor extends Component {
       return
 
     } else if (settingKey) {
-      record[utmType.type].key = value
+      params[utmType.type].key = value
 
     } else {
-      record[utmType.type].value = value
+      params[utmType.type].value = value
     }
 
-    record.dirty = true
-    //update the record form
-    formActions.setParams(this.props.form, this.props.items, {[record.id]: record})
+    params.dirty = true
+    //update the params form
+    formActions.setParams(this.props.form, this.props.items, {[params.id]: params})
   }
 
   toggleUtm(utmType, checked, e) {
     //basically, source needs to exist if any other one exists
-    const record = this.props.record
-    const required = utmType.requiredIfUtmsEnabled && Object.keys(record).some((key) => {
-      const isActive = key !== utmType.type && key.includes("Utm") && record[key].active && record[key].active !== "false"
+    const params = this.props.params
+    const required = utmType.requiredIfUtmsEnabled && Object.keys(params).some((key) => {
+      const isActive = key !== utmType.type && key.includes("Utm") && params[key].active && params[key].active !== "false"
       return isActive
     })
 
@@ -78,20 +79,20 @@ class PostEditor extends Component {
 
 
     } else {
-      //update the record form
-      let record = Object.assign({}, this.props.record)
-      record[utmType.type].active = checked
-      record.dirty = true
+      //update the params form
+      let params = Object.assign({}, this.props.params)
+      params[utmType.type].active = checked
+      params.dirty = true
 
-      formActions.setParams(this.props.form, this.props.items, {[record.id]: record})
+      formActions.setParams(this.props.form, this.props.items, {[params.id]: params})
     }
   }
 
   //adds a variable to the UTM
   addVariable(utmType) {
     //currently only adding campaign name
-    const record = Object.assign({}, this.props.record)
-    let currentValue = record[utmType.type].value
+    const params = Object.assign({}, this.props.params)
+    let currentValue = params[utmType.type].value
     let newValue = currentValue ? `${currentValue}-{{campaign.name}}` : "{{campaign.name}}"
     this.updateUtm(utmType, false, newValue)
   }
@@ -99,12 +100,12 @@ class PostEditor extends Component {
   //TODO debounce
   handleContentText(value) {
     //set the param
-    let record = Object.assign({}, this.props.record)
-    record.text = value
-    record.dirty = true
+    let params = Object.assign({}, this.props.params)
+    params.text = value
+    params.dirty = true
 
-    const maxCharacters = PROVIDERS[record.provider].channelTypes[record.channelType].maxCharacters
-    const characterCount = Helpers.safeDataPath(record, "text", "").length + (record.contentUrl ? URL_LENGTH : 0)
+    const maxCharacters = PROVIDERS[params.provider].channelTypes[params.channelType].maxCharacters
+    const characterCount = Helpers.safeDataPath(params, "text", "").length + (params.contentUrl ? URL_LENGTH : 0)
 
     if (characterCount.length > maxCharacters) {
       alertActions.newAlert({
@@ -114,8 +115,8 @@ class PostEditor extends Component {
       })
 
     } else {
-      //update the record form
-      formActions.setParams(this.props.form, this.props.items, {[record.id]: record})
+      //update the params form
+      formActions.setParams(this.props.form, this.props.items, {[params.id]: params})
     }
   }
 
@@ -136,12 +137,12 @@ class PostEditor extends Component {
 
     //formActions.setParams(this.props.form, "uploadedFiles", uploadedFiles)
 
-    //update the record form
-    let record = Object.assign({}, this.props.record)
-    _.remove(record.uploadedContent, (c) => c.url === oldFileUrl)
-    record.dirty = true
-    formActions.setParams(this.props.form, this.props.items, {[record.id]: record})
-//console.log(record);
+    //update the params form
+    let params = Object.assign({}, this.props.params)
+    _.remove(params.uploadedContent, (c) => c.url === oldFileUrl)
+    params.dirty = true
+    formActions.setParams(this.props.form, this.props.items, {[params.id]: params})
+//console.log(params);
   }
 
   //not using
@@ -167,53 +168,52 @@ class PostEditor extends Component {
 
       //formActions.setParams(this.props.form, "uploadedFiles", uploadedFiles)
 
-      //update the record form
-      let record = Object.assign({}, this.props.record)
-      if (!record.uploadedContent) {
-        record.uploadedContent = []
+      //update the params form
+      let params = Object.assign({}, this.props.params)
+      if (!params.uploadedContent) {
+        params.uploadedContent = []
       }
-      record.uploadedContent.push({url: fileUrl, type: "IMAGE"})
-      record.dirty = true
+      params.uploadedContent.push({url: fileUrl, type: "IMAGE"})
+      params.dirty = true
 
-      formActions.setParams(this.props.form, this.props.items, {[record.id]: record})
+      formActions.setParams(this.props.form, this.props.items, {[params.id]: params})
     }
   }
 
   render() {
-    const record = this.props.record
-    if (!record) {return null} //shouldn't happen, but whatever
-    let utmFields = Object.assign({}, Helpers.safeDataPath(this.props.formOptions, `${record.id}.utms`, {}))
+    const params = this.props.params
+    if (!params) {return null} //shouldn't happen, but whatever
+    let utmFields = Object.assign({}, Helpers.safeDataPath(this.props.formOptions, `${params.id}.utms`, {}))
 
-    const maxImages = PROVIDERS[record.provider].channelTypes[record.channelType].maxImages
-    const imageCount = record.uploadedContent ? record.uploadedContent.length : 0
+    const maxImages = PROVIDERS[params.provider].channelTypes[params.channelType].maxImages
+    const imageCount = params.uploadedContent ? params.uploadedContent.length : 0
 
-    const maxCharacters = PROVIDERS[record.provider].channelTypes[record.channelType].maxCharacters
-    const characterCount = Helpers.safeDataPath(record, "text", "").length + (record.contentUrl ? URL_LENGTH : 0)
-    const account = Helpers.accountFromPost(record)
-    const channelTypeHasMultiple = Helpers.channelTypeHasMultiple(null, record.provider, record.channelType)
+    const maxCharacters = PROVIDERS[params.provider].channelTypes[params.channelType].maxCharacters
+    const characterCount = Helpers.safeDataPath(params, "text", "").length + (params.contentUrl ? URL_LENGTH : 0)
+    const account = Helpers.accountFromPost(params)
+    const channelTypeHasMultiple = Helpers.channelTypeHasMultiple(null, params.provider, params.channelType)
     const type = this.props.type
 
     let warningMessage
-    if (record.provider === "LINKEDIN" && !record.contentUrl && record.uploadedContent && record.uploadedContent.length) {
+    if (params.provider === "LINKEDIN" && !params.contentUrl && params.uploadedContent && params.uploadedContent.length) {
       warningMessage = "WARNING: Growth Ramp allows, but does not recommend, posting to LinkedIn with an image but without a link. Due to a flaw in LinkedIn's system, the post will be displayed in an irregular way. We are currently working with LinkedIn to find a solution. Thanks"
     }
 
     return (
-      <Flexbox direction="column" className={classes.recordFields}>
-          <h2>{Helpers.providerFriendlyName(record.provider)} {record.channelType.titleCase()}{type === "postTemplate" ? " Template" : ""}</h2>
-          {account &&
-            <div key={account.id} >
-              {account.photoUrl ? <img src={account.photoUrl}/> : <div>(No profile picture on file)</div>}
-              <h5>{account.userName} ({account.email || "No email on file"})</h5>
-              {channelTypeHasMultiple && record.postingAs && <h5>(Posting as {record.postingAs.toLowerCase()})</h5>}
-            </div>
-          }
+      <Flexbox direction="column" className={classes.paramsFields}>
+          <h2>{Helpers.providerFriendlyName(params.provider)} {params.channelType.titleCase()}{type === "postTemplate" ? " Template" : ""}</h2>
+
+          {account.photoUrl && <img className={classes.profilePic} src={account.photoUrl}/>}
+          <div className={classes.accountInfo}>
+            <div>{account.userName} ({account.email || "No email on file"})</div>
+            {channelTypeHasMultiple && params.postingAs && <div>(Posting as {params.postingAs.toLowerCase()})</div>}
+          </div>
 
           {this.props.hasContent && <Flexbox direction="column" justify="center" className={classes.textEditor}>
-            <div>Maximum: {maxCharacters};&nbsp;Current Count: {characterCount} {record.contentUrl ? `(including ${URL_LENGTH} for the url length)` : ""}</div>
+            <div>Maximum: {maxCharacters};&nbsp;Current Count: {characterCount} {params.contentUrl ? `(including ${URL_LENGTH} for the url length)` : ""}</div>
             <Input
               textarea={true}
-              value={record.text || ""}
+              value={params.text || ""}
               placeholder={`Your message`}
               onChange={this.handleContentText}
               type="text"
@@ -230,7 +230,7 @@ class PostEditor extends Component {
                 onFailure={this.onUpload}
                 className={classes.dropImage}
               />}
-              {record.uploadedContent && record.uploadedContent.map((upload) => {
+              {params.uploadedContent && params.uploadedContent.map((upload) => {
                 return <Flexbox key={upload.url} direction="column">
                   <a
                     target="_blank"
@@ -244,16 +244,16 @@ class PostEditor extends Component {
             </Flexbox>
           </Flexbox>}
           <Flexbox className={classes.utms} justify="flex-start" align="flex-start" direction="column">
-            {this.props.hasContent && !record.contentUrl ? (
-              <div>(Utms cannot be set when there is no content URL)</div>
+            {this.props.hasContent && (!this.props.currentCampaign.contentUrl) ? ( //if you just changed campaign contentUrl, and it wasn't there before, post won't have contentUrl yet in store (though it is in db). So...just use campaign for now...TODO fix that, update teh store
+              <div>{false  && "(Utms cannot be set when there is no content URL)"}</div>
             ) : (
               UTM_TYPES.map((utmType) => {
                 //TODO want to extract for use with plan editor...if we have a plan editor
                 const type = utmType.type
                 const label = utmType.label
-                const active = [true, "true"].includes(Helpers.safeDataPath(record, `${type}.active`, false))
-                const value = Helpers.safeDataPath(record, `${type}.value`, "")
-                const key = Helpers.safeDataPath(record, `${type}.key`, "")
+                const active = [true, "true"].includes(Helpers.safeDataPath(params, `${type}.active`, false))
+                const value = Helpers.safeDataPath(params, `${type}.value`, "")
+                const key = Helpers.safeDataPath(params, `${type}.key`, "")
                 return (
                   <div key={type} className={classes.utmField}>
                     <div className={classes.utmCheckbox}>
@@ -286,7 +286,7 @@ class PostEditor extends Component {
                 )
               })
             )}
-            {this.props.hasContent && record.contentUrl && (
+            {this.props.hasContent && params.contentUrl && (
               <div className={classes.instructions}>
                 <p>
                   <h4>Instructions:</h4><strong>"{"{{campaign.name}}"}"</strong> will use the campaign name in the utm once the campaign gets published.
@@ -325,6 +325,7 @@ class PostEditor extends Component {
 const mapStateToProps = state => {
   return {
     user: state.user,
+    currentCampaign: state.currentCampaign, //just for hacky fix when just changed contentUrl for campaign...eventually, do it diffewrent
   }
 }
 const mapDispatchToProps = (dispatch) => {

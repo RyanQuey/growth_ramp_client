@@ -9,6 +9,12 @@
   }
 }
 
+.popupWrapper {
+  position: relative;
+  width: 150px;
+  margin: auto;
+}
+
 .messageTemplate {
   @include mq(xs) {
     @include cols(12)

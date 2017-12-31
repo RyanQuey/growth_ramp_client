@@ -40,9 +40,8 @@ class PlanTable extends Component {
   }
 
   //can be id or false
-  toggleDeleting (planId) {
-    const newState = typeof value === "boolean" ? value : !this.state.deleting
-    this.setState({deleting: planId})
+  toggleDeleting (value) {
+    this.setState({deleting: value})
   }
 
   removePlan (plan, e) {

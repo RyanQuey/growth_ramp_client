@@ -87,7 +87,7 @@ export const matchCampaignStateToRecord = () => {
   const campaignPosts = campaign.posts || []
   //convert to object for easy getting/setting
   const postObj = campaignPosts.reduce((acc, post) => {
-    acc[post.id] = post
+    acc[post.id] = _.cloneDeep(post)
     return acc
   }, {})
 
@@ -112,7 +112,7 @@ export const matchPlanStateToRecord = () => {
   const planPostTemplates = plan.postTemplates || []
   //convert to object for easy getting/setting
   const postTemplateObj = planPostTemplates.reduce((acc, template) => {
-    acc[template.id] = template
+    acc[template.id] = _.cloneDeep(template)
     return acc
   }, {})
 

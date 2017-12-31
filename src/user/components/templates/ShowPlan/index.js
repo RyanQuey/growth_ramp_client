@@ -37,6 +37,7 @@ class ShowPlan extends Component {
     this.savePostTemplates = this.savePostTemplates.bind(this)
     this.toggleAdding = this.toggleAdding.bind(this)
     this.toggleHidePosts = this.toggleHidePosts.bind(this)
+    this.togglePending = this.togglePending.bind(this)
     //this.toggleMode = this.toggleMode.bind(this)
     this.setPlan = this.setPlan.bind(this)
     this.handleChangeName = this.handleChangeName.bind(this)
@@ -75,9 +76,15 @@ class ShowPlan extends Component {
     const currentPlan = this.props.plans[planId]
     //check if need to retrieve and/or populate postTemplates
     if (!currentPlan || !currentPlan.postTemplatess) {
+      const cb = () => {
+        this.togglePending(false)
+        formActions.matchPlanStateToRecord()
+      }
+
       //this action doesn't yet support any criteria
-      this.setState({pending: true})
-      this.props.fetchCurrentPlan(planId)
+      this.togglePending(true)
+
+      this.props.fetchCurrentPlan(planId, cb)
       //initializing to match persisted record
       formActions.matchPlanStateToRecord()
 
@@ -118,6 +125,10 @@ class ShowPlan extends Component {
     this.setState({
       hidePosts: value,
     })
+  }
+
+  togglePending(value = !this.state.pending) {
+    this.setState({pending: value})
   }
 
   toggleAdding(provider, value = !this.state.addingPostTemplate, currentPostTemplate = null) {
@@ -194,18 +205,18 @@ class ShowPlan extends Component {
 
     //save the templates after updating the plan. Unless plan doesn't need to be updated at all
     const done = () => {
+      this.togglePending(false)
       formActions.matchPlanStateToRecord()
     }
 
-      const options = {} //can't remember why i have this..maybe just that, I coudl use if needed?
-      const params = {
-        id: persistedRecord.id,
-        name: planParams.name, //only thing I'm saving so far
-        userId: persistedRecord.userId,
-      }
+    const options = {} //can't remember why i have this..maybe just that, I coudl use if needed?
+    const params = {
+      id: persistedRecord.id,
+      name: planParams.name, //only thing I'm saving so far
+      userId: persistedRecord.userId,
+    }
 
-      this.props.updatePlanRequest(params, options, done)
-
+    this.props.updatePlanRequest(params, options, done)
   }
 
   handleLinkProvider() {
@@ -249,22 +260,6 @@ class ShowPlan extends Component {
               currentPost={this.props.currentPostTemplate}
             />
 
-            {!this.state.hidePosts && (
-              true || mode === "EDIT" ? (
-                <div>
-                  <Button style="inverted" disabled={!dirty} onClick={this.savePostTemplates}>
-                    {dirty ? "Save changes" : "All drafts saved"}
-                  </Button>
-                  {false && <Button style="inverted" onClick={this.toggleMode}>
-                    {dirty ? "Cancel edits" : "Finished editing"}
-                  </Button>}
-                </div>
-              ) : (
-                <Button style="inverted" onClick={this.toggleMode}>
-                  Edit
-                </Button>
-              )
-            )}
             {(this.state.addingPost || this.props.currentPostTemplate || this.state.hidePosts) && <a href="#" onClick={this.toggleHidePosts.bind(this, !this.state.hidePosts)}>{this.state.hidePosts ? "Show" : "Hide"} Current Post Templates</a>}
           </div>
 
@@ -281,6 +276,10 @@ class ShowPlan extends Component {
               <PostTemplateEditorWrapper
                 mode={mode}
                 toggleHidePosts={this.toggleHidePosts}
+                saveAllPosts={this.savePostTemplates}
+                dirty={dirty}
+                togglePending={this.props.togglePending}
+                pending={this.state.pending}
               />
             </div>
           )}
@@ -308,7 +307,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = (dispatch) => {
   return {
     //createPlanRequest: (data) => dispatch({type: CREATE_PLAN_REQUEST, payload: data}),
-    fetchCurrentPlan: (data) => dispatch({type: FETCH_CURRENT_PLAN_REQUEST, payload: data}),
+    fetchCurrentPlan: (data, cb) => dispatch({type: FETCH_CURRENT_PLAN_REQUEST, payload: data, cb}),
     setCurrentPlan: (data) => dispatch({type: SET_CURRENT_PLAN, payload: data}),
     createPostTemplateRequest: (payload, cb) => {dispatch({type: CREATE_POST_TEMPLATE_REQUEST, payload, cb})},
     updatePlanRequest: (payload, options, cb) => {dispatch({type: UPDATE_PLAN_REQUEST, payload, options, cb})},

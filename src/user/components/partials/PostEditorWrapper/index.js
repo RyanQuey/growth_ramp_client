@@ -1,8 +1,13 @@
 import { Component } from 'react';
 import { connect } from 'react-redux'
 import { Flexbox, Button, Icon } from 'shared/components/elements'
+import { ConfirmationPopup } from 'shared/components/groups'
 import { PostCard, PostEditor } from 'user/components/partials'
-import { SET_CURRENT_MODAL, UPDATE_POST_REQUEST, SET_CURRENT_POST  } from 'constants/actionTypes'
+import {
+  SET_CURRENT_MODAL,
+  UPDATE_POST_REQUEST,
+  DESTROY_POST_REQUEST,
+  SET_CURRENT_POST  } from 'constants/actionTypes'
 import { PROVIDERS } from 'constants/providers'
 import {formActions} from 'shared/actions'
 import classes from './style.scss'
@@ -15,14 +20,17 @@ class CampaignPostWrapper extends Component {
 
     this.state = {
       pending: false,
+      deleting: false,
+      deletePending: false,
     }
 
     this.channelPosts = this.channelPosts.bind(this)
     this.removePost = this.removePost.bind(this)
     this.done = this.done.bind(this)
-    this.togglePending = this.togglePending.bind(this)
+    this.toggleDeleting = this.toggleDeleting.bind(this)
   }
 
+  /* this was when using draft system, and saving all at once
   removePost(post) {
     if (this.props.currentPost.id === post.id) {
       this.props.setCurrentPost(null)
@@ -36,6 +44,25 @@ class CampaignPostWrapper extends Component {
     formActions.setParams("EditCampaign", "posts", {[post.id]: post})
     this.props.setCurrentPost(null)
     this.props.toggleHidePosts(false)
+  }*/
+
+  removePost() {
+    this.setState({deletePending: true})
+
+    const cb = () => {
+      this.setState({deletePending: false})
+      this.toggleDeleting(false)
+      this.props.setCurrentPost(null)
+      this.props.toggleHidePosts(false)
+    }
+
+
+    if (typeof this.props.currentPost.id === "string") {
+      cb()
+
+    } else {
+      this.props.destroyPostRequest(this.props.currentPost, cb)
+    }
   }
 
   //takes posts from all providers and accounts and organizes by channelType
@@ -48,18 +75,18 @@ class CampaignPostWrapper extends Component {
     return channelPosts*/
   }
 
+  toggleDeleting (value = !this.state.deleting) {
+    this.setState({deleting: value})
+  }
+
   done(){
     this.props.setCurrentPost(null)
     this.props.toggleHidePosts(false)
   }
 
-  togglePending(value = !this.state.pending) {
-    this.setState({pending: value})
-  }
-
   render() {
 //TODO not using a lot of these
-    const {currentAccount, currentProvider, currentChannel, currentPost, campaignPosts} = this.props
+    const {currentAccount, currentProvider, currentChannel, currentPost, campaignPosts, dirty} = this.props
     if (this.props.hide || !currentPost || !Object.keys(currentPost).length ) {
       return null
     }
@@ -83,10 +110,29 @@ console.log(channelPosts);*/
           type="Post"
           items="posts"
           hasContent={true}
-          togglePending={this.togglePending}
+          togglePending={this.props.togglePending}
         />
-        <Button style="danger" onClick={this.removePost.bind(this, currentPost)}>Delete Post</Button>
-        <Button onClick={this.done} pending={this.state.pending}>Done</Button>
+
+
+        <Button style="inverted" disabled={!dirty} title={dirty ? "" : "No changes to undo"} onClick={formActions.matchCampaignStateToRecord}>
+          Undo Changes
+        </Button>
+        <Button disabled={this.props.pending} onClick={dirty ? this.props.saveAllPosts : this.done}>
+          {dirty ? "Save changes" : "Done"}
+        </Button>
+
+        <div className={classes.popupWrapper}>
+          <Button style="danger" onClick={this.toggleDeleting.bind(this, true)}>Delete Post</Button>
+          {this.state.deleting &&
+            <ConfirmationPopup
+             onConfirm={this.removePost}
+             onCancel={this.toggleDeleting.bind(this, false)}
+             pending={this.state.deletePending}
+             dangerous={true}
+             side="top"
+           />
+          }
+        </div>
       </div>
     )
   }
@@ -107,6 +153,7 @@ const mapDispatchToProps = (dispatch) => {
     setCurrentModal: (payload, provider) => dispatch({type: SET_CURRENT_MODAL, payload, options: {oneProviderOnly: provider}}),
     setCurrentPost: (payload) => dispatch({type: SET_CURRENT_POST, payload}),
     updatePostRequest: (payload) => {dispatch({type: UPDATE_POST_REQUEST, payload})},
+    destroyPostRequest: (payload, cb) => {dispatch({type: DESTROY_POST_REQUEST, payload, cb})},
   }
 }
 
