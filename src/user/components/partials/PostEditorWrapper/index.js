@@ -105,7 +105,7 @@ console.log(channelPosts);*/
     return (
       <div key={currentPost.id}>
         <PostEditor
-          record={currentPostParams}
+          params={currentPostParams}
           form="EditCampaign"
           type="Post"
           items="posts"
