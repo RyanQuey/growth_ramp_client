@@ -359,7 +359,21 @@ const Helpers = {
         console.log(err);
 
         return "unknown-error"
-      }
+
+      } else if (raw) {
+        try {
+          //note: raw might be good data from provider
+          let data = JSON.parse(raw)
+          if (data.code && data.code === "no-sign-up-with-oauth") {
+            //we're not allowing it right now. Logging in, not signing up
+            return "forbidden-oauth-signup"
+          }
+
+        } catch (err) {
+          //because...not sure what else to do
+          return "success"
+        }
+
 
       return "success"
     },
