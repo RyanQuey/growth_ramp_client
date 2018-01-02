@@ -111,7 +111,10 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.get('/robots.txt', function (req, res) {
-  if (!req.subdomains.includes("test")) {
+  if (req.subdomains.includes("test")) {
+    res.type('text/plain');
+    res.send("User-agent: *\nDisallow: /");
+  } else {
     res.type('text/plain');
     res.send("User-agent: *\nDisallow: /");
   }
