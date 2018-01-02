@@ -110,6 +110,13 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
+app.get('/robots.txt', function (req, res) {
+  if (!req.subdomains.includes("test")) {
+    res.type('text/plain');
+    res.send("User-agent: *\nDisallow: /");
+  }
+});
+
 app.get('/login/:provider', ((req, res, next) => {
   const providerName = req.params.provider.toLowerCase()
   //options will look like this for example: {scope: __, authType: 'rerequest'}
