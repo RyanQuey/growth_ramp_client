@@ -1,7 +1,7 @@
 import { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-import { errorActions, alertActions } from 'shared/actions'
+import { errorActions, alertActions, formActions } from 'shared/actions'
 import { Button, Flexbox, Input, Checkbox } from 'shared/components/elements'
 import { SIGN_IN_REQUEST, UPDATE_USER_REQUEST, RESET_PASSWORD_REQUEST } from 'constants/actionTypes'
 
@@ -24,22 +24,19 @@ class UserCredentials extends Component {
     this.toggleTos = this.toggleTos.bind(this)
   }
   componentWillReceiveProps(props) {
-    //what is this/
-    if (props.errors && props.errors !== this.props.errors) {
+    //(if logging in, and there's an error that's new, stop pending or else it might get stuck indeffinitely spinning)
+    if (props.loginErrors && props.loginErrors !== this.props.loginErrors) {
       this.props.togglePending && this.props.togglePending(false);
     }
   }
 
   handlePassword(value, e, errors) {
-
-    this.setState({
-      password: value,
-    })
+    formActions.setParams("UserCredentials", "credentials", {password: value})
   }
   handleEmail(value, e, errors) {
 
+    formActions.setParams("UserCredentials", "credentials", {email: value})
     this.setState({
-      email: value,
       validEmail: (!errors || errors.length === 0),
     })
   }
@@ -53,8 +50,8 @@ class UserCredentials extends Component {
     this.props.togglePending(true);
     alertActions.closeAlerts()
 
-    let password = this.state.password
-    let email = this.state.email
+    let password = this.props.password
+    let email = this.props.email
     let token = this.props.viewSettings.modalToken
     let cb
 
@@ -81,20 +78,8 @@ class UserCredentials extends Component {
       this.props.resetPasswordRequest(email, cb)
 
     } else {
-      let signInType
-      if (this.props.view === 'SIGN_UP') {
-        signInType = 'SIGN_UP_WITH_EMAIL'
-      } else {
-        signInType = 'SIGN_IN_WITH_EMAIL'
-      }
 
-      let onFailure = () => {
-        this.props.togglePending(false)
-      }
-
-      const credentials = {email, password}
-      //not a login token, but any other token that needs a logged in user for it to operate
-      this.props.signInRequest(signInType, credentials, token, onFailure)
+      this.props.submit()
     }
   }
 
@@ -111,7 +96,7 @@ class UserCredentials extends Component {
             onChange={this.handleEmail}
             placeholder="your-email@gmail.com"
             type="email"
-            value={this.state.email}
+            value={this.props.email}
             validations={['required', 'email']}
             handleErrors={errors => errorActions.handleErrors(errors, "Login", "credentials", {alert: false})}
           />
@@ -123,7 +108,7 @@ class UserCredentials extends Component {
             onChange={this.handlePassword}
             placeholder="password"
             type="password"
-            value={this.state.password}
+            value={this.props.password}
             validations={passwordValidations}
             handleErrors={errors => errorActions.handleErrors(errors, "Login", "credentials", {alert: false})}
           />
@@ -143,7 +128,7 @@ class UserCredentials extends Component {
         <Button
           disabled={(
             (!this.props.passwordOnly && !this.state.validEmail) ||
-            (view !== "RESETTING_PASSWORD" && this.props.errors && this.props.errors.length) ||
+            (view !== "RESETTING_PASSWORD" && this.props.loginErrors && this.props.loginErrors.length) ||
             (view === "SIGN_UP" && !this.state.acceptedTerms)
           )}
           type="submit"
@@ -159,11 +144,6 @@ class UserCredentials extends Component {
 const mapDispatchToProps = (dispatch) => {
   return {
     updateUser: (userData, cb) => store.dispatch({type: UPDATE_USER_REQUEST, payload: userData, cb}),
-    signInRequest: (signInType, credentials, token, onFailure) => store.dispatch({
-      type: SIGN_IN_REQUEST,
-      payload: {signInType, credentials, token},
-      onFailure,
-    }),
     resetPasswordRequest: (email, cb) => store.dispatch({type: RESET_PASSWORD_REQUEST, payload: email, cb}),
 
   }
@@ -171,8 +151,10 @@ const mapDispatchToProps = (dispatch) => {
 const mapStateToProps = (state) => {
   return {
     user: state.user,
-    errors: Helpers.safeDataPath(state, "errors.Login.credentials", false),
+    loginErrors: Helpers.safeDataPath(state, "errors.Login.credentials", false),
     viewSettings: state.viewSettings,
+    password: Helpers.safeDataPath(state, "forms.UserCredentials.credentials.params.password", ""),
+    email: Helpers.safeDataPath(state, "forms.UserCredentials.credentials.params.email", ""),
   }
 }
 

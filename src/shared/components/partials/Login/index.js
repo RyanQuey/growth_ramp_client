@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { userActions, errorActions } from 'shared/actions'
 import { Button, Flexbox, Input } from 'shared/components/elements'
-import { SocialLogin, UserCredentials } from 'shared/components/partials'
+import { SocialLogin, UserCredentials, CheckoutFormWrapper, PricingPlans } from 'shared/components/partials'
 
 import errorTypes from 'constants/errors'
 
@@ -15,12 +15,19 @@ class Login extends Component {
     this.state = {
       view: props.initialView || 'LOGIN',
       pending: false,
+      onboardingStage: "",
     }
 
     this.toggleView = this.toggleView.bind(this)
     this.togglePending = this.togglePending.bind(this)
     this.toggleResetPassword = this.toggleResetPassword.bind(this)
+    this.submitPricing = this.submitPricing.bind(this)
+    this.submitCredentials = this.submitCredentials.bind(this)
+    this.submitCredentialsForm = this.submitCredentialsForm.bind(this)
+    this.finishedOnboarding = this.finishedOnboarding.bind(this)
+    this.setOnboardingStage = this.setOnboardingStage.bind(this)
   }
+
   componentWillReceiveProps (props) {
     const user = props.user
     const errors = Helpers.safeDataPath(props, 'errors.Login.onSubmit', false)
@@ -66,6 +73,44 @@ class Login extends Component {
     }
   }
 
+  setOnboardingStage(value) {
+    this.setState({onboardingStage: value}) //CHOOSE_PRICING_PLAN, ADD_CARD, or ADD_CREDENTIALS
+  }
+
+  submitCredentialsForm () {
+    if (this.state.view === "LOGIN"){
+      this.submitCredentials()
+
+    } else if (this.state.view === 'SIGN_UP') {
+      this.setOnboardingStage("ADD_CREDIT_CARD")
+    }
+  }
+
+  submitCredentials () {
+    if (this.state.view === "LOGIN"){
+      signInType = 'SIGN_IN_WITH_EMAIL'
+
+    } else if (this.state.view === 'SIGN_UP') {
+      signInType = 'SIGN_UP_WITH_EMAIL'
+    }
+
+      //not a login token, but any other token that needs a logged in user for it to operate
+    const token = this.props.viewSettings.modalToken
+    const onFailure = () => {
+      this.props.togglePending(false)
+    }
+    const credentials = {password: this.props.password, email: this.props.email}
+    this.props.signInRequest(signInType, credentials, token, onFailure)
+  }
+
+  submitPricing () {
+    this.setOnboardingStage("ADD_CREDIT_CARD")
+  }
+
+  finishedOnboarding () {
+    this.submitCredentials()
+  }
+
   render() {
     const view = this.state.view
     let generalText
@@ -91,35 +136,48 @@ class Login extends Component {
     return (
       <Flexbox className={classes.fields} direction="column" justify="center" align="center">
         <h1 color="primary">{generalText}</h1>
-        <UserCredentials
-          view={view}
-          buttonText={generalText}
-          pending={this.state.pending}
-          token={this.props.viewSettings.modalToken}
-          togglePending={this.togglePending}
-        />
-        {view === "LOGIN"  &&
-          <a href="#" onClick={this.toggleResetPassword}>{this.state.resettingPassword ? "Login or signup" : "Forget your password?"}</a>
-        }
-
-        <br/>
-        {!credentialsOnly && !resettingPassword && view === "LOGIN" && <div>
-          <h3>{socialText} through one of your social networks:</h3>
-          <SocialLogin
-            pending={this.state.pending}
-            togglePending={this.togglePending}
+        {this.state.onboardingStage === "CHOOSE_PRICING_PLAN" &&
+          <PricingPlans
+            submitPricing={this.submitPricing}
           />
-        </div>}
-        <a
-          onClick={this.toggleView}
-          href="#"
-        >
-          {view === "LOGIN" ? (
-            "Don't have an account? Click here to sign up"
-          ) : (
-            "Already have an account? Click here to login"
-          )}
-        </a>
+        }
+        {this.state.onboardingStage === "ADD_CREDIT_CARD" &&
+          <CheckoutFormWrapper />
+        }
+        {!this.state.onboardingStage &&
+          <div>
+            <UserCredentials
+              view={view}
+              buttonText={generalText}
+              pending={this.state.pending}
+              token={this.props.viewSettings.modalToken}
+              togglePending={this.togglePending}
+              submit={this.submitCredentialsForm}
+            />
+            {view === "LOGIN"  &&
+              <a href="#" onClick={this.toggleResetPassword}>{this.state.resettingPassword ? "Login or signup" : "Forget your password?"}</a>
+            }
+
+            <br/>
+            {!credentialsOnly && !resettingPassword && view === "LOGIN" && <div>
+              <h3>{socialText} through one of your social networks:</h3>
+              <SocialLogin
+                pending={this.state.pending}
+                togglePending={this.togglePending}
+              />
+            </div>}
+            <a
+              onClick={this.toggleView}
+              href="#"
+            >
+              {view === "LOGIN" ? (
+                "Don't have an account? Click here to sign up"
+              ) : (
+                "Already have an account? Click here to login"
+              )}
+            </a>
+          </div>
+        }
       </Flexbox>
     )
   }
@@ -134,7 +192,18 @@ const mapStateToProps = (state) => {
     user: state.user,
     errors: state.errors,
     viewSettings: state.viewSettings,
+    password: Helpers.safeDataPath(state, "forms.UserCredentials.credentials.params.password", ""),
+    email: Helpers.safeDataPath(state, "forms.UserCredentials.credentials.params.email", ""),
   }
 }
 
-export default connect(mapStateToProps)(Login)
+const mapDispatchToProps = (dispatch) => {
+  return {
+    signInRequest: (signInType, credentials, token, onFailure) => store.dispatch({
+      type: SIGN_IN_REQUEST,
+      payload: {signInType, credentials, token},
+      onFailure,
+    }),
+  }
+}
+export default connect(mapStateToProps, mapDispatchToProps)(Login)
