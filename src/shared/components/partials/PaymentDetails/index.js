@@ -47,7 +47,14 @@ console.log(value);
     let cb = (result) => {
       console.log("Successfully handled Credit card");
       console.log(result);
+      this.cardElement.clear()
       this.togglePending(false)
+      this.props.toggleUpdatingCard(false)
+
+      alertActions.newAlert({
+        title: "Successfully updated credit card",
+        level: "SUCCESS",
+      })
     }
 
     let onFailure = () => {
@@ -81,7 +88,7 @@ console.log(value);
   render() {
     return (
       <form className={classes.form} onSubmit={this.submit}>
-        <div>Add your credit card info:</div>
+        <div>Update your credit card info:</div>
         <CardElement
           elementRef={r => {this.cardElement = r}}
           onChange={this.onChange}
@@ -89,7 +96,7 @@ console.log(value);
         <Button
           disabled={!this.state.ready}
           type="submit"
-          pending={this.props.pending}
+          pending={this.state.pending}
         >
           Submit
         </Button>

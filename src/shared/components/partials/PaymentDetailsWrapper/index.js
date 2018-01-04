@@ -26,7 +26,9 @@ class PaymentDetailsWrapper extends Component {
     return (
       <StripeProvider apiKey={stripeApiPublicKey}>
         <Elements>
-          <PaymentDetails />
+          <PaymentDetails
+            toggleUpdatingCard={this.props.toggleUpdatingCard}
+          />
         </Elements>
       </StripeProvider>
     )

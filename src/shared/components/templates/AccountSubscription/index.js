@@ -50,7 +50,7 @@ class AccountSubscription extends Component {
 
     const currentPaymentPlan = ALLOWED_EMAILS.includes(this.props.user.email) ? "prepaid" : (this.props.accountSubscription && this.props.accountSubscription.paymentPlan || "basic-monthly")
     const planText = `${PAYMENT_PLANS[currentPaymentPlan].name} ($${PAYMENT_PLANS[currentPaymentPlan].price}/${PAYMENT_PLANS[currentPaymentPlan].frequency})`
-    const currentPaymentMethod = this.props.accountSubscription && this.props.accountSubscription.defaultSourceId ? "Credit card configured" : "Payment method is not configured"
+    const currentPaymentMethod = this.props.accountSubscription && this.props.accountSubscription.defaultSourceId ? `Credit card ending in ${this.props.accountSubscription.defaultSourceLastFour}` : "Payment method is not configured"
 
     return (
       <div>
@@ -84,6 +84,7 @@ class AccountSubscription extends Component {
           {this.state.updatingCard && <div className={classes.expandedForm}>
             <PaymentDetailsWrapper
               submitCb={this.toggleUpdatingCard.bind(this, false)}
+              toggleUpdatingCard={this.toggleUpdatingCard}
             />
           </div>}
         </div>
