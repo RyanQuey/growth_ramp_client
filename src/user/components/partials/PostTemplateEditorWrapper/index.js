@@ -25,6 +25,7 @@ class PostTemplateWrapper extends Component {
     this.channelPostTemplates = this.channelPostTemplates.bind(this)
     this.removePostTemplate = this.removePostTemplate.bind(this)
     this.toggleDeleting = this.toggleDeleting.bind(this)
+    this.undoChanges = this.undoChanges.bind(this)
   }
 
   /*this was when just marking as deleting
@@ -58,6 +59,14 @@ class PostTemplateWrapper extends Component {
 
     } else {
       this.props.destroyPostTemplateRequest(this.props.currentPostTemplate, cb)
+    }
+  }
+
+  undoChanges() {
+    formActions.matchPlanStateToRecord()
+    //if an unsaved post draft was just removed from undoing changes, go back to post picker
+    if (!this.props.currentPostTemplate || Helpers.safeDataPath(this.props, "currentPostTemplate.id", "").includes("not-saved")) {
+      this.props.toggleHidePosts(false)
     }
   }
 
@@ -111,7 +120,7 @@ class PostTemplateWrapper extends Component {
             saveAllPosts={this.saveAllPosts}
             togglePending={this.props.togglePending}
           />
-          <Button style="inverted" disabled={!dirty} title={dirty ? "" : "No changes to undo"} onClick={formActions.matchPlanStateToRecord}>
+          <Button style="inverted" disabled={!dirty} title={dirty ? "" : "No changes to undo"} onClick={this.undoChanges}>
             Undo Changes
           </Button>
 

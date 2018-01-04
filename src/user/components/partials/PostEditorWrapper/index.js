@@ -28,6 +28,7 @@ class CampaignPostWrapper extends Component {
     this.removePost = this.removePost.bind(this)
     this.done = this.done.bind(this)
     this.toggleDeleting = this.toggleDeleting.bind(this)
+    this.undoChanges = this.undoChanges.bind(this)
   }
 
   /* this was when using draft system, and saving all at once
@@ -63,6 +64,15 @@ class CampaignPostWrapper extends Component {
 
     } else {
       this.props.destroyPostRequest(this.props.currentPost, cb)
+    }
+  }
+
+  undoChanges() {
+    formActions.matchCampaignStateToRecord()
+console.log(this.props.currentPost);
+    //if an unsaved post draft was just removed from undoing changes, go back to post picker
+    if (!this.props.currentPost || Helpers.safeDataPath(this.props, "currentPost.id", "").includes("not-saved")) {
+      this.props.toggleHidePosts(false)
     }
   }
 
@@ -115,7 +125,7 @@ console.log(channelPosts);*/
         />
 
 
-        <Button style="inverted" disabled={!dirty} title={dirty ? "" : "No changes to undo"} onClick={formActions.matchCampaignStateToRecord}>
+        <Button style="inverted" disabled={!dirty} title={dirty ? "" : "No changes to undo"} onClick={this.undoChanges}>
           Undo Changes
         </Button>
         <Button disabled={this.props.pending} onClick={dirty ? this.props.saveAllPosts : this.done}>

@@ -4,6 +4,8 @@ import {
   SET_OPTIONS,
   FORM_PERSISTED,
   CLEAR_PARAMS,
+  SET_CURRENT_POST,
+  SET_CURRENT_POST_TEMPLATE,
 } from 'constants/actionTypes'
 
 //override will totally override whatever params are there; otherwise, will just be merged to state
@@ -98,6 +100,11 @@ export const matchCampaignStateToRecord = () => {
     clearParams("EditCampaign", "posts")
   }
 
+  //clear current post template if it's just a draft too
+  if (Helpers.safeDataPath(store.getState(), "currentPost.id", "").includes("not-saved")) {
+    store.dispatch({type: SET_CURRENT_POST, payload: null})
+  }
+
   delete campaign.posts //will not be updating posts on that part of the state, so don't want to confuse things; just remove it
 
   //sets dirty to false, and override to true
@@ -106,6 +113,7 @@ export const matchCampaignStateToRecord = () => {
 
 //basically, the postTemplate you are working on will reflect the same data it had, and params are ready to persisted if you update again
 //other plan params is set too; each "form" is a plan attribute
+//watch out: doesn't change
 export const matchPlanStateToRecord = () => {
   //this should match the persisted recoard
   const plan = Object.assign({}, Helpers.safeDataPath(store.getState(), `currentPlan`, {}))
@@ -121,6 +129,11 @@ export const matchPlanStateToRecord = () => {
     setParams("EditPlan", "postTemplates", postTemplateObj, false, true)
   } else {
     clearParams("EditPlan", "postTemplates")
+  }
+
+  //clear current post template if it's just a draft too
+  if (Helpers.safeDataPath(store.getState(), "currentPostTemplate.id", "").includes("not-saved")) {
+    store.dispatch({type: SET_CURRENT_POST_TEMPLATE, payload: null})
   }
 
   delete plan.postTemplates //will not be updating posts on that part of the state, so don't want to confuse things; just remove it
