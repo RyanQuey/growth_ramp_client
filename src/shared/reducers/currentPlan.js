@@ -3,6 +3,7 @@ import {
   FETCH_PLAN_SUCCESS,
   CREATE_POST_TEMPLATE_SUCCESS,
   UPDATE_POST_TEMPLATE_SUCCESS,
+  DESTROY_POST_TEMPLATE_SUCCESS,
   UPDATE_PLAN_SUCCESS,
   SIGN_OUT,
   SET_CURRENT_PLAN, //probably eventually call this SET_PLAN
@@ -48,6 +49,22 @@ const currentPlanReducer = (state = null, action) => {
 
         //replaces that item in the array
         planPostTemplates.splice(postTemplateIndex, 1, postTemplate)
+        plan.postTemplates = planPostTemplates
+
+        return Object.assign({}, state, plan)
+
+      } else {
+        return state
+      }
+
+    case DESTROY_POST_TEMPLATE_SUCCESS:
+      if (state && state.id === action.payload.planId) {
+        postTemplate = action.payload
+        plan = Object.assign({}, state)
+        oldPostTemplates = plan.postTemplates || []
+        //removes that item in the array, and any other archived ones
+        planPostTemplates = [...oldPostTemplates.filter((p) => p.id !== postTemplate.id && p.status !== "ARCHIVED")]
+
         plan.postTemplates = planPostTemplates
 
         return Object.assign({}, state, plan)

@@ -53,6 +53,7 @@ class CampaignPostWrapper extends Component {
       this.setState({deletePending: false})
       this.toggleDeleting(false)
       this.props.setCurrentPost(null)
+      formActions.matchCampaignStateToRecord()
       this.props.toggleHidePosts(false)
     }
 

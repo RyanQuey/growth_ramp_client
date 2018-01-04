@@ -49,6 +49,7 @@ class PostTemplateWrapper extends Component {
       this.setState({deletePending: false})
       this.toggleDeleting(false)
       this.props.setCurrentPostTemplate(null)
+      formActions.matchPlanStateToRecord()
       this.props.toggleHidePosts(false)
     }
 
@@ -121,7 +122,7 @@ class PostTemplateWrapper extends Component {
             <Button style="danger"  onClick={this.toggleDeleting.bind(this, true)} >Delete Post Template</Button>
             {this.state.deleting &&
               <ConfirmationPopup
-                onConfirm={this.removePlan}
+                onConfirm={this.removePostTemplate}
                 onCancel={this.toggleDeleting.bind(this, false)}
                 pending={this.state.deletePending}
                 dangerous={true}

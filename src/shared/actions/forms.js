@@ -112,7 +112,7 @@ export const matchPlanStateToRecord = () => {
   const planPostTemplates = plan.postTemplates || []
   //convert to object for easy getting/setting
   const postTemplateObj = planPostTemplates.reduce((acc, template) => {
-    acc[template.id] = _.cloneDeep(template)
+    acc[template.id] = _.cloneDeep(template) //make sure it's not the same object, so when params change record doesn't
     return acc
   }, {})
 
