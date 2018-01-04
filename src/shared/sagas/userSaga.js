@@ -60,7 +60,7 @@ function* signIn(action) {
     let user = result.data.user ? result.data.user : result.data //ternary  necessary if provider login and waiting for the populated data from db (?)
 
     if (user) {
-      _handleInitialUserData(user)
+      _handleInitialUserData(result.data)
 
       yield put({type: SIGN_IN_SUCCESS, payload: user})
       alertActions.newAlert({
@@ -89,7 +89,8 @@ function* signIn(action) {
     //these are codes from our api
     let errorCode = err && Helpers.safeDataPath(err, "response.data.originalError.code", 500)
     let errorMessage = err && Helpers.safeDataPath(err, "response.data.originalError.message", 500)
-    console.log(errorCode, errorMessage, err.response.data);
+    console.error(errorCode, errorMessage, err && err.response && err.response.data || err);
+
     if (httpStatus === 403) {
       alertActions.newAlert({
         title: "Invalid email or password",

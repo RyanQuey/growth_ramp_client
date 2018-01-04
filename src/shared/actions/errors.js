@@ -52,6 +52,9 @@ export const handleErrors = (errors = [], templateName, templatePart, options = 
 
           errors.message = formValidationMessage.join("; ").capitalize()
         }
+      } else {
+        //not from axios
+        console.error(errors.errorObject)
       }
       errors = [errors]
     }

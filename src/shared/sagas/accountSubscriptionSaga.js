@@ -4,6 +4,7 @@ import {
   CREATE_ACCOUNT_SUBSCRIPTION_REQUEST,
   FETCH_ACCOUNT_SUBSCRIPTION_REQUEST,
   FETCH_ACCOUNT_SUBSCRIPTION_SUCCESS,
+  HANDLE_CREDIT_CARD_INFO_REQUEST,
   INITIALIZE_USER_ACCOUNT_SUBSCRIPTION_REQUEST,
   UPDATE_ACCOUNT_SUBSCRIPTION_REQUEST,
   UPDATE_ACCOUNT_SUBSCRIPTION_SUCCESS,
@@ -55,15 +56,15 @@ function* initializeUserSubscription(action) {
 function* handleCreditCardInfo(action) {
   try {
     const user = store.getState().user
-    let res, newRecord
-
-    res = yield axios.post(`/api/accountSubscriptions/handleCreditCardInfo/${user.id}`, action.payload) //eventually switch to socket
-    newRecord = res.data
+console.log(action.payload);
+    const res = yield axios.post(`/api/accountSubscriptions/handleCreditCardUpdate/${user.id}`, action.payload) //eventually switch to socket
+console.log(res);
+    const updatedRecord = res.data
 
     yield all([
-      put({ type: CREATE_ACCOUNT_SUBSCRIPTION_SUCCESS, payload: newRecord}),
+      put({ type: UPDATE_ACCOUNT_SUBSCRIPTION_SUCCESS, payload: updatedRecord}),
     ])
-    action.cb && action.cb(newRecord)
+    action.cb && action.cb(res.data)
 
   } catch (err) {
     action.onFailure && action.onFailure(err)
@@ -99,7 +100,7 @@ function* update(action) {
   }
 }
 
-export default function* accountsSubscriptionSagas() {
+export default function* accountSubscriptionsSaga() {
   yield takeLatest(FETCH_ACCOUNT_SUBSCRIPTION_REQUEST, find)
   //will use for workgroups maybe
   //yield takeLatest(CREATE_ACCOUNT_SUBSCRIPTION_REQUEST, create)

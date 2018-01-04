@@ -36,9 +36,14 @@ class AccountSubscription extends Component {
     this.setState({plansVisible: !this.state.plansVisible})
   }
 
-  toggleUpdatingCard (e) {
-    e.preventDefault()
-    this.setState({updatingCard: !this.state.updatingCard})
+  toggleUpdatingCard (value, e) {
+    if (value === undefined) {
+      e = value
+      value = !this.state.updatingCard
+    }
+
+    e && e.preventDefault()
+    this.setState({updatingCard: value})
   }
 
   render (){
@@ -77,7 +82,9 @@ class AccountSubscription extends Component {
             </Flexbox>
           </div>
           {this.state.updatingCard && <div className={classes.expandedForm}>
-            <PaymentDetailsWrapper />
+            <PaymentDetailsWrapper
+              submitCb={this.toggleUpdatingCard.bind(this, false)}
+            />
           </div>}
         </div>
       </div>

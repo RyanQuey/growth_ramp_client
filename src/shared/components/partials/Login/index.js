@@ -3,11 +3,14 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { userActions, errorActions } from 'shared/actions'
 import { Button, Flexbox, Input } from 'shared/components/elements'
+import {
+  SIGN_IN_REQUEST,
+} from 'constants/actionTypes'
 import { SocialLogin, UserCredentials } from 'shared/components/partials'
 import { withRouter } from 'react-router-dom'
 
 import errorTypes from 'constants/errors'
-import {ALLOWED_EMAILS} from 'constants/users'
+import {ALLOWED_EMAILS} from 'constants/accountSubscriptions'
 
 import classes from './style.scss'
 
@@ -75,6 +78,7 @@ class Login extends Component {
   }
 
   submitCredentials () {
+    let signInType
     if (this.state.view === "LOGIN"){
       signInType = 'SIGN_IN_WITH_EMAIL'
 
@@ -85,7 +89,7 @@ class Login extends Component {
       //not a login token, but any other token that needs a logged in user for it to operate
     const token = this.props.viewSettings.modalToken
     const onFailure = () => {
-      this.props.togglePending(false)
+      this.togglePending(false)
     }
     const cb = (allData) => {
       if (!ALLOWED_EMAILS.includes(allData.user.email) && !allData.accountSubscription) {

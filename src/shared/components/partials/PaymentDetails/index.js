@@ -24,9 +24,15 @@ class PaymentDetails extends Component {
     this.togglePending = this.togglePending.bind(this)
   }
 
+  componentDidMount() {
+    setTimeout(() => {
+console.log("this runs");
+      this.cardElement && this.cardElement.focus()
+    }, 1500)
+  }
   onChange({error, brand, empty, complete, value}) {
 console.log(value);
-    this.setState({ready: complete, postalCode: value})
+    this.setState({ready: complete, postalCode: value.postalCode})
   }
 
   togglePending(value = !this.state.pending) {
@@ -39,32 +45,35 @@ console.log(value);
     alertActions.closeAlerts()
 
     let cb = (result) => {
+      console.log("Successfully handled Credit card");
       console.log(result);
+      this.togglePending(false)
     }
 
     let onFailure = () => {
-      this.props.togglePending(false)
+      this.togglePending(false)
     }
 
-
-    const form = this.refs.cardForm
-
-    this.props.stripe.createSource(this.refs.cardForm, {owner: {address: {postal_code: this.state.postalCode}}})
+    //pulls some magic and grabs the data from the CardElement and sends to stripe api to create a source
+    this.props.stripe.createSource(undefined, {owner: {address: {postal_code: this.state.postalCode}}})
     .then(({source, error}) => {
+      console.log(source);
       if (error) { //TODO handle error
         throw error
+      } else if (source.status !== "chargeable") {
+        throw new Error(`The credit card you entered has the following status: ${source.status}. Please try a different credit card`)
+      } else if (source.usage === "single_use") {
+        throw new Error(`The credit card you entered is single use only. Please try a different credit card`)
       }
-
-console.log(form, source);
 
       this.props.handleCreditCardInfo(source, cb, onFailure)
     })
     .catch((err) => {
-      console.eror(err);
       errorActions.handleErrors({
         templateName: "PaymentDetails",
         templatePart: "creditCard",
         title: "Error in form",
+        errorObject: err,
       })
     })
   }
@@ -74,7 +83,7 @@ console.log(form, source);
       <form className={classes.form} onSubmit={this.submit}>
         <div>Add your credit card info:</div>
         <CardElement
-          ref="cardForm"
+          elementRef={r => {this.cardElement = r}}
           onChange={this.onChange}
         />
         <Button
@@ -92,7 +101,7 @@ console.log(form, source);
 const mapDispatchToProps = (dispatch) => {
   return {
     updateUser: (userData, cb) => store.dispatch({type: UPDATE_USER_REQUEST, payload: userData, cb}),
-    handleCreditCardInfo: (token, cb, onFailure) => store.dispatch({type: HANDLE_CREDIT_CARD_INFO_REQUEST, payload: {source}, cb, onFailure}),
+    handleCreditCardInfo: (source, cb, onFailure) => store.dispatch({type: HANDLE_CREDIT_CARD_INFO_REQUEST, payload: {source}, cb, onFailure}),
 
   }
 }
