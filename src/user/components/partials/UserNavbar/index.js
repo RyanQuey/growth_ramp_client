@@ -41,6 +41,7 @@ class UserNavbar extends Component {
 
   render() {
     const { user, userSettingsOnly, forLandingPage } = this.props
+    //userSettingsOnly is mostly if don't want create campaign button and other things for non-signed in users
 
     return (
       <Navbar className={classes.header}>

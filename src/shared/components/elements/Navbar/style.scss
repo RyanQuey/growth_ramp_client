@@ -34,12 +34,17 @@
   &.center > ul {
     justify-content: center;
   }
+  &.navTabs > ul {
+    //border-bottom: solid black 1px;
+    margin-bottom: 0;
+  }
   &.navTabs > ul > li {
     padding: 10px;
     margin: 0px;
-    border: 1px black solid;
+    //border: 1px black solid;
     border-bottom: none;
     border-radius: 15px 15px 0 0;
+    background-color: $white;
     &:hover {
       cursor: pointer;
     }

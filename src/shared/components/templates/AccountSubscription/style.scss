@@ -1,0 +1,16 @@
+@import 'theme/_helpers';
+
+.formSection {
+  margin-bottom: 10px;
+  .settingLabel {
+    font-weight: bold;
+  }
+
+  //when toggled is closed, when opened though, is this
+  .expandedForm {
+    margin-top: 30px;
+  }
+}
+.toggleButton {
+  float: right;
+}

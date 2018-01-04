@@ -1,5 +1,6 @@
 import { call, put, takeLatest, all } from 'redux-saga/effects'
 import {
+  FETCH_ACCOUNT_SUBSCRIPTION_SUCCESS,
   FETCH_USER_REQUEST,
   FETCH_CURRENT_USER_REQUEST,
   FETCH_USER_SUCCESS,
@@ -7,6 +8,7 @@ import {
   FETCH_PLAN_SUCCESS,
   FETCH_PROVIDER_SUCCESS,
   HANDLE_ERRORS,
+  INITIALIZE_USER_ACCOUNT_SUBSCRIPTION_REQUEST,
   REFRESH_CHANNEL_TYPE_REQUEST,
   RESET_PASSWORD_REQUEST,
   RESET_PASSWORD_SUCCESS,
@@ -55,22 +57,19 @@ function* signIn(action) {
         break
     }
 
-    let user = result.data.user ? result.data.user : result.data
-    let userPlans = result.data.plans
-    let providerAccounts = result.data.providerAccounts
+    let user = result.data.user ? result.data.user : result.data //ternary  necessary if provider login and waiting for the populated data from db (?)
 
     if (user) {
-      setupSession(user)
+      _handleInitialUserData(user)
+
       yield put({type: SIGN_IN_SUCCESS, payload: user})
-
-      yield put({type: FETCH_PLAN_SUCCESS, payload: userPlans})
-      yield put({type: FETCH_PROVIDER_SUCCESS, payload: providerAccounts})
-
       alertActions.newAlert({
         title: "Welcome!",
         level: "SUCCESS",
-        options: {forComponent: "/campaigns"}
+        options: {}
       })
+
+      action.cb && action.cb(result.data)
 
     } else {
       //no user found
@@ -90,7 +89,7 @@ function* signIn(action) {
     //these are codes from our api
     let errorCode = err && Helpers.safeDataPath(err, "response.data.originalError.code", 500)
     let errorMessage = err && Helpers.safeDataPath(err, "response.data.originalError.message", 500)
-console.log(errorCode, errorMessage, err.response.data);
+    console.log(errorCode, errorMessage, err.response.data);
     if (httpStatus === 403) {
       alertActions.newAlert({
         title: "Invalid email or password",
@@ -156,43 +155,11 @@ function* fetchCurrentUser(action) {
     //TODO: also fetch the plans
     const res = yield axios.get(`/api/users/${userData.id}/initialUserData`)
     const result = res.data
+
     //no reason to restart the socket here; this event should only occur is already retrieving the user data from the cookie, which means that API token and headers already are set correctly.
+    _handleInitialUserData(result, {resetSocket: false})
 
-    Cookie.set('sessionUser', result.user)
-    //TODO yield all might be faster? prob same though
-    yield put({type: FETCH_CURRENT_USER_SUCCESS, payload: result.user})
-    yield put({type: FETCH_PROVIDER_SUCCESS, payload: result.providerAccounts})
-    yield put({type: FETCH_PLAN_SUCCESS, payload: result.plans})
-
-    action.cb && action.cb(result.user)
-
-    if (!Helpers.allChannels().length) {
-      yield put({type: SET_CURRENT_MODAL, payload: "LinkProviderAccountModal"})
-    }
-
-    //refresh all channel lists
-    //doesn't need to succeed; so don't raise error if doesn't necesarily, and make sure everything just moves forward
-    //Also don't want this to slow down getting initial user, or cause it to fail, so don't want to do this in api as part of initialUserData call
-    const providers = Object.keys(result.providerAccounts)
-    const allAccounts = Helpers.flattenProviderAccounts()
-    for (let account of allAccounts) {
-      //map out channels
-      //TODO make an api endpoint for refreshing all
-      let permittedChannels = Helpers.permittedChannelTypes(account)
-      permittedChannels.forEach((channelType) => {
-        const hasMultiple = Helpers.channelTypeHasMultiple(null, account.provider, channelType)
-        if (hasMultiple) {
-          store.dispatch({
-            type: REFRESH_CHANNEL_TYPE_REQUEST,
-            payload: {
-              channelType: channelType,
-              account,
-            },
-          })
-        }
-      })
-    }
-
+    action.cb && action.cb(result.data)
 
   } catch (err) {
     errorActions.handleErrors({
@@ -202,8 +169,6 @@ function* fetchCurrentUser(action) {
       errorObject: err,
     })
   }
-
-
 }
 
 function* signUserOut() {
@@ -275,6 +240,59 @@ function* resetPassword(action) {
       title: "Error resetting password",
       errorObject: err,
     })
+  }
+}
+
+function _handleInitialUserData(data, options = {}) {
+  if (options.keepHeaders) {
+    Cookie.set('sessionUser', data.user)
+  } else {
+    setupSession(data.user)
+  }
+
+  store.dispatch({type: FETCH_CURRENT_USER_SUCCESS, payload: data.user})
+  store.dispatch({type: FETCH_ACCOUNT_SUBSCRIPTION_SUCCESS, payload: data.accountSubscription})
+  store.dispatch({type: FETCH_PROVIDER_SUCCESS, payload: data.providerAccounts})
+  store.dispatch({type: FETCH_PLAN_SUCCESS, payload: data.plans})
+
+  //if has no channels, prompt user to link a new account
+  if (!Helpers.allChannels().length) {
+    store.dispatch({type: SET_CURRENT_MODAL, payload: "LinkProviderAccountModal"})
+  }
+
+  //refresh all channel lists
+  //doesn't need to succeed; so don't raise error if doesn't necesarily, and make sure everything just moves forward
+  //Also don't want this to slow down getting initial user, or cause it to fail, so don't want to do this in api as part of initialUserData call
+  const providers = Object.keys(data.providerAccounts)
+  const allAccounts = Helpers.flattenProviderAccounts()
+
+  for (let account of allAccounts) {
+    //map out channels
+    //TODO make an api endpoint for refreshing all
+    let permittedChannels = Helpers.permittedChannelTypes(account)
+    permittedChannels.forEach((channelType) => {
+      const hasMultiple = Helpers.channelTypeHasMultiple(null, account.provider, channelType)
+      if (hasMultiple) {
+        store.dispatch({
+          type: REFRESH_CHANNEL_TYPE_REQUEST,
+          payload: {
+            channelType: channelType,
+            account,
+          },
+        })
+      }
+    })
+  }
+
+/*
+ * stripe reqs a card to create customer record
+*/
+  //check if there's a stripe acct. If not, go make one real quick
+  let accountSubscription = data.accountSubscription
+console.log(accountSubscription);
+  if (!accountSubscription) {
+    //don't want this in afterCreate cb, since that would either delay the ttfb, or if stripe api is bugging, make things even worse, etc. So just do it here
+    store.dispatch({type: INITIALIZE_USER_ACCOUNT_SUBSCRIPTION_REQUEST})
   }
 }
 

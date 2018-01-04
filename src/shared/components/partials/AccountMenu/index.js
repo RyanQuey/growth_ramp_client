@@ -49,7 +49,7 @@ class AccountMenu extends Component {
         {this.state.open ? (
           <Popup body="left">
             <ul className={`${classes.menuDropdown}`}>
-              {false && <MenuItem link="/settings" text="Settings" hoverType="textOnly" />}
+              <MenuItem link="/settings" text="Settings" hoverType="textOnly" />
               <MenuItem link="/" onClick={signOut} text="Sign Out" hoverType="textOnly"/>
             </ul>
           </Popup>

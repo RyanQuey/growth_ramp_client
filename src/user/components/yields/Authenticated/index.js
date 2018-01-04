@@ -17,6 +17,7 @@ import { withRouter } from 'react-router-dom'
 class Authenticated extends Component {
   render() {
     const settingCredentials = !this.props.user.password || !this.props.user.email
+
     return (
       <div>
         <Flexbox direction="column" >

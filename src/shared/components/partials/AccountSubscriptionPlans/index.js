@@ -4,11 +4,11 @@ import { connect } from 'react-redux'
 import { errorActions, alertActions } from 'shared/actions'
 import { Button, Flexbox, Input, Checkbox } from 'shared/components/elements'
 import { SIGN_IN_REQUEST, UPDATE_USER_REQUEST, RESET_PASSWORD_REQUEST } from 'constants/actionTypes'
-import {injectStripe, CardElement} from 'react-stripe-elements'
 
 import classes from './style.scss'
+import {ALLOWED_EMAILS} from 'constants/accountSubscriptions'
 
-class PricingPlans extends Component {
+class AccountSubscriptionPlans extends Component {
   constructor() {
     super()
     this.state = {
@@ -20,25 +20,25 @@ class PricingPlans extends Component {
   submit(e) {
     e.preventDefault()
 
-    formActions.setParams("PricingPlans", "plan", {pricingPlan: "monthly.basic"}) // $49/mo. won't use this if there was a button to actually pick plans, haha
+    formActions.setParams("AccountSubscriptionPlans", "plan", {pricingPlan: "basic-monthly"}) // $49/mo. won't use this if there was a button to actually pick plans, haha
     this.props.submitPricing()
   }
 
   handlePickPlan (value) {
-    formActions.setParams("PricingPlans", "plan", {pricingPlan: value})
+    formActions.setParams("AccountSubscriptionPlans", "plan", {pricingPlan: value})
   }
 
   render() {
     return (
       <form onSubmit={this.submit}>
         <div>
-          <a href="/files/growth-ramp-terms-of-service.pdf" target="_blank">Terms of Service</a>
+          Pricing: $49/month
         </div>
         <Button
           type="submit"
         >
           Continue
-        </Button>}
+        </Button>
       </form>
     )
   }
@@ -46,7 +46,6 @@ class PricingPlans extends Component {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    resetPasswordRequest: (email, cb) => store.dispatch({type: RESET_PASSWORD_REQUEST, payload: email, cb}),
   }
 }
 const mapStateToProps = (state) => {
@@ -57,4 +56,4 @@ const mapStateToProps = (state) => {
   }
 }
 
-export default injectStripe(connect(mapStateToProps, mapDispatchToProps)(PricingPlans))
+export default connect(mapStateToProps, mapDispatchToProps)(AccountSubscriptionPlans)

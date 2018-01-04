@@ -1,6 +1,7 @@
 import { all, call } from 'redux-saga/effects'
-import eventHooksSaga from './eventHooksSaga'
 import campaignSaga from './campaignSaga'
+import accountSubscriptionSaga from './accountSubscriptionSaga'
+import eventHooksSaga from './eventHooksSaga'
 //TODO not using this; remove
 import linkAccountSaga from './linkAccountSaga'
 import permissionSaga from './permissionSaga'
@@ -14,6 +15,7 @@ import workgroupSaga from './workgroupSaga'
 
 export default function* rootSaga() {
   yield all([
+    call(accountSubscriptionSaga),
     call(campaignSaga),
     call(eventHooksSaga),
     call(linkAccountSaga),
