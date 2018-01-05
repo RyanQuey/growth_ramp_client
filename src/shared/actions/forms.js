@@ -100,8 +100,8 @@ export const matchCampaignStateToRecord = () => {
     clearParams("EditCampaign", "posts")
   }
 
-  //clear current post template if it's just a draft too
-  if (Helpers.safeDataPath(store.getState(), "currentPost.id", "").includes("not-saved")) {
+  //clear current post template if it's just a draft too (real records are integers)
+  if (typeof Helpers.safeDataPath(store.getState(), "currentPost.id", "") === "string") {
     store.dispatch({type: SET_CURRENT_POST, payload: null})
   }
 
@@ -131,8 +131,8 @@ export const matchPlanStateToRecord = () => {
     clearParams("EditPlan", "postTemplates")
   }
 
-  //clear current post template if it's just a draft too
-  if (Helpers.safeDataPath(store.getState(), "currentPostTemplate.id", "").includes("not-saved")) {
+  //clear current post template if it's just a draft too  (real records are integers)
+  if (typeof Helpers.safeDataPath(store.getState(), "currentPostTemplate.id", "") === "string") {
     store.dispatch({type: SET_CURRENT_POST_TEMPLATE, payload: null})
   }
 

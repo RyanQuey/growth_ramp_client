@@ -6,6 +6,7 @@ import { Button, Flexbox, Input, Alert } from 'shared/components/elements'
 import { PaymentDetailsWrapper, AccountSubscriptionPlans } from 'shared/components/partials'
 import classes from './style.scss'
 import { withRouter } from 'react-router-dom'
+import {CHECK_STRIPE_STATUS_REQUEST} from 'constants/actionTypes'
 import {ALLOWED_EMAILS, PAYMENT_PLANS} from 'constants/accountSubscriptions'
 
 class AccountSubscription extends Component {
@@ -22,6 +23,10 @@ class AccountSubscription extends Component {
     this.updatePlan = this.updatePlan.bind(this)
     this.togglePlans = this.togglePlans.bind(this)
     this.toggleUpdatingCard = this.toggleUpdatingCard.bind(this)
+  }
+
+  componentWillMount() {
+    this.props.checkStripeStatus()
   }
 
   togglePending(value = !this.state.pending) {
@@ -42,6 +47,7 @@ class AccountSubscription extends Component {
   }
 
   render (){
+    //TODO does not show accurate info if stripe gets changed!!
     let currentPaymentPlan = ALLOWED_EMAILS.includes(this.props.user.email) ? "prepaid" : (this.props.accountSubscription && this.props.accountSubscription.paymentPlan || "basic-monthly")
 
     const planText = `${PAYMENT_PLANS[currentPaymentPlan].name} ($${PAYMENT_PLANS[currentPaymentPlan].price}/${PAYMENT_PLANS[currentPaymentPlan].frequency})`
@@ -95,6 +101,11 @@ const mapStateToProps = (state) => {
     accountSubscription: state.accountSubscription,
   }
 }
+const mapDispatchToProps = (dispatch) => {
+  return {
+    checkStripeStatus: (cb, onFailure) => store.dispatch({type: CHECK_STRIPE_STATUS_REQUEST, cb, onFailure}),
+  }
+}
 
-export default connect(mapStateToProps)(AccountSubscription)
+export default connect(mapStateToProps, mapDispatchToProps)(AccountSubscription)
 

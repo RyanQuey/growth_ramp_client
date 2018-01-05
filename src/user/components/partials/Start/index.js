@@ -61,9 +61,9 @@ class Start extends Component {
     formActions.setParams("EditCampaign", "other", {name: value})
   }
 
-  saveOrContinue(e) {
+  saveOrContinue(e, a) {
     e && e.preventDefault()
-
+console.log(e, a &&  a.preventDefault);
     let campaignParams = this.props.campaignParams
     if (!campaignParams.name) {
 

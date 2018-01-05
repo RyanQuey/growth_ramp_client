@@ -238,7 +238,7 @@ class PostEditor extends Component {
                     className={classes.dropImage}
                     href={upload.url}
                   />
-                  <Icon name="close" onClick={this.removeUpload.bind(this, upload.url)} />
+                  <Icon name="close" className={classes.removeImageBtn} onClick={this.removeUpload.bind(this, upload.url)} />
                 </Flexbox>
               })}
             </Flexbox>

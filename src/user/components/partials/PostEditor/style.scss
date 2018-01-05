@@ -60,7 +60,9 @@
   background-size: cover;
   background-position: center;
 }
-
+.removeImageBtn {
+  cursor: pointer;
+}
 .instructions {
   text-align: left;
   h5 {

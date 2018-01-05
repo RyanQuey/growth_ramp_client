@@ -1,5 +1,7 @@
 import { call, put, select, takeLatest, all, throttle } from 'redux-saga/effects'
 import {
+  CHECK_STRIPE_STATUS_REQUEST,
+  CHECK_STRIPE_STATUS_SUCCESS,
   CREATE_ACCOUNT_SUBSCRIPTION_SUCCESS,
   CREATE_ACCOUNT_SUBSCRIPTION_REQUEST,
   FETCH_ACCOUNT_SUBSCRIPTION_REQUEST,
@@ -14,23 +16,40 @@ import { errorActions, formActions, alertActions } from 'shared/actions'
 
 function* find(action) {
   try {
-    const accountsSubscriptionId = action.payload
+    const accountSubscriptionId = action.payload
 
-    let res = yield axios.get(`/api/accountsSubscriptions/${accountsSubscriptionId}/`)
+    let res = yield axios.get(`/api/accountSubscriptions/${accountSubscriptionId}/`)
 
     yield all([
       put({type: SET_CURRENT_ACCOUNT_SUBSCRIPTION, payload: res.data})
     ])
 
     action.cb && action.cb(res.data)
-    formActions.matchPlanStateToRecord()
 
   } catch (err) {
-    console.log('current campaign fetch failed', err.response || err)
+    console.log('current account subscription fetch failed', err.response || err)
     // yield put(userFetchFailed(err.message))
   }
 }
 
+//refresh current plan, payment method data, etc
+function* checkStripeStatus(action) {
+  try {
+    const user = store.getState().user
+
+    let res = yield axios.get(`/api/accountSubscriptions/checkStripeStatus/${user.id}`)
+
+    yield all([
+      put({type: CHECK_STRIPE_STATUS_SUCCESS, payload: res.data})
+    ])
+
+    action.cb && action.cb(res.data)
+
+  } catch (err) {
+    console.log('current account subscription refresh failed', err.response || err)
+    // yield put(userFetchFailed(err.message))
+  }
+}
 //call this for every user if they don't have one already
 function* initializeUserSubscription(action) {
   try {
@@ -47,7 +66,7 @@ function* initializeUserSubscription(action) {
 
   } catch (err) {
     action.onFailure && action.onFailure(err)
-    console.log(`Error in Create accountsSubscription Saga:`)
+    console.log(`Error in Create accountSubscription Saga:`)
     console.error(err.response || err)
   }
 }
@@ -81,7 +100,7 @@ function* update(action) {
 
     let updatedRecord, res
 
-      res = yield axios.put(`/api/accountsSubscriptions/${accountsSubscriptionData.id}`, accountsSubscriptionData)
+      res = yield axios.put(`/api/accountSubscriptions/${accountsSubscriptionData.id}`, accountsSubscriptionData)
       updatedRecord = res.data
 
     yield all([
@@ -89,19 +108,20 @@ function* update(action) {
     ])
     alertActions.newAlert({
       title: "Success!",
-      message: "Successfully updated accountsSubscription",
+      message: "Successfully updated accountSubscription",
       level: "SUCCESS",
     })
 
     action.cb && action.cb(res.data)
   } catch (err) {
-    console.log(`Error in update accountsSubscription Saga`)
+    console.log(`Error in update accountSubscription Saga`)
     console.log(err.response || err)
   }
 }
 
 export default function* accountSubscriptionsSaga() {
   yield takeLatest(FETCH_ACCOUNT_SUBSCRIPTION_REQUEST, find)
+  yield takeLatest(CHECK_STRIPE_STATUS_REQUEST, checkStripeStatus)
   //will use for workgroups maybe
   //yield takeLatest(CREATE_ACCOUNT_SUBSCRIPTION_REQUEST, create)
   yield takeLatest(INITIALIZE_USER_ACCOUNT_SUBSCRIPTION_REQUEST, initializeUserSubscription)

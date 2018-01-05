@@ -310,7 +310,7 @@ class Compose extends Component {
             <hr/>
             <PostEditorWrapper
               toggleHidePosts={this.toggleHidePosts}
-              togglePending={this.props.togglePending}
+              togglePending={this.togglePending}
               saveAllPosts={this.saveCampaignPosts}
               dirty={dirty}
               pending={this.state.pending}
