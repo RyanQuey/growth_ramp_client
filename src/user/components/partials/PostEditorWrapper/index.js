@@ -69,7 +69,6 @@ class CampaignPostWrapper extends Component {
 
   undoChanges() {
     formActions.matchCampaignStateToRecord()
-console.log(this.props.currentPost);
     //if an unsaved post draft was just removed from undoing changes, go back to post picker
     if (!this.props.currentPost || Helpers.safeDataPath(this.props, "currentPost.id", "").includes("not-saved")) {
       this.props.toggleHidePosts(false)

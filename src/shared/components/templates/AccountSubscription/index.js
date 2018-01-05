@@ -37,18 +37,13 @@ class AccountSubscription extends Component {
   }
 
   toggleUpdatingCard (value, e) {
-    if (value === undefined) {
-      e = value
-      value = !this.state.updatingCard
-    }
-
     e && e.preventDefault()
     this.setState({updatingCard: value})
   }
 
   render (){
+    let currentPaymentPlan = ALLOWED_EMAILS.includes(this.props.user.email) ? "prepaid" : (this.props.accountSubscription && this.props.accountSubscription.paymentPlan || "basic-monthly")
 
-    const currentPaymentPlan = ALLOWED_EMAILS.includes(this.props.user.email) ? "prepaid" : (this.props.accountSubscription && this.props.accountSubscription.paymentPlan || "basic-monthly")
     const planText = `${PAYMENT_PLANS[currentPaymentPlan].name} ($${PAYMENT_PLANS[currentPaymentPlan].price}/${PAYMENT_PLANS[currentPaymentPlan].frequency})`
     const currentPaymentMethod = this.props.accountSubscription && this.props.accountSubscription.defaultSourceId ? `Credit card ending in ${this.props.accountSubscription.defaultSourceLastFour}` : "Payment method is not configured"
 
@@ -77,7 +72,7 @@ class AccountSubscription extends Component {
               <div className={classes.settingLabel}>Payment Method:&nbsp;</div>
               <div className={classes.settingValue}>
                 <div>{currentPaymentMethod}</div>
-                <a href="#" className={classes.toggleButton} onClick={this.toggleUpdatingCard}>{!this.state.updatingCard ? "Update payment method" : "Cancel"}</a>
+                <a href="#" className={classes.toggleButton} onClick={this.toggleUpdatingCard.bind(this, !this.state.updatingCard)}>{!this.state.updatingCard ? "Update payment method" : "Cancel"}</a>
               </div>
             </Flexbox>
           </div>

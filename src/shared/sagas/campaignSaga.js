@@ -202,15 +202,28 @@ console.log("now parsing results");
     }
 
   } catch (err) {
-    console.error(`Error publishing campaign: ${err}`)
-    errorActions.handleErrors({
-      templateName: "Campaign",
-      templatePart: "published",
-      title: "Error publishing campaign",
-      level: "DANGER",
-      errorObject: err,
-      alert: true,
-    })
+    console.error(`Error publishing campaign: `, err)
+    if (Helpers.safeDataPath(err, "response.data.code") === "delinquent-payment") {
+      alertActions.newAlert({
+        title: "Payment due before publishing is allowed: ",
+        message: "Please change your payment method in the settings before continuing",
+        level: "DANGER",
+        options: {
+          timer: false,
+        }
+      })
+
+    } else {
+      errorActions.handleErrors({
+        templateName: "Campaign",
+        templatePart: "published",
+        title: "Error publishing campaign",
+        level: "DANGER",
+        errorObject: err,
+        alert: true,
+      })
+
+    }
 
     action.onFailure && action.onFailure(err)
   }

@@ -26,9 +26,8 @@ class PaymentDetails extends Component {
 
   componentDidMount() {
     setTimeout(() => {
-console.log("this runs");
       this.cardElement && this.cardElement.focus()
-    }, 1500)
+    }, 1000)
   }
   onChange({error, brand, empty, complete, value}) {
 console.log(value);
