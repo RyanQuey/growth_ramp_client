@@ -47,8 +47,8 @@ class AccountSubscription extends Component {
   }
 
   render (){
-    //TODO does not show accurate info if stripe gets changed!!
-    let currentPaymentPlan = ALLOWED_EMAILS.includes(this.props.user.email) ? "prepaid" : (this.props.accountSubscription && this.props.accountSubscription.paymentPlan || "basic-monthly")
+    // if it's set, use that, if it's not, show default
+    let currentPaymentPlan = this.props.accountSubscription && this.props.accountSubscription.paymentPlan || (ALLOWED_EMAILS.includes(this.props.user.email) ? "prepaid" : "basic-monthly")
 
     const planText = `${PAYMENT_PLANS[currentPaymentPlan].name} ($${PAYMENT_PLANS[currentPaymentPlan].price}/${PAYMENT_PLANS[currentPaymentPlan].frequency})`
     const currentPaymentMethod = this.props.accountSubscription && this.props.accountSubscription.defaultSourceId ? `Credit card ending in ${this.props.accountSubscription.defaultSourceLastFour}` : "Payment method is not configured"
