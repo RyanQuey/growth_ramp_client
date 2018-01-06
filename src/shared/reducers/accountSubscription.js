@@ -28,11 +28,7 @@ const accountSubscriptionReducer = (state = null, action) => {
 
     case UPDATE_ACCOUNT_SUBSCRIPTION_SUCCESS:
       //payload should be the updated accountsSubscription
-      if (state && state.id === action.payload.id) {
-        return Object.assign({}, pld)
-      } else {
-        return state
-      }
+      return Object.assign({}, pld)
 
     case SIGN_OUT:
       return false
