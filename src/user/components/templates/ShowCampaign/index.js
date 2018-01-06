@@ -129,6 +129,7 @@ class ShowCampaign extends Component {
                 {currentCampaign.posts.map((post) =>
                   <PostCard
                     key={post.id}
+                    subtitle={post.publishedAt ? "" : "Unpublished"}
                     post={post}
                     className={classes.postCard}
                     height="260px"
@@ -146,8 +147,8 @@ class ShowCampaign extends Component {
             </div>
           )}
 
-          {currentCampaign.status === "PUBLISHED" ? (
-            this.state.savingPlanFromCampaign ? (
+            <Button style="inverted" onClick={this.editCampaign}>Continue working on campaign</Button>
+            {this.state.savingPlanFromCampaign ? (
               <div>
                 <SavePlanFromCampaign
                   finished={this.finishedSavingAsPlan}
@@ -158,10 +159,7 @@ class ShowCampaign extends Component {
               <div>
                 <Button onClick={this.toggleSavingPlan}>Save plan from campaign</Button>
               </div>
-            )
-          ) : (
-            <Button onClick={this.editCampaign}>Continue working on campaign</Button>
-          )}
+            )}
         </div>
       </div>
     )

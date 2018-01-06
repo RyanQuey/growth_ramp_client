@@ -16,7 +16,7 @@ class PostCard extends Component {
   }
 
   render () {
-    const { post, selected, onClick, height, maxWidth, className, showUtms, showIcon, showLink, showImages, showText = true, subtitle, small, wrapperClass} = this.props
+    const { post, selected, onClick, height, maxWidth, className, showUtms, showIcon, showLink, showImages, showText = true, subtitle, small, wrapperClass, smallIcon} = this.props
     if (!post) {return null} //shouldn't happen, but whatever
 
     let status
@@ -53,7 +53,7 @@ class PostCard extends Component {
 
     return (
       <Card selected={selected} onClick={onClick} height={height} maxWidth={maxWidth} wrapperClass={wrapperClass} className={`${className} ${classes[status]} ${small ? classes.small : ""}`}>
-        <CardHeader className={small ? classes.smallHeader : ""} title={post.channelType.titleCase()} subtitle={subtitle || sub} icon={showIcon && post.provider.toLowerCase()} iconColor={post.provider.toLowerCase()} />
+        <CardHeader className={small ? classes.smallHeader : ""} title={post.channelType.titleCase()} subtitle={subtitle || sub} icon={showIcon && post.provider.toLowerCase()} iconColor={post.provider.toLowerCase()}/>
 
         <Flexbox direction="column" className={classes.content}>
           <div className={classes.contentSection}><span className={classes.cardLabel}>Account:</span>&nbsp;{userName ? userName : "Error: Could not be found"}</div>
@@ -88,6 +88,8 @@ class PostCard extends Component {
               </div>
             })}
           </Flexbox>}
+          {!small && <br/>}
+          {!small && post.delayedUntil && <div className={classes.contentSection}><span className={classes.cardLabel}>Delayed Publishing Until:</span>&nbsp;{moment(post.delayedUntil).format("MM-DD-YYYY h:mm a")}</div>}
         </Flexbox>
       </Card>
     )

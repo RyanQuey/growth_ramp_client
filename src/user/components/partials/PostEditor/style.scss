@@ -44,6 +44,11 @@
 .delayPostBtn {
   width: 85px;
 }
+.delayPostFields {
+  label {
+    margin-bottom: 1rem;
+  }
+}
 .linkPreview {
   margin-top: 1rem;
 
@@ -61,6 +66,7 @@
 
     i {
       width: 20px;
+      text-align: center;
     }
   }
   .utmField {

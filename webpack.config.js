@@ -76,7 +76,7 @@ const config = {
           },
         ],
       },*/
-      { test: /\.css$/, exclude: /node_modules\/normalize.css/, loader: 'style-loader!css-loader' },
+      { test: /\.css$/, exclude: /node_modules\/normalize.css/, loader: 'style-loader!css-loader' }, //still doesn't work
       {
         test: /\.json$/,
         loaders: 'json-loader',

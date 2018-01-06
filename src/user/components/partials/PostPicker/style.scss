@@ -65,6 +65,9 @@
       &.publishedPost {
         cursor: not-allowed !important;
         background-color: gray !important;
+        div {
+          border-bottom: gray !important;
+        }
       }
 
     }

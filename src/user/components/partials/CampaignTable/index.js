@@ -108,9 +108,9 @@ class CampaignPicker extends Component {
               </td>
               <td>
                 <div className={classes.buttonStack}>
-                  {campaign.status !== "PUBLISHED" && <Button onClick={this.editCampaign.bind(this, campaign)} small={true}>Edit</Button>}
+                  <Button onClick={this.editCampaign.bind(this, campaign)} small={true}>Edit</Button>
                   <Button onClick={this.showCampaign.bind(this, campaign)} small={true}>Details</Button>
-                  {campaign.status !== "PUBLISHED" && (
+                  {campaign.status === "DRAFT" && ( //make sure not to archive published or partially published campaigns
                     <div className={classes.popupWrapper}>
                       <Button style="danger" onClick={this.toggleDeleting.bind(this, campaign.id)} small={true}>Delete</Button>
                       {this.state.deleting === campaign.id &&

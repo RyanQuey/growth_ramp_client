@@ -70,11 +70,12 @@ class EditCampaign extends Component {
     this.resetComposeView()
 
     //is already published or is archived, don't let them try to edit from using browser link.
+    //UPDATE: just don't let them update link or name if pub'd or partially pub'd in Start component
     //will disable link to edit elsewhere if published too
-    if (currentCampaign.status === "PUBLISHED") {
+    /*if (currentCampaign.status === "PUBLISHED") {
       this.props.history.push("/campaigns")
 
-    } else {
+    } else {*/
       this.props.setCurrentCampaign(currentCampaign)
       //initializing to match persisted record
       formActions.matchCampaignStateToRecord()
@@ -83,7 +84,7 @@ class EditCampaign extends Component {
       if (currentCampaign.name) {
         this.switchTo("Compose")
       }
-    }
+    //}
   }
 
   setCampaign (campaignId) {

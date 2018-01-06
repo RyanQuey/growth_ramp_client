@@ -61,9 +61,8 @@ class Start extends Component {
     formActions.setParams("EditCampaign", "other", {name: value})
   }
 
-  saveOrContinue(e, a) {
+  saveOrContinue(e) {
     e && e.preventDefault()
-console.log(e, a &&  a.preventDefault);
     let campaignParams = this.props.campaignParams
     if (!campaignParams.name) {
 
@@ -131,14 +130,18 @@ console.log(e, a &&  a.preventDefault);
         />
         <br/>
         <h4>What would you like to promote?</h4>
-        <Input
-          value={campaignParams.contentUrl || ""}
-          placeholder="e.g., https://www.website.com/awesome-blog-post"
-          disabled={currentCampaign.status !== "DRAFT"}
-          validations={["url"]}
-          onChange={this.handleUrl}
-          handleErrors={this.handleErrors}
-        />
+        {currentCampaign.status === "DRAFT" ? (
+          <Input
+            value={campaignParams.contentUrl || ""}
+            placeholder="e.g., https://www.website.com/awesome-blog-post"
+            disabled={currentCampaign.status !== "DRAFT"}
+            validations={["url"]}
+            onChange={this.handleUrl}
+            handleErrors={this.handleErrors}
+          />
+        ) : (
+          <div title="Content url cannot be changed after publishing any of its posts">{campaignParams.contentUrl ? campaignParams.contentUrl : "No content promoted"}</div>
+        )}
 
         {!planIds || planIds.length === 0 ? (
           <div>

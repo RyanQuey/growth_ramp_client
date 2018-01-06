@@ -381,18 +381,19 @@ console.log(this.state.delayingPost);
             onChange={this.toggleDelayPost}
             label="Set custom publish time?"
           />&nbsp;
-          {params.delayedUntil && <div>Delay until: {moment(params.delayedUntil).format("MM-DD-YYYY h:mm a z")}</div>}
+          {false && params.delayedUntil && <div>Delay until: {moment(params.delayedUntil).format("MM-DD-YYYY h:mm a z")}</div>}
           {this.state.delayingPost && <div>
-            <div>(will publish whether or not rest of campaign is published)</div>
+            <div>Note: Will post within 10 minutes after the chosen delay time</div>
+            <div>(Will publish whether or not rest of campaign is published)</div>
             <DatePicker
-              selected={this.state.selectedDateTime}
+              selected={params.delayedUntil && moment(params.delayedUntil)}
               onChange={this.handlePostTime}
               isClearable={true}
               showTimeSelect
               todayButton="Today"
               dateFormatCalendar="LLL"
               dateFormat="LLL"
-              timeIntervals={15}
+              timeIntervals={10}
               timeFormat="h:mm a"
               calendarClassName={classes.reactDatepicker}
               className={classes.datePickerInput}
