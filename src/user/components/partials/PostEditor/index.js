@@ -374,7 +374,7 @@ console.log(this.state.delayingPost);
             <Button className={classes.delayPostBtn} onClick={this.toggleDelayCalendar}><Icon name="calendar-o" />Delay Post</Button>
           </div>}
 
-        <div>
+        <div className={classes.delayPostFields}>
           <h3>Post Publish Time</h3>
           <Checkbox
             value={!!params.delayedUntil || this.state.delayingPost}
