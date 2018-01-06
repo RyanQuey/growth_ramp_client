@@ -12,6 +12,7 @@ import {
   newAlert
 } from 'shared/actions/alerts'
 import { PROVIDERS } from 'constants/providers'
+import { UTM_TYPES, URL_LENGTH } from 'constants/posts'
 import campaignHelpers from './campaignHelpers'
 
 let Helpers = {
@@ -170,6 +171,33 @@ let Helpers = {
     return accounts
   },
 
+  //takes utm sset and converts to final string
+  //keep in sync with api helper
+  extractUtmString: (post, campaign) => {
+    //only get active with values
+    let utmList = ['campaignUtm', 'contentUtm', 'mediumUtm', 'sourceUtm', 'termUtm', 'customUtm'].filter((type) => (
+      post[type] && post[type].active && post[type].active !== "false" && post[type].value
+    ))
+
+    const campaignName = campaign && campaign.name.replace(/\s+/g, "-")
+
+    //turn into parameters
+    utmList = utmList.map((type) => {
+      let campaignNameRegex = /{{campaign.name}}/g
+      let campaignIdRegex = /{{campaign.id}}/g
+      let computedValue = campaign ? post[type].value.replace(campaignNameRegex, campaignName).replace(campaignIdRegex, campaign.id) : post[type].value
+
+      if (type === "customUtm") {
+        return `${post[type].key}=${computedValue}`
+      } else {
+        let root = type.split("Utm")[0]
+        return `utm_${root}=${computedValue}`
+      }
+    })
+
+    const utmString = utmList.join("&") //might use querystring to make sure there are no extra characters slipping in
+    return utmString
+  },
 }
 
 Helpers = Object.assign(Helpers, campaignHelpers)

@@ -181,9 +181,10 @@ class PostEditor extends Component {
   }
 
   render() {
-    const params = this.props.params
+    const {params, currentCampaign, type, formOptions} = this.props
+
     if (!params) {return null} //shouldn't happen, but whatever
-    let utmFields = Object.assign({}, Helpers.safeDataPath(this.props.formOptions, `${params.id}.utms`, {}))
+    let utmFields = Object.assign({}, Helpers.safeDataPath(formOptions, `${params.id}.utms`, {}))
 
     const maxImages = PROVIDERS[params.provider].channelTypes[params.channelType].maxImages
     const imageCount = params.uploadedContent ? params.uploadedContent.length : 0
@@ -192,11 +193,21 @@ class PostEditor extends Component {
     const characterCount = Helpers.safeDataPath(params, "text", "").length + (params.contentUrl ? URL_LENGTH : 0)
     const account = Helpers.accountFromPost(params)
     const channelTypeHasMultiple = Helpers.channelTypeHasMultiple(null, params.provider, params.channelType)
-    const type = this.props.type
 
     let warningMessage
     if (params.provider === "LINKEDIN" && !params.contentUrl && params.uploadedContent && params.uploadedContent.length) {
       warningMessage = "WARNING: Growth Ramp allows, but does not recommend, posting to LinkedIn with an image but without a link. Due to a flaw in LinkedIn's system, the post will be displayed in an irregular way. We are currently working with LinkedIn to find a solution. Thanks"
+    }
+
+    const hasUtms = UTM_TYPES.some((utm) => Helpers.safeDataPath(params, `${utm.type}.active`)) && (!this.props.hasContent || currentCampaign.contentUrl)
+
+    let fullLinkPreview = ""
+    if (hasUtms) {
+      if (this.props.hasContent && currentCampaign.contentUrl) {
+        fullLinkPreview += currentCampaign.contentUrl
+      }
+
+      fullLinkPreview += Helpers.extractUtmString(params, currentCampaign)
     }
 
     return (
@@ -244,7 +255,13 @@ class PostEditor extends Component {
             </Flexbox>
           </Flexbox>}
           <Flexbox className={classes.utms} justify="flex-start" align="flex-start" direction="column">
-            {this.props.hasContent && (!this.props.currentCampaign.contentUrl) ? ( //if you just changed campaign contentUrl, and it wasn't there before, post won't have contentUrl yet in store (though it is in db). So...just use campaign for now...TODO fix that, update teh store
+            {hasUtms && <div className={classes.linkPreview}>
+              <div><strong>Full link Preview:&nbsp;</strong>{fullLinkPreview}</div>
+              <br/>
+              <div>(link will be made into Google short link before posting)</div>
+            </div>}
+
+            {this.props.hasContent && (!currentCampaign.contentUrl) ? ( //if you just changed campaign contentUrl, and it wasn't there before, post won't have contentUrl yet in store (though it is in db). So...just use campaign for now...TODO fix that, update teh store
               <div>{false  && "(Utms cannot be set when there is no content URL)"}</div>
             ) : (
               UTM_TYPES.map((utmType) => {
