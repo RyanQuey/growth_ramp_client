@@ -276,7 +276,7 @@ class Compose extends Component {
               {dirty ? (
                 <Button onClick={this.saveCampaignPosts}>Save Changes</Button>
               ) : (
-                campaignPosts.length > 0 && (
+                campaignPosts.filter((p) => !p.publishedAt).length > 0 && (
                   <div className={classes.publishButtonWrapper}>
                     <Button disabled={dirty} onClick={this.togglePublishing.bind(this, true)}>Publish All Posts</Button>
 
