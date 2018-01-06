@@ -58,6 +58,11 @@ console.log(value);
 
     let onFailure = () => {
       this.togglePending(false)
+      alertActions.newAlert({
+        title: "Error updating credit card: ",
+        message: "Please contact support at hello@growthramp.io for help",
+        level: "DANGER",
+      })
     }
 
     //pulls some magic and grabs the data from the CardElement and sends to stripe api to create a source

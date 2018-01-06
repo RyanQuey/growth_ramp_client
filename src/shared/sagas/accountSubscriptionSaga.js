@@ -2,6 +2,10 @@ import { call, put, select, takeLatest, all, throttle } from 'redux-saga/effects
 import {
   CHECK_STRIPE_STATUS_REQUEST,
   CHECK_STRIPE_STATUS_SUCCESS,
+  REACTIVATE_ACCOUNT_SUBSCRIPTION_SUCCESS,
+  REACTIVATE_ACCOUNT_SUBSCRIPTION_REQUEST,
+  CANCEL_ACCOUNT_SUBSCRIPTION_SUCCESS,
+  CANCEL_ACCOUNT_SUBSCRIPTION_REQUEST,
   CREATE_ACCOUNT_SUBSCRIPTION_SUCCESS,
   CREATE_ACCOUNT_SUBSCRIPTION_REQUEST,
   FETCH_ACCOUNT_SUBSCRIPTION_REQUEST,
@@ -12,9 +16,10 @@ import {
   UPDATE_ACCOUNT_SUBSCRIPTION_SUCCESS,
 
 } from 'constants/actionTypes'
-import { errorActions, formActions, alertActions } from 'shared/actions'
+import { errorActions, formActions, alertActions } from 'shared/actions';
 
-function* find(action) {
+//not using yet
+/*function* find(action) {
   try {
     const accountSubscriptionId = action.payload
 
@@ -30,7 +35,7 @@ function* find(action) {
     console.log('current account subscription fetch failed', err.response || err)
     // yield put(userFetchFailed(err.message))
   }
-}
+}*/
 
 //refresh current plan, payment method data, etc
 function* checkStripeStatus(action) {
@@ -50,6 +55,7 @@ function* checkStripeStatus(action) {
     // yield put(userFetchFailed(err.message))
   }
 }
+
 //call this for every user if they don't have one already
 function* initializeUserSubscription(action) {
   try {
@@ -73,6 +79,7 @@ function* initializeUserSubscription(action) {
 
 //call this when they enter their credit card info
 function* handleCreditCardInfo(action) {
+console.log("starting request");
   try {
     const user = store.getState().user
 console.log(action.payload);
@@ -119,11 +126,50 @@ function* update(action) {
   }
 }
 
+function* cancel(action) {
+  try {
+    const user = store.getState().user
+    let res, updatedRecord
+
+    res = yield axios.post(`/api/accountSubscriptions/cancelStripeSubscription/${user.id}`) //eventually switch to socket
+    updatedRecord = res.data
+console.log("finished");
+    yield all([
+      put({ type: CANCEL_ACCOUNT_SUBSCRIPTION_SUCCESS, payload: updatedRecord}),
+    ])
+    action.cb && action.cb(updatedRecord)
+
+  } catch (err) {
+    action.onFailure && action.onFailure(err)
+    console.log(`Error in Cancel accountSubscription Saga:`)
+    console.error(err.response || err)
+  }
+}
+function* reactivateAccount(action) {
+  try {
+    const user = store.getState().user
+    let res, updatedRecord
+
+    res = yield axios.post(`/api/accountSubscriptions/reactivateStripeSubscription/${user.id}`) //eventually switch to socket
+    updatedRecord = res.data
+console.log("finished");
+    yield all([
+      put({ type: UPDATE_ACCOUNT_SUBSCRIPTION_SUCCESS, payload: updatedRecord}),
+    ])
+    action.cb && action.cb(updatedRecord)
+
+  } catch (err) {
+    action.onFailure && action.onFailure(err)
+    console.log(`Error in Cancel accountSubscription Saga:`)
+    console.error(err.response || err)
+  }
+}
+
 export default function* accountSubscriptionsSaga() {
-  yield takeLatest(FETCH_ACCOUNT_SUBSCRIPTION_REQUEST, find)
+  //yield takeLatest(FETCH_ACCOUNT_SUBSCRIPTION_REQUEST, find)
   yield takeLatest(CHECK_STRIPE_STATUS_REQUEST, checkStripeStatus)
-  //will use for workgroups maybe
-  //yield takeLatest(CREATE_ACCOUNT_SUBSCRIPTION_REQUEST, create)
+  yield takeLatest(CANCEL_ACCOUNT_SUBSCRIPTION_REQUEST, cancel)
+  yield takeLatest(REACTIVATE_ACCOUNT_SUBSCRIPTION_REQUEST, reactivateAccount)
   yield takeLatest(INITIALIZE_USER_ACCOUNT_SUBSCRIPTION_REQUEST, initializeUserSubscription)
   yield takeLatest(UPDATE_ACCOUNT_SUBSCRIPTION_REQUEST, update)
   yield takeLatest(HANDLE_CREDIT_CARD_INFO_REQUEST, handleCreditCardInfo)

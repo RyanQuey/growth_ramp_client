@@ -285,12 +285,9 @@ function _handleInitialUserData(data, options = {}) {
     })
   }
 
-/*
- * stripe reqs a card to create customer record
-*/
   //check if there's a stripe acct. If not, go make one real quick
   let accountSubscription = data.accountSubscription
-console.log(accountSubscription);
+  console.log(accountSubscription);
   if (!accountSubscription) {
     //don't want this in afterCreate cb, since that would either delay the ttfb, or if stripe api is bugging, make things even worse, etc. So just do it here
     store.dispatch({type: INITIALIZE_USER_ACCOUNT_SUBSCRIPTION_REQUEST})

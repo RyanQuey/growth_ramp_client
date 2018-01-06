@@ -13,6 +13,8 @@ import querySaga from './querySaga'
 import userSaga from './userSaga'
 import workgroupSaga from './workgroupSaga'
 
+console.log(accountSubscriptionSaga);
+
 export default function* rootSaga() {
   yield all([
     call(accountSubscriptionSaga),
