@@ -24,6 +24,8 @@ window._ = _
 window.moment = moment
 window.Helpers = Helpers
 
+//right now just doing cdn. .css files not working with webpack right now. BUt this would work too...but cdn works, so whatever
+//import 'react-datepicker/src/stylesheets/datepicker-cssmodules.scss'
 
 import initializers from './initializers'
 initializers()

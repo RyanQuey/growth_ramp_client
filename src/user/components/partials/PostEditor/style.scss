@@ -10,9 +10,14 @@
 }
 
 .paramsFields {
+  text-align: left;
   h2 {
     margin: 0;
   }
+  h3 {
+    margin: 1rem 0 .5rem 0;
+  }
+
   .accountInfo {
     margin: .5rem 0 15px;
   }
@@ -36,9 +41,14 @@
     }
   }
 }
+.delayPostBtn {
+  width: 85px;
+}
 .linkPreview {
+  margin-top: 1rem;
+
   div {
-    padding-bottom: 1rem;
+    margin-bottom: 1rem;
   }
 }
 .utms {
@@ -63,6 +73,7 @@
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
+  text-align: center;
 }
 .removeImageBtn {
   cursor: pointer;
@@ -92,4 +103,18 @@
 }
 .popupWrapper {
   position: relative;
+}
+
+.datePickerInput {
+  width: 220px !important;
+}
+//hacky fix for datepicker, since mine has scrollbar
+//this selects the time list
+.reactDatepicker > div > div > div > ul { //ul.react-datepicker__time-list , but without using classes since I'm hashing them
+
+    padding: 0 !important;
+    width: 85px !important; //hacky fix to hide most of scrollbar, but also show time on one line
+    li {
+      padding: 5px 0 5px 5px !important;
+    }
 }

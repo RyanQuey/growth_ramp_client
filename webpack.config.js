@@ -55,7 +55,7 @@ const config = {
           },
         ],
       },
-      {
+      /*{
         //test: /^(?!style)+.*\.scss$/, //don't hash classes for everything else besides style.scss. doesn't seem to work though, potentially using getLocalIdent could work, but it seems like using multiple tests that use .scss just causes trouble
         test: /\.css$/,
         use: [
@@ -75,7 +75,8 @@ const config = {
             },
           },
         ],
-      },
+      },*/
+      { test: /\.css$/, exclude: /node_modules\/normalize.css/, loader: 'style-loader!css-loader' },
       {
         test: /\.json$/,
         loaders: 'json-loader',
