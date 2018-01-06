@@ -264,7 +264,7 @@ function _handleInitialUserData(data, options = {}) {
   //refresh all channel lists
   //doesn't need to succeed; so don't raise error if doesn't necesarily, and make sure everything just moves forward
   //Also don't want this to slow down getting initial user, or cause it to fail, so don't want to do this in api as part of initialUserData call
-  const providers = Object.keys(data.providerAccounts)
+  const providers = data.providerAccounts && Object.keys(data.providerAccounts) || {}
   const allAccounts = Helpers.flattenProviderAccounts()
 
   for (let account of allAccounts) {
