@@ -293,7 +293,7 @@ console.log(this.state.delayingPost);
           </Flexbox>
         </Flexbox>}
         <Flexbox className={classes.utms} justify="flex-start" align="flex-start" direction="column">
-          <h3>UTMs</h3>
+          {(!this.props.hasContent || params.contentUrl) && <h3>UTMs</h3>}
           {(!this.props.hasContent || params.contentUrl) && (
             <div className={classes.instructions}>
               <div><strong>Instructions:&nbsp;</strong>"{"{{campaign.name}}"}" will use the campaign name in the utm once the campaign gets published.</div>
@@ -383,8 +383,6 @@ console.log(this.state.delayingPost);
           />&nbsp;
           {false && params.delayedUntil && <div>Delay until: {moment(params.delayedUntil).format("MM-DD-YYYY h:mm a z")}</div>}
           {this.state.delayingPost && <div>
-            <div>Note: Will post within 10 minutes after the chosen delay time</div>
-            <div>(Will publish whether or not rest of campaign is published)</div>
             <DatePicker
               selected={params.delayedUntil && moment(params.delayedUntil)}
               onChange={this.handlePostTime}

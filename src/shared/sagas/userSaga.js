@@ -250,7 +250,7 @@ function _handleInitialUserData(data, options = {}) {
   } else {
     setupSession(data.user)
   }
-
+console.log(data);
   store.dispatch({type: FETCH_CURRENT_USER_SUCCESS, payload: data.user})
   store.dispatch({type: FETCH_ACCOUNT_SUBSCRIPTION_SUCCESS, payload: data.accountSubscription})
   store.dispatch({type: FETCH_PROVIDER_SUCCESS, payload: data.providerAccounts})
