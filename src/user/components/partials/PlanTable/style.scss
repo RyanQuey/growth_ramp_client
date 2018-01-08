@@ -26,11 +26,10 @@
   position: relative;
 }
 .buttonStack {
-  padding: 5px;
-  width: 100%;
-  button {
+  margin: 15px 0;
+  width: 130px;
+  & > button, & > div > button {
     display: block;
-    margin: 4px !important; //margins are collapsing, and thsoe in campaign are not for some reason, so making consistenT
     width: 120px;
   }
 }
