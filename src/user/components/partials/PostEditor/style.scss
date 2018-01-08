@@ -49,32 +49,16 @@
     margin-bottom: 1rem;
   }
 }
-.linkPreview {
-  margin-top: 1rem;
-
-  div {
-    margin-bottom: 1rem;
-  }
+.popupWrapper {
+  position: relative;
+  width: 150px;
+  margin: auto;
 }
-.utms {
-  div {
-    display: inline-block;
-  }
-  .utmCheckbox {
-    width: 200px;
-    text-align: left;
-
-    i {
-      width: 20px;
-      text-align: center;
-    }
-  }
-  .utmField {
-    line-height: 1.7rem;
-    text-align: left;
-  }
-
+.helpBtn {
+  cursor: pointer;
 }
+
+
 .dropImage {
   background-repeat: no-repeat;
   background-size: cover;
@@ -84,13 +68,8 @@
 .removeImageBtn {
   cursor: pointer;
 }
-.instructions {
-  text-align: left;
-  h5 {
-    font-size: 1rem;
-  }
-
-}
+//if we want to add columns back in
+/*
 .leftColumn {
   margin-right: 30px;
   font-weight: bold;
@@ -104,11 +83,9 @@
     margin-bottom: 5px;
   }
 }
+*/
 .warningMessage {
   color: $danger;
-}
-.popupWrapper {
-  position: relative;
 }
 
 .datePickerInput {

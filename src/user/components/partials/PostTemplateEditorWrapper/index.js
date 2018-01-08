@@ -129,15 +129,15 @@ class PostTemplateWrapper extends Component {
           </Button>
           <div className={classes.popupWrapper}>
             <Button style="danger"  onClick={this.toggleDeleting.bind(this, true)} >Delete Post Template</Button>
-            {this.state.deleting &&
-              <ConfirmationPopup
-                onConfirm={this.removePostTemplate}
-                onCancel={this.toggleDeleting.bind(this, false)}
-                pending={this.state.deletePending}
-                dangerous={true}
-                side="top"
-              />
-            }
+            <ConfirmationPopup
+              show={this.state.deleting}
+              handleClickOutside={this.toggleDeleting.bind(this, false)}
+              onConfirm={this.removePostTemplate}
+              onCancel={this.toggleDeleting.bind(this, false)}
+              pending={this.state.deletePending}
+              dangerous={true}
+              side="top"
+            />
           </div>
         </div>
     )

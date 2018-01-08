@@ -1,3 +1,4 @@
+import { Component } from 'react';
 import PropTypes from 'prop-types'
 import classes from './style.scss'
 import { StyleSheet, css } from 'aphrodite'
@@ -38,29 +39,65 @@ const styles = (style, disabled, selected) => {
 
 
 //use containerClass to define padding etc on container
-const Popup = ({ style = 'primary', children, onClick, type, className, body = "left", float = "right", side = "bottom", containerClass }) => {
-  const scrim = (
-    <div className={`${classes.scrim}`}>
-      <span className={`${css(styles(style).popup)} ${classes.caret}`}/>
-    </div>
-  )
+class Popup extends Component {
+  constructor() {
+    super()
 
-  return (
-    <div
-      className={`${classes.popup} ${classes[`float-${body}`]} ${classes[`body-${body}`]} ${classes[`side-${side}`]} ${className}`}
-      onClick={onClick}
-    >
-      {side === "bottom" && scrim}
-      <div className={`${css(styles(style).popup)}  ${classes.container} ${containerClass}`}>
-        {children}
+    this.handleClickOutside = this.handleClickOutside.bind(this)
+  }
+
+  componentWillReceiveProps(props) {
+    if (props.show && !this.props.show) {
+      document.addEventListener('mousedown', this.handleClickOutside);
+    } else if (!props.show && this.props.show) {
+      document.removeEventListener('mousedown', this.handleClickOutside);
+    }
+  }
+
+  handleClickOutside(e) {
+    if (this.refs.wrapperRef && !this.refs.wrapperRef.contains(e.target)) {
+      this.props.handleClickOutside(e)
+    }
+  }
+
+  render () {
+    const { show, style, children, onClick, type, className, body, float, side, containerClass } = this.props
+
+    const scrim = (
+      <div className={`${classes.scrim}`}>
+        <span className={`${css(styles(style).popup)} ${classes.caret}`}/>
       </div>
-      {side === "top" && scrim}
-    </div>
-  )
+    )
+
+    if (!show) {
+      return null
+    }
+
+    return (
+      <div
+        className={`${classes.popup} ${classes[`float-${body}`]} ${classes[`body-${body}`]} ${classes[`side-${side}`]} ${className}`}
+        onClick={onClick}
+      >
+        {side === "bottom" && scrim}
+        <div className={`${css(styles(style).popup)}  ${classes.container} ${containerClass}`} ref="wrapperRef">
+          {children}
+        </div>
+        {side === "top" && scrim}
+      </div>
+    )
+  }
 }
 
 Popup.propTypes = {
   onClick: PropTypes.func,
+}
+
+Popup.defaultProps = {
+  show: false,
+  style: "primary",
+  body: "left",
+  float: "right",
+  side: "bottom",
 }
 
 export default Popup

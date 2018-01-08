@@ -5,7 +5,7 @@ import { Popup } from 'shared/components/groups'
 import theme from 'theme'
 
 //use containerClass to define padding etc on container
-const ConfirmationPopup = ({ onConfirm, onCancel, confirmationText, dangerous, pending, className, body = "left", float = "right", side}) => {
+const ConfirmationPopup = ({ onConfirm, onCancel, confirmationText, dangerous, pending, className, body = "left", float = "right", side, handleClickOutside, show}) => {
 
   return (
     <Popup
@@ -13,6 +13,8 @@ const ConfirmationPopup = ({ onConfirm, onCancel, confirmationText, dangerous, p
       float={float}
       body={body}
       side={side}
+      handleClickOutside={handleClickOutside}
+      show={show}
     >
       <div className={``}>
         {confirmationText || "Are you sure you want to do this?"}

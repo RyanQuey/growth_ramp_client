@@ -17,27 +17,15 @@ class AccountMenu extends Component {
     this.state = { open: false }
 
     this.toggleMenu = this.toggleMenu.bind(this)
-    this.handleClickOutside = this.handleClickOutside.bind(this)
   }
-  componentDidMount() {
-    document.addEventListener('mousedown', this.handleClickOutside);
-  }
-  componentWillUnmount() {
-    document.removeEventListener('mousedown', this.handleClickOutside);
-  }
-  handleClickOutside(e) {
-    if (this.refs.wrapperRef && !this.refs.wrapperRef.contains(e.target)) {
-      this.setState({ open: false })
-    }
-  }
-  toggleMenu(newState) {
-    this.setState({ open: !this.state.open })
+  toggleMenu(newState = !this.state.open) {
+    this.setState({ open: newState })
   }
   render() {
     const { user, signOut } = this.props
 
     return (
-      <div className={classes.menuCtn} ref="wrapperRef">
+      <div className={classes.menuCtn}>
         <Avatar
           onClick={this.toggleMenu}
           margin="0 20px"
@@ -46,16 +34,12 @@ class AccountMenu extends Component {
           src={user && user.photoURL || avatar}
         />
 
-        {this.state.open ? (
-          <Popup body="left">
-            <ul className={`${classes.menuDropdown}`}>
-              <MenuItem link="/settings" text="Settings" hoverType="textOnly" />
-              <MenuItem link="/" onClick={signOut} text="Sign Out" hoverType="textOnly"/>
-            </ul>
-          </Popup>
-        ) : (
-          null
-        )}
+        <Popup body="left" show={this.state.open} handleClickOutside={this.toggleMenu.bind(this, false)}>
+          <ul className={`${classes.menuDropdown}`}>
+            <MenuItem link="/settings" text="Settings" hoverType="textOnly" />
+            <MenuItem link="/" onClick={signOut} text="Sign Out" hoverType="textOnly"/>
+          </ul>
+        </Popup>
       </div>
     )
   }

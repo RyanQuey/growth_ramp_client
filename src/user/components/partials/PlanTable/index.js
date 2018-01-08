@@ -90,14 +90,14 @@ class PlanTable extends Component {
                   {false && <Button onClick={this.showPlan.bind(this, plan)} small={true}>Details</Button>}
                   <div className={classes.popupWrapper}>
                     <Button style="danger" onClick={this.toggleDeleting.bind(this, planId)} small={true}>Delete</Button>
-                    {this.state.deleting === planId &&
-                      <ConfirmationPopup
-                        onConfirm={this.removePlan.bind(this, plan)}
-                        onCancel={this.toggleDeleting.bind(this, false)}
-                        pending={this.state.deletePending}
-                        dangerous={true}
-                      />
-                    }
+                    <ConfirmationPopup
+                      show={this.state.deleting === planId }
+                      handleClickOutside={this.toggleDeleting.bind(this, false)}
+                      onConfirm={this.removePlan.bind(this, plan)}
+                      onCancel={this.toggleDeleting.bind(this, false)}
+                      pending={this.state.deletePending}
+                      dangerous={true}
+                    />
                   </div>
                 </div>
               </td>

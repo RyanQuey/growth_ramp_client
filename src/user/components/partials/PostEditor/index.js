@@ -2,6 +2,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux'
 import { Flexbox, Button, Input, Checkbox, Icon } from 'shared/components/elements'
 import { DropImage } from 'shared/components/groups'
+import { UtmForm } from 'user/components/partials'
 import {
   SET_CURRENT_POST,
   LIVE_UPDATE_POST_REQUEST,
@@ -25,7 +26,6 @@ class PostEditor extends Component {
       delayingPost: this.props.params.delayedUntil //will use as boolean though
     }
 
-    this.addVariable = this.addVariable.bind(this)
     this.handleContentText = this.handleContentText.bind(this)
     this.onDrop = this.onDrop.bind(this)
     //this.onOverrideDrop = this.onOverrideDrop.bind(this)
@@ -34,73 +34,6 @@ class PostEditor extends Component {
     //this.toggleDelayCalendar = this.toggleDelayCalendar.bind(this)
     this.toggleDelayPost = this.toggleDelayPost.bind(this)
     this.handlePostTime = this.handlePostTime.bind(this)
-  }
-
-  updateUtm(utmType, settingKey = false, value, e) {
-    //set the param
-    let params = Object.assign({}, this.props.params)
-
-    //if this type is required if any other exists, and some other exists
-    //TODO performance better if only check other values if this one is blank
-    const required = utmType.requiredIfUtmsEnabled && Object.keys(params).some((key) => {
-      const isActive = key !== utmType.type && key.includes("Utm") && params[key].active && params[key].active !== "false"
-      return isActive
-    })
-
-    if (required && !value) {
-      alertActions.newAlert({
-        title: `${utmType.label} is required:`,
-        message: "Please remove all other utms before removing this utm.",
-        level: "DANGER",
-      })
-
-      return
-
-    } else if (settingKey) {
-      params[utmType.type].key = value
-
-    } else {
-      params[utmType.type].value = value
-    }
-
-    params.dirty = true
-    //update the params form
-    formActions.setParams(this.props.form, this.props.items, {[params.id]: params})
-  }
-
-  toggleUtm(utmType, checked, e) {
-    //basically, source needs to exist if any other one exists
-    const params = this.props.params
-    const required = utmType.requiredIfUtmsEnabled && Object.keys(params).some((key) => {
-      const isActive = key !== utmType.type && key.includes("Utm") && params[key].active && params[key].active !== "false"
-      return isActive
-    })
-
-    if (required && !checked) {
-      alertActions.newAlert({
-        title: `${utmType.label} is required:`,
-        message: "Please remove all other utms before removing source.",
-        level: "DANGER",
-      })
-
-
-    } else {
-      //update the params form
-      let params = Object.assign({}, this.props.params)
-      params[utmType.type].active = checked
-      params.dirty = true
-
-      formActions.setParams(this.props.form, this.props.items, {[params.id]: params})
-    }
-  }
-
-  //adds a variable to the UTM
-  addVariable(utmType) {
-    //currently only adding campaign name
-    const params = Object.assign({}, this.props.params)
-    let currentValue = params[utmType.type].value
-    let newValue = currentValue ? `${currentValue}-{{campaign.name}}` : "{{campaign.name}}"
-    this.updateUtm(utmType, false, newValue)
   }
 
   //TODO debounce
@@ -218,7 +151,6 @@ console.log(value, e);
 
   render() {
     const {params, currentCampaign, type, formOptions} = this.props
-console.log(this.state.delayingPost);
     if (!params) {return null} //shouldn't happen, but whatever
     let utmFields = Object.assign({}, Helpers.safeDataPath(formOptions, `${params.id}.utms`, {}))
 
@@ -236,18 +168,6 @@ console.log(this.state.delayingPost);
     }
 
     const hasUtms = UTM_TYPES.some((utm) => Helpers.safeDataPath(params, `${utm.type}.active`)) && (!this.props.hasContent || currentCampaign.contentUrl)
-
-    let fullLinkPreview = ""
-    if (hasUtms) {
-      if (this.props.hasContent && currentCampaign.contentUrl) {
-        fullLinkPreview += currentCampaign.contentUrl
-      } else if (!this.props.hasContent) {
-        fullLinkPreview += "https://www.your-link"
-      }
-
-      fullLinkPreview += "?"
-      fullLinkPreview += Helpers.extractUtmString(params, currentCampaign)
-    }
 
     return (
       <Flexbox direction="column" className={classes.paramsFields}>
@@ -292,87 +212,14 @@ console.log(this.state.delayingPost);
             })}
           </Flexbox>
         </Flexbox>}
-        <Flexbox className={classes.utms} justify="flex-start" align="flex-start" direction="column">
-          {(!this.props.hasContent || params.contentUrl) && <h3>UTMs</h3>}
-          {(!this.props.hasContent || params.contentUrl) && (
-            <div className={classes.instructions}>
-              <div><strong>Instructions:&nbsp;</strong>"{"{{campaign.name}}"}" will use the campaign name in the utm once the campaign gets published.</div>
-              {false && <p>
-                <h5>Available attributes:</h5>
-                <br/>
-                <Flexbox>
-                  <Flexbox className={classes.leftColumn} direction="column">
-                    <div>{"{{campaign.name}}"}</div>
-                    <div>{"{{campaign.id}}"}</div>
-                    {false && <div>{"{{platform.name}}"}</div>}
-                    {false && <div>{"{{channel.type}}"}</div>}
-                    {false && <div>{"{{channel.name}}"}</div>}
-                  </Flexbox>
-                  <Flexbox className={classes.rightColumn} direction="column">
-                    <div>The name of the campaign</div>
-                    <div>A unique id number Growth Ramp assigns to each of your campaigns</div>
-                    {false && <div>The name of the social media platform (e.g., "Facebook" or "Twitter")</div>}
-                    {false && <div>The type of channel the post is for (e.g., "Personal" or "Company-Page")</div>}
-                    {false && <div>The name of the channel if applicable (e.g., "My-Favorite-Group"). Will be blank if personal post</div>}
-                  </Flexbox>
-                </Flexbox>
-              </p>}
-            </div>
-          )}
 
-          {hasUtms && <div className={classes.linkPreview}>
-            <div><strong>Full link Preview:&nbsp;</strong>{fullLinkPreview}</div>
-            <br/>
-            <div>(link will be made into Google short link before posting)</div>
-          </div>}
-
-          {this.props.hasContent && (!currentCampaign.contentUrl) ? ( //if you just changed campaign contentUrl, and it wasn't there before, post won't have contentUrl yet in store (though it is in db). So...just use campaign for now...TODO fix that, update teh store
-            <div>{false  && "(Utms cannot be set when there is no content URL)"}</div>
-          ) : (
-            UTM_TYPES.map((utmType) => {
-              //TODO want to extract for use with plan editor...if we have a plan editor
-              const type = utmType.type
-              const label = utmType.label
-              const active = [true, "true"].includes(Helpers.safeDataPath(params, `${type}.active`, false))
-              const value = Helpers.safeDataPath(params, `${type}.value`, "")
-              const key = Helpers.safeDataPath(params, `${type}.key`, "")
-              return (
-                <div key={type} className={classes.utmField}>
-                  <div className={classes.utmCheckbox}>
-                    <Checkbox
-                      value={active}
-                      onChange={this.toggleUtm.bind(this, utmType)}
-                      label={`${label.titleCase()} UTM`}
-                    />&nbsp;
-                  </div>
-                  {active && <div>
-                    <Input
-                      placeholder={``}
-                      onChange={this.updateUtm.bind(this, utmType, false)}
-                      value={value}
-                    />
-                    {type === "customUtm" && <Input
-                      placeholder={``}
-                      onChange={this.updateUtm.bind(this, utmType, "settingKey")}
-                      value={key}
-                    />}
-                    <Button
-                      onClick={this.addVariable.bind(this, utmType)}
-                      style="inverted"
-                      small={true}
-                    >
-                      Add Campaign Name to UTM
-                    </Button>
-                  </div>}
-                </div>
-              )
-            })
-          )}
-
-        </Flexbox>
-          {false && <div>
-            <Button className={classes.delayPostBtn} onClick={this.toggleDelayCalendar}><Icon name="calendar-o" />Delay Post</Button>
-          </div>}
+        {(!this.props.hasContent || params.contentUrl) &&
+          <UtmForm
+            params={this.props.params}
+            form={this.props.form}
+            items={this.props.items}
+          />
+        }
 
         <div className={classes.delayPostFields}>
           <h3>Post Publish Time</h3>
@@ -386,7 +233,7 @@ console.log(this.state.delayingPost);
             <DatePicker
               selected={params.delayedUntil && moment(params.delayedUntil)}
               onChange={this.handlePostTime}
-              isClearable={true}
+              isClearable={false}
               showTimeSelect
               todayButton="Today"
               dateFormatCalendar="LLL"

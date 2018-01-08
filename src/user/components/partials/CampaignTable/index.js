@@ -113,14 +113,14 @@ class CampaignPicker extends Component {
                   {campaign.status === "DRAFT" && ( //make sure not to archive published or partially published campaigns
                     <div className={classes.popupWrapper}>
                       <Button style="danger" onClick={this.toggleDeleting.bind(this, campaign.id)} small={true}>Delete</Button>
-                      {this.state.deleting === campaign.id &&
-                        <ConfirmationPopup
-                          onConfirm={this.removeCampaign.bind(this, campaign)}
-                          onCancel={this.toggleDeleting.bind(this, false)}
-                          pending={this.state.deletePending}
-                          dangerous={true}
-                        />
-                      }
+                      <ConfirmationPopup
+                        show={this.state.deleting === campaign.id }
+                        handleClickOutside={this.toggleDeleting.bind(this, false)}
+                        onConfirm={this.removeCampaign.bind(this, campaign)}
+                        onCancel={this.toggleDeleting.bind(this, false)}
+                        pending={this.state.deletePending}
+                        dangerous={true}
+                      />
                     </div>
                   )}
                 </div>

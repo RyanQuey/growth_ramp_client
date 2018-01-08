@@ -1,0 +1,78 @@
+@import 'theme/_helpers';
+
+.linkPreview {
+  margin-top: 1rem;
+
+  div {
+    margin-bottom: 1rem;
+  }
+}
+
+.utms {
+  div {
+    display: inline-block;
+  }
+  .utmCheckbox {
+    width: 200px;
+    text-align: left;
+
+    i {
+      width: 20px;
+      text-align: center;
+    }
+  }
+  .utmField {
+    line-height: 1.7rem;
+    text-align: left;
+  }
+
+}
+.popupWrapper {
+  position: relative;
+}
+.helpBtn {
+  cursor: pointer;
+}
+
+.popupContainer {
+  //width: 250px;
+}
+.helpBox {
+  margin: 5px;
+  .instructions {
+    @include rems(14)
+    line-height: 1rem;
+    text-align: left;
+    padding: 10px 10px 0 10px;
+    h5 {
+      font-size: 1rem;
+    }
+    div {
+      padding-bottom: 1rem;
+    }
+  }
+  button {
+    @include rems(14)
+    line-height: 1rem;
+    white-space: nowrap;
+  }
+}
+
+/*
+.leftColumn {
+  margin-right: 30px;
+  font-weight: bold;
+  //TODO use a class
+  div {
+    margin-bottom: 5px;
+  }
+}
+.rightColumn {
+  div {
+    margin-bottom: 5px;
+  }
+}
+.warningMessage {
+  color: $danger;
+}
+*/

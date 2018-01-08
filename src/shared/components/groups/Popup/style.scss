@@ -11,6 +11,7 @@
   z-index: 100;
 
   .scrim {
+    display: block !important;
     background-color: transparent;
   }
   .caret {
@@ -52,6 +53,12 @@
     left: 0;
     .caret {
       left: calc(0px + 25px);
+    }
+
+  }
+  &.float-center {
+    .caret {
+      left: 7px; //makes up for the rotation
     }
 
   }

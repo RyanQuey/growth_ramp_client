@@ -133,15 +133,15 @@ console.log(channelPosts);*/
 
         <div className={classes.popupWrapper}>
           <Button style="danger" onClick={this.toggleDeleting.bind(this, true)}>Delete Post</Button>
-          {this.state.deleting &&
-            <ConfirmationPopup
-             onConfirm={this.removePost}
-             onCancel={this.toggleDeleting.bind(this, false)}
-             pending={this.state.deletePending}
-             dangerous={true}
-             side="top"
-           />
-          }
+          <ConfirmationPopup
+           show={this.state.deleting}
+           handleClickOutside={this.toggleDeleting.bind(this, false)}
+           onConfirm={this.removePost}
+           onCancel={this.toggleDeleting.bind(this, false)}
+           pending={this.state.deletePending}
+           dangerous={true}
+           side="top"
+         />
         </div>
       </div>
     )
