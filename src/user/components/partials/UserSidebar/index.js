@@ -50,6 +50,7 @@ class UserSidebar extends Component {
                 <MenuChild text="New Account" onClick={this.openNewProviderModal} link={false && `/providerAccounts`} icon="plus-circle"/>
               </ul>
             </MenuItem>
+            {false && <MenuItem link="/analytics" text="Analytics" nav={true} icon="bar-chart"/>}
             {false && <MenuItem link="/workgroups" text="Workgroups" nav={true} icon="users"/>}
 
           </ul>

@@ -9,7 +9,7 @@ import {
 import { Alert, Flexbox } from 'shared/components/elements'
 import { ContactUsButton } from 'shared/components/groups'
 import { UserSettings } from 'shared/components/templates'
-import { Home, ViewPlans, ShowPlan, ShowCampaign, EditCampaign, ViewCampaigns, Providers, ShowProvider, Workgroups } from 'user/components/templates'
+import { Home, ViewPlans, ShowPlan, ShowCampaign, EditCampaign, ViewAnalytics, ViewCampaigns, Providers, ShowProvider, Workgroups } from 'user/components/templates'
 import { Footer } from 'user/components/groups'
 import requireAuthenticated from 'lib/requireAuthenticated'
 import forbidAuthenticated from 'lib/forbidAuthenticated'
@@ -28,6 +28,7 @@ class UserContent extends Component {
             <Route path="/campaigns" component={ViewCampaigns} />
             <Route path="/plans/:planId/:editing?" component={ShowPlan} />
             <Route path="/plans" component={ViewPlans} />
+            {false && <Route path="/analytics" component={ViewAnalytics} />}
             <Route path="/providerAccounts/:provider" component={ShowProvider} />
             <Route path="/settings/:view?" component={UserSettings} />
             {false && <Route path="/providerAccounts/:provider?" component={Providers} />}

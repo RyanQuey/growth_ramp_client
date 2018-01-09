@@ -71,6 +71,8 @@ class ViewCampaigns extends Component {
         {(!this.props.campaigns || !Object.keys(this.props.campaigns).length || Object.keys(this.props.campaigns).length > 4) && (
           <Button onClick={this.createCampaign}>New campaign</Button>
         )}
+
+        {false && <div>Generate UTM for a different Platform for this campaign</div>}
       </div>
     )
   }
