@@ -17,6 +17,7 @@ import { PUBLISH_CAMPAIGN_REQUEST,
   USER_CAMPAIGNS_OUTDATED,
 } from 'constants/actionTypes'
 import { errorActions, formActions, alertActions } from 'shared/actions'
+import { Link } from 'react-router-dom'
 
 //so far, always creating blank; then goes to the edit view from there
 function* createCampaign(action) {
@@ -206,7 +207,7 @@ console.log("now parsing results");
     if (Helpers.safeDataPath(err, "response.data.code") === "delinquent-payment") {
       alertActions.newAlert({
         title: "Payment due before publishing is allowed: ",
-        message: "Please change your payment method in the settings before continuing",
+        message: (<div>Please change your payment method in the <Link to="/settings/paymentDetails">settings</Link> before continuing</div>),
         level: "DANGER",
         options: {
           timer: false,

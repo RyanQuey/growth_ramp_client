@@ -203,6 +203,7 @@ class Compose extends Component {
 
     } else {
 
+console.log("now publishing true", value);
       this.setState({publishing: value})
     }
   }
@@ -210,7 +211,7 @@ class Compose extends Component {
   publish() {
     this.setState({pending: true})
     alertActions.closeAlerts()
-
+console.log("now publishing");
     const cb = () => {
       this.setState({
         pending: false,
@@ -280,14 +281,14 @@ class Compose extends Component {
                   <div className={classes.publishButtonWrapper}>
                     <Button disabled={dirty} onClick={this.togglePublishing.bind(this, true)}>Publish All Posts</Button>
 
-                    {this.state.publishing &&
-                      <ConfirmationPopup
-                        onConfirm={this.publish}
-                        onCancel={this.togglePublishing.bind(this, false)}
-                        side="top"
-                        pending={this.state.pending}
-                      />
-                    }
+                    <ConfirmationPopup
+                      show={this.state.publishing}
+                      onConfirm={this.publish}
+                      onCancel={this.togglePublishing.bind(this, false)}
+                      handleClickOutside={this.togglePublishing.bind(this, false)}
+                      side="top"
+                      pending={this.state.pending}
+                    />
                     <div className={classes.saveStatus}>All drafts saved</div>
                   </div>
                 )
