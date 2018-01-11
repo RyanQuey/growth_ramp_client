@@ -10,7 +10,6 @@ import { SocialLogin, UserCredentials } from 'shared/components/partials'
 import { withRouter } from 'react-router-dom'
 
 import errorTypes from 'constants/errors'
-import {ALLOWED_EMAILS} from 'constants/accountSubscriptions'
 
 import classes from './style.scss'
 
@@ -92,9 +91,6 @@ class Login extends Component {
       this.togglePending(false)
     }
     const cb = (allData) => {
-      if (!ALLOWED_EMAILS.includes(allData.user.email) && !allData.accountSubscription) {
-        this.props.history.push("/settings/paymentDetails")
-      }
     }
 
     const credentials = {password: this.props.password, email: this.props.email}

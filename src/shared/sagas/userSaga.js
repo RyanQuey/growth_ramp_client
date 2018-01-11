@@ -24,6 +24,7 @@ import {
   UPDATE_USER_SUCCESS,
 }  from 'constants/actionTypes'
 import { USER_FIELDS_TO_PERSIST, PROVIDER_IDS_MAP } from 'constants'
+import {ALLOWED_EMAILS} from 'constants/accountSubscriptions'
 import { setupSession } from 'lib/socket'
 import { errorActions, alertActions } from 'shared/actions'
 
@@ -115,7 +116,6 @@ function* signIn(action) {
         level: "DANGER",
         options: {timer: false},
       })
-
 
     } else {
       console.log('Error signing in/signing up', err)
@@ -255,11 +255,6 @@ function _handleInitialUserData(data, options = {}) {
   store.dispatch({type: FETCH_PROVIDER_SUCCESS, payload: data.providerAccounts})
   store.dispatch({type: FETCH_PLAN_SUCCESS, payload: data.plans})
 
-  //if has no channels, prompt user to link a new account
-  if (!Helpers.allChannels().length) {
-    store.dispatch({type: SET_CURRENT_MODAL, payload: "LinkProviderAccountModal"})
-  }
-
   //refresh all channel lists
   //doesn't need to succeed; so don't raise error if doesn't necesarily, and make sure everything just moves forward
   //Also don't want this to slow down getting initial user, or cause it to fail, so don't want to do this in api as part of initialUserData call
@@ -291,6 +286,21 @@ function _handleInitialUserData(data, options = {}) {
     //don't want this in afterCreate cb, since that would either delay the ttfb, or if stripe api is bugging, make things even worse, etc. So just do it here
     store.dispatch({type: INITIALIZE_USER_ACCOUNT_SUBSCRIPTION_REQUEST})
   }
+
+  //set initial modal if necessary
+  if (!ALLOWED_EMAILS.includes(data.user.email) && (
+    !accountSubscription ||
+    (
+      accountSubscription.paymentPlan !== "free" && accountSubscription.subscriptionStatus !== "active"
+    )
+  )) {
+    store.dispatch({type: SET_CURRENT_MODAL, payload: "PaymentDetailsModal"})
+
+  } else if (!Helpers.allChannels().length) {
+    //if has no channels, prompt user to link a new account (assuming haven't prompted them to enter payment method already)
+    store.dispatch({type: SET_CURRENT_MODAL, payload: "LinkProviderAccountModal"})
+  }
+
 }
 
 export default function* userSaga() {
