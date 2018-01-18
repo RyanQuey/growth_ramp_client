@@ -341,6 +341,21 @@ const Helpers = {
     callbackURL: `${callbackUrl}/linkedin`,
     //gets read access for these two
     scope: ['r_emailaddress', 'r_basicprofile', 'w_share'],
+
+    //https://github.com/auth0/passport-linkedin-oauth2/issues/24
+    //ran into this, so specifying profileFields
+    profileFields: [
+      'email-address',
+      'id',
+      'first-name',
+      'last-name',
+      'public-profile-url',
+      'picture-url',
+      //'api-standard-profile-request:(headers,url)',
+      //'formatted-name',
+      //'permissions', //this app 's current permissions
+    ],
+
     passReqToCallback: true,//to extract the code from the query...for some reason, passport doesn't get it by default. also to get cookies
     state: true, //a security thing
   },
