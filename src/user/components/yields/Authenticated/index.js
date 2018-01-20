@@ -7,6 +7,7 @@ import {
   UserNavbar,
   UserSidebar,
   LinkProviderAccountModal,
+//  CreateLinkModal,
   PaymentDetailsModal,
   ShowAccountModal
 } from 'user/components/partials'

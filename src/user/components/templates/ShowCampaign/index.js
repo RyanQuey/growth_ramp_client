@@ -1,7 +1,7 @@
 import { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-import { FETCH_CURRENT_CAMPAIGN_REQUEST, SET_CURRENT_CAMPAIGN} from 'constants/actionTypes'
+import { FETCH_CURRENT_CAMPAIGN_REQUEST, SET_CURRENT_CAMPAIGN, SET_CURRENT_MODAL, } from 'constants/actionTypes'
 import { SavePlanFromCampaign, PostCard } from 'user/components/partials'
 import { Button, Form, Card, Flexbox, Icon } from 'shared/components/elements'
 import { ButtonGroup } from 'shared/components/groups'
@@ -24,6 +24,7 @@ class ShowCampaign extends Component {
     this.editCampaign = this.editCampaign.bind(this)
     this.toggleSavingPlan = this.toggleSavingPlan.bind(this)
     this.finishedSavingAsPlan = this.finishedSavingAsPlan.bind(this)
+    this.openCreateLinkModal = this.openCreateLinkModal.bind(this)
   }
 
  componentDidMount() {
@@ -70,6 +71,16 @@ class ShowCampaign extends Component {
     this.setState({savingPlanFromCampaign: newState})
   }
 
+  /*
+ * not doing this anymore; try to make more like a pseudo-post
+  openCreateLinkModal() {
+    this.props.setCurrentModal("CreateLinkModal", {
+      items: "utms",
+      form: "CampaignLink",
+    })
+  }
+  */
+
   extractCampaignLinks(posts) {
     let links = {}
 
@@ -105,6 +116,8 @@ class ShowCampaign extends Component {
         <h1>{currentCampaign.name}{currentCampaign.status === "DRAFT" && " (Draft)"}</h1>
         <div className={classes.content}>
           <h2>Content Url:</h2>&nbsp;{currentCampaign.contentUrl || "(none)"}
+          <Button onClick={this.openCreateLinkModal}>Create Link for Other Provider</Button>
+
           {links && links.length > 0 &&
             <Flexbox direction="column">
               <h2>Analytics</h2>
@@ -175,6 +188,7 @@ const mapDispatchToProps = (dispatch) => {
       cb,
     }),
     setCurrentCampaign: (data) => dispatch({type: SET_CURRENT_CAMPAIGN, payload: data}),
+    setCurrentModal: (payload, modalOptions) => dispatch({type: SET_CURRENT_MODAL, payload, options: modalOptions}),
   }
 }
 const mapStateToProps = (state) => {

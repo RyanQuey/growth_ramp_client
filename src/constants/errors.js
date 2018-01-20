@@ -1,3 +1,4 @@
+//not using
 export default {
   //error types
   //available levels: one of "ALERT", "WARNING", "DANGER", "BUG"
