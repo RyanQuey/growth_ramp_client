@@ -116,7 +116,7 @@ class ShowCampaign extends Component {
         <h1>{currentCampaign.name}{currentCampaign.status === "DRAFT" && " (Draft)"}</h1>
         <div className={classes.content}>
           <h2>Content Url:</h2>&nbsp;{currentCampaign.contentUrl || "(none)"}
-          <Button onClick={this.openCreateLinkModal}>Create Link for Other Provider</Button>
+          {false && <Button onClick={this.openCreateLinkModal}>Create Link for Other Provider</Button>}
 
           {links && links.length > 0 &&
             <Flexbox direction="column">
