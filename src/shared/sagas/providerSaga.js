@@ -20,7 +20,7 @@ const providerInfo = {}
 function* fetchAllAccounts(action) {
   try {
     const userId = store.getState().user.id
-    const res = yield axios.get(`/api/users/${userId}/providerAccounts?populate=channels`)
+    const res = yield axios.get(`/api/providerAccounts/getUserAccounts/${userId}`)
 
     //organize by provider
     const sortedAccounts = Helpers.sortAccounts(res.data)

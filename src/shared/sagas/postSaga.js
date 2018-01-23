@@ -22,7 +22,7 @@ function* publishPost(action) {
   try {
     const pld = action.payload
 
-    yield axios.post(`posts/${pld.campaign.id}/publish`, pld)
+    yield axios.post(`api/posts/${pld.campaign.id}/publish`, pld)
     yield put({type: PUBLISH_POST_SUCCESS, payload: {providers: pld.providers}})
 
   } catch (err) {
