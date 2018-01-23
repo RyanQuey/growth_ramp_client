@@ -24,7 +24,7 @@ class ShowCampaign extends Component {
     this.editCampaign = this.editCampaign.bind(this)
     this.toggleSavingPlan = this.toggleSavingPlan.bind(this)
     this.finishedSavingAsPlan = this.finishedSavingAsPlan.bind(this)
-    this.openCreateLinkModal = this.openCreateLinkModal.bind(this)
+    //this.openCreateLinkModal = this.openCreateLinkModal.bind(this)
   }
 
  componentDidMount() {
