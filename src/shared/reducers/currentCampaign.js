@@ -78,7 +78,7 @@ const currentCampaignReducer = (state = null, action) => {
       if (post.campaignId = state.id) {
 
         campaign = Object.assign({}, state)
-        campaignPosts = [...campaign.posts]
+        campaignPosts = [...(campaign.posts || [])]
         postIndex = _.findIndex(campaignPosts, (p) => p.id === post.id)
 console.log(postIndex, post);
 console.log(campaignPosts[postIndex]);
