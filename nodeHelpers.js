@@ -8,7 +8,8 @@ if (process.env.NODE_ENV !== 'production') {
     throw result.error
   }
 
-  console.log(result.parsed)
+  // logs all env vars
+  //console.log(result.parsed)
   env = result.parsed // this should === process.env
 } else {
   env = process.env
