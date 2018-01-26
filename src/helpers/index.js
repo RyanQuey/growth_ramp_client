@@ -115,6 +115,7 @@ let Helpers = {
   //either need channel or the other two
   //NOTE currently, ALL channel records have multiple, hence why they are channel records. Personal posts don't get a record.
   channelTypeHasMultiple: (channel, providerName, channelType) => PROVIDERS[providerName || channel.provider].channelTypes[channelType || channel.type].hasMultiple,
+  channelTypeHasForums: (channel, providerName, channelType) => PROVIDERS[providerName || channel.provider].channelTypes[channelType || channel.type].hasForums,
 
   //takes channel record and returns required scopes
   //either need channel or the other two

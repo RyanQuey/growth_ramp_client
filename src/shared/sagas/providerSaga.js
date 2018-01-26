@@ -137,7 +137,7 @@ function* createFakeChannel (action) {
       errorObject: err,
     })
     if (action.onFailure) {
-      action.onFailure(newRecord)
+      action.onFailure(err)
     }
   }
 }

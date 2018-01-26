@@ -88,7 +88,11 @@ class PostPicker extends Component {
 
   render() {
     const sortedPosts = this.sortPostsByProvider(this.props.postsParams || {})
-    const providers = Object.keys(PROVIDERS)
+    const providers = Object.keys(PROVIDERS).filter((provider) =>
+      !PROVIDERS[provider].unsupported ||
+      (this.props.providerAccounts[provider] && this.props.providerAccounts[provider].length)
+    )
+
     return (
       <div className={`${classes.container} ${this.props.hidden ? classes.hidden : ""}`}>
 

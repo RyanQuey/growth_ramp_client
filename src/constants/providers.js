@@ -138,6 +138,22 @@ module.exports = {
         },
       },
     },
+    SLACK: {
+      name: 'Slack',
+      unsupported: true,
+      providerId: 'SLACK',
+      channelTypes: {
+        CHAT_CHANNEL: { //TODO these are fake figures
+          name: "Slack Channel",
+          requiredScopes: [],
+          hasMultiple: true,
+          hasForums: true,
+        },
+      },
+      forums: { // for slack, these are workspaces. Other chatrooms have these as subdomains
+        name: "Workspace", //friendly name
+      },
+    },
   },
 }
       //keep this in sync with the frontend constants
