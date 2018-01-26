@@ -21,6 +21,7 @@ class PostPicker extends Component {
     //this.removePost = this.removePost.bind(this)
     this.sortPostsByProvider = this.sortPostsByProvider.bind(this)
     this.setCurrentPost = this.setCurrentPost.bind(this)
+    this.addFakeProvider = this.addFakeProvider.bind(this)
   }
 
   /*removePost(post, index) {
@@ -80,11 +81,23 @@ class PostPicker extends Component {
     formActions.setOptions(this.props.form, this.props.items, {[post.id]: {utms: utmFields}})
   }
 
+  addFakeProvider (e) {
+    e.preventDefault()
+    this.props.setCurrentModal("AddFakeProviderAccountModal")
+  }
+
   render() {
     const sortedPosts = this.sortPostsByProvider(this.props.postsParams || {})
     const providers = Object.keys(PROVIDERS)
     return (
       <div className={`${classes.container} ${this.props.hidden ? classes.hidden : ""}`}>
+
+        <Button
+          onClick={this.addFakeProvider}
+        >
+          Add Another Platform
+        </Button>
+
         <h2>Current Post{this.props.items === "postTemplates" ? " Template" : ""}s:</h2>
 
         <Flexbox className={classes.table} flexWrap="wrap">

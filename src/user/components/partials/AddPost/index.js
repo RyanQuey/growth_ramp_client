@@ -124,6 +124,7 @@ class AddPost extends Component {
       providerAccountId: this.state.currentAccount.id,
       provider: this.state.currentAccount.provider,
       postingAs: this.state.currentPostingAsType || "SELF",
+      pseudopost: this.state.currentAccount.unsupportedProvider,
     }
 
     //set fields to active and params to active for each type

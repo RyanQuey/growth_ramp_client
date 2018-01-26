@@ -162,7 +162,7 @@ class Compose extends Component {
     return (
       this.props.currentCampaign.contentUrl ||
       campaignPosts.every((post) =>
-        post.text
+        post.text || post.pseudopost // if for some reason want a pp even when there's no url...I guess it's fine :)
       )
     )
   }
@@ -173,7 +173,8 @@ class Compose extends Component {
     const campaignPosts = this.props.currentCampaign.posts || []
     const postProviderAccountIds = campaignPosts.map((post) => post.providerAccountId)
     const postProviderAccounts = Helpers.flattenProviderAccounts().filter((account) => postProviderAccountIds.includes(account.id))
-    const accountsMissingToken = postProviderAccounts.filter((account) => !account.accessToken)
+    //accounts that don't have accesstoken, and will actually publish the posts
+    const accountsMissingToken = postProviderAccounts.filter((account) => !account.accessToken && !account.unsupportedProvider)
 
     if (!hasContent) {
       alertActions.newAlert({

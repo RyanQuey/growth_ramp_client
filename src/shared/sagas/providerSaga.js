@@ -1,5 +1,9 @@
 import { call, put, takeLatest, takeEvery, all, fork, join } from 'redux-saga/effects'
 import {
+  CREATE_FAKE_CHANNEL_REQUEST,
+  CREATE_FAKE_CHANNEL_SUCCESS,
+  CREATE_FAKE_ACCOUNT_REQUEST,
+  CREATE_FAKE_ACCOUNT_SUCCESS,
   UPDATE_PROVIDER_REQUEST,
   UPDATE_PROVIDER_FAILURE,
   UPDATE_PROVIDER_SUCCESS,
@@ -11,6 +15,7 @@ import {
   FETCH_PROVIDER_SUCCESS,
 } from 'constants/actionTypes'
 import { USER_FIELDS_TO_PERSIST, PROVIDER_IDS_MAP  } from 'constants'
+import { errorActions, alertActions } from 'shared/actions'
 
 //disabling environment variables in the front-end; so remove this  ||  when this gets moved to the backend. I will want to throw an error at that point
 const providerInfo = {}
@@ -102,11 +107,76 @@ function* refreshChannelType(action) {
   }
 }
 
+function* createFakeChannel (action) {
+  try {
+    const params = action.payload
+
+    const res = yield axios.post("/api/channels", params)
+    const newRecord = res.data
+
+    yield all([
+      put({ type: CREATE_FAKE_CHANNEL_SUCCESS, payload: newRecord}),
+    ])
+
+    alertActions.newAlert({
+      title: "Account created!",
+      level: "SUCCESS",
+      options: {}
+    })
+
+    if (action.cb) {
+      action.cb(newRecord)
+    }
+
+  } catch (err) {
+    console.error(`Error in Create fake channel Saga ${err}`)
+    errorActions.handleErrors({
+      templateName: "Channels",
+      templatePart: "create",
+      title: "Error creating channel",
+      errorObject: err,
+    })
+    if (action.onFailure) {
+      action.onFailure(newRecord)
+    }
+  }
+}
+
+function* createFakeAccount (action) {
+  try {
+    const params = action.payload
+
+    const res = yield axios.post("/api/providerAccounts", params)
+    const newRecord = res.data
+
+    yield all([
+      put({ type: CREATE_FAKE_ACCOUNT_SUCCESS, payload: newRecord}),
+    ])
+    if (action.cb) {
+      action.cb(newRecord)
+    }
+
+  } catch (err) {
+    console.error(`Error in Create fake provider account Saga ${err}`)
+    errorActions.handleErrors({
+      templateName: "Channels",
+      templatePart: "create",
+      title: "Error creating account",
+      errorObject: err,
+    })
+    if (action.onFailure) {
+      action.onFailure(newRecord)
+    }
+  }
+}
+
 
 export default function* updateProviderSaga() {
   yield takeLatest(UPDATE_PROVIDER_REQUEST, updateData)
   yield takeEvery(REFRESH_CHANNEL_TYPE_REQUEST, refreshChannelType)
   yield takeLatest(FETCH_CURRENT_ACCOUNT_REQUEST, fetchCurrentAccount)
   yield takeLatest(FETCH_PROVIDER_REQUEST, fetchAllAccounts)
+  yield takeLatest(CREATE_FAKE_CHANNEL_REQUEST, createFakeChannel)
+  yield takeLatest(CREATE_FAKE_ACCOUNT_REQUEST, createFakeAccount)
 
 }

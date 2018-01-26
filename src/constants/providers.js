@@ -124,6 +124,20 @@ module.exports = {
         //  maxCharacters: 100*1000,
       },
     },
+    REDDIT: {
+      name: 'Reddit',
+      unsupported: true,
+      providerId: 'REDDIT',
+      channelTypes: {
+        PERSONAL_POST: { //TODO these are fake figures
+          name: "Personal",
+          requiredScopes: [],
+          hasMultiple: false,
+          maxImages: 4,
+          maxCharacters: 280,
+        },
+      },
+    },
   },
 }
       //keep this in sync with the frontend constants

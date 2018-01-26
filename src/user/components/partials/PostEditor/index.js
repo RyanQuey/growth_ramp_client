@@ -66,7 +66,6 @@ class PostEditor extends Component {
 
   toggleDelayPost(value, e) {
     this.setState({delayingPost: value})
-console.log(value, e);
     if (!value) {
       //set to not delay
       let params = this.props.params
@@ -86,7 +85,6 @@ console.log(value, e);
     this.setState({selectedDateTime: dateTime})
 
     formActions.setParams(this.props.form, this.props.items, {[params.id]: params})
-
   }
 
   //NOTE: cannot save a file object in redux, at least not in a easy way.
@@ -167,6 +165,7 @@ console.log(value, e);
       warningMessage = "WARNING: Growth Ramp allows, but does not recommend, posting to LinkedIn with an image but without a link. Due to a flaw in LinkedIn's system, the post will be displayed in an irregular way. We are currently working with LinkedIn to find a solution. Thanks"
     }
 
+    // check if either this is a post template (ie, !props.hasContent) or has a url, so should show the utm fields
     const hasUtms = UTM_TYPES.some((utm) => Helpers.safeDataPath(params, `${utm.type}.active`)) && (!this.props.hasContent || currentCampaign.contentUrl)
 
     return (
@@ -177,7 +176,7 @@ console.log(value, e);
           <div>{account.userName} ({account.email || "No email on file"})</div>
           {channelTypeHasMultiple && params.postingAs && <div>(Posting as {params.postingAs.toLowerCase()})</div>}
         </div>
-        {this.props.hasContent && <Flexbox direction="column" justify="center" className={classes.textEditor}>
+        {this.props.hasContent && !params.pseudopost && <Flexbox direction="column" justify="center" className={classes.textEditor}>
           <h3>Post Content</h3>
           <div>Maximum: {maxCharacters};&nbsp;Current Count: {characterCount} {params.contentUrl ? `(including ${URL_LENGTH} for the url length)` : ""}</div>
           <Input
@@ -221,7 +220,7 @@ console.log(value, e);
           />
         }
 
-        <div className={classes.delayPostFields}>
+        {this.props.hasContent && <div className={classes.delayPostFields}>
           <h3>Post Publish Time</h3>
           <Checkbox
             value={!!params.delayedUntil || this.state.delayingPost}
@@ -245,7 +244,7 @@ console.log(value, e);
               placeholderText="Click to select time"
             />
           </div>}
-        </div>
+        </div>}
       </Flexbox>
     )
   } //want to display times in their tz, but store in utc

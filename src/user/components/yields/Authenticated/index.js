@@ -7,6 +7,7 @@ import {
   UserNavbar,
   UserSidebar,
   LinkProviderAccountModal,
+  AddFakeProviderAccountModal,
 //  CreateLinkModal,
   PaymentDetailsModal,
   ShowAccountModal
@@ -35,6 +36,7 @@ class Authenticated extends Component {
         </Flexbox>
 
         <LinkProviderAccountModal />
+        <AddFakeProviderAccountModal />
         <PaymentDetailsModal />
         <ShowAccountModal />
       </div>

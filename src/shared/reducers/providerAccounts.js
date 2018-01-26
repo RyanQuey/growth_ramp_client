@@ -3,15 +3,41 @@ import {
   FETCH_PROVIDER_SUCCESS,
   SIGN_OUT_SUCCESS,
   REFRESH_CHANNEL_TYPE_SUCCESS,
+  CREATE_FAKE_ACCOUNT_SUCCESS,
+  CREATE_FAKE_CHANNEL_SUCCESS,
 } from 'constants/actionTypes'
 
 const providersReducer = (state = {}, action) => {
+  let newState, accounts
 
   const pld = action.payload
   switch (action.type) {
 
     case SIGN_OUT_SUCCESS:
       return {}
+
+    case CREATE_FAKE_ACCOUNT_SUCCESS:
+      newState = Object.assign({}, state)
+      // get accts for this provider
+      accounts = [...newState[pld.provider]]
+      //push the new acct
+      accounts.push(pld)
+      newState[pld.provider] = accounts
+
+      return Object.assign({}, newState)
+
+    case CREATE_FAKE_CHANNEL_SUCCESS:
+      newState = Object.assign({}, state)
+      // get accts for this provider
+      accounts = [...newState[pld.provider]]
+      //push the new acct
+      let channels = [...accounts.channels]
+      channels.push(pld)
+
+      accounts.channels = channels
+      newState[pld.provider] = accounts
+
+      return Object.assign({}, newState)
 
     case UPDATE_PROVIDER_SUCCESS:
       return Object.assign({}, state, action.payload)
