@@ -279,6 +279,7 @@ const Helpers = {
       //only persisting one email
       userData.email = Helpers.safeDataPath(passportProfile, "emails.0.value", "")
 
+   // TODO need to figure out what to extract
     } else if (userData.provider === "GOOGLE") {
       userData.userName = passportProfile.displayName
       //not sure why permissions are sent in this _json property only, but whatever
@@ -290,6 +291,7 @@ const Helpers = {
         userData.scopes[scope.permission] = {status: scope.status}
       }
       //only persisting one email
+      //TODO this might be for all providers, so don't need conditional
       userData.email = Helpers.safeDataPath(passportProfile, "emails.0.value", "")
 
     } else if (userData.provider === "LINKEDIN") {
