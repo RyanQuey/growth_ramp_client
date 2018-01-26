@@ -138,12 +138,16 @@ module.exports = {
         },
       },
     },
+    // for slack, there are USERS, (who can login to many workspaces) and WORKSPACES (with workspace tokens) https://api.slack.com/docs/token-types
+    // channel types listed here: https://api.slack.com/docs/conversations-api#conversations_api_is_for_anything_channel-like
+
     SLACK: {
       name: 'Slack',
       unsupported: true,
       providerId: 'SLACK',
       channelTypes: {
-        CHAT_CHANNEL: { //TODO these are fake figures
+        CHAT_CHANNEL: { //slack calls these "conversations" in their api, slamming together private, public, dm aand group dm. all have same scope https://api.slack.com/scopes
+
           name: "Slack Channel",
           requiredScopes: [],
           hasMultiple: true,
