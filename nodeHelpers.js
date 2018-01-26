@@ -266,9 +266,20 @@ const Helpers = {
       userData.profilePictureUrl = passportProfile.profile_image_url_https
 
     } else if (userData.provider === "FACEBOOK") {
-      if (!refreshToken) {
-        refreshToken = req.query.code//not sure if this is really the refreshtoken...might just be a temporary code that passport will use.
+      //fb not supporting refresh tokens, just long-lived access token (or they do support, but passport doesn't, or something)
+      userData.userName = passportProfile.displayName
+      //not sure why permissions are sent in this _json property only, but whatever
+      //mapping to an object, with keys being the scope
+      userData.scopes = {}
+      let scopes = passportProfile._json.permissions.data
+      for (let i = 0; i < scopes.length; i++) {
+        let scope = scopes[i]
+        userData.scopes[scope.permission] = {status: scope.status}
       }
+      //only persisting one email
+      userData.email = Helpers.safeDataPath(passportProfile, "emails.0.value", "")
+
+    } else if (userData.provider === "GOOGLE") {
       userData.userName = passportProfile.displayName
       //not sure why permissions are sent in this _json property only, but whatever
       //mapping to an object, with keys being the scope
@@ -334,6 +345,16 @@ const Helpers = {
     passReqToCallback: true,//to extract the code from the query...for some reason, passport doesn't get it by default. also to get cookies
     scope: ["publish_actions", "email"],
     enableProof: true,
+  },
+
+  googleOptions: { //TODO
+    clientID: env.CLIENT_GOOGLE_ID,
+    clientSecret: env.CLIENT_GOOGLE_SECRET,
+    callbackURL: `${callbackUrl}/google`,
+    profileFields: [
+    ],
+    passReqToCallback: true,//to extract the code from the query...for some reason, passport doesn't get it by default. also to get cookies
+    scope: [],
   },
 
   linkedinOptions: {
@@ -427,6 +448,10 @@ const Helpers = {
         return "unknown-error"
       }
 
+      return "success"
+    },
+    google: (req, err, raw) => {
+      // TODO need to add this error handling
       return "success"
     },
     twitter: (req, err, raw) => {

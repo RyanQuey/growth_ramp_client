@@ -28,6 +28,7 @@ const Transform = require('stream').Transform
 
 const passport = require('passport')
 const FacebookStrategy = require('passport-facebook').Strategy
+const GoogleStrategy = require('passport-google-oauth20').Strategy
 const TwitterStrategy = require('passport-twitter').Strategy
 const LinkedInStrategy = require('passport-linkedin-oauth2').Strategy;
 
@@ -50,6 +51,22 @@ console.log("**************");
 console.log(accessToken, refreshToken);
 console.log("**************");
 
+
+    return Helpers.tradeTokenForUser(providerData, cookie, done)
+  }
+))
+//appsecret is automatically set (?)
+
+passport.use(new GoogleStrategy(
+  Helpers.googleOptions,
+  function(req, accessToken, refreshToken, params, profile, done) {
+    console.log(accessToken, refreshToken);
+    console.log("***profile***");
+    console.log(profile);
+
+    const providerData = Helpers.extractPassportData(accessToken, refreshToken, profile, "", req, params)
+//console.log("providerData", providerData);
+    const cookie = Helpers.extractCookie(req.headers.cookie)
 
     return Helpers.tradeTokenForUser(providerData, cookie, done)
   }
