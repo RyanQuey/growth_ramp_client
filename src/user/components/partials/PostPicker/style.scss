@@ -89,10 +89,9 @@
 
     .postList {
       overflow-y: auto;
-      overflow-x: visible;
-      max-height: 300px;
       width: 100%;
       min-width: 100%;
+      padding: 15px 15px 0 15px;
     }
     .cardWrapper {
       max-width: 95%;

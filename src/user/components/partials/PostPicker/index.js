@@ -38,7 +38,6 @@ class PostPicker extends Component {
   }*/
 
   toggleOpen (provider, value, e) {
-console.log(provider, value);
     this.setState({[provider]: value})
   }
 
@@ -68,6 +67,11 @@ console.log(provider, value);
     }
 
     return sorted
+  }
+
+  toggleAdding (provider, e) {
+    e && e.stopPropagation && e.stopPropagation()
+    this.props.toggleAdding(provider)
   }
 
   setCurrentPost(post) {
@@ -133,22 +137,21 @@ console.log(provider, value);
                   className={`${classes.row} ${classes.topRow}`}
                   direction="row"
                   align="center"
+                  justify="space-between"
                   onClick={this.toggleOpen.bind(this, provider, this.state[provider] === "open" ? "closed" : "open")}
                 >
-                  <div className={`${classes.columnOne} ${classes.header}`}>
+                  <div className={` ${classes.header}`}>
                     <Icon name={this.state[provider] === "open" ? "angle-down" : "angle-right"} /> <Icon name={provider.toLowerCase()} /> {PROVIDERS[provider].name} ({providerPosts.length})
                   </div>
-                  <div className={classes.columnTwo}></div>
-                  <div className={classes.columnThree}></div>
                   <Button
-                    onClick={this.props.toggleAdding.bind(this, provider)}
+                    onClick={this.toggleAdding.bind(this, provider)}
                     className={classes.twoColumns}
                   >
                     <Icon name={provider.toLowerCase()} className={classes.icon}/>&nbsp;&nbsp;Add post
                   </Button>
                 </Flexbox>
 
-                {this.state[provider] === "open" && <Flexbox className={classes.postList} className={classes.row} direction="row" align="flex-start" flexWrap="wrap">
+                {this.state[provider] === "open" && providerPosts.length > 0 && <Flexbox className={`${classes.postList} ${classes.row}`} direction="row" align="flex-start" flexWrap="wrap">
                   {providerPosts.map((post) => (
                       <PostCard
                         key={post.id}
