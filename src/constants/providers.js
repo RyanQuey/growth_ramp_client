@@ -158,6 +158,44 @@ module.exports = {
         name: "Workspace", //friendly name
       },
     },
+
+    QUORA: {
+      name: 'Quora',
+      unsupported: true,
+      providerId: 'QUORA',
+      channelTypes: {
+      },
+    },
+
+    PINTEREST: {
+      name: 'Pinterest',
+      unsupported: true,
+      providerId: 'PINTEREST',
+      channelTypes: {
+      },
+    },
+
+    INBOUND: {
+      name: 'Inbound.org',
+      unsupported: true,
+      providerId: 'INBOUND',
+      channelTypes: {
+      },
+    },
+    GROWTHHACKERS: {
+      name: 'GrowthHackers.com',
+      unsupported: true,
+      providerId: 'GROWTHHACKERS',
+      channelTypes: {
+      },
+    },
+    GOOGLE: {
+      name: 'Google+',
+      unsupported: true,
+      providerId: 'GOOGLE',
+      channelTypes: {
+      },
+    },
   },
 }
       //keep this in sync with the frontend constants
