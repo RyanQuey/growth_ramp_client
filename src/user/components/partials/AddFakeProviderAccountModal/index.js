@@ -429,9 +429,10 @@ console.log("submitting");
                     <Flexbox justify="center" direction="row">
                       <Input
                         value={channelName}
-                        placeholder="Channel Name (optional)"
+                        placeholder="Channel Name"
                         className={classes.input}
                         onChange={this.handleParam.bind(this, `channelName`)}
+                        validations={["required"]}
                         type="text"
                         handleErrors={this.handleInputErrors.bind(this, `channelName`)}
                       />
@@ -456,16 +457,14 @@ console.log("submitting");
                 </div>
               }
 
-              <Button
-                type='submit'
-                pending={this.state.pending}
-                disabled={errorsPresent || !currentProvider || !currentAccount || !channelType}
-
-              >
-                Add {currentProviderName || ""} Account
+            <Button
+              type='submit'
+              pending={this.state.pending}
+              disabled={errorsPresent || !currentProvider || !currentAccount || !channelType || !channelName}
+            >
+              Add {currentProviderName || ""} Account
               </Button>
-            </Form>
-          }
+          </Form>
         </ModalBody>
       </ModalContainer>
     )
