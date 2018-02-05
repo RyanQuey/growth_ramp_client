@@ -18,8 +18,11 @@ const styles = StyleSheet.create({
 class MySelect extends Component {
 
   render() {
-    const { currentOption, onChange, handleSubmit, options, name, submitButton, label, labelAfter, asynchronous, loadOptions, className, clearable = false } = this.props
+    const { currentOption, onChange, handleSubmit, options, name, submitButton, label, labelAfter, asynchronous, loadOptions, className, clearable = false, creatable, openOnClick } = this.props
 
+    //might add Select.Async in here too to furtner DRY up? ? TODO
+    //haevn't added creatable to async yet TODO
+    const SelectTag = creatable ? Select.Creatable : Select
 
     return (
       <div className={`${classes.selectWrapper} ${className}`}>
@@ -31,16 +34,18 @@ class MySelect extends Component {
               name={name}
               id={name}
               onChange={onChange}
+              openOnClick={openOnClick}
               loadOptions={loadOptions}
               value={currentOption}
               clearable={clearable}
             />
           ) : (
-            <Select
+            <SelectTag
               className={`${css(styles.select)} ${classes.select}`}
               name={name}
               id={name}
               onChange={onChange}
+              openOnClick={openOnClick}
               options={options}
               value={currentOption}
               clearable={clearable}

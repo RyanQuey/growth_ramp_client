@@ -168,11 +168,11 @@ class Input extends Component {
 
     return (
       <div className={this.props.className}>
+        {/* TODO need to make div class this.props.containerClassName so not same as input el*/}
         {!this.props.labelAfter && label}
         <Tag
           className={
-            `input-${this.props.type}
-            ${this.props.className || ''}
+            `${this.props.className || ''}
             ${classes.input}
             ${(this.state.errors.length > 0) && classes.formError}`
           }

@@ -124,7 +124,31 @@ module.exports = {
         //  maxCharacters: 100*1000,
       },
     },
+    /*
+    GOOGLE: {
+      name: 'Google+',
+      unsupported: true,
+      providerId: 'GOOGLE',
+      channelTypes: {
+      },
+    },
+    */
   },
+  PROVIDER_SUGGESTION_LIST: [
+    "Reddit",
+    "Slack",
+    "Voat",
+    "Quora",
+    "Pinterest",
+    "GrowthHackers.com",
+    "Inbound.org",
+    "Instagram",
+    "Google Plus",
+    "Snapchat",
+    "Facebook",
+    "Twitter",
+    "LinkedIn",
+  ]
 }
       //keep this in sync with the frontend constants
 

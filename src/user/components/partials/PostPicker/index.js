@@ -21,6 +21,7 @@ class PostPicker extends Component {
     //this.removePost = this.removePost.bind(this)
     this.sortPostsByProvider = this.sortPostsByProvider.bind(this)
     this.setCurrentPost = this.setCurrentPost.bind(this)
+    this.toggleOpen = this.toggleOpen.bind(this)
   }
 
   /*removePost(post, index) {
@@ -34,6 +35,10 @@ class PostPicker extends Component {
     this.props.updatePostRequest(plan)
     this.props.setCurrentPost(null)
   }*/
+
+  toggleOpen (provider, value, e) {
+    this.setState({[provider]: value})
+  }
 
   //takes posts from all channels and accounts and organizes by provider
   sortPostsByProvider(posts) {
@@ -63,6 +68,11 @@ class PostPicker extends Component {
     return sorted
   }
 
+  toggleAdding (provider, e) {
+    e && e.stopPropagation && e.stopPropagation()
+    this.props.toggleAdding(provider)
+  }
+
   setCurrentPost(post) {
     //turn off adding a post when click on a card
     this.props.toggleAdding(false, false)
@@ -82,27 +92,57 @@ class PostPicker extends Component {
 
   render() {
     const sortedPosts = this.sortPostsByProvider(this.props.postsParams || {})
-    const providers = Object.keys(PROVIDERS)
+    const providers = Object.keys(this.props.providerAccounts)
+
     return (
       <div className={`${classes.container} ${this.props.hidden ? classes.hidden : ""}`}>
-        <h2>Current Post{this.props.items === "postTemplates" ? " Template" : ""}s:</h2>
 
-        <Flexbox className={classes.table} flexWrap="wrap">
-          {providers.map((provider) => {
+        {false && <h2>Current Post{this.props.items === "postTemplates" ? " Template" : ""}s:</h2>}
+
+        <Flexbox className={classes.table} direction="column" align="center">
+          {false && <Flexbox className={` ${classes.tableHeader}`} direction="row">
+            <div className={`${classes.columnOne}`}></div>
+            <div className={`${classes.columnTwo}`}></div>
+            <div className={`${classes.columnThree}`}></div>
+            <div className={`${classes.columnFour}`}></div>
+            <div className={`${classes.columnFive}`}></div>
+          </Flexbox>}
+
+          {providers.map((provider, index) => {
             let providerPosts = sortedPosts[provider] || []
+            let alternatingClass = (index % 2) == 1 ? "oddRow" : "evenRow"
+
             return (
-              <Flexbox key={provider} className={classes.providerColumn} direction="column" align="center">
-                <h2>{PROVIDERS[provider].name}</h2>
-
-                <Button
-                  onClick={this.props.toggleAdding.bind(this, provider)}
+              <Flexbox
+                key={provider}
+                className={`${classes.providerContainer} ${classes[alternatingClass]}`}
+                direction="column"
+              >
+                <Flexbox
+                  className={`${classes.row} ${classes.topRow}`}
+                  direction="row"
+                  align="center"
+                  justify="space-between"
+                  onClick={this.toggleOpen.bind(this, provider, this.state[provider] === "open" ? "closed" : "open")}
                 >
-                  {<Icon name={provider.toLowerCase()} className={classes.icon}/>}&nbsp;&nbsp;Add post
-                </Button>
+                  <div className={` ${classes.header}`}>
+                    <Icon name={this.state[provider] === "open" ? "angle-down" : "angle-right"} />&nbsp;
+                    <Icon name={provider.toLowerCase()} />&nbsp;
+                    {Helpers.providerFriendlyName(provider)}&nbsp;
+                    ({providerPosts.length})
+                  </div>
 
-                <div className={classes.postList}>
-                  {providerPosts.map((post) => {
-                    return (
+                  <Button
+                    onClick={this.toggleAdding.bind(this, provider)}
+                    className={classes.twoColumns}
+                  >
+                    <Icon name={provider.toLowerCase()} className={classes.icon}/>&nbsp;&nbsp;Add post
+                  </Button>
+                </Flexbox>
+
+                {this.state[provider] === "open" && providerPosts.length > 0 &&
+                  <Flexbox className={`${classes.postList} ${classes.row}`} direction="row" align="flex-start" flexWrap="wrap">
+                    {providerPosts.map((post) => (
                       <PostCard
                         key={post.id}
                         className={`${classes.postCard} ${post.publishedAt ? classes.publishedPost : ""}`}
@@ -115,12 +155,11 @@ class PostPicker extends Component {
                         small={true}
                         wrapperClass={classes.cardWrapper}
                       />
-                    )
-                  })}
-                </div>
+                    ))}
+                  </Flexbox>
+                }
               </Flexbox>
             )
-
           })}
         </Flexbox>
       </div>

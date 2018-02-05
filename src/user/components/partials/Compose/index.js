@@ -51,6 +51,7 @@ class Compose extends Component {
     this.togglePending = this.togglePending.bind(this)
     this.publish = this.publish.bind(this)
     this._hasContent = this._hasContent.bind(this)
+    this.addFakeProvider = this.addFakeProvider.bind(this)
   }
 
   componentWillReceiveProps(props) {
@@ -91,6 +92,11 @@ class Compose extends Component {
 
   togglePending(value = !this.state.pending) {
     this.setState({pending: value})
+  }
+
+  addFakeProvider (e) {
+    e.preventDefault()
+    this.props.setCurrentModal("AddFakeProviderAccountModal")
   }
 
   //persist images here
@@ -162,7 +168,7 @@ class Compose extends Component {
     return (
       this.props.currentCampaign.contentUrl ||
       campaignPosts.every((post) =>
-        post.text
+        post.text || post.pseudopost // if for some reason want a pp even when there's no url...I guess it's fine :)
       )
     )
   }
@@ -173,7 +179,8 @@ class Compose extends Component {
     const campaignPosts = this.props.currentCampaign.posts || []
     const postProviderAccountIds = campaignPosts.map((post) => post.providerAccountId)
     const postProviderAccounts = Helpers.flattenProviderAccounts().filter((account) => postProviderAccountIds.includes(account.id))
-    const accountsMissingToken = postProviderAccounts.filter((account) => !account.accessToken)
+    //accounts that don't have accesstoken, and will actually publish the posts
+    const accountsMissingToken = postProviderAccounts.filter((account) => !account.accessToken && !account.unsupportedProvider)
 
     if (!hasContent) {
       alertActions.newAlert({
@@ -256,10 +263,14 @@ console.log("now publishing");
 
     return (
       <div>
-        <h1 className="display-3">{this.props.currentCampaign.name}</h1>
+        <h1 className={classes.sectionHeader}>{this.props.currentCampaign.name}</h1>
         {this.state.status === "PENDING" && <Icon name="spinner" className="fa-spin" />}
 
+        <div className={classes.fakePlatformBox}>
+          <a onClick={this.addFakeProvider}>Promoting in a channel Growth Ramp doesn't post to? Click here to build a link for that channel too</a>
+        </div>
         <div>
+
           <PostPicker
             channel={this.state.currentChannel}
             toggleAdding={this.toggleAdding}

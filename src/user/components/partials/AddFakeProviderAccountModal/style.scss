@@ -1,0 +1,49 @@
+@import 'theme/_helpers';
+
+  .icon {
+    //float: right;
+    padding: 0px 5px 0 0;
+  }
+
+.input {
+  overflow: auto;
+  display: inline-block;
+  input {
+    width: 100%;
+  }
+}
+.popupWrapper {
+  position: relative;
+  width: 50px;
+  display: inline-block;
+  padding: 10px;
+}
+.helpBtn {
+  cursor: pointer;
+}
+
+.popupContainer {
+  //width: 250px;
+}
+.helpBox {
+  margin: 5px;
+  .instructions {
+    @include rems(14)
+    line-height: 1rem;
+    text-align: left;
+    padding: 10px 10px 0 10px;
+    width: 300px;
+    h5 {
+      font-size: 1rem;
+    }
+    div {
+      padding-bottom: 1rem;
+    }
+  }
+  button {
+    @include rems(14)
+    line-height: 1rem;
+    white-space: nowrap;
+  }
+}
+

@@ -45,7 +45,7 @@ class UserSidebar extends Component {
             <MenuItem link={false && "/providerAccounts"} text="Platforms" selected={this.state.providerAccounts} onClick={this.handleClick.bind(this, "providerAccounts")} icon="vcard">
               <ul>
                 {Object.keys(this.props.providerAccounts).map((providerName) => (
-                  <MenuChild key={providerName} text={PROVIDERS[providerName].name} link={`/providerAccounts/${providerName.toLowerCase()}`} nav={true} icon={providerName.toLowerCase()}/>
+                  <MenuChild key={providerName} text={Helpers.providerFriendlyName(providerName)} link={`/providerAccounts/${providerName.toLowerCase()}`} nav={true} icon={providerName.toLowerCase()}/>
                 ))}
                 <MenuChild text="New Account" onClick={this.openNewProviderModal} link={false && `/providerAccounts`} icon="plus-circle"/>
               </ul>
