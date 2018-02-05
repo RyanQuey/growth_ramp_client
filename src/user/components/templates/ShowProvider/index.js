@@ -31,18 +31,19 @@ class ShowProvider extends Component {
   }
 
   render() {
-    if (this.props.hide) {
+    if (this.props.hide || !this.props.providerAccounts) {
       return null
     }
 
-    const currentProvider = Helpers.safeDataPath(this.props, "match.params.provider", "").toUpperCase()
-    const providers = this.props.providers
+    const currentProviderParam = Helpers.safeDataPath(this.props, "match.params.provider", "")
+    const currentProvider = Object.keys(this.props.providerAccounts).find((provider) => currentProviderParam.toLowerCase() === provider.toLowerCase())
+    const providers = this.props.providerAccounts
     const currentAccounts = this.props.providerAccounts[currentProvider] || []
 
     return (
       <div>
         <div>
-          <h1>{PROVIDERS[currentProvider].name} Accounts</h1>
+          <h1>{Helpers.providerFriendlyName(currentProvider)} Accounts</h1>
 
           <Flexbox>
             {currentAccounts.map((account) => (
