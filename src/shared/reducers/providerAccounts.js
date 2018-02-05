@@ -19,7 +19,7 @@ const providersReducer = (state = {}, action) => {
     case CREATE_FAKE_ACCOUNT_SUCCESS:
       newState = Object.assign({}, state)
       // get accts for this provider
-      accounts = newState[pld.provider] ? [...newState[pld.provider]] : {}
+      accounts = newState[pld.provider] ? [...newState[pld.provider]] : []
       //push the new acct
       accounts.push(pld)
       newState[pld.provider] = accounts

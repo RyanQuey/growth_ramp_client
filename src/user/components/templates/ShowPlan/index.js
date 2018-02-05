@@ -17,6 +17,7 @@ import {
   UPDATE_POST_TEMPLATE_REQUEST,
   SET_CURRENT_POST_TEMPLATE,
   DESTROY_POST_TEMPLATE_REQUEST,
+  SET_CURRENT_MODAL,
 } from 'constants/actionTypes'
 import {UTM_TYPES} from 'constants/posts'
 import theme from 'theme'
@@ -42,6 +43,7 @@ class ShowPlan extends Component {
     this.setPlan = this.setPlan.bind(this)
     this.handleChangeName = this.handleChangeName.bind(this)
     this.handleUnload = this.handleUnload.bind(this)
+    this.addFakeProvider = this.addFakeProvider.bind(this)
   }
 
   componentDidMount() {
@@ -53,6 +55,11 @@ class ShowPlan extends Component {
 
   componentWillUnmount () {
     window.onbeforeunload = null
+  }
+
+  addFakeProvider (e) {
+    e.preventDefault()
+    this.props.setCurrentModal("AddFakeProviderAccountModal")
   }
 
   handleUnload(e) {
@@ -247,6 +254,9 @@ class ShowPlan extends Component {
             {planParams.name !== currentPlan.name ? "Save name" : "Name is up to date"}
           </Button>
 
+          <div className={classes.fakePlatformBox}>
+            <a onClick={this.addFakeProvider}>Promoting in a channel Growth Ramp doesn't post to? Click here to build a link for that channel too</a>
+          </div>
           <div>
             <PostPicker
               toggleAdding={this.toggleAdding}
@@ -313,6 +323,7 @@ const mapDispatchToProps = (dispatch) => {
     updatePlanRequest: (payload, options, cb) => {dispatch({type: UPDATE_PLAN_REQUEST, payload, options, cb})},
     updatePostTemplateRequest: (payload, cb) => {dispatch({type: UPDATE_POST_TEMPLATE_REQUEST, payload, cb})},
     setCurrentPostTemplate: (data) => dispatch({type: SET_CURRENT_POST_TEMPLATE, payload: data}),
+    setCurrentModal: (payload, modalOptions) => dispatch({type: SET_CURRENT_MODAL, payload, options: modalOptions}),
     destroyPostTemplateRequest: (payload) => dispatch({type: DESTROY_POST_TEMPLATE_REQUEST, payload}),
   }
 }

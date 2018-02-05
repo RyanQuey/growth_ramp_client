@@ -336,7 +336,7 @@ console.log("submitting");
       >
         <ModalBody>
           <h2>Add channel Growth Ramp does not post to</h2>
-          <div>Growth Ramp currently only makes posts to Facebook, LinkedIn, and Twitter. To make a post to a different platform, or to a channel in Facebook, LinkedIn or Twitter that we do not support yet, add a channel below.</div>
+          <div>Growth Ramp currently only makes posts to Facebook, LinkedIn, and Twitter. To make a post to a different platform, or to a channel in Facebook, LinkedIn or Twitter that we do not support yet, add a channel below. Growth Ramp will not publish the post, but will generate a short link (with its utms).</div>
           <ButtonGroup>
             {platformBtns}
           </ButtonGroup>
