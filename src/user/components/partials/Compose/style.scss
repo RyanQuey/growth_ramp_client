@@ -1,5 +1,13 @@
 @import 'theme/_helpers';
-
+.sectionHeader {
+}
+.fakePlatformBox {
+  padding: 1rem;
+}
+.fakePlatformBoxWrapper {
+  overflow: auto;
+  width: 100%;
+}
 .publishButtonWrapper {
   position: relative;
   width: 320px;

@@ -9,18 +9,15 @@ const STYLES = {
     regular: {
       background: theme.color.primary,
       color: theme.color.white,
-      border: "none",
       hover: theme.color.lightPurpleGray,
     },
     disabled: {
       background: theme.color.darkPurpleGray,
       color: theme.color.white,
-      border: "none",
     },
     selected: {
       background: theme.color.lightPurpleGray,
       color: theme.color.white,
-      border: "none",
       hover: theme.color.lightPurpleGray,
     },
   },
@@ -34,7 +31,7 @@ const STYLES = {
     disabled: {
       background: theme.color.moduleGrayOne,
       color: theme.color.primary,
-      border: `${theme.color.primary} solid 0px`,
+      border: `${theme.color.moduleGrayOne} solid 2px`,
     },
     selected: {
       background: theme.color.lightPurpleGray,
@@ -47,17 +44,14 @@ const STYLES = {
     regular: {
       background: theme.color.ghostRed,
       color: theme.color.white,
-      border: `none`,
       hover: theme.color.danger,
     },
     disabled: {
       background: theme.color.moduleGrayOne,
-      border: `none`,
       color: theme.color.primary,
     },
     selected: {
       background: theme.color.danger,
-      border: `none`,
       color: theme.color.white,
       hover: theme.color.danger,
     },
@@ -80,7 +74,8 @@ const styles = (style, disabled, selected) => {
     button: {
       background: buttonStyle.background,
       color: buttonStyle.color,
-      border: buttonStyle.border,
+      //should always have a border, in case is in same btn group as a button with style that has border, and would end up smaller than that btn
+      border: buttonStyle.border || `${buttonStyle.background} 2px solid`,
       ':hover': {
         background: buttonStyle.hover
       },

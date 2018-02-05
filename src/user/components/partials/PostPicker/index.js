@@ -21,7 +21,6 @@ class PostPicker extends Component {
     //this.removePost = this.removePost.bind(this)
     this.sortPostsByProvider = this.sortPostsByProvider.bind(this)
     this.setCurrentPost = this.setCurrentPost.bind(this)
-    this.addFakeProvider = this.addFakeProvider.bind(this)
     this.toggleOpen = this.toggleOpen.bind(this)
   }
 
@@ -91,26 +90,12 @@ class PostPicker extends Component {
     formActions.setOptions(this.props.form, this.props.items, {[post.id]: {utms: utmFields}})
   }
 
-  addFakeProvider (e) {
-    e.preventDefault()
-    this.props.setCurrentModal("AddFakeProviderAccountModal")
-  }
-
   render() {
     const sortedPosts = this.sortPostsByProvider(this.props.postsParams || {})
-    const providers = Object.keys(PROVIDERS).filter((provider) =>
-      !PROVIDERS[provider].unsupported ||
-      (this.props.providerAccounts[provider] && this.props.providerAccounts[provider].length)
-    )
+    const providers = Object.keys(this.props.providerAccounts)
 
     return (
       <div className={`${classes.container} ${this.props.hidden ? classes.hidden : ""}`}>
-
-        <Button
-          onClick={this.addFakeProvider}
-        >
-          Add Another Platform
-        </Button>
 
         {false && <h2>Current Post{this.props.items === "postTemplates" ? " Template" : ""}s:</h2>}
 
@@ -141,8 +126,12 @@ class PostPicker extends Component {
                   onClick={this.toggleOpen.bind(this, provider, this.state[provider] === "open" ? "closed" : "open")}
                 >
                   <div className={` ${classes.header}`}>
-                    <Icon name={this.state[provider] === "open" ? "angle-down" : "angle-right"} /> <Icon name={provider.toLowerCase()} /> {PROVIDERS[provider].name} ({providerPosts.length})
+                    <Icon name={this.state[provider] === "open" ? "angle-down" : "angle-right"} />&nbsp;
+                    <Icon name={provider.toLowerCase()} />&nbsp;
+                    {Helpers.providerFriendlyName(provider)}&nbsp;
+                    ({providerPosts.length})
                   </div>
+
                   <Button
                     onClick={this.toggleAdding.bind(this, provider)}
                     className={classes.twoColumns}
@@ -151,8 +140,9 @@ class PostPicker extends Component {
                   </Button>
                 </Flexbox>
 
-                {this.state[provider] === "open" && providerPosts.length > 0 && <Flexbox className={`${classes.postList} ${classes.row}`} direction="row" align="flex-start" flexWrap="wrap">
-                  {providerPosts.map((post) => (
+                {this.state[provider] === "open" && providerPosts.length > 0 &&
+                  <Flexbox className={`${classes.postList} ${classes.row}`} direction="row" align="flex-start" flexWrap="wrap">
+                    {providerPosts.map((post) => (
                       <PostCard
                         key={post.id}
                         className={`${classes.postCard} ${post.publishedAt ? classes.publishedPost : ""}`}
@@ -165,8 +155,9 @@ class PostPicker extends Component {
                         small={true}
                         wrapperClass={classes.cardWrapper}
                       />
-                  ))}
-                </Flexbox>}
+                    ))}
+                  </Flexbox>
+                }
               </Flexbox>
             )
           })}

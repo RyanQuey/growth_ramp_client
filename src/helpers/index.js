@@ -63,13 +63,12 @@ let Helpers = {
   //takes a list of scopes for an account and returns the list of available channels for that account
   //might make a helper function if I needed anywhere else
   permittedChannelTypes: (account) => {
-    if (!account || typeof account !== "object") {
+    if (!account || typeof account !== "object" || account.unsupportedProvider) {
       return []
     }
     const permittedScopes = Object.keys(account.scopes).filter((scopeType) => {
       return account.scopes[scopeType].status === 'granted'
     })
-
     const permittedChannelTypes = Object.keys(PROVIDERS[account.provider].channelTypes).filter((channelType) => {
       const channelScopes = PROVIDERS[account.provider].channelTypes[channelType].requiredScopes
 
@@ -105,7 +104,8 @@ let Helpers = {
 
   //takes upper scored provider name and returns friendly name
   //either need channel or the other two
-  providerFriendlyName: (providerName) => PROVIDERS[providerName].name,
+  //for custom platforms we don't support, just uses the providerName as is
+  providerFriendlyName: (providerName) => PROVIDERS[providerName] ? PROVIDERS[providerName].name : providerName,
 
   //takes channel record and returns friendly name
   //either need channel or the other two
@@ -114,8 +114,14 @@ let Helpers = {
   //takes channel record and returns whether the channel type normally has multiple channels for it
   //either need channel or the other two
   //NOTE currently, ALL channel records have multiple, hence why they are channel records. Personal posts don't get a record.
-  channelTypeHasMultiple: (channel, providerName, channelType) => PROVIDERS[providerName || channel.provider].channelTypes[channelType || channel.type].hasMultiple,
-  channelTypeHasForums: (channel, providerName, channelType) => PROVIDERS[providerName || channel.provider].channelTypes[channelType || channel.type].hasForums,
+  channelTypeHasMultiple: (channel, providerName, channelType) => {
+    providerName = providerName || channel.provider
+    channelType = channelType || channel.type
+
+    return PROVIDERS[providerName] ? PROVIDERS[providerName].channelTypes[channelType].hasMultiple : true
+  },
+  //not really using, since actually supported providers don't have forums
+  //channelTypeHasForums: (channel, providerName, channelType) => PROVIDERS[providerName || channel.provider].channelTypes[channelType || channel.type].hasForums,
 
   //takes channel record and returns required scopes
   //either need channel or the other two

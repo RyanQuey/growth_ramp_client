@@ -17,6 +17,9 @@
 
   a {
     //border: 1px solid $nav-border;
+    &:hover {
+      text-decoration: none;
+    }
   }
 }
 

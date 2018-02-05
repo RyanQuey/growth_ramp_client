@@ -264,6 +264,8 @@ function _handleInitialUserData(data, options = {}) {
   for (let account of allAccounts) {
     //map out channels
     //TODO make an api endpoint for refreshing all
+    if (account.unsupportedProvider) {continue}
+
     let permittedChannels = Helpers.permittedChannelTypes(account)
     permittedChannels.forEach((channelType) => {
       const hasMultiple = Helpers.channelTypeHasMultiple(null, account.provider, channelType)

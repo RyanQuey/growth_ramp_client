@@ -124,71 +124,7 @@ module.exports = {
         //  maxCharacters: 100*1000,
       },
     },
-    REDDIT: {
-      name: 'Reddit',
-      unsupported: true,
-      providerId: 'REDDIT',
-      channelTypes: {
-        PERSONAL_POST: { //TODO these are fake figures
-          name: "Personal",
-          requiredScopes: [],
-          hasMultiple: false,
-          maxImages: 4,
-          maxCharacters: 280,
-        },
-      },
-    },
-    // for slack, there are USERS, (who can login to many workspaces) and WORKSPACES (with workspace tokens) https://api.slack.com/docs/token-types
-    // channel types listed here: https://api.slack.com/docs/conversations-api#conversations_api_is_for_anything_channel-like
-
-    SLACK: {
-      name: 'Slack',
-      unsupported: true,
-      providerId: 'SLACK',
-      channelTypes: {
-        CHAT_CHANNEL: { //slack calls these "conversations" in their api, slamming together private, public, dm aand group dm. all have same scope https://api.slack.com/scopes
-
-          name: "Slack Channel",
-          requiredScopes: [],
-          hasMultiple: true,
-          hasForums: true,
-        },
-      },
-      forums: { // for slack, these are workspaces. Other chatrooms have these as subdomains
-        name: "Workspace", //friendly name
-      },
-    },
-
-    QUORA: {
-      name: 'Quora',
-      unsupported: true,
-      providerId: 'QUORA',
-      channelTypes: {
-      },
-    },
-
-    PINTEREST: {
-      name: 'Pinterest',
-      unsupported: true,
-      providerId: 'PINTEREST',
-      channelTypes: {
-      },
-    },
-
-    INBOUND: {
-      name: 'Inbound.org',
-      unsupported: true,
-      providerId: 'INBOUND',
-      channelTypes: {
-      },
-    },
-    GROWTHHACKERS: {
-      name: 'GrowthHackers.com',
-      unsupported: true,
-      providerId: 'GROWTHHACKERS',
-      channelTypes: {
-      },
-    },
+    /*
     GOOGLE: {
       name: 'Google+',
       unsupported: true,
@@ -196,7 +132,23 @@ module.exports = {
       channelTypes: {
       },
     },
+    */
   },
+  PROVIDER_SUGGESTION_LIST: [
+    "Reddit",
+    "Slack",
+    "Voat",
+    "Quora",
+    "Pinterest",
+    "GrowthHackers.com",
+    "Inbound.org",
+    "Instagram",
+    "Google Plus",
+    "Snapchat",
+    "Facebook",
+    "Twitter",
+    "LinkedIn",
+  ]
 }
       //keep this in sync with the frontend constants
 

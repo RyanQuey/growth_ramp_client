@@ -11,7 +11,7 @@ import { SocialLogin } from 'shared/components/partials'
 import { AccountCard } from 'user/components/partials'
 import { Input, Button, Form, Card, Flexbox, Icon } from 'shared/components/elements'
 import { ButtonGroup, Select } from 'shared/components/groups'
-import { PROVIDERS } from 'constants/providers'
+import { PROVIDERS, PROVIDER_SUGGESTION_LIST } from 'constants/providers'
 import { errorActions, alertActions } from 'shared/actions'
 import classes from './style.scss'
 
@@ -23,16 +23,20 @@ class AddFakeProviderAccount extends Component {
       pending: false,
       currentProvider: "",
       currentAccount: null,
-      channelTypes: [],
       email: "",
       userName: "",
+      channelType: "",
+      forumName: "",
+      channelName: "",
     }
 
     this.handleClose = this.handleClose.bind(this)
     this.handleChooseAccount = this.handleChooseAccount.bind(this)
     this.togglePending = this.togglePending.bind(this)
+    this.toggleAddingProvider = this.toggleAddingProvider.bind(this)
     this.chooseProvider = this.chooseProvider.bind(this)
-    this.chooseChannel = this.chooseChannel.bind(this)
+    this.handleChooseProvider = this.handleChooseProvider.bind(this)
+    this.chooseChannelType = this.chooseChannelType.bind(this)
     this.handleParam = this.handleParam.bind(this)
     this.submit = this.submit.bind(this)
     this._createFakeChannel = this._createFakeChannel.bind(this)
@@ -62,23 +66,35 @@ class AddFakeProviderAccount extends Component {
     })
   }
 
-  checkForRequired() {
-    let {channelTypes, currentProvider, currentAccount} = this.state
-    // get all the rquired fields
-    const requiredFields = currentAccount ? [] : ["userName"]
+  toggleAddingProvider(value = !this.state.addingProvider) {
+    const newState = {
+      addingProvider: value,
+    }
+    //if opening up this form, clear rest of fields
+    if (value) {
+      Object.assign(newState, {
+        currentProvider: "",
+        currentAccount: "",
+        channelType: "",
+      })
+    }
+    this.setState(newState)
+  }
 
+  checkForRequired() {
+    let {channelType, currentProvider, currentAccount} = this.state
+    // get all the rquired fields
+    const requiredFields = currentAccount ? ["channelType"] : ["userName", "channelType"]
+
+/*
     for (let channelType of channelTypes) {
       const hasMultiple = Helpers.channelTypeHasMultiple(null, currentProvider, channelType)
-      const hasForums = Helpers.channelTypeHasForums(null, currentProvider, channelType)
 
       if (hasMultiple) {
         requiredFields.push(`${channelType}-channelName`)
       }
-      if (hasForums) {
-        requiredFields.push(`${channelType}-forumName`)
-      }
     }
-
+*/
     // test all
     for (let field of requiredFields) {
 console.log(field);
@@ -92,10 +108,9 @@ console.log(field);
 
   chooseProvider(provider) {
     const newState = {
-      mode: 'CHOOSE_SCOPE',
       currentProvider: provider,
       currentAccount: null,
-      channelTypes: [],
+      channelType: "",
     }
 
     const accountsForProvider = this.props.providerAccounts[provider]
@@ -103,22 +118,49 @@ console.log(field);
     this.setState(newState)
   }
 
-  chooseChannel(channelType) {
-    let channelTypes = this.state.channelTypes
+  //if choose from the select bar (ie while adding nwe provider)
+  handleChooseProvider(providerOption) {
+    const value = providerOption.value
+    const match = PROVIDER_SUGGESTION_LIST.find((suggestion) => suggestion.toLowerCase() === value.toLowerCase())
+    const newState = {addingProvider: false}
 
-    if (channelTypes.includes(channelType)) {
-      _.remove(channelTypes, (c) => channelType === c)
+    let providerName
+    // if already in suggestion list, use that list item
+    if (match) {
+      //check if we support the provider; if so use that providerName, if not, use match name
+      const alreadyAdded = Object.keys(this.props.providerAccounts).find((provider) => provider.toLowerCase() === value.toLowerCase())
+      if (alreadyAdded) {
+        providerName = alreadyAdded
+      } else {
+        providerName = match
+      }
+console.log(value.toLowerCase(), providerName, alreadyAdded);
+      newState.brandNewProvider = false
+
     } else {
-      channelTypes = channelTypes.concat(channelType)
+      newState.brandNewProvider = true
+      providerName = value
     }
 
-    this.setState({channelTypes})
+    this.setState(newState)
+    this.chooseProvider(providerName)
+  }
+
+  chooseChannelType(channelType) {
+    this.setState({channelType})
   }
 
   accountOption(account) {
     return {
       label: `${account.userName || "no username"} (${account.email || "no email"})`,
       value: account,
+    }
+  }
+
+  providerOption(provider) {
+    return {
+      label: provider,
+      value: provider,
     }
   }
 
@@ -152,7 +194,7 @@ console.log("submitting");
 
     this.togglePending(true)
 
-    const {currentProvider, currentAccount, userName, email, channelTypes, photoUrl} = this.state
+    const {currentProvider, currentAccount, userName, email, channelType} = this.state
 
     const cb = (fakeAcct) => {
       const newChannelNames = Object.keys(this.state).filter((stateProp) => stateProp.includes("-name"))
@@ -160,18 +202,32 @@ console.log("submitting");
       const promises = []
 
       // create a new channel for each one specified
+      /*
       for (let channelType of channelTypes) {
         const channelParams = {
           userId: store.getState().user.id,
           provider: currentProvider,
-          name: this.state[`${channelType}-channelName`],
+          name: this.state[`channelName`],
           providerAccountId: fakeAcct.id,
           unsupportedChannel: true,
-          forumName: this.state[`${channelType}-forumName`],
+          forumName: this.state[`forumName`],
           type: channelType,
         }
         promises.push(this._createFakeChannel(channelParams))
+      }*/
+
+      const channelParams = {
+        userId: store.getState().user.id,
+        provider: currentProvider,
+        name: this.state[`channelName`],
+        providerAccountId: fakeAcct.id,
+        unsupportedChannel: true,
+        forumName: this.state[`forumName`],
+        type: channelType,
       }
+
+      promises.push(this._createFakeChannel(channelParams))
+
 
       Promise.all(promises)
       .then(() => {
@@ -191,7 +247,6 @@ console.log("submitting");
         userName,
         email,
         userId: store.getState().user.id,
-        photoUrl,
         unsupportedProvider: true,
       }
 
@@ -201,17 +256,14 @@ console.log("submitting");
     } else {
       cb(currentAccount)
     }
-
-
-
   }
   togglePending(value = !this.state.pending) {
     this.setState({pending: value})
   }
 
   render (){
-    const {currentProvider, currentAccount, errors} = this.state
-    const currentProviderName = currentProvider && PROVIDERS[currentProvider].name
+    const {currentProvider, currentAccount, errors, addingProvider, channelName, channelType, forumName, brandNewProvider} = this.state
+    const currentProviderName = Helpers.providerFriendlyName(currentProvider)
 
     const accountsForProvider = this.props.providerAccounts[currentProvider] || []
     const accountOptions = accountsForProvider.map((a) => (
@@ -224,6 +276,47 @@ console.log("submitting");
 
     const errorsPresent = errors && Object.keys(errors).some((field) => errors[field] && errors[field].length)
 
+    const currentProviders = Object.keys(this.props.providerAccounts)
+    const platformOptions = PROVIDER_SUGGESTION_LIST.map((p) => this.providerOption(p))
+
+    // TODO sep component for these buttons
+    // cannot map out in the return value because of how children props and ButtonGroup compnoent work, (the plus button ends up messing things up). So define here before returning
+    const platformBtns = currentProviders.map((provider) => {
+      return (
+        <Button
+          key={provider}
+          selected={provider === currentProvider}
+          onClick={this.chooseProvider.bind(this, provider)}
+        >
+          <Icon name={provider.toLowerCase()}  className={classes.icon}/>
+          {Helpers.providerFriendlyName(provider)}
+        </Button>
+      )
+    })
+
+    if (brandNewProvider) {
+      //add a temp button for them too
+      platformBtns.push(
+        <Button
+          key={currentProvider}
+          selected={true}
+        >
+          <Icon name={currentProvider.toLowerCase()}  className={classes.icon}/>
+          {currentProvider}
+        </Button>
+      )
+    }
+
+    platformBtns.push(
+      <Button
+        style="inverted"
+        onClick={this.toggleAddingProvider}
+        key="new"
+      >
+        <Icon name="plus"  className={classes.icon}/>
+      </Button>
+    )
+
     return (
       <ModalContainer
         visible={this.props.currentModal === "AddFakeProviderAccountModal"}
@@ -231,24 +324,30 @@ console.log("submitting");
         title={false && currentProviderName}
       >
         <ModalBody>
-          <h2>Add a new account or new channels to a current account</h2>
+          <h2>Add channel Growth Ramp does not post to</h2>
+          <div>Growth Ramp currently only makes posts to Facebook, LinkedIn, and Twitter. To make a post to a different platform, or to a channel in Facebook, LinkedIn or Twitter that we do not support yet, add a channel below.</div>
           <ButtonGroup>
-            {Object.keys(PROVIDERS).filter((providerName) => PROVIDERS[providerName].unsupported).map((provider) => {
-              return (
-                <Button
-                  key={provider}
-                  selected={provider === currentProvider}
-                  onClick={this.chooseProvider.bind(this, provider)}
-                >
-                  {<Icon name={provider.toLowerCase()}  className={classes.icon}/>}
-                  {PROVIDERS[provider].name}
-                </Button>
-              )
-            })}
+            {platformBtns}
           </ButtonGroup>
 
+          {addingProvider && (
+            <div>
+              <Select
+                creatable={true}
+                label={`Add new platform`}
+                className={classes.select}
+                openOnClick={false}
+                options={platformOptions}
+                onChange={this.handleChooseProvider}
+                currentOption={currentProvider ? this.providerOption(currentProvider) : placeholder}
+                name="select-platform"
+              />
+            </div>
+          )}
+
+
           {accountsForProvider.length > 0 && <Select
-            label="Account"
+            label={`${currentProviderName} Account`}
             className={classes.select}
             options={accountOptions}
             onChange={this.handleChooseAccount}
@@ -259,7 +358,7 @@ console.log("submitting");
           {currentAccount === "new" && <div>
             <Input
               value={this.state.userName}
-              placeholder={`username for ${PROVIDERS[currentProvider].name}`}
+              placeholder={`username for ${currentProviderName}`}
               onChange={this.handleParam.bind(this, "userName")}
               type="text"
               validations={["required"]}
@@ -271,78 +370,47 @@ console.log("submitting");
               onChange={this.handleParam.bind(this, "email")}
               type="email"
             />
-            <Input
-              value={this.state.photoUrl}
-              placeholder={`Profile picture url (optional)`}
-              onChange={this.handleParam.bind(this, "photoUrl")}
-              type="text"
-            />
           </div>}
 
-          {currentProvider &&
-            <Form onSubmit={this.submit}>
-              {currentProvider === "TWITTER" ? (
-                <p>All channels available by default for Twitter</p>
-              ) : (
-                <div>
-                  <h3>Choose Channels to add:</h3>
-                  <Flexbox justify="center">
-                    {Object.keys(PROVIDERS[currentProvider].channelTypes).map((channelType) => {
-                      const selected = this.state.channelTypes.includes(channelType)
-                      const hasMultiple = Helpers.channelTypeHasMultiple(null, currentProvider, channelType)
-                      const hasForums = Helpers.channelTypeHasForums(null, currentProvider, channelType)
-
-                      return <div key={channelType}>
-                        <Button
-                          style="inverted"
-                          onClick={this.chooseChannel.bind(this, channelType)}
-                          selected={selected}
-                        >
-                          {channelType.titleCase()}
-                        </Button>
-
-                        {selected && hasForums && <Input
-                          value={this.state[`${channelType}-forumName`] || ""}
-                          placeholder={`${PROVIDERS[currentProvider].forums.name} name`}
-                          onChange={this.handleParam.bind(this, `${channelType}-forumName`)}
-                          type="text"
-                          validations={["required"]}
-                          handleErrors={this.handleInputErrors.bind(this, `${channelType}-forumName`)}
-                        />}
-
-                        {selected && hasMultiple && <Input
-                          value={this.state[`${channelType}-channelName`] || ""}
-                          placeholder="Channel Name"
-                          onChange={this.handleParam.bind(this, `${channelType}-channelName`)}
-                          type="text"
-                          validations={["required"]}
-                          handleErrors={this.handleInputErrors.bind(this, `${channelType}-channelName`)}
-                        />}
-
-                      </div>
-                    })}
-                  </Flexbox>
-                </div>
-              )}
-
-              <Button
-                type='submit'
-                pending={this.state.pending}
-                disabled={errorsPresent}
-              >
-                Add {PROVIDERS[currentProvider].name} Account
-              </Button>
-
-              <hr/>
-              <div className={classes.instructions}>
-                <div>
-                  <strong>Instructions:</strong>
-                </div>
+          <Form onSubmit={this.submit}>
+            {currentProvider &&
+              <div>
+                <h3>Channel Details:</h3>
+                <Flexbox justify="center">
+                  <Input
+                    value={channelType}
+                    placeholder="Channel Type"
+                    onChange={this.handleParam.bind(this, `channelType`)}
+                    type="text"
+                    validations={["required"]}
+                    handleErrors={this.handleInputErrors.bind(this, `channelType`)}
+                  />
+                  <Input
+                    value={forumName}
+                    placeholder={`Forum name (optional)`}
+                    onChange={this.handleParam.bind(this, `forumName`)}
+                    type="text"
+                    handleErrors={this.handleInputErrors.bind(this, `forumName`)}
+                  />
+                  <Input
+                    value={channelName}
+                    placeholder="Channel Name (optional)"
+                    onChange={this.handleParam.bind(this, `channelName`)}
+                    type="text"
+                    handleErrors={this.handleInputErrors.bind(this, `channelName`)}
+                  />
+                </Flexbox>
               </div>
+            }
 
-              <h2>Have a platform you want to share to that's not on this list? Let us know and we'll add it!</h2>
-            </Form>
-          }
+            <Button
+              type='submit'
+              pending={this.state.pending}
+              disabled={errorsPresent || !currentProvider}
+            >
+              Add {currentProviderName || ""} Account
+            </Button>
+          </Form>
         </ModalBody>
       </ModalContainer>
     )
