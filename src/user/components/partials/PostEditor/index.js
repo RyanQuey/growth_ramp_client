@@ -43,7 +43,7 @@ class PostEditor extends Component {
     params.text = value
     params.dirty = true
 
-    const maxCharacters = PROVIDERS[params.provider].channelTypes[params.channelType].maxCharacters
+    const maxCharacters = PROVIDERS[params.provider] ? PROVIDERS[params.provider].channelTypes[params.channelType].maxCharacters : 0
     const characterCount = Helpers.safeDataPath(params, "text", "").length + (params.contentUrl ? URL_LENGTH : 0)
 
     if (characterCount.length > maxCharacters) {
@@ -152,10 +152,10 @@ class PostEditor extends Component {
     if (!params) {return null} //shouldn't happen, but whatever
     let utmFields = Object.assign({}, Helpers.safeDataPath(formOptions, `${params.id}.utms`, {}))
 
-    const maxImages = PROVIDERS[params.provider].channelTypes[params.channelType].maxImages
+    const maxImages = PROVIDERS[params.provider] ? PROVIDERS[params.provider].channelTypes[params.channelType].maxImages : 0
     const imageCount = params.uploadedContent ? params.uploadedContent.length : 0
 
-    const maxCharacters = PROVIDERS[params.provider].channelTypes[params.channelType].maxCharacters
+    const maxCharacters = PROVIDERS[params.provider] ? PROVIDERS[params.provider].channelTypes[params.channelType].maxCharacters : 0
     const characterCount = Helpers.safeDataPath(params, "text", "").length + (params.contentUrl ? URL_LENGTH : 0)
     const account = Helpers.accountFromPost(params)
     const channelTypeHasMultiple = Helpers.channelTypeHasMultiple(null, params.provider, params.channelType)
