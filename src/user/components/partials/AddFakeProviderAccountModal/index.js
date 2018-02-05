@@ -460,6 +460,7 @@ console.log("submitting");
             <Button
               type='submit'
               pending={this.state.pending}
+              title={(errorsPresent || !currentProvider || !currentAccount || !channelType || !channelName) ? "Please fill out all required fields" : ""}
               disabled={errorsPresent || !currentProvider || !currentAccount || !channelType || !channelName}
             >
               Add {currentProviderName || ""} Account

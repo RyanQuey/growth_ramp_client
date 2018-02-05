@@ -58,7 +58,7 @@ class PostCard extends Component {
         <Flexbox direction="column" className={classes.content}>
           <div className={classes.contentSection}><span className={classes.cardLabel}>Account:</span>&nbsp;{userName ? userName : "Error: Could not be found"}</div>
           {hasMultiple && post.channelId && (
-            <div className={classes.contentSection}><span className={classes.cardLabel}>Channel:</span>&nbsp;{channelName !== undefined ? (channelName || "(channel has no name)") : "Error: Could not be found"}</div>
+            <div className={classes.contentSection}><span className={classes.cardLabel}>Channel:</span>&nbsp;{channelName ? channelName  : "Error: Could not be found"}</div>
           )}
           {!small && <br/>}
           {showText && <div className={`${classes.contentSection}`}><span className={classes.cardLabel}>Text:</span>&nbsp;<span className={classes.text}>{post.text ? post.text : "(none)"}</span></div>}
