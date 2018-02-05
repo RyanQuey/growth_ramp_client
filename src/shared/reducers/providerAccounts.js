@@ -8,7 +8,7 @@ import {
 } from 'constants/actionTypes'
 
 const providersReducer = (state = {}, action) => {
-  let newState, accounts, account
+  let newState, accounts, account, channels
 
   const pld = action.payload
   switch (action.type) {
@@ -20,6 +20,9 @@ const providersReducer = (state = {}, action) => {
       newState = Object.assign({}, state)
       // get accts for this provider
       accounts = newState[pld.provider] ? [...newState[pld.provider]] : []
+
+      //add empty channels array, as if it was just retrieved
+      pld.channels = pld.channels || []
       //push the new acct
       accounts.push(pld)
       newState[pld.provider] = accounts
@@ -33,6 +36,7 @@ const providersReducer = (state = {}, action) => {
       accounts = newState[pld.provider] ? [...newState[pld.provider]] : []
       //push the new channel
       account = accounts.find((a) => a.id === pld.providerAccountId)
+      account.channels = account.channels || []
       account.channels.push(pld)
 
       newState[pld.provider] = accounts
