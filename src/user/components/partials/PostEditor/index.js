@@ -152,10 +152,11 @@ class PostEditor extends Component {
     if (!params) {return null} //shouldn't happen, but whatever
     let utmFields = Object.assign({}, Helpers.safeDataPath(formOptions, `${params.id}.utms`, {}))
 
-    const maxImages = PROVIDERS[params.provider] ? PROVIDERS[params.provider].channelTypes[params.channelType].maxImages : 0
+    const isFake = !Helpers.safeDataPath(PROVIDERS, `${params.provider}.channelTypes.${params.channelType}`)
+    const maxImages = !isFake ? PROVIDERS[params.provider].channelTypes[params.channelType].maxImages : 0
     const imageCount = params.uploadedContent ? params.uploadedContent.length : 0
 
-    const maxCharacters = PROVIDERS[params.provider] ? PROVIDERS[params.provider].channelTypes[params.channelType].maxCharacters : 0
+    const maxCharacters = !isFake ? PROVIDERS[params.provider].channelTypes[params.channelType].maxCharacters : 0
     const characterCount = Helpers.safeDataPath(params, "text", "").length + (params.contentUrl ? URL_LENGTH : 0)
     const account = Helpers.accountFromPost(params)
     const channelTypeHasMultiple = Helpers.channelTypeHasMultiple(null, params.provider, params.channelType)
@@ -170,11 +171,11 @@ class PostEditor extends Component {
 
     return (
       <Flexbox direction="column" className={classes.paramsFields}>
-        <h2>{Helpers.providerFriendlyName(params.provider)} {params.channelType.titleCase()}{type === "postTemplate" ? " Template" : ""}</h2>
+        <h2>{Helpers.providerFriendlyName(params.provider)} {params.channelType.titleCase()}{type === "postTemplate" ? " Template" : ""}{isFake ? "(Building Link Only)" : ""}</h2>
         {account.photoUrl && <img className={classes.profilePic} src={account.photoUrl}/>}
         <div className={classes.accountInfo}>
           <div>{account.userName} ({account.email || "No email on file"})</div>
-          {channelTypeHasMultiple && params.postingAs && <div>(Posting as {params.postingAs.toLowerCase()})</div>}
+          {channelTypeHasMultiple && params.postingAs && !isFake && <div>(Posting as {params.postingAs.toLowerCase()})</div>}
         </div>
         {this.props.hasContent && !params.pseudopost && <Flexbox direction="column" justify="center" className={classes.textEditor}>
           <h3>Post Content</h3>

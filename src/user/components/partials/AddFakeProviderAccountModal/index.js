@@ -10,7 +10,7 @@ import { CLOSE_MODAL, CREATE_FAKE_ACCOUNT_REQUEST, CREATE_FAKE_CHANNEL_REQUEST }
 import { SocialLogin } from 'shared/components/partials'
 import { AccountCard } from 'user/components/partials'
 import { Input, Button, Form, Card, Flexbox, Icon } from 'shared/components/elements'
-import { ButtonGroup, Select } from 'shared/components/groups'
+import { ButtonGroup, Select, Popup } from 'shared/components/groups'
 import { PROVIDERS, PROVIDER_SUGGESTION_LIST } from 'constants/providers'
 import { errorActions, alertActions } from 'shared/actions'
 import classes from './style.scss'
@@ -44,6 +44,12 @@ class AddFakeProviderAccount extends Component {
     this.checkForRequired = this.checkForRequired.bind(this)
     this.handleProviderText = this.handleProviderText.bind(this)
     this.handleAddProvider = this.handleAddProvider.bind(this)
+
+    this.togglePopup = this.togglePopup.bind(this)
+  }
+  togglePopup (value) {
+    //a string for the popup to use or false for no popup
+    this.setState({popup: value})
   }
 
   handleParam(key, value) {
@@ -227,7 +233,7 @@ console.log("submitting");
         name: this.state[`channelName`],
         providerAccountId: fakeAcct.id,
         unsupportedChannel: true,
-        forumName: this.state[`forumName`],
+        //forumName: this.state[`forumName`],
         type: channelType,
       }
 
@@ -336,19 +342,19 @@ console.log("submitting");
           </ButtonGroup>
 
           {addingProvider && (
-            <div>
+            <form onSubmit={this.handleAddProvider}>
               <Input
                 label={`Add new platform`}
                 onChange={this.handleProviderText}
               />
               <Button
-                onClick={this.handleAddProvider}
+                type="submit"
                 pending={this.state.pending}
                 disabled={!this.state.newProvider}
               >
                 Add Platform
               </Button>
-            </div>
+            </form>
           )}
 
 
@@ -378,40 +384,83 @@ console.log("submitting");
             />
           </div>}
 
-          {currentProvider &&
             <Form onSubmit={this.submit}>
-              <div>
-                <h3>Channel Details:</h3>
-                <Flexbox justify="center">
-                  <Input
-                    value={channelType}
-                    placeholder="Channel Type"
-                    onChange={this.handleParam.bind(this, `channelType`)}
-                    type="text"
-                    validations={["required"]}
-                    handleErrors={this.handleInputErrors.bind(this, `channelType`)}
-                  />
-                  <Input
-                    value={forumName}
-                    placeholder={`Forum name (optional)`}
-                    onChange={this.handleParam.bind(this, `forumName`)}
-                    type="text"
-                    handleErrors={this.handleInputErrors.bind(this, `forumName`)}
-                  />
-                  <Input
-                    value={channelName}
-                    placeholder="Channel Name (optional)"
-                    onChange={this.handleParam.bind(this, `channelName`)}
-                    type="text"
-                    handleErrors={this.handleInputErrors.bind(this, `channelName`)}
-                  />
-                </Flexbox>
-              </div>
+              {currentProvider && currentAccount &&
+                <div>
+                  <h3>Channel Details:</h3>
+                  <Flexbox justify="center" direction="column">
+                    <Flexbox justify="center" direction="row">
+                      <Input
+                        className={classes.input}
+                        value={channelType}
+                        placeholder="Channel Type"
+                        onChange={this.handleParam.bind(this, `channelType`)}
+                        type="text"
+                        validations={["required"]}
+                        handleErrors={this.handleInputErrors.bind(this, `channelType`)}
+                      />
+
+                      <div className={classes.popupWrapper}>
+                        <Icon name="question-circle" className={classes.helpBtn} onClick={this.togglePopup.bind(this, "channelType")}/>
+                        <Popup
+                          side="top"
+                          float="center"
+                          handleClickOutside={this.togglePopup.bind(this, false)}
+                          show={this.state.popup === "channelType"}
+                          containerClass={classes.popupContainer}
+                        >
+                          <div className={classes.helpBox}>
+                            <div className={classes.instructions}>
+                              <div>Growth Ramp recommends using the channel type for the source UTM. For example, if you're promoting in a Facebook Group called "Sofas are soft" your source UTM is "Facebook-Group". (Beware that utms are case sensitive). <br/>Fill in your channel type here to use it when creating links for this channel.</div>
+                            </div>
+                          </div>
+                        </Popup>
+                      </div>
+
+                      {false && <Input
+                        value={forumName}
+                        placeholder={`Forum name (optional)`}
+                        onChange={this.handleParam.bind(this, `forumName`)}
+                        type="text"
+                        handleErrors={this.handleInputErrors.bind(this, `forumName`)}
+                      />}
+                    </Flexbox>
+
+                    <Flexbox justify="center" direction="row">
+                      <Input
+                        value={channelName}
+                        placeholder="Channel Name (optional)"
+                        className={classes.input}
+                        onChange={this.handleParam.bind(this, `channelName`)}
+                        type="text"
+                        handleErrors={this.handleInputErrors.bind(this, `channelName`)}
+                      />
+                      <div className={classes.popupWrapper}>
+                        <Icon name="question-circle" className={classes.helpBtn} onClick={this.togglePopup.bind(this, "channelName")}/>
+                        <Popup
+                          side="top"
+                          float="center"
+                          handleClickOutside={this.togglePopup.bind(this, false)}
+                          show={this.state.popup === "channelName"}
+                          containerClass={classes.popupContainer}
+                        >
+                          <div className={classes.helpBox}>
+                            <div className={classes.instructions}>
+                              <div>Growth Ramp recommends using the channel name for the medium UTM. For example, if you're promoting in a Facebook Group called "Sofas are soft" your medium UTM is "Sofas-are-soft". (Beware that utms are case sensitive). <br/>Fill in your channel name here to use it when creating links for this channel</div>
+                            </div>
+                          </div>
+                        </Popup>
+                      </div>
+                    </Flexbox>
+                  </Flexbox>
+                </div>
+              }
 
               <Button
                 type='submit'
                 pending={this.state.pending}
-                disabled={errorsPresent || !currentProvider}
+                disabled={errorsPresent || !currentProvider || !currentAccount || !channelType}
+
               >
                 Add {currentProviderName || ""} Account
               </Button>

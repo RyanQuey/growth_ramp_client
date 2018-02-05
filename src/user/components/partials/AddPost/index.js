@@ -131,6 +131,8 @@ class AddPost extends Component {
     let tempUuid = `not-saved-${uuidv4()}`
     //set utm field options (set all to active)
 
+    const isFake = !Helpers.safeDataPath(PROVIDERS, `${this.state.currentAccount.provider}.channelTypes.${this.state.currentChannelType}`)
+
     let newParams = {
       id: tempUuid,
       channelType: this.state.currentChannelType,
@@ -140,7 +142,7 @@ class AddPost extends Component {
       providerAccountId: this.state.currentAccount.id,
       provider: this.state.currentAccount.provider,
       postingAs: this.state.currentPostingAsType || "SELF",
-      pseudopost: this.state.currentAccount.unsupportedProvider,
+      pseudopost: isFake,
     }
 
     //set fields to active and params to active for each type
@@ -265,25 +267,34 @@ class AddPost extends Component {
       channelOptions,
       hasForums,
       forums,
-      forumOptions
+      forumOptions,
+      fakeChannels,
+      fakeChannelTypes,
+      isFake
 
     if (currentAccount) {
       let availableChannelTypes = Helpers.safeDataPath(PROVIDERS, `${currentProvider}.channelTypes`, {})
-      channelTypeOptions = Object.keys(availableChannelTypes).map((key) => (
+      fakeChannels = currentAccount.channels.filter((channel) => channel.unsupportedChannel)
+      fakeChannelTypes = fakeChannels.map((channel) => channel.type)
+
+      channelTypeOptions = Object.keys(availableChannelTypes).concat(fakeChannelTypes).map((key) => (
         this.channelTypeOption(key)
       ))
 
       let permittedChannelTypes = Helpers.permittedChannelTypes(currentAccount)
 
       if (currentChannelType) {
-        channelTypeIsAllowed = permittedChannelTypes.includes(currentChannelType)
+        //ie is custom made
+        isFake = fakeChannelTypes.includes(currentChannelType)
+        channelTypeIsAllowed = permittedChannelTypes.includes(currentChannelType) || isFake
 
-        channelTypeHasMultiple = PROVIDERS[currentProvider].channelTypes[currentChannelType].hasMultiple
-        channelTypeName = PROVIDERS[currentProvider].channelTypes[currentChannelType].name
+        channelTypeHasMultiple = Helpers.channelTypeHasMultiple(null, currentProvider, currentChannelType)
+        channelTypeName = Helpers.channelTypeFriendlyName(null,  currentProvider, currentChannelType)
         let channelsForType = currentAccount.channels.filter((c) => c.type === currentChannelType)
 
         //hasForums = Helpers.channelTypeHasForums(null, currentProvider, currentChannelType)
 
+        /*
         if (hasForums) {
           forums = channelsForType.reduce((acc, channel) => {
             if (channel.forumName && !acc.includes(channel.forumName)) {
@@ -301,12 +312,13 @@ class AddPost extends Component {
             channelOptions = channelsForType.filter((channel) => channel.forumName === currentForum).map((channel) => (
               this.channelOption(channel)
             ))
-          }
-        } else {
+          }*/
+      //  } else {
           channelOptions = channelsForType.map((channel) => (
             this.channelOption(channel)
           ))
-        }
+       // }
+
       }
     }
 
@@ -331,7 +343,7 @@ class AddPost extends Component {
 
         ) : (
           <Flexbox className={classes.fields} direction="column" justify="center" align="center">
-            <h2>Select where to send this {PROVIDERS[currentProvider].name} post</h2>
+            <h2>Select where to send this {Helpers.providerFriendlyName(currentProvider)} post</h2>
             {false && !(typeof this.props.addingPost === "string") && <Select
               className={classes.select}
               label="Platform"
@@ -424,7 +436,7 @@ class AddPost extends Component {
           (currentChannelType && channelTypeIsAllowed && !channelTypeHasMultiple) ||
           currentChannel
         ) && (
-            <Button style="inverted" onClick={this.new}>Add a {currentChannelType.titleCase()}</Button>
+            <Button style="inverted" onClick={this.new}>Add a {currentChannelType.titleCase()}{isFake ? " Post" : ""}</Button>
         )}
 
         <Button style="inverted" onClick={this.props.toggleAdding.bind(this, false, this.state.addingPost, false)}>Cancel</Button>
