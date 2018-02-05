@@ -120,8 +120,7 @@ let Helpers = {
 
     return PROVIDERS[providerName] ? PROVIDERS[providerName].channelTypes[channelType].hasMultiple : true
   },
-  //not really using, since actually supported providers don't have forums
-  //channelTypeHasForums: (channel, providerName, channelType) => PROVIDERS[providerName || channel.provider].channelTypes[channelType || channel.type].hasForums,
+  channelTypeHasForums: (channel, providerName, channelType) => PROVIDERS[providerName || channel.provider].channelTypes[channelType || channel.type].hasForums,
 
   //takes channel record and returns required scopes
   //either need channel or the other two

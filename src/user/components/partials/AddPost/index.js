@@ -282,7 +282,7 @@ class AddPost extends Component {
         channelTypeName = PROVIDERS[currentProvider].channelTypes[currentChannelType].name
         let channelsForType = currentAccount.channels.filter((c) => c.type === currentChannelType)
 
-        hasForums = Helpers.channelTypeHasForums(null, currentProvider, currentChannelType)
+        //hasForums = Helpers.channelTypeHasForums(null, currentProvider, currentChannelType)
 
         if (hasForums) {
           forums = channelsForType.reduce((acc, channel) => {
