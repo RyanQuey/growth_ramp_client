@@ -79,11 +79,12 @@ module.exports = {
       },
     },
     //GITHUB: 'github',
-    /*GOOGLE: {
+    GOOGLE: {
       name: 'Google',
       providerId: 'GOOGLE',
-      channels: []
-    },*/
+      notForPublishing: true, //can still publish if they create channels on this though, using the custom channel builder
+      channelTypes: [],
+    },
     LINKEDIN: {
       name: 'LinkedIn',
       providerId: 'LINKEDIN',

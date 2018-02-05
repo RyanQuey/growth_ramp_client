@@ -40,7 +40,15 @@ this.props.setCurrentModal("ShowAccountModal", {currentAccount: this.props.accou
               ))}
             </div>
           ) : (
-            <div>No permitted channels yet</div>
+            (account.unsupportedProvider || account.provider === "GOOGLE") ? (
+              <div>
+                {account.channels.map((channel) => (
+                  <div key={channel.id}>{channel.type}</div>
+                ))}
+              </div>
+            ) : (
+              <div>No permitted channels yet</div>
+            )
           )}
         </div>
 
