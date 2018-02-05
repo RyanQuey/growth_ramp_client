@@ -45,7 +45,7 @@ class SocialLogin extends Component {
 
     return (
       <div>
-        {Object.keys(providers).filter((providerName) => !PROVIDERS[providerName].unsupported).map((key) => {
+        {Object.keys(providers).map((key) => {
           const providerName = providers[key].name
 
             return (

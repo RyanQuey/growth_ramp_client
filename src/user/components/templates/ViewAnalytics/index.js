@@ -4,6 +4,8 @@ import { } from 'constants/actionTypes'
 import { Button, Flexbox } from 'shared/components/elements'
 import {
 } from 'user/components/partials'
+import { SocialLogin } from 'shared/components/partials'
+import { PROVIDERS, PROVIDER_IDS_MAP } from 'constants/providers'
 import {
   withRouter,
 } from 'react-router-dom'
@@ -19,7 +21,7 @@ class ViewAnalytics extends Component {
   }
 
   componentWillMount() {
-    this.props.fetchAnalyticRequest({userId: this.props.user.id})
+    //this.props.fetchAnalyticRequest({userId: this.props.user.id})
   }
 
   componentWillReceiveProps(props) {
@@ -30,6 +32,11 @@ class ViewAnalytics extends Component {
     return (
       <div>
         <h1>Analytics</h1>
+          <SocialLogin
+            pending={this.state.pending}
+            togglePending={this.togglePending}
+            providers={_.pick(PROVIDERS, "GOOGLE")}
+          />
       </div>
     )
   }

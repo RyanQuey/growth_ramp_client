@@ -20,7 +20,7 @@ const B2 = require('backblaze-b2')
 const moment = require('moment')
 
 const uuid = require('uuid/v4');
-const $ = require('jquery');
+//const $ = require('jquery');
 const _ = require('lodash')
 
 const b2 = new B2({
@@ -284,12 +284,8 @@ const Helpers = {
       userData.userName = passportProfile.displayName
       //not sure why permissions are sent in this _json property only, but whatever
       //mapping to an object, with keys being the scope
+      //TODO get scopes somehow. FOr now only allowing basic options
       userData.scopes = {}
-      let scopes = passportProfile._json.permissions.data
-      for (let i = 0; i < scopes.length; i++) {
-        let scope = scopes[i]
-        userData.scopes[scope.permission] = {status: scope.status}
-      }
       //only persisting one email
       //TODO this might be for all providers, so don't need conditional
       userData.email = Helpers.safeDataPath(passportProfile, "emails.0.value", "")
@@ -354,9 +350,18 @@ const Helpers = {
     clientSecret: env.CLIENT_GOOGLE_SECRET,
     callbackURL: `${callbackUrl}/google`,
     profileFields: [
+      "id",
+      "language",
+      "picture",
+      "isPerson",
+      "isPlusUser",
+      "displayName",
     ],
     passReqToCallback: true,//to extract the code from the query...for some reason, passport doesn't get it by default. also to get cookies
-    scope: [],
+    scope: [
+      "https://www.googleapis.com/auth/analytics.readonly", // to GET google analytics
+      "https://www.googleapis.com/auth/plus.login", // to login with this token later, and passport seems to need it
+    ],
   },
 
   linkedinOptions: {
@@ -445,7 +450,7 @@ const Helpers = {
       } else if (err || !raw){
         console.log("should never get here (FB)");
         console.log("ERROR: Unknown");
-        console.log(err);
+        console.error(err);
 
         return "unknown-error"
       }
@@ -454,6 +459,39 @@ const Helpers = {
     },
     google: (req, err, raw) => {
       // TODO need to add this error handling
+      console.log("Exception from Google:"); //could be from our api, if decided to throw something too :) (if so, expect it in the raw)
+      console.log(err);
+      //if the user rejected the permissions they just asked to give...
+      if (err && err.code === 1000) { //TODO fix this
+        //then, redirect back to app
+        return "invalid-code"
+
+      //I'm actually getting a 200 code with this
+      //provider_redirect/facebook?error=access_denied&error_code=200&error_description=Permissions+error&error_reason=user_denied#_=_
+      } else if (err && err.code === 10 || req.query.error === "access_denied") { //TODO add this
+        return "user-rejected"
+      } else if (raw) {
+        try {
+          //note: raw might be good data from provider
+          let data = JSON.parse(raw)
+          if (data.code && data.code === "no-sign-up-with-oauth") {
+            //we're not allowing it right now. Logging in, not signing up
+            return "forbidden-oauth-signup"
+          }
+
+        } catch (err) {
+          //because...not sure what else to do
+          return "success"
+        }
+
+      } else if (err || !raw){
+        console.log("should never get here (Google)");
+        console.log("ERROR: Unknown");
+        console.error(err);
+
+        return "unknown-error"
+      }
+
       return "success"
     },
     twitter: (req, err, raw) => {
@@ -465,7 +503,7 @@ const Helpers = {
       } else if (err || !raw) {
         console.log("should never get here (Twitter)");
         console.log("ERROR: Unknown");
-        console.log(err);
+        console.error(err);
 
         return "unknown-error"
 

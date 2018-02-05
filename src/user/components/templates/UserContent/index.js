@@ -28,7 +28,7 @@ class UserContent extends Component {
             <Route path="/campaigns" component={ViewCampaigns} />
             <Route path="/plans/:planId/:editing?" component={ShowPlan} />
             <Route path="/plans" component={ViewPlans} />
-            {false && <Route path="/analytics" component={ViewAnalytics} />}
+            <Route path="/analytics" component={ViewAnalytics} />
             <Route path="/providerAccounts/:provider" component={ShowProvider} />
             <Route path="/settings/:view?" component={UserSettings} />
             {false && <Route path="/providerAccounts/:provider?" component={Providers} />}

@@ -21,7 +21,13 @@ class ShowProvider extends Component {
     //will eventually use a store to tell modal to only show this account
 
     const currentProvider = Helpers.safeDataPath(this.props, "match.params.provider", "").toUpperCase()
-    this.props.setCurrentModal("LinkProviderAccountModal", {provider: currentProvider})
+    const canAddRealAccounts = PROVIDERS[currentProvider] && !PROVIDERS[currentProvider].notForPublishing
+    if (canAddRealAccounts) {
+      this.props.setCurrentModal("LinkProviderAccountModal", {provider: currentProvider})
+
+    } else {
+      this.props.setCurrentModal("AddFakeProviderAccountModal")
+    }
   }
 
   render() {

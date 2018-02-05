@@ -55,7 +55,7 @@ console.log("**************");
     return Helpers.tradeTokenForUser(providerData, cookie, done)
   }
 ))
-//appsecret is automatically set (?)
+// fb appsecret is automatically set (?)
 
 passport.use(new GoogleStrategy(
   Helpers.googleOptions,
@@ -166,11 +166,11 @@ app.get('/login/:provider', ((req, res, next) => {
 
 app.get(`${Helpers.callbackPath}/:provider`, (req, res, next) => {
   const providerName = req.params.provider.toLowerCase()
-  if (!["facebook", "twitter", "linkedin"].includes(providerName)) {
+  if (!["facebook", "twitter", "linkedin", "google"].includes(providerName)) {
     console.log("someone is hacking us I think. Unless provider is app.js, in which case it's going to growthramp.io/provider_redirect/facebook or something.")
     console.log("They tried:", req.params.provider);
     //TODO if req.params.provider === "app.js", should redirect to home page
-    next()
+    next("Error: someone is hacking us I think. Unless provider is app.js, in which case it's going to growthramp.io/provider_redirect/facebook or something.")
   }
   const cookie = req.headers.cookie && Helpers.extractCookie(req.headers.cookie)
 

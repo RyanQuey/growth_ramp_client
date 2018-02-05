@@ -34,8 +34,9 @@ export default () => {
   Cookie.host = Cookie.host.join(".")
   Cookie.host = Cookie.host.split(":")[0]
 
-  if (Cookie.host === "herokuapp.com") { //hacky way of working on it while using heroku...
-    Cookie.host = "growth-ramp.herokuapp.com"
+   //Not sure if this works
+  if (location.host === "localhost:5000") { //hacky way of working on it while using localhost...
+    Cookie.host = "localhost"
   }
 
   //anything else I want to save to the browser, besides cookies?

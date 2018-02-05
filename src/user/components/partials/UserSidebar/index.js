@@ -44,13 +44,18 @@ class UserSidebar extends Component {
             <MenuItem link="/plans" text="Plans" nav={true} icon="map"/>
             <MenuItem link={false && "/providerAccounts"} text="Platforms" selected={this.state.providerAccounts} onClick={this.handleClick.bind(this, "providerAccounts")} icon="vcard">
               <ul>
-                {Object.keys(this.props.providerAccounts).map((providerName) => (
+                {Object.keys(this.props.providerAccounts).filter((provider) =>
+                  !PROVIDERS[provider] ||
+                  !PROVIDERS[provider].notForPublishing ||
+                  //this is for google. If they have linked google account, might not be any channels; only have channels if they make custom ones at this point
+                  (this.props.providerAccounts[provider].some((account) => account.channels && account.channels.length))
+                ).map((providerName) => (
                   <MenuChild key={providerName} text={Helpers.providerFriendlyName(providerName)} link={`/providerAccounts/${providerName.toLowerCase()}`} nav={true} icon={providerName.toLowerCase()}/>
                 ))}
                 <MenuChild text="New Account" onClick={this.openNewProviderModal} link={false && `/providerAccounts`} icon="plus-circle"/>
               </ul>
             </MenuItem>
-            {false && <MenuItem link="/analytics" text="Analytics" nav={true} icon="bar-chart"/>}
+            <MenuItem link="/analytics" text="Analytics" nav={true} icon="bar-chart"/>
             {false && <MenuItem link="/workgroups" text="Workgroups" nav={true} icon="users"/>}
 
           </ul>
