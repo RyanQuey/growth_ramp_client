@@ -28,6 +28,7 @@ class AddFakeProviderAccount extends Component {
       channelType: "",
       forumName: "",
       channelName: "",
+      newProvider: "",
     }
 
     this.handleClose = this.handleClose.bind(this)
@@ -35,13 +36,14 @@ class AddFakeProviderAccount extends Component {
     this.togglePending = this.togglePending.bind(this)
     this.toggleAddingProvider = this.toggleAddingProvider.bind(this)
     this.chooseProvider = this.chooseProvider.bind(this)
-    this.handleChooseProvider = this.handleChooseProvider.bind(this)
     this.chooseChannelType = this.chooseChannelType.bind(this)
     this.handleParam = this.handleParam.bind(this)
     this.submit = this.submit.bind(this)
     this._createFakeChannel = this._createFakeChannel.bind(this)
     this.handleInputErrors = this.handleInputErrors.bind(this)
     this.checkForRequired = this.checkForRequired.bind(this)
+    this.handleProviderText = this.handleProviderText.bind(this)
+    this.handleAddProvider = this.handleAddProvider.bind(this)
   }
 
   handleParam(key, value) {
@@ -106,6 +108,9 @@ console.log(field);
     return true
   }
 
+  handleProviderText(value) {
+    this.setState({newProvider: value})
+  }
   chooseProvider(provider) {
     const newState = {
       currentProvider: provider,
@@ -119,8 +124,8 @@ console.log(field);
   }
 
   //if choose from the select bar (ie while adding nwe provider)
-  handleChooseProvider(providerOption) {
-    const value = providerOption.value
+  handleAddProvider() {
+    const value = this.state.newProvider
     const match = PROVIDER_SUGGESTION_LIST.find((suggestion) => suggestion.toLowerCase() === value.toLowerCase())
     const newState = {addingProvider: false}
 
@@ -332,16 +337,17 @@ console.log("submitting");
 
           {addingProvider && (
             <div>
-              <Select
-                creatable={true}
+              <Input
                 label={`Add new platform`}
-                className={classes.select}
-                openOnClick={false}
-                options={platformOptions}
-                onChange={this.handleChooseProvider}
-                currentOption={currentProvider ? this.providerOption(currentProvider) : placeholder}
-                name="select-platform"
+                onChange={this.handleProviderText}
               />
+              <Button
+                onClick={this.handleAddProvider}
+                pending={this.state.pending}
+                disabled={!this.state.newProvider}
+              >
+                Add Platform
+              </Button>
             </div>
           )}
 
@@ -372,8 +378,8 @@ console.log("submitting");
             />
           </div>}
 
-          <Form onSubmit={this.submit}>
-            {currentProvider &&
+          {currentProvider &&
+            <Form onSubmit={this.submit}>
               <div>
                 <h3>Channel Details:</h3>
                 <Flexbox justify="center">
@@ -401,16 +407,16 @@ console.log("submitting");
                   />
                 </Flexbox>
               </div>
-            }
 
-            <Button
-              type='submit'
-              pending={this.state.pending}
-              disabled={errorsPresent || !currentProvider}
-            >
-              Add {currentProviderName || ""} Account
-            </Button>
-          </Form>
+              <Button
+                type='submit'
+                pending={this.state.pending}
+                disabled={errorsPresent || !currentProvider}
+              >
+                Add {currentProviderName || ""} Account
+              </Button>
+            </Form>
+          }
         </ModalBody>
       </ModalContainer>
     )
