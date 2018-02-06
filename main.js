@@ -156,6 +156,14 @@ app.get('/login/:provider', ((req, res, next) => {
 
 //console.log("callback path (only set for LI)");
 //console.log(options.callbackUrl);
+
+  if (providerName === "google") {
+    //for some reason, google passport doesn't like setting these in the strategy
+    //gets refreshtoken
+    options.accessType = "offline"
+    options.prompt = "consent"
+  }
+
   passport.authenticate(providerName, options)(req, res, next)
 }))
 

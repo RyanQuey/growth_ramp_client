@@ -17,6 +17,7 @@ import providerAccountsReducer from './providerAccounts'
 import userReducer from './user'
 import viewSettingsReducer from './viewSettings'
 import workgroupsReducer from './workgroups'
+import websites from './websites'
 
 const rootReducer = combineReducers({
   accountSubscription: accountSubscriptionReducer,
@@ -39,6 +40,7 @@ const rootReducer = combineReducers({
   // the current user
   user: userReducer,
   viewSettings: viewSettingsReducer,
+  websites,
 })
 
 const sagaMiddleware = createSagaMiddleware()

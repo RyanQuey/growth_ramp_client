@@ -48,7 +48,7 @@ console.log(window.api);*/
   }, (error) => {
     console.log("getting error",); return Promise.reject(error)
   })*/
-console.log("setting user", user);
+
   Cookie.set('sessionUser', user)
 }
 

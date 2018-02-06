@@ -29,7 +29,7 @@ const b2 = new B2({
 })
 
 const bucketId = process.env.B2_BUCKET_ID
-const domain = env.CLIENT_URL || 'http://www.local.test:5000'
+const domain = 'http://www.lvh.me:5000' || env.CLIENT_URL || 'http://www.local.test:5000' //Google doesn't like local.test. use http://www.lvh.me:5000
 const callbackPath = '/provider_redirect'
 const callbackUrl = domain + callbackPath
 
@@ -256,6 +256,7 @@ const Helpers = {
     userData.photoUrl = Helpers.safeDataPath(passportProfile, "photos.0.value", "")
     userData.providerUserId = passportProfile.id
     userData.accessToken = accessToken
+console.log("\n\n refresh token", refreshToken);
     userData.refreshToken = refreshToken
     //only twitter sends; because oauth1 probably
     userData.accessTokenSecret = accessTokenSecret
@@ -349,18 +350,12 @@ const Helpers = {
     clientID: env.CLIENT_GOOGLE_ID,
     clientSecret: env.CLIENT_GOOGLE_SECRET,
     callbackURL: `${callbackUrl}/google`,
-    profileFields: [
-      "id",
-      "language",
-      "picture",
-      "isPerson",
-      "isPlusUser",
-      "displayName",
-    ],
     passReqToCallback: true,//to extract the code from the query...for some reason, passport doesn't get it by default. also to get cookies
     scope: [
       "https://www.googleapis.com/auth/analytics.readonly", // to GET google analytics
-      "https://www.googleapis.com/auth/plus.login", // to login with this token later, and passport seems to need it
+      "https://www.googleapis.com/auth/userinfo.profile", // to login with this token later, and passport seems to need it. ANd this is probably better than google plus stuff
+      "https://www.googleapis.com/auth/userinfo.email", // to login with this token later, and passport seems to need it. ANd this is probably better than google plus stuff
+      //"https://www.googleapis.com/auth/plus.login", // to login with this token later, and passport seems to need it
     ],
   },
 
