@@ -1,13 +1,14 @@
 import { Component } from 'react';
 import { connect } from 'react-redux'
 import {
-  FETCH_ALL_GA_ACCOUNTS_REQUEST,
 } from 'constants/actionTypes'
-import { Button, Flexbox, Icon } from 'shared/components/elements'
+import { Button, Flexbox, Icon, Form } from 'shared/components/elements'
 import {
 } from 'user/components/partials'
 import { SocialLogin } from 'shared/components/partials'
+import { AnalyticsFilters } from 'user/components/partials'
 import { PROVIDERS, PROVIDER_IDS_MAP } from 'constants/providers'
+import {formActions, alertActions} from 'shared/actions'
 import {
   withRouter,
 } from 'react-router-dom'
@@ -18,27 +19,23 @@ class ViewAnalytics extends Component {
     super()
     this.state = {
       pending: true,
+      analyticsPending: false,
     }
 
-    this.refreshGAAccounts = this.refreshGAAccounts.bind(this)
+
+    this.togglePending = this.togglePending.bind(this)
+  }
+
+  togglePending(value = !this.state.pending) {
+    this.setState({pending: value})
   }
 
   componentWillMount() {
-    this.refreshGAAccounts()
-  }
-
-  refreshGAAccounts() {
-    const cb = () => {
-      this.setState({pending: false})
-    }
-
-    this.setState({pending: true})
-    this.props.fetchAllGAAccounts({}, cb)
   }
 
   render () {
-    const {googleAccounts, websites} = this.props
     const {pending} = this.state
+    const {googleAccounts} = this.props
     const currentGoogleAccount = googleAccounts && googleAccounts[0]
 
     return (
@@ -46,21 +43,9 @@ class ViewAnalytics extends Component {
         <h1>Analytics</h1>
 
         {currentGoogleAccount ? (
-          <div>
-            {currentGoogleAccount.userName}
-            {pending ? (
-              <Icon name="spinner"/>
-            ) : (
-              Object.keys(websites).length ? (
-                <div>Pick a website
-                  {Object.keys(websites).map((url) => <div key={url}>{url}</div>)}
-                </div>
-
-              ) : (
-                <div>No websites connected to your google account. </div>
-              )
-            )}
-          </div>
+          <AnalyticsFilters
+            togglePending={this.togglePending}
+          />
         ) : (
           <SocialLogin
             pending={this.state.pending}
@@ -68,6 +53,8 @@ class ViewAnalytics extends Component {
             providers={_.pick(PROVIDERS, "GOOGLE")}
           />
         )}
+
+        <div>Chart will go here</div>
       </div>
     )
   }
@@ -75,7 +62,6 @@ class ViewAnalytics extends Component {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    fetchAllGAAccounts: (payload, cb) => dispatch({type: FETCH_ALL_GA_ACCOUNTS_REQUEST, payload, cb})
   }
 }
 
@@ -85,6 +71,7 @@ const mapStateToProps = state => {
     campaigns: state.campaigns,
     googleAccounts: Helpers.safeDataPath(state, "providerAccounts.GOOGLE", []).filter((account) => !account.unsupportedProvider),
     websites: state.websites,
+    currentWebsiteId: Helpers.safeDataPath(state, "form.Analytics.filters.websiteId"),
   }
 }
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(ViewAnalytics))
