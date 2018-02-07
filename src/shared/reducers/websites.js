@@ -1,5 +1,6 @@
 import {
   FETCH_ALL_GA_ACCOUNTS_SUCCESS,
+  SIGN_OUT,
 } from 'constants/actionTypes'
 
 const websitesReducer = (state = {}, action) => {

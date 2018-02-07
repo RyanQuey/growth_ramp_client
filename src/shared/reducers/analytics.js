@@ -1,5 +1,6 @@
 import {
   GET_ANALYTICS_SUCCESS,
+  SIGN_OUT,
 } from 'constants/actionTypes'
 
 const analyticsReducer = (state = {}, action) => {
