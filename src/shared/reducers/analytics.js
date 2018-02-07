@@ -16,6 +16,9 @@ const analyticsReducer = (state = {}, action) => {
       newState[dataset] = data
       return newState
 
+    case SIGN_OUT:
+      return {}
+
     default:
       return state
   }

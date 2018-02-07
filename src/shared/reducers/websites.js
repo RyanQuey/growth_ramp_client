@@ -34,6 +34,9 @@ const websitesReducer = (state = {}, action) => {
 
       return websites
 
+    case SIGN_OUT:
+      return {}
+
     default:
       return state
   }
