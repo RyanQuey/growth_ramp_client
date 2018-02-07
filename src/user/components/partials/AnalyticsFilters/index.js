@@ -63,20 +63,38 @@ class AnalyticsFilters extends Component {
 
   //gets the accounts and all the websites we could filter/show
   refreshGAAccounts(cbcb) {
-    const cb = (analyticsAccts) => {
+    const cb = (googleAccts) => {
       this.setState({pending: false})
       const {websiteId, profileId} = this.props
 
       if (!websiteId) {
         //is initializing table for first time; default to first site and first profile of that site (often will be the only profile...total)
-        const defaultSite = analyticsAccts && analyticsAccts.find((acct) => Helpers.safeDataPath(acct, `items.0.webProperties.0`, false)).items[0].webProperties[0]
-        this.setAnalyticsFilter({
-          websiteId: defaultSite.id,
-          providerAccountId: defaultSite.providerAccountId,
-          profileId: Helpers.safeDataPath(defaultSite, `profiles.0.id`, ""),
-        })
+        let matchingIndex
+console.log(googleAccts);
+        const gAccountWithSite = googleAccts && googleAccts.find((acct) => {
+          const analyticsAccounts = acct && acct.items
+          //find first analytics account with a website and grab that site
+          const hasSite = analyticsAccounts.some((account, index) => {
+            matchingIndex = index
+            // find first one with at least one web property (aka website) and one profile (aka view)
+            return Helpers.safeDataPath(account, `webProperties.0.profiles.0`, false)
+          })
 
-        this.getAnalytics()
+          return hasSite
+        })
+        const defaultSite = gAccountWithSite && gAccountWithSite.items[matchingIndex].webProperties[0]
+
+        if (defaultSite) {
+          this.setAnalyticsFilter({
+            websiteId: defaultSite.id,
+            providerAccountId: defaultSite.providerAccountId,
+            profileId: Helpers.safeDataPath(defaultSite, `profiles.0.id`, ""),
+          })
+
+          this.getAnalytics()
+        } else {
+          this.setState({pending: false})
+        }
       }
     }
 
