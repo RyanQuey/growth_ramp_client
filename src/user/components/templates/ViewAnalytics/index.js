@@ -6,7 +6,7 @@ import { Button, Flexbox, Icon, Form } from 'shared/components/elements'
 import {
 } from 'user/components/partials'
 import { SocialLogin } from 'shared/components/partials'
-import { AnalyticsFilters } from 'user/components/partials'
+import { AnalyticsFilters, AnalyticsTable } from 'user/components/partials'
 import { PROVIDERS, PROVIDER_IDS_MAP } from 'constants/providers'
 import {formActions, alertActions} from 'shared/actions'
 import {
@@ -54,7 +54,9 @@ class ViewAnalytics extends Component {
           />
         )}
 
-        <div>Chart will go here</div>
+        <AnalyticsTable
+          dataset="websiteSummary"
+        />
       </div>
     )
   }

@@ -4,6 +4,7 @@ import createSagaMiddleware from 'redux-saga'
 import rootSaga from 'shared/sagas'
 
 import alertReducer from './alerts'
+import analytics from './analytics'
 import errorReducer from './errors'
 import formsReducer from './forms'
 import campaignsReducer from './campaigns'
@@ -20,6 +21,7 @@ import workgroupsReducer from './workgroups'
 import websites from './websites'
 
 const rootReducer = combineReducers({
+  analytics,
   accountSubscription: accountSubscriptionReducer,
   alerts: alertReducer,
   //the plan that the user is currently working on OR viewing

@@ -61,6 +61,7 @@ export const uploadFile = (file) => {
   })
 }
 
+//makes it not dirty anymore
 export const formPersisted = (component, form) => {
   store.dispatch({
     type: FORM_PERSISTED,
