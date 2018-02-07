@@ -116,7 +116,7 @@ app.get('/robots.txt', function (req, res) {
     res.send("User-agent: *\nDisallow: /");
   } else {
     res.type('text/plain');
-    res.send("User-agent: *\nDisallow: /");
+    res.send("User-agent: *\nAllow: /");
   }
 });
 
