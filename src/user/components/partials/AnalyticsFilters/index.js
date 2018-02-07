@@ -70,7 +70,6 @@ class AnalyticsFilters extends Component {
       if (!websiteId) {
         //is initializing table for first time; default to first site and first profile of that site (often will be the only profile...total)
         let matchingIndex
-console.log(googleAccts);
         const gAccountWithSite = googleAccts && googleAccts.find((acct) => {
           const analyticsAccounts = acct && acct.items
           //find first analytics account with a website and grab that site
@@ -115,10 +114,16 @@ console.log(googleAccts);
 
   //for filtering which websites to show analytics for
   setWebsiteFilter(website) {
+    //default to first profile
+    let defaultProfile = ""
+    if (website.profiles && website.profiles.length) {
+      defaultProfileId = website.profiles[0].id
+    }
+
     this.setAnalyticsFilter({
       websiteId: website.id,
       providerAccountId: website.providerAccountId,
-      profileId: "",
+      profileId: defaultProfileId,
     })
   }
 
@@ -132,9 +137,18 @@ console.log(googleAccts);
   getAnalytics(e) {
     e && e.preventDefault()
     //TODO set filters to store, and then use in saga
+    formActions.formPersisted("Analytics", "filters")
     const cb = () => {
       this.setState({pending: false})
-      formActions.formPersisted("Analytics", "filters")
+    }
+    const onFailure = (err) => {
+      this.setState({pending: false})
+      alertActions.newAlert({
+        title: "Failure to get analytics: ",
+        level: "DANGER",
+        message: err.message || "Unknown error",
+        options: {timer: false},
+      })
     }
 
     this.setState({pending: true})

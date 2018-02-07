@@ -118,7 +118,7 @@ function* signIn(action) {
       })
 
     } else {
-      console.log('Error signing in/signing up', err)
+      console.error('Error signing in/signing up', err)
       errorActions.handleErrors({
         templateName: "Login",
         templatePart: "credentials",
@@ -129,7 +129,6 @@ function* signIn(action) {
         useInvalidAttributeMessage: true,
       })
     }
-console.log(action.onFailure, "should run");
     action.onFailure && action.onFailure(err)
 
   }
