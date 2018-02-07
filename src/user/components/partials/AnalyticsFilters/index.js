@@ -6,10 +6,10 @@ import {
   SET_ANALYTICS_FILTER,
 } from 'constants/actionTypes'
 import { Button, Flexbox, Icon, Form } from 'shared/components/elements'
-import {
-} from 'user/components/partials'
+import { Select } from 'shared/components/groups'
 import { SocialLogin } from 'shared/components/partials'
 import { PROVIDERS, PROVIDER_IDS_MAP } from 'constants/providers'
+import { TIME_RANGE_OPTIONS, } from 'constants/analytics'
 import {formActions, alertActions} from 'shared/actions'
 import {
   withRouter,
@@ -21,26 +21,52 @@ class AnalyticsFilters extends Component {
     super()
     this.state = {
       pending: true,
-      analyticsPending: false,
     }
 
     this.refreshGAAccounts = this.refreshGAAccounts.bind(this)
     this.getAnalytics = this.getAnalytics.bind(this)
     this.setAnalyticsFilter = this.setAnalyticsFilter.bind(this)
     this.setAnalyticsProfileFilter = this.setAnalyticsProfileFilter.bind(this)
+    this.setDateFilter = this.setDateFilter.bind(this)
   }
 
   componentWillMount() {
     this.refreshGAAccounts()
   }
 
+  timeRangeOptions () {
+    return [
+      {
+        label: "Past 7 Days",
+        value: {
+          startDate: moment().subtract(7, "days").format("YYYY-MM-DD"),
+          endDate: moment().format("YYYY-MM-DD"),
+        },
+      },
+      {
+        label: "Past 30 Days",
+        value: {
+          startDate: moment().subtract(30, "days").format("YYYY-MM-DD"),
+          endDate: moment().format("YYYY-MM-DD"),
+        },
+      },
+      {
+        label: "Total",
+        value: {
+          startDate: "2005-01-01", //GA started, so can't go before this
+          endDate: moment().format("YYYY-MM-DD"),
+        }
+      },
+    ]
+  }
+
   //gets the accounts and all the websites we could filter/show
   refreshGAAccounts(cbcb) {
     const cb = (analyticsAccts) => {
       this.setState({pending: false})
-      const {currentWebsiteId, currentAnalyticsProfileId} = this.props
+      const {websiteId, profileId} = this.props
 
-      if (!currentWebsiteId) {
+      if (!websiteId) {
         //is initializing table for first time; default to first site and first profile of that site (often will be the only profile...total)
         const defaultSite = Helpers.safeDataPath(analyticsAccts, `0.items.0.webProperties.0`, {})
         this.setAnalyticsFilter({
@@ -60,6 +86,12 @@ class AnalyticsFilters extends Component {
   // filter should be object, keys being params that will be overwritten for the analytics filters
   setAnalyticsFilter(filter) {
     formActions.setParams("Analytics", "filters", filter)
+  }
+
+  setDateFilter(selectedOption) {
+    const {startDate, endDate} = selectedOption.value
+
+    this.setAnalyticsFilter({startDate, endDate})
   }
 
   //for filtering which websites to show analytics for
@@ -82,66 +114,81 @@ class AnalyticsFilters extends Component {
     e && e.preventDefault()
     //TODO set filters to store, and then use in saga
     const cb = () => {
-      this.setState({analyticsPending: false})
+      this.setState({pending: false})
       formActions.formPersisted("Analytics", "filters")
     }
 
-    this.setState({analyticsPending: true})
+    this.setState({pending: true})
     this.props.getAnalytics({}, cb)
   }
 
   render () {
-    const {googleAccounts, websites, currentWebsiteId, currentAnalyticsProfileId, dirty} = this.props
     const {pending} = this.state
-    const currentWebsite = websites[currentWebsiteId]
-console.log(currentWebsite && currentWebsite.profiles);
-    const currentGoogleAccount = googleAccounts && googleAccounts[0]
+    const {googleAccounts, websites, dirty, filters} = this.props
 
-    if (pending) {
+    if (!filters || !websites) {
       return <Icon name="spinner"/>
     }
+    const {websiteId, profileId, startDate, endDate} = filters
+
+    const currentWebsite = websites[websiteId]
+    const currentGoogleAccount = googleAccounts && googleAccounts[0]
+
+
+    //set by function so date will refresh, in case goes past midnight and they didn't refresh browser or something
+    const timeRangeOptions = this.timeRangeOptions()
+console.log(startDate);
+    const currentTimeRangeOption = timeRangeOptions.find((option) => option.value.startDate === startDate)
 
     return (
-      <div>
-          <Form onSubmit={this.getAnalytics}>
-            {currentGoogleAccount.userName}
-            {Object.keys(websites).length ? (
+      <Form onSubmit={this.getAnalytics}>
+        <div>Google Account: {currentGoogleAccount.userName}</div>
+
+        {Object.keys(websites).length ? (
+          <div>
+            <h4>Choose Analytics Set</h4>
+
+            {Object.keys(websites).map((id) => {
+              let website = websites[id]
+
+              return <Button
+                key={id}
+                onClick={this.setWebsiteFilter.bind(this, website)}
+                selected={id === websiteId}
+              >
+                {website.name || website.websiteUrl}
+              </Button>
+            })}
+
+            {currentWebsite &&
               <div>
-                <h4>Choose Analytics Set</h4>
-
-                {Object.keys(websites).map((id) => {
-                  let website = websites[id]
-
-                  return <Button
-                    key={id}
-                    onClick={this.setWebsiteFilter.bind(this, website)}
-                    selected={id === currentWebsiteId}
+                {currentWebsite.profiles.map((profile) =>
+                  <Button
+                    key={profile.id}
+                    onClick={this.setAnalyticsProfileFilter.bind(this, profile)}
+                    selected={profile.id === profileId}
                   >
-                    {website.name || website.websiteUrl}
+                    {profile.name}
                   </Button>
-                })}
-
-                {currentWebsite &&
-                  <div>
-                    {currentWebsite.profiles.map((profile) =>
-                      <Button
-                        key={profile.id}
-                        onClick={this.setAnalyticsProfileFilter.bind(this, profile)}
-                        selected={profile.id === currentAnalyticsProfileId}
-                      >
-                        {profile.name}
-                      </Button>
-                    )}
-                  </div>
-                }
-
-                <Button type="submit" disabled={!currentAnalyticsProfileId || !dirty}>Submit</Button>
+                )}
               </div>
-            ) : (
-              <div>No websites connected to your google account. </div>
-            )}
-          </Form>
-      </div>
+            }
+
+            <Select
+              label="Time Range"
+              className={classes.select}
+              options={timeRangeOptions}
+              onChange={this.setDateFilter}
+              currentOption={currentTimeRangeOption || timeRangeOptions[0]}
+              name="timerange"
+            />
+
+            <Button type="submit" pending={pending} disabled={!profileId || !dirty}>Submit</Button>
+          </div>
+        ) : (
+          <div>No websites connected to your google account. </div>
+        )}
+      </Form>
     )
   }
 }
@@ -159,8 +206,7 @@ const mapStateToProps = state => {
     campaigns: state.campaigns,
     googleAccounts: Helpers.safeDataPath(state, "providerAccounts.GOOGLE", []).filter((account) => !account.unsupportedProvider),
     websites: state.websites,
-    currentWebsiteId: Helpers.safeDataPath(state, "forms.Analytics.filters.params.websiteId"),
-    currentAnalyticsProfileId: Helpers.safeDataPath(state, "forms.Analytics.filters.params.profileId"),
+    filters: Helpers.safeDataPath(state, "forms.Analytics.filters.params"),
     dirty: Helpers.safeDataPath(state, "forms.Analytics.filters.dirty"),
   }
 }
