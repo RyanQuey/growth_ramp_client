@@ -125,7 +125,7 @@ class AnalyticsFilters extends Component {
   //for filtering which websites to show analytics for
   setWebsiteFilter(website) {
     //default to first profile
-    let defaultProfile = ""
+    let defaultProfileId = ""
     if (website.profiles && website.profiles.length) {
       defaultProfileId = website.profiles[0].id
     }
