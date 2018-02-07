@@ -67,6 +67,7 @@ class AnalyticsTable extends Component {
               <Flexbox
                 key={row.dimensions[0]}
                 className={`${classes.providerContainer} ${classes[alternatingClass]}`}
+                align="center"
               >
                 {columns.map((column, index) =>
                   <div key={index} className={`${classes[`column${index +1}`]}`}>{column}</div>

@@ -18,8 +18,7 @@ class ViewAnalytics extends Component {
   constructor() {
     super()
     this.state = {
-      pending: true,
-      analyticsPending: false,
+      pending: false,
     }
 
 
@@ -27,7 +26,7 @@ class ViewAnalytics extends Component {
   }
 
   togglePending(value = !this.state.pending) {
-    this.setState({pending: value})
+    this.setState({pending: value}) //only for social login so far
   }
 
   componentWillMount() {
