@@ -16,6 +16,7 @@ function* fetchAllGAAccounts(action) {
 
     //organize by provider
     const allAccounts = res.data
+console.log(res);
     yield all([
       put({type: FETCH_ALL_GA_ACCOUNTS_SUCCESS, payload: allAccounts})
     ])
