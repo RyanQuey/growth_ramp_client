@@ -72,6 +72,7 @@ class ContactUsButton extends Component {
             float="left"
             body="left"
             side="top"
+            show={this.state.open}
           >
             <h3>Send us an email</h3>
             <form className={``} onSubmit={this.submit} >
