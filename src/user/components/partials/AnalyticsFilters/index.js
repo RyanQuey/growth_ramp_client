@@ -242,9 +242,9 @@ const mapDispatchToProps = (dispatch) => {
     getAnalytics: (payload, cb, onFailure) => dispatch({
       type: GET_ANALYTICS_REQUEST,
       payload,
-      cb,
       dataset: "websiteSummary",
-      onFailure
+      cb,
+      onFailure,
     }),
   }
 }
