@@ -96,9 +96,19 @@ class AnalyticsFilters extends Component {
         }
       }
     }
+    const onFailure = (err) => {
+      this.setState({pending: false})
+      alertActions.newAlert({
+        title: "Failure to fetch Google Analytics accounts: ",
+        level: "DANGER",
+        message: err.message || "Unknown error",
+        options: {timer: false},
+      })
+    }
+
 
     this.setState({pending: true})
-    this.props.fetchAllGAAccounts({}, cb)
+    this.props.fetchAllGAAccounts({}, cb, onFailure)
   }
 
   // filter should be object, keys being params that will be overwritten for the analytics filters
@@ -228,7 +238,7 @@ console.log(startDate);
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    fetchAllGAAccounts: (payload, cb) => dispatch({type: FETCH_ALL_GA_ACCOUNTS_REQUEST, payload, cb}),
+    fetchAllGAAccounts: (payload, cb, onFailure) => dispatch({type: FETCH_ALL_GA_ACCOUNTS_REQUEST, payload, cb, onFailure}),
     getAnalytics: (payload, cb, onFailure) => dispatch({type: GET_ANALYTICS_REQUEST, payload, cb, dataset: "websiteSummary"}, onFailure),
   }
 }
