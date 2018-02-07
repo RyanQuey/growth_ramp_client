@@ -152,7 +152,7 @@ class AnalyticsFilters extends Component {
     }
 
     this.setState({pending: true})
-    this.props.getAnalytics({}, cb)
+    this.props.getAnalytics({}, cb, onFailure)
   }
 
   render () {
@@ -229,7 +229,7 @@ console.log(startDate);
 const mapDispatchToProps = (dispatch) => {
   return {
     fetchAllGAAccounts: (payload, cb) => dispatch({type: FETCH_ALL_GA_ACCOUNTS_REQUEST, payload, cb}),
-    getAnalytics: (payload, cb) => dispatch({type: GET_ANALYTICS_REQUEST, payload, cb, dataset: "websiteSummary"}),
+    getAnalytics: (payload, cb, onFailure) => dispatch({type: GET_ANALYTICS_REQUEST, payload, cb, dataset: "websiteSummary"}, onFailure),
   }
 }
 
