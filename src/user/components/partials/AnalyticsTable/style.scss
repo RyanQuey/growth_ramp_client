@@ -2,7 +2,7 @@
 .container {
   visibility: visible;
   opacity: 1;
-  max-height: 9000px ; //could set dynamically to show more or less rows
+  max-height: 99000px ; //could set dynamically to show more or less rows
   @include transition(max-height, .8s, ease);
   overflow-y: hidden;
 

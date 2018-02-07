@@ -35,6 +35,7 @@ class AnalyticsFilters extends Component {
   }
 
   timeRangeOptions () {
+    //default is first option, one week, which is what GA defaults to
     return [
       {
         label: "Past 7 Days",
