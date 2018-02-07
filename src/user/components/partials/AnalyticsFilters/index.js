@@ -69,7 +69,7 @@ class AnalyticsFilters extends Component {
 
       if (!websiteId) {
         //is initializing table for first time; default to first site and first profile of that site (often will be the only profile...total)
-        const defaultSite = Helpers.safeDataPath(analyticsAccts, `0.items.0.webProperties.0`, {})
+        const defaultSite = analyticsAccts && analyticsAccounts.find((acct) => Helpers.safeDataPath(acct, `items.0.webProperties.0`, false))
         this.setAnalyticsFilter({
           websiteId: defaultSite.id,
           providerAccountId: defaultSite.providerAccountId,

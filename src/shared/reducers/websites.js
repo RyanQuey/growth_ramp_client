@@ -11,16 +11,15 @@ const websitesReducer = (state = {}, action) => {
 
     case FETCH_ALL_GA_ACCOUNTS_SUCCESS:
       // a given GR user might have multiple google accounts
-console.log("pld",pld);
-      googleUserAccounts = pld
+      googleUserAccounts = pld || []
 
       for (let googleUserAccount of googleUserAccounts) {
         // each google user acct might have access to multiple GA accts
-        let analyticsAccounts = googleUserAccount.items
+        let analyticsAccounts = googleUserAccount.items || []
         for (let analyticsAccount of analyticsAccounts) {
           // websites this analytics account has
           // TODO might be elsewhere besides webProperties. But we are a content marketing site so probably all websites
-          let sites = analyticsAccount.webProperties
+          let sites = analyticsAccount.webProperties || []
 
           //each site will become a key in websites
           for (let site of sites) {
