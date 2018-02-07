@@ -11,6 +11,7 @@ const websitesReducer = (state = {}, action) => {
 
     case FETCH_ALL_GA_ACCOUNTS_SUCCESS:
       // a given GR user might have multiple google accounts
+console.log("pld",pld);
       googleUserAccounts = pld
 
       for (let googleUserAccount of googleUserAccounts) {
