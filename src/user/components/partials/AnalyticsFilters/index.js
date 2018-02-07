@@ -239,7 +239,13 @@ console.log(startDate);
 const mapDispatchToProps = (dispatch) => {
   return {
     fetchAllGAAccounts: (payload, cb, onFailure) => dispatch({type: FETCH_ALL_GA_ACCOUNTS_REQUEST, payload, cb, onFailure}),
-    getAnalytics: (payload, cb, onFailure) => dispatch({type: GET_ANALYTICS_REQUEST, payload, cb, dataset: "websiteSummary"}, onFailure),
+    getAnalytics: (payload, cb, onFailure) => dispatch({
+      type: GET_ANALYTICS_REQUEST,
+      payload,
+      cb,
+      dataset: "websiteSummary",
+      onFailure
+    }),
   }
 }
 
