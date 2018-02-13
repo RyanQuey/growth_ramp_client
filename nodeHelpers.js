@@ -355,6 +355,7 @@ console.log("\n\n refresh token", refreshToken);
       "https://www.googleapis.com/auth/analytics.readonly", // to GET google analytics
       "https://www.googleapis.com/auth/userinfo.profile", // to login with this token later, and passport seems to need it. ANd this is probably better than google plus stuff
       "https://www.googleapis.com/auth/userinfo.email", // to login with this token later, and passport seems to need it. ANd this is probably better than google plus stuff
+      "https://www.googleapis.com/auth/webmasters.readonly", // to read GSC stuff. Might do writing later too (?)
       //"https://www.googleapis.com/auth/plus.login", // to login with this token later, and passport seems to need it
     ],
   },
