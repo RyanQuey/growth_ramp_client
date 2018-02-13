@@ -43,10 +43,10 @@ class AnalyticsTable extends Component {
 
     const headers = [
       ...theseAnalytics.columnHeader.dimensions,
-      ...theseAnalytics.columnHeader.metricHeader.metricHeaderEntries.map((entry) => entry.title)
+      ...theseAnalytics.columnHeader.metrics.map((entry) => entry.title)
     ].map((header) => header.replace("ga:", "").titleCase())
 
-    const rows = theseAnalytics.data.rows
+    const rows = theseAnalytics.rows
 
     return (
       <div className={`${classes.container} ${this.props.hidden ? classes.hidden : ""}`}>
