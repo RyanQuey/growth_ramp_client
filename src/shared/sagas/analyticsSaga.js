@@ -12,10 +12,12 @@ import { errorActions, alertActions } from 'shared/actions'
 function* fetchAllGAAccounts(action) {
   try {
     const userId = store.getState().user.id
-    const res = yield axios.get(`/api/analytics/getAllGAAccounts/${userId}`)
+    const res = yield axios.get(`/api/analytics/getAllAnalyticsAccounts/${userId}`)
 
     //organize by provider
-    const allAccounts = res.data
+    const allAccounts = res.data.gaAccounts
+
+
     yield all([
       put({
         type: FETCH_ALL_GA_ACCOUNTS_SUCCESS,

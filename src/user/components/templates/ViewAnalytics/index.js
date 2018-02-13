@@ -41,16 +41,17 @@ class ViewAnalytics extends Component {
       <div>
         <h1>Analytics</h1>
 
+        <SocialLogin
+          pending={this.state.pending}
+          togglePending={this.togglePending}
+          providers={_.pick(PROVIDERS, "GOOGLE")}
+        />
         {currentGoogleAccount ? (
           <AnalyticsFilters
             togglePending={this.togglePending}
           />
         ) : (
-          <SocialLogin
-            pending={this.state.pending}
-            togglePending={this.togglePending}
-            providers={_.pick(PROVIDERS, "GOOGLE")}
-          />
+          <div/>
         )}
 
         <AnalyticsTable

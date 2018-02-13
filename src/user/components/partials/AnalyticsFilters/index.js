@@ -86,6 +86,7 @@ class AnalyticsFilters extends Component {
         if (defaultSite) {
           this.setAnalyticsFilter({
             websiteId: defaultSite.id,
+            websiteUrl: defaultSite.websiteUrl,
             providerAccountId: defaultSite.providerAccountId,
             profileId: Helpers.safeDataPath(defaultSite, `profiles.0.id`, ""),
           })
