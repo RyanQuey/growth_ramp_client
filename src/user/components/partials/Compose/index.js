@@ -210,7 +210,6 @@ class Compose extends Component {
 
     } else {
 
-console.log("now publishing true", value);
       this.setState({publishing: value})
     }
   }
@@ -218,7 +217,6 @@ console.log("now publishing true", value);
   publish() {
     this.setState({pending: true})
     alertActions.closeAlerts()
-console.log("now publishing");
     const cb = () => {
       this.setState({
         pending: false,

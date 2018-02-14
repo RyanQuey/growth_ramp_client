@@ -284,6 +284,7 @@ function _handleInitialUserData(data, options = {}) {
   let accountSubscription = data.accountSubscription
   console.log(accountSubscription);
   if (!accountSubscription) {
+    //they don't have a customer record in stripe yet. Initialize for them
     //don't want this in afterCreate cb, since that would either delay the ttfb, or if stripe api is bugging, make things even worse, etc. So just do it here
     store.dispatch({type: INITIALIZE_USER_ACCOUNT_SUBSCRIPTION_REQUEST})
   }
@@ -292,7 +293,7 @@ function _handleInitialUserData(data, options = {}) {
   if (!ALLOWED_EMAILS.includes(data.user.email) && (
     !accountSubscription ||
     (
-      accountSubscription.paymentPlan !== "free" && accountSubscription.subscriptionStatus !== "active"
+      accountSubscription.subscriptionStatus !== "active"
     )
   )) {
     store.dispatch({type: SET_CURRENT_MODAL, payload: "PaymentDetailsModal"})
