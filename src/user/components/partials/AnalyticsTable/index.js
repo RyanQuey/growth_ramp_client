@@ -4,6 +4,7 @@ import { Flexbox, Button, Icon, Card } from 'shared/components/elements'
 import { PostCard, ProviderCard } from 'user/components/partials'
 import { SET_CURRENT_PAGE, SET_CURRENT_MODAL  } from 'constants/actionTypes'
 import { PROVIDERS } from 'constants/providers'
+import { METRICS_FRIENDLY_NAME } from 'constants/analytics'
 import {formActions} from 'shared/actions'
 import classes from './style.scss'
 
@@ -43,7 +44,7 @@ class AnalyticsTable extends Component {
 
     const headers = [
       ...theseAnalytics.columnHeader.dimensions,
-      ...theseAnalytics.columnHeader.metrics.map((entry) => entry.title)
+      ...theseAnalytics.columnHeader.metrics.map((entry) => METRICS_FRIENDLY_NAME[entry.name])
     ].map((header) => header.replace("ga:", "").titleCase())
 
     const rows = theseAnalytics.rows
@@ -61,7 +62,12 @@ class AnalyticsTable extends Component {
           {rows.map((row, index) => {
             const alternatingClass = (index % 2) == 1 ? "oddRow" : "evenRow"
 
-            const columns = [...row.dimensions, ...row.metrics.map((metric) => metric.values[0])]
+            const values = [
+              ...row.dimensions,
+              ...row.metrics[0].values.map((value) =>
+                parseFloat(value) ? Math.round(value * 100) / 100 : value
+              )
+            ]
 
             return (
               <Flexbox
@@ -69,8 +75,8 @@ class AnalyticsTable extends Component {
                 className={`${classes.providerContainer} ${classes[alternatingClass]}`}
                 align="center"
               >
-                {columns.map((column, index) =>
-                  <div key={index} className={`${classes[`column${index +1}`]}`}>{column}</div>
+                {values.map((value, index) =>
+                  <div key={index} className={`${classes[`column${index +1}`]}`}>{value}</div>
                 )}
               </Flexbox>
             )

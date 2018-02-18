@@ -133,7 +133,6 @@ function* cancel(action) {
 
     res = yield axios.post(`/api/accountSubscriptions/cancelStripeSubscription/${user.id}`) //eventually switch to socket
     updatedRecord = res.data
-console.log("finished");
     yield all([
       put({ type: CANCEL_ACCOUNT_SUBSCRIPTION_SUCCESS, payload: updatedRecord}),
     ])
@@ -152,7 +151,6 @@ function* reactivateAccount(action) {
 
     res = yield axios.post(`/api/accountSubscriptions/reactivateStripeSubscription/${user.id}`) //eventually switch to socket
     updatedRecord = res.data
-console.log("finished");
     yield all([
       put({ type: UPDATE_ACCOUNT_SUBSCRIPTION_SUCCESS, payload: updatedRecord}),
     ])

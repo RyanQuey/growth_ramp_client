@@ -43,7 +43,7 @@ function* getAnalytics(action) {
     const filtersObj = Helpers.safeDataPath(state, `forms.Analytics.filters.params`, {})
     //transfomr into array of objs, each obj with single key (a filter param).
     const filters = JSON.stringify(filtersObj)
-    const res = yield axios.get(`/api/analytics/getAnalytics?filters=${filters}`) //eventually switch to socket
+    const res = yield axios.get(`/api/analytics/getAnalytics?filters=${filters}&dataset=${dataset}`) //eventually switch to socket
 
 
     yield all([

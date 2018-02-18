@@ -24,6 +24,9 @@ class UserSidebar extends Component {
   handleClick(menuItem, e) {
     e.preventDefault()
     switch(menuItem) {
+      case "trafficDashboard":
+        this.setState({trafficDashboard: !this.state.trafficDashboard})
+        break
       case "providerAccounts":
         this.setState({providerAccounts: !this.state.providerAccounts})
         break
@@ -55,7 +58,13 @@ class UserSidebar extends Component {
                 <MenuChild text="New Account" onClick={this.openNewProviderModal} link={false && `/providerAccounts`} icon="plus-circle"/>
               </ul>
             </MenuItem>
-            <MenuItem link="/analytics" text="Analytics" nav={true} icon="bar-chart"/>
+
+            <MenuItem link={false && "/analytics"} text="Traffic Dashboard" selected={this.state.trafficDashboard} onClick={this.handleClick.bind(this, "trafficDashboard")} icon="bar-chart">
+              <ul>
+                <MenuChild text="Website Traffic" link={`/analytics/website-traffic`} nav={true} icon={""}/>
+                <MenuChild text="Webpage Traffic" link={`/analytics/webpage-traffic`} nav={true} icon={""}/>
+              </ul>
+            </MenuItem>
             {false && <MenuItem link="/workgroups" text="Workgroups" nav={true} icon="users"/>}
 
           </ul>

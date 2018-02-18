@@ -34,8 +34,11 @@ class ViewAnalytics extends Component {
 
   render () {
     const {pending} = this.state
-    const {googleAccounts} = this.props
+    const {googleAccounts, match} = this.props
     const currentGoogleAccount = googleAccounts && googleAccounts[0]
+    //getting dataset/what the analytics dashboard view and filters are on this component.
+    //For now, can do it all from the path, but might have to change later
+    const {dataset} = match.params
 
     return (
       <div>
@@ -49,13 +52,14 @@ class ViewAnalytics extends Component {
         {currentGoogleAccount ? (
           <AnalyticsFilters
             togglePending={this.togglePending}
+            dataset={dataset}
           />
         ) : (
           <div/>
         )}
 
         <AnalyticsTable
-          dataset="websiteSummary"
+          dataset={dataset}
         />
       </div>
     )

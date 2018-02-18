@@ -34,6 +34,13 @@ class AnalyticsFilters extends Component {
     this.refreshGAAccounts()
   }
 
+  componentWillReceiveProps (props) {
+    if (props.dataset !== this.props.dataset) {
+      //hacky way of marking form as dirty
+      this.refreshGAAccounts()
+    }
+  }
+
   timeRangeOptions () {
     //default is first option, one week, which is what GA defaults to
     return [
@@ -163,7 +170,7 @@ class AnalyticsFilters extends Component {
     }
 
     this.setState({pending: true})
-    this.props.getAnalytics({}, cb, onFailure)
+    this.props.getAnalytics({}, this.props.dataset, cb, onFailure)
   }
 
   render () {
@@ -240,10 +247,11 @@ console.log(startDate);
 const mapDispatchToProps = (dispatch) => {
   return {
     fetchAllGAAccounts: (payload, cb, onFailure) => dispatch({type: FETCH_ALL_GA_ACCOUNTS_REQUEST, payload, cb, onFailure}),
-    getAnalytics: (payload, cb, onFailure) => dispatch({
+
+    getAnalytics: (payload, dataset, cb, onFailure) => dispatch({
       type: GET_ANALYTICS_REQUEST,
       payload,
-      dataset: "websiteSummary",
+      dataset,
       cb,
       onFailure,
     }),
