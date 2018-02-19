@@ -52,7 +52,7 @@ function* getAnalytics(action) {
     action.cb && action.cb(res.data)
 
   } catch (err) {
-    console.error('current account fetch failed', err.response || err)
+    console.error('gwet analytics fetch failed', err.response || err)
     action.onFailure && action.onFailure(err)
     // yield put(userFetchFailed(err.message))
   }

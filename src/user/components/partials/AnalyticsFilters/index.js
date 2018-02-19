@@ -3,7 +3,6 @@ import { connect } from 'react-redux'
 import DatePicker from 'react-datepicker'
 import {
   FETCH_ALL_GA_ACCOUNTS_REQUEST,
-  GET_ANALYTICS_REQUEST,
   SET_ANALYTICS_FILTER,
 } from 'constants/actionTypes'
 import { Button, Flexbox, Icon, Form } from 'shared/components/elements'
@@ -25,29 +24,18 @@ class AnalyticsFilters extends Component {
     }
 
     this.refreshGAAccounts = this.refreshGAAccounts.bind(this)
-    this.getAnalytics = this.getAnalytics.bind(this)
-    this.setAnalyticsFilter = this.setAnalyticsFilter.bind(this)
     this.setAnalyticsProfileFilter = this.setAnalyticsProfileFilter.bind(this)
     this.selectFilterOption = this.selectFilterOption.bind(this)
     this.handleCalendarClick = this.handleCalendarClick.bind(this)
   }
 
-  componentWillMount() {
-    const {filters} = this.props
-    if (!filters || !filters.startDate) {
-      //initialize the filters with just week start date, which is default for GA anyways
-      this.setAnalyticsFilter({
-        startDate: moment().subtract(7, "days").format("YYYY-MM-DD"),
-        endDate: moment().format("YYYY-MM-DD"),
-      })
-    }
+  componentDidMount() {
     this.refreshGAAccounts()
   }
 
   componentWillReceiveProps (props) {
     if (props.dataset !== this.props.dataset) {
-      //hacky way of marking form as dirty
-      this.refreshGAAccounts()
+      this.props.getAnalytics()
     }
   }
 
@@ -56,7 +44,7 @@ class AnalyticsFilters extends Component {
     return [
       {
         label: "Select",
-        value: {},
+        value: {}, //will default to week view, but if choosing with calendar will go to this
       },
       {
         label: "Past 7 Days",
@@ -132,14 +120,14 @@ class AnalyticsFilters extends Component {
         const defaultSite = gAccountWithSite && gAccountWithSite.items[matchingIndex].webProperties[0]
 
         if (defaultSite) {
-          this.setAnalyticsFilter({
+          this.props.setAnalyticsFilters({
             websiteId: defaultSite.id,
             websiteUrl: defaultSite.websiteUrl,
             providerAccountId: defaultSite.providerAccountId,
             profileId: Helpers.safeDataPath(defaultSite, `profiles.0.id`, ""),
           })
 
-          this.getAnalytics()
+          this.props.getAnalytics()
         } else {
           this.setState({pending: false})
         }
@@ -160,18 +148,14 @@ class AnalyticsFilters extends Component {
     this.props.fetchAllGAAccounts({}, cb, onFailure)
   }
 
-  // filter should be object, keys being params that will be overwritten for the analytics filters
-  setAnalyticsFilter(filter) {
-    formActions.setParams("Analytics", "filters", filter)
-  }
 
   selectFilterOption(option) {
-    this.setAnalyticsFilter(option.value)
+    this.props.setAnalyticsFilters(option.value)
   }
 
   handleCalendarClick(param, dateTime) {
 
-    this.setAnalyticsFilter({[param]: dateTime.format("YYYY-MM-DD")})
+    this.props.setAnalyticsFilters({[param]: dateTime.format("YYYY-MM-DD")})
   }
 
   //for filtering which websites to show analytics for
@@ -182,7 +166,7 @@ class AnalyticsFilters extends Component {
       defaultProfileId = website.profiles[0].id
     }
 
-    this.setAnalyticsFilter({
+    this.props.setAnalyticsFilters({
       websiteId: website.id,
       providerAccountId: website.providerAccountId,
       profileId: defaultProfileId,
@@ -191,30 +175,9 @@ class AnalyticsFilters extends Component {
 
   // called "view" or "profile" by GA
   setAnalyticsProfileFilter(profile) {
-    this.setAnalyticsFilter({
+    this.props.setAnalyticsFilters({
       profileId: profile.id
     })
-  }
-
-  getAnalytics(e) {
-    e && e.preventDefault()
-    //TODO set filters to store, and then use in saga
-    formActions.formPersisted("Analytics", "filters")
-    const cb = () => {
-      this.setState({pending: false})
-    }
-    const onFailure = (err) => {
-      this.setState({pending: false})
-      alertActions.newAlert({
-        title: "Failure to get analytics: ",
-        level: "DANGER",
-        message: err.message || "Unknown error",
-        options: {timer: false},
-      })
-    }
-
-    this.setState({pending: true})
-    this.props.getAnalytics({}, this.props.dataset, cb, onFailure)
   }
 
   render () {
@@ -237,7 +200,7 @@ class AnalyticsFilters extends Component {
     const currentChannelGroupingOption = channelGroupingFilterOptions.find((option) => option.value.defaultChannelGrouping === defaultChannelGrouping)
 
     return (
-      <Form onSubmit={this.getAnalytics}>
+      <Form onSubmit={this.props.getAnalytics}>
         <div>Google Account: {currentGoogleAccount.userName}</div>
 
         {Object.keys(websites).length ? (
@@ -329,13 +292,6 @@ const mapDispatchToProps = (dispatch) => {
   return {
     fetchAllGAAccounts: (payload, cb, onFailure) => dispatch({type: FETCH_ALL_GA_ACCOUNTS_REQUEST, payload, cb, onFailure}),
 
-    getAnalytics: (payload, dataset, cb, onFailure) => dispatch({
-      type: GET_ANALYTICS_REQUEST,
-      payload,
-      dataset,
-      cb,
-      onFailure,
-    }),
   }
 }
 

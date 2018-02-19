@@ -4,7 +4,7 @@ import { Flexbox, Button, Icon, Card } from 'shared/components/elements'
 import { PostCard, ProviderCard } from 'user/components/partials'
 import { SET_CURRENT_PAGE, SET_CURRENT_MODAL  } from 'constants/actionTypes'
 import { PROVIDERS } from 'constants/providers'
-import { METRICS_FRIENDLY_NAME } from 'constants/analytics'
+import { DIMENSIONS_METRICS_FRIENDLY_NAME } from 'constants/analytics'
 import {formActions} from 'shared/actions'
 import classes from './style.scss'
 
@@ -19,6 +19,7 @@ class AnalyticsTable extends Component {
     }
 
     this.setCurrentPage = this.setCurrentPage.bind(this)
+    this.setOrderBy = this.setOrderBy.bind(this)
   }
   setCurrentPage(post) {
     this.props.setCurrentPage(post, this.props.items)
@@ -34,8 +35,26 @@ class AnalyticsTable extends Component {
     formActions.setOptions(this.props.form, this.props.items, {[post.id]: {utms: utmFields}})
   }
 
+  setOrderBy(headerName, e) {
+    e && e.preventDefault()
+
+    let orderBy = {
+      fieldName: headerName,
+      sortOrder: "DESCENDING",
+    }
+    //if already ordering by this column, reverse direction
+    const currentOrderBy = Helpers.safeDataPath(this.props, `filters.orderBy`, {})
+    if (currentOrderBy.fieldName === headerName) {
+      orderBy.sortOrder = currentOrderBy.sortOrder === "DESCENDING" ? "ASCENDING" : "DESCENDING"
+    }
+console.log(currentOrderBy, headerName);
+
+    this.props.setAnalyticsFilters({orderBy})
+    this.props.getAnalytics()
+  }
+
   render() {
-    const {dataset, analytics} = this.props
+    const {dataset, analytics, filters} = this.props
     const theseAnalytics = analytics[dataset]
 
     if (!analytics || !theseAnalytics) {
@@ -44,10 +63,13 @@ class AnalyticsTable extends Component {
 
     const headers = [
       ...theseAnalytics.columnHeader.dimensions,
-      ...theseAnalytics.columnHeader.metrics.map((entry) => METRICS_FRIENDLY_NAME[entry.name])
-    ].map((header) => header.replace("ga:", "").titleCase())
+      ...theseAnalytics.columnHeader.metrics
+    ].map((header) => Object.assign({}, header,
+      {title: DIMENSIONS_METRICS_FRIENDLY_NAME[header.name]}
+    ))
 
     const rows = theseAnalytics.rows
+    const orderByFilter = filters && filters.orderBy
 
     return (
       <div className={`${classes.container} ${this.props.hidden ? classes.hidden : ""}`}>
@@ -55,7 +77,12 @@ class AnalyticsTable extends Component {
         <Flexbox className={classes.table} direction="column" align="center">
           <Flexbox className={` ${classes.tableHeader}`} direction="row">
             {headers.map((header, index) =>
-              <div key={header} className={`${classes[`column${index +1}`]}`}>{header}</div>
+              <div key={header.name} className={`${classes[`column${index +1}`]}`}>
+                <a onClick={this.setOrderBy.bind(this, header.name)}>{header.title}</a>&nbsp;
+                {orderByFilter.fieldName === header.name && (
+                  <Icon name={orderByFilter.sortOrder === "DESCENDING" ? "caret-down" : "caret-up"}/>
+                )}
+              </div>
             )}
           </Flexbox>
 
@@ -92,12 +119,14 @@ const mapStateToProps = state => {
     //really is campaign posts params
     currentPage: state.currentPage,
     analytics: state.analytics,
+    filters: Helpers.safeDataPath(state, "forms.Analytics.filters.params"),
   }
 }
 const mapDispatchToProps = (dispatch) => {
   return {
     setCurrentModal: (payload) => dispatch({type: SET_CURRENT_MODAL, payload}),
     setCurrentPage: (payload, items, options) => dispatch({type: SET_CURRENT_PAGE, payload, options}),
+
   }
 }
 

@@ -1,6 +1,9 @@
 export const ANALYTICS = ""
   //analytics constants
-export const METRICS_FRIENDLY_NAME = {
+export const DIMENSIONS_METRICS_FRIENDLY_NAME = {
+  //dimensions
+  "ga:landingPagePath": "Landing Page",
+  //metrics
   "ga:pageviews": "Page Views",
   "ga:uniquePageviews": "Unique Page Views",
   "ga:bounceRate": "Bounce Rate",
