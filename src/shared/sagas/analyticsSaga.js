@@ -47,7 +47,7 @@ function* getAnalytics(action) {
 
 
     yield all([
-      put({type: GET_ANALYTICS_SUCCESS, payload: {data: res.data, dataset}})
+      put({type: GET_ANALYTICS_SUCCESS, payload: {results: res.data, dataset, filters}})
     ])
     action.cb && action.cb(res.data)
 

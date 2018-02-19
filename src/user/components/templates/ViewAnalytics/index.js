@@ -6,7 +6,7 @@ import {
 import { Button, Flexbox, Icon, Form } from 'shared/components/elements'
 import {
 } from 'user/components/partials'
-import { SocialLogin } from 'shared/components/partials'
+import { PaginationMenu, SocialLogin } from 'shared/components/partials'
 import { AnalyticsFilters, AnalyticsTable } from 'user/components/partials'
 import { PROVIDERS, PROVIDER_IDS_MAP } from 'constants/providers'
 import {formActions, alertActions} from 'shared/actions'
@@ -26,6 +26,18 @@ class ViewAnalytics extends Component {
     this.togglePending = this.togglePending.bind(this)
     this.setAnalyticsFilters = this.setAnalyticsFilters.bind(this)
     this.getAnalytics = this.getAnalytics.bind(this)
+    this.onPageChange = this.onPageChange.bind(this)
+    this.onPageSizeChange = this.onPageSizeChange.bind(this)
+  }
+
+  onPageSizeChange(value) {
+    this.setAnalyticsFilters({pageSize: value})
+  }
+
+  onPageChange(value) {
+    //NOTE technically, pageToken is arbitrary string, only retrievable for next page (see GA docs). But, for most part is just the zero-based row index of last row currently shown.
+    //If ever get problems, just disallow jumping pages
+    this.setAnalyticsFilters({page: value})
   }
 
   togglePending(value = !this.state.pending) {
@@ -46,7 +58,9 @@ class ViewAnalytics extends Component {
         //could make this plural, so can sort by multiple. but for now, just support sorting by one
         orderBy: {
           fieldName: "ga:pageviews", sortOrder: "DESCENDING"
-        }
+        },
+        pageSize: 10,
+        page: 1,
       })
     }
   }
@@ -76,18 +90,30 @@ class ViewAnalytics extends Component {
 
   render () {
     const {pending} = this.state
-    const {googleAccounts} = this.props
+    const {googleAccounts, filters, analytics} = this.props
     const currentGoogleAccount = googleAccounts && googleAccounts[0]
     //getting dataset/what the analytics dashboard view and filters are on this component.
     //For now, can do it all from the path, but might have to change later
     const dataset = Helpers.safeDataPath(this.props, "match.params.dataset")
+
+    //wait to finish initializing store at least
+    if (!filters) {
+      return <Icon name="spinner"/>
+    }
+
+    //pagination stuff
+    const lastUsedFilters = Helpers.safeDataPath(analytics, `${dataset}.lastUsedFilters`, {})
+    const currentPage = lastUsedFilters.page || 1
+    const currentPageSize = lastUsedFilters.pageSize || 10
+    const lastRecordShown = Helpers.safeDataPath(analytics, `${dataset}.nextPageToken`) //could also use currentPage * currentPageSize
+    const totalRecords = Helpers.safeDataPath(analytics, `${dataset}.data.rowCount`, 0)
 
     return (
       <div>
         <h1>Analytics</h1>
 
         <SocialLogin
-          pending={this.state.pending}
+          pending={pending}
           togglePending={this.togglePending}
           providers={_.pick(PROVIDERS, "GOOGLE")}
         />
@@ -99,7 +125,7 @@ class ViewAnalytics extends Component {
             getAnalytics={this.getAnalytics}
           />
         ) : (
-          <div/>
+          <div />
         )}
 
         <AnalyticsTable
@@ -107,6 +133,20 @@ class ViewAnalytics extends Component {
           setAnalyticsFilters={this.setAnalyticsFilters}
           getAnalytics={this.getAnalytics}
         />
+
+        {currentGoogleAccount && (
+          <PaginationMenu
+            onSubmit={this.getAnalytics}
+            onPageSizeChange={this.onPageSizeChange}
+            onPageChange={this.onPageChange}
+            pageSizeParam={filters && filters.pageSize}
+            pageParam={filters && filters.page}
+            currentPage={currentPage}
+            currentPageSize={currentPageSize}
+            totalRecords={totalRecords}
+            pending={pending}
+          />
+        )}
       </div>
     )
   }
@@ -126,11 +166,13 @@ const mapDispatchToProps = (dispatch) => {
 
 const mapStateToProps = state => {
   return {
+    analytics: state.analytics,
     user: state.user,
     campaigns: state.campaigns,
     googleAccounts: Helpers.safeDataPath(state, "providerAccounts.GOOGLE", []).filter((account) => !account.unsupportedProvider),
     websites: state.websites,
     currentWebsiteId: Helpers.safeDataPath(state, "form.Analytics.filters.websiteId"),
+    filters: Helpers.safeDataPath(state, "forms.Analytics.filters.params"),
   }
 }
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(ViewAnalytics))
