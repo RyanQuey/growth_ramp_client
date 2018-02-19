@@ -249,8 +249,8 @@ class AnalyticsFilters extends Component {
                 onChange={this.handleCalendarClick.bind(this, "startDate")}
                 isClearable={false}
                 todayButton="Today"
-                dateFormatCalendar="LLL"
-                dateFormat="LLL"
+                dateFormatCalendar="MMM D, YYYY"
+                dateFormat="MMM D, YYYY"
                 calendarClassName={classes.reactDatepicker}
                 className={classes.datePickerInput}
                 placeholderText={startDate}
@@ -261,8 +261,8 @@ class AnalyticsFilters extends Component {
                 onChange={this.handleCalendarClick.bind(this, "endDate")}
                 isClearable={false}
                 todayButton="Today"
-                dateFormatCalendar="LLL"
-                dateFormat="LLL"
+                dateFormatCalendar="MMM D, YYYY"
+                dateFormat="MMM D, YYYY"
                 calendarClassName={classes.reactDatepicker}
                 className={classes.datePickerInput}
                 placeholderText={endDate}
