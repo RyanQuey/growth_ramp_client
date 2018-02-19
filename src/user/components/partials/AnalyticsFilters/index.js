@@ -1,5 +1,6 @@
 import { Component } from 'react';
 import { connect } from 'react-redux'
+import DatePicker from 'react-datepicker'
 import {
   FETCH_ALL_GA_ACCOUNTS_REQUEST,
   GET_ANALYTICS_REQUEST,
@@ -27,10 +28,19 @@ class AnalyticsFilters extends Component {
     this.getAnalytics = this.getAnalytics.bind(this)
     this.setAnalyticsFilter = this.setAnalyticsFilter.bind(this)
     this.setAnalyticsProfileFilter = this.setAnalyticsProfileFilter.bind(this)
-    this.setDateFilter = this.setDateFilter.bind(this)
+    this.selectFilterOption = this.selectFilterOption.bind(this)
+    this.handleCalendarClick = this.handleCalendarClick.bind(this)
   }
 
   componentWillMount() {
+    const {filters} = this.props
+    if (!filters || !filters.startDate) {
+      //initialize the filters with just week start date, which is default for GA anyways
+      this.setAnalyticsFilter({
+        startDate: moment().subtract(7, "days").format("YYYY-MM-DD"),
+        endDate: moment().format("YYYY-MM-DD"),
+      })
+    }
     this.refreshGAAccounts()
   }
 
@@ -44,6 +54,10 @@ class AnalyticsFilters extends Component {
   timeRangeOptions () {
     //default is first option, one week, which is what GA defaults to
     return [
+      {
+        label: "Select",
+        value: {},
+      },
       {
         label: "Past 7 Days",
         value: {
@@ -64,6 +78,33 @@ class AnalyticsFilters extends Component {
           startDate: "2005-01-01", //GA started, so can't go before this
           endDate: moment().format("YYYY-MM-DD"),
         }
+      },
+    ]
+  }
+
+
+  channelGroupingFilterOptions () {
+    //default is first option, one week, which is what GA defaults to
+    return [
+      {
+        label: "Select",
+        value: {defaultChannelGrouping: undefined},
+      },
+      {
+        label: "Organic",
+        value: {defaultChannelGrouping: "organic"},
+      },
+      {
+        label: "Social",
+        value: {defaultChannelGrouping: "direct"},
+      },
+      {
+        label: "Direct",
+        value: {defaultChannelGrouping: "social"},
+      },
+      {
+        label: "Referral",
+        value: {defaultChannelGrouping: "referral"},
       },
     ]
   }
@@ -124,10 +165,13 @@ class AnalyticsFilters extends Component {
     formActions.setParams("Analytics", "filters", filter)
   }
 
-  setDateFilter(selectedOption) {
-    const {startDate, endDate} = selectedOption.value
+  selectFilterOption(option) {
+    this.setAnalyticsFilter(option.value)
+  }
 
-    this.setAnalyticsFilter({startDate, endDate})
+  handleCalendarClick(param, dateTime) {
+
+    this.setAnalyticsFilter({[param]: dateTime.format("YYYY-MM-DD")})
   }
 
   //for filtering which websites to show analytics for
@@ -180,7 +224,7 @@ class AnalyticsFilters extends Component {
     if (!filters || !websites) {
       return <Icon name="spinner"/>
     }
-    const {websiteId, profileId, startDate, endDate} = filters
+    const {websiteId, profileId, startDate, endDate, defaultChannelGrouping} = filters
 
     const currentWebsite = websites[websiteId]
     const currentGoogleAccount = googleAccounts && googleAccounts[0]
@@ -188,8 +232,9 @@ class AnalyticsFilters extends Component {
 
     //set by function so date will refresh, in case goes past midnight and they didn't refresh browser or something
     const timeRangeOptions = this.timeRangeOptions()
-console.log(startDate);
+    const channelGroupingFilterOptions = this.channelGroupingFilterOptions()
     const currentTimeRangeOption = timeRangeOptions.find((option) => option.value.startDate === startDate)
+    const currentChannelGroupingOption = channelGroupingFilterOptions.find((option) => option.value.defaultChannelGrouping === defaultChannelGrouping)
 
     return (
       <Form onSubmit={this.getAnalytics}>
@@ -229,8 +274,44 @@ console.log(startDate);
               label="Time Range"
               className={classes.select}
               options={timeRangeOptions}
-              onChange={this.setDateFilter}
+              onChange={this.selectFilterOption}
               currentOption={currentTimeRangeOption || timeRangeOptions[0]}
+              name="timerange"
+            />
+
+            <div>
+              <div>Start Date</div>
+              <DatePicker
+                selected={startDate && moment(startDate)}
+                onChange={this.handleCalendarClick.bind(this, "startDate")}
+                isClearable={false}
+                todayButton="Today"
+                dateFormatCalendar="LLL"
+                dateFormat="LLL"
+                calendarClassName={classes.reactDatepicker}
+                className={classes.datePickerInput}
+                placeholderText={startDate}
+              />
+              <div>End Date</div>
+              <DatePicker
+                selected={endDate && moment(endDate)}
+                onChange={this.handleCalendarClick.bind(this, "endDate")}
+                isClearable={false}
+                todayButton="Today"
+                dateFormatCalendar="LLL"
+                dateFormat="LLL"
+                calendarClassName={classes.reactDatepicker}
+                className={classes.datePickerInput}
+                placeholderText={endDate}
+              />
+            </div>
+
+            <Select
+              label="Channel Grouping"
+              className={classes.select}
+              options={channelGroupingFilterOptions}
+              onChange={this.selectFilterOption}
+              currentOption={currentChannelGroupingOption || channelGroupingFilterOptions[0]}
               name="timerange"
             />
 
