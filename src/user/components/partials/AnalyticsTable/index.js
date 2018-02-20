@@ -91,9 +91,7 @@ console.log(currentOrderBy, headerName);
 
             const values = [
               ...row.dimensions,
-              ...row.metrics[0].values.map((value) =>
-                parseFloat(value) ? Math.round(value * 100) / 100 : value
-              )
+              ...row.metrics[0].values,
             ]
 
             return (
