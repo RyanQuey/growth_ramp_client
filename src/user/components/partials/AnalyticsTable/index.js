@@ -46,15 +46,14 @@ class AnalyticsTable extends Component {
     if (currentOrderBy.fieldName === headerName) {
       orderBy.sortOrder = currentOrderBy.sortOrder === "DESCENDING" ? "ASCENDING" : "DESCENDING"
     }
-console.log(currentOrderBy, headerName);
 
     this.props.setAnalyticsFilters({orderBy})
     this.props.getAnalytics()
   }
 
   render() {
-    const {dataset, analytics, filters} = this.props
-    const theseAnalytics = analytics[dataset]
+    const {tableDataset, analytics, filters} = this.props
+    const theseAnalytics = analytics[tableDataset]
 
     if (!analytics || !theseAnalytics) {
       return null

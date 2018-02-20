@@ -34,7 +34,13 @@ class AnalyticsFilters extends Component {
   }
 
   componentWillReceiveProps (props) {
-    if (props.dataset !== this.props.dataset) {
+    if (
+      /*!_.isEqual(
+        _.pick(props.filters, ["startDate", "endDate", "defaultChannelGrouping", "websiteId"]),
+        _.pick(this.props.filters, ["startDate", "endDate", "defaultChannelGrouping", "websiteId"])
+      ) ||*/
+      props.tableDataset !== this.props.tableDataset
+    ) {
       this.props.getAnalytics()
     }
   }

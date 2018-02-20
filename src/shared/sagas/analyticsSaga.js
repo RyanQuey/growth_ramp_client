@@ -39,7 +39,6 @@ function* getAnalytics(action) {
   try {
     const state = store.getState()
     const dataset = action.dataset
-
     const filtersObj = Helpers.safeDataPath(state, `forms.Analytics.filters.params`, {})
     //transfomr into array of objs, each obj with single key (a filter param).
     const filters = JSON.stringify(filtersObj)
@@ -60,6 +59,6 @@ function* getAnalytics(action) {
 
 export default function* updateProviderSaga() {
   yield takeLatest(FETCH_ALL_GA_ACCOUNTS_REQUEST, fetchAllGAAccounts)
-  yield takeLatest(GET_ANALYTICS_REQUEST, getAnalytics)
+  yield takeEvery(GET_ANALYTICS_REQUEST, getAnalytics)
 
 }

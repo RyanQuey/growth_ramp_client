@@ -206,7 +206,7 @@ Input.propTypes = {
   type: PropTypes.string,
   onChange: PropTypes.func,
   onBlur: PropTypes.func,
-  value: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.integer]),
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.number]),
   checked: PropTypes.bool,
   placeholder: PropTypes.string,
   label: PropTypes.string,

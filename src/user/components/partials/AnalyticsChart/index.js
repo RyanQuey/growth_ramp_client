@@ -7,6 +7,7 @@ import { SET_CURRENT_PAGE, SET_CURRENT_MODAL  } from 'constants/actionTypes'
 import { PROVIDERS } from 'constants/providers'
 import { DIMENSIONS_METRICS_FRIENDLY_NAME } from 'constants/analytics'
 import {formActions} from 'shared/actions'
+import analyticsHelpers from 'helpers/analyticsHelpers'
 import classes from './style.scss'
 
 //shows up as buttons in mobile, or sidebar in browser?
@@ -20,61 +21,10 @@ class AnalyticsChart extends Component {
 
   }
 
-  //currently based solely on dates of data given
-  //goal is to have 4-6 labels
-  getXAxisLabels({startDate, endDate}){
-    const start = moment(startDate)
-    const end = moment(endDate)
-    //diff in days
-    const filterLength = end.diff(start) / 1000 / 60 / 60 / 24
-    const range = moment.range(start, end)
-
-    let rangeArr, unit, step
-    if (filterLength < 7) {
-      unit = "day"
-      step = 1
-
-    } else if (filterLength < 13) {
-      unit = "day"
-      step = 2
-
-    } else if (filterLength < 49) {
-      unit = "week"
-      step = 1
-
-    } else if (filterLength < 100) {
-      unit = "week"
-      step = 2
-
-    } else if (filterLength < 180) {
-      unit = "month"
-      step = 1
-
-    } else if (filterLength < 365) {
-      unit = "month"
-      step = 2
-
-    } else if (filterLength < 730) { //2 years
-      unit = "month"
-      step = 6
-
-    } else if (filterLength < 730) { //4 years
-      unit = "year"
-      step = 1
-
-    } else {
-      unit = "year"
-      step = 2
-
-    }
-    rangeArr = Array.from(range.by(unit, {step: step}))
-
-    return {rangeArr, unit, step}
-  }
-
   render() {
-    const {dataset, analytics, filters} = this.props
-    const theseAnalytics = analytics[dataset]
+    const {chartDataset, analytics, filters, chartFilters} = this.props
+    const theseAnalytics = analytics[chartDataset]
+    const lastUsedFilters = Helpers.safeDataPath(this.props.analytics, `chart-line-time.lastUsedFilters`, {})
 
     if (!analytics || !theseAnalytics) {
       return null
@@ -88,19 +38,39 @@ class AnalyticsChart extends Component {
     ))
 
     const rows = theseAnalytics.rows
-    const orderByFilter = filters && filters.orderBy
 
-    const xAxisLabels = this.getXAxisLabels(filters)
+    const {rangeArray, unit, step} = analyticsHelpers.getXAxisData(lastUsedFilters)
+    const labels = analyticsHelpers.getHistogramLabels({rangeArray, unit, step}, rows)
+    const metricSets = theseAnalytics.columnHeader.metrics.map((metric, index) => (
+      {
+        label: DIMENSIONS_METRICS_FRIENDLY_NAME[metric.name], //for the legend
+        data: rows.map((row) => row.metrics[0].values[index]),
+        fill: true,
+        lineTension: 0.1,
+        backgroundColor: 'rgba(75,192,192,0.4)',
+        borderColor: 'rgba(75,192,192,1)',
+        borderCapStyle: 'butt',
+        borderDash: [],
+        borderDashOffset: 0.0,
+        borderJoinStyle: 'miter',
+        pointBorderColor: 'rgba(75,192,192,1)',
+        pointBackgroundColor: '#fff',
+        pointBorderWidth: 1,
+        pointHoverRadius: 5,
+        pointHoverBackgroundColor: 'rgba(75,192,192,1)',
+        pointHoverBorderColor: 'rgba(220,220,220,1)',
+        pointHoverBorderWidth: 2,
+        pointRadius: 1,
+        pointHitRadius: 10,
+      }
+
+    ))
 
     const dataProp = {
       labels,
-      datasets: [
-        {
-          data: [],
-        }
-      ]
+      datasets: metricSets //add a dataset to add an additional line to the graph (could add another metric for example)
     }
-
+console.log("try", dataProp);
     return (
       <div className={`${classes.container} ${this.props.hidden ? classes.hidden : ""}`}>
         <Line data={dataProp} />
