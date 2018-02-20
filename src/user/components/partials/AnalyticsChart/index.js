@@ -96,7 +96,7 @@ class AnalyticsChart extends Component {
       labels,
       datasets: [
         {
-          data:
+          data: [],
         }
       ]
     }
