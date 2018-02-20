@@ -1,0 +1,87 @@
+@import 'theme/_helpers';
+.container {
+  visibility: visible;
+  opacity: 1;
+  max-height: 99000px ; //could set dynamically to show more or less rows
+  @include transition(max-height, .8s, ease);
+  overflow-y: hidden;
+  text-align: center;
+
+  &.hidden {
+    max-height: 0;
+    overflow-y: hidden;
+  }
+
+}
+.table {
+  border-bottom: 1px solid $black;
+  h2 {
+    margin-top: 0;
+  }
+
+  .tableHeader {
+    width: 100%;
+    div {
+      font-weight: bold;
+    }
+  }
+  .row {
+    width: 100%;
+
+  }
+  .column1 {
+    @include cols(4)
+  }
+  // whether I opt to do table or just flex:
+  .column2, .column3, .column4, .column5, .column6, .column7, .cardWrapper,  {
+    @include cols(2)
+  }
+  .column3 {
+  }
+  .column4 {
+  }
+  .column5 {
+  }
+  .twoColumns {
+    @include cols(4)
+  }
+
+  .tableRow {
+    border-top: 1px solid $black;
+    width: 100%;
+
+
+    &.evenRow {
+      background: $even-lighter-purple-gray;
+    }
+    &.oddRow {
+      //background: $light-purple-gray;
+    }
+    .header {
+      font-weight: bold;
+    }
+    .topRow {
+      cursor: pointer;
+      text-align: left;
+      padding-left: 30px;
+      &:hover {
+        background: $light-purple-gray;
+      }
+    }
+
+    h2 {
+      margin-bottom: 0;
+      font-weight: normal;
+    }
+    //flexbox likes to shrink its children if it has overflow, rather than just adding a scrollbar. Min height stops that from happening
+    button {
+      min-height: 38px;
+      //padding: 10px 15px; //was spazzing out, flipping back and forth between the paddings, so just forget it
+    }
+
+    .column1 {
+      text-align: left;
+    }
+  }
+
+}

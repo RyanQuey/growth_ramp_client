@@ -17,11 +17,12 @@ import 'theme/index.scss'
 
 import _ from 'lodash'
 import moment from 'moment'
+import { extendMoment } from 'moment-range'
 
 window.React = React;
 window.axios = axios;
 window._ = _
-window.moment = moment
+window.moment = extendMoment(moment)
 window.Helpers = Helpers
 
 //right now just doing cdn. .css files not working with webpack right now. BUt this would work too...but cdn works, so whatever

@@ -15,7 +15,6 @@ class AnalyticsTable extends Component {
     super()
 
     this.state = {
-      currentPage: null, //will be an index
     }
 
     this.setCurrentPage = this.setCurrentPage.bind(this)
