@@ -61,7 +61,7 @@ class AnalyticsFilters extends Component {
         },
       },
       {
-        label: "Total",
+        label: "All",
         value: {
           startDate: "2005-01-01", //GA started, so can't go before this
           endDate: moment().format("YYYY-MM-DD"),
@@ -200,13 +200,13 @@ class AnalyticsFilters extends Component {
     const currentChannelGroupingOption = channelGroupingFilterOptions.find((option) => option.value.defaultChannelGrouping === defaultChannelGrouping)
 
     return (
-      <Form onSubmit={this.props.getAnalytics}>
+      <Form className={classes.filtersForm} onSubmit={this.props.getAnalytics}>
         <div>Google Account: {currentGoogleAccount.userName}</div>
 
         {Object.keys(websites).length ? (
           <div>
             <h4>Choose Analytics Set</h4>
-
+            <div>Websites: </div>
             {Object.keys(websites).map((id) => {
               let website = websites[id]
 
@@ -214,11 +214,13 @@ class AnalyticsFilters extends Component {
                 key={id}
                 onClick={this.setWebsiteFilter.bind(this, website)}
                 selected={id === websiteId}
+                small={true}
               >
                 {website.name || website.websiteUrl}
               </Button>
             })}
 
+            <div>Analytics Profile: </div>
             {currentWebsite &&
               <div>
                 {currentWebsite.profiles.map((profile) =>
@@ -226,6 +228,7 @@ class AnalyticsFilters extends Component {
                     key={profile.id}
                     onClick={this.setAnalyticsProfileFilter.bind(this, profile)}
                     selected={profile.id === profileId}
+                    small={true}
                   >
                     {profile.name}
                   </Button>
@@ -233,41 +236,48 @@ class AnalyticsFilters extends Component {
               </div>
             }
 
-            <Select
-              label="Time Range"
-              className={classes.select}
-              options={timeRangeOptions}
-              onChange={this.selectFilterOption}
-              currentOption={currentTimeRangeOption || timeRangeOptions[0]}
-              name="timerange"
-            />
+            <Flexbox>
+              <div>
+                <div>Start Date</div>
+                <DatePicker
+                  selected={startDate && moment(startDate)}
+                  onChange={this.handleCalendarClick.bind(this, "startDate")}
+                  isClearable={false}
+                  todayButton="Today"
+                  dateFormatCalendar="MMM D, YYYY"
+                  dateFormat="MMM D, YYYY"
+                  calendarClassName={classes.reactDatepicker}
+                  className={classes.datePickerInput}
+                  placeholderText={startDate}
+                />
+              </div>
 
-            <div>
-              <div>Start Date</div>
-              <DatePicker
-                selected={startDate && moment(startDate)}
-                onChange={this.handleCalendarClick.bind(this, "startDate")}
-                isClearable={false}
-                todayButton="Today"
-                dateFormatCalendar="MMM D, YYYY"
-                dateFormat="MMM D, YYYY"
-                calendarClassName={classes.reactDatepicker}
-                className={classes.datePickerInput}
-                placeholderText={startDate}
-              />
-              <div>End Date</div>
-              <DatePicker
-                selected={endDate && moment(endDate)}
-                onChange={this.handleCalendarClick.bind(this, "endDate")}
-                isClearable={false}
-                todayButton="Today"
-                dateFormatCalendar="MMM D, YYYY"
-                dateFormat="MMM D, YYYY"
-                calendarClassName={classes.reactDatepicker}
-                className={classes.datePickerInput}
-                placeholderText={endDate}
-              />
-            </div>
+              <div>
+                <div>End Date</div>
+                <DatePicker
+                  selected={endDate && moment(endDate)}
+                  onChange={this.handleCalendarClick.bind(this, "endDate")}
+                  isClearable={false}
+                  todayButton="Today"
+                  dateFormatCalendar="MMM D, YYYY"
+                  dateFormat="MMM D, YYYY"
+                  calendarClassName={classes.reactDatepicker}
+                  className={classes.datePickerInput}
+                  placeholderText={endDate}
+                />
+              </div>
+
+              <div className={classes.timeRangeSelect}>
+                <div>&nbsp;</div>
+                <Select
+                  options={timeRangeOptions}
+                  onChange={this.selectFilterOption}
+                  currentOption={currentTimeRangeOption || timeRangeOptions[0]}
+                  name="timerange"
+                />
+              </div>
+
+            </Flexbox>
 
             <Select
               label="Channel Grouping"

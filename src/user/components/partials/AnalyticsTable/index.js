@@ -99,7 +99,7 @@ console.log(currentOrderBy, headerName);
             return (
               <Flexbox
                 key={row.dimensions[0]}
-                className={`${classes.providerContainer} ${classes[alternatingClass]}`}
+                className={`${classes.tableRow} ${classes[alternatingClass]}`}
                 align="center"
               >
                 {values.map((value, index) =>

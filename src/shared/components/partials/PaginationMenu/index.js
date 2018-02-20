@@ -58,7 +58,7 @@ class PaginationMenu extends Component {
   changePage(value, autoReload = false) {
     this.props.onPageChange(value)
 
-    if (autoReload) {
+    if (autoReload === true) {
       this.props.onSubmit()
     }
   }
@@ -76,31 +76,31 @@ class PaginationMenu extends Component {
     const pageSizeOptions = this.pageSizeOptions()
 
     return (
-      <Form onSubmit={this.props.onSubmit}>
+      <Form className={classes.paginationMenu} onSubmit={this.props.onSubmit} >
+        <Flexbox justify="space-between" align="center">
+          <div>Page Size:&nbsp;</div>
+          <Select
+            className={classes.pageSizeSelect}
+            options={pageSizeOptions}
+            onChange={this.selectPageSizeOption}
+            currentOption={pageSizeParam || pageSizeOptions[0]}
+            name="page-size"
+          />
 
-            <Select
-              label="Page Size:"
-              className={classes.select}
-              options={pageSizeOptions}
-              onChange={this.selectPageSizeOption}
-              currentOption={pageSizeParam || pageSizeOptions[0]}
-              name="page-size"
-            />
+          <div>Jump to Page:</div>
+          <Input
+            value={pageParam || ""}
+            className={classes.pageInput}
+            onChange={this.changePage}
+          />
 
-
-            <Input
-              label="Jump to Page:"
-              value={pageParam || ""}
-              className={classes.select}
-              onChange={this.changePage}
-            />
-
-            <Button type="submit" pending={pending}>Go</Button>
-            {!pending && <div>Showing {startingRecord} - {endingRecord} of {totalRecords}</div>}
-            <div>
-              <Button disabled={pending || pageParam === 1} onClick={this.changePage.bind(this, currentPage -1, true)}><Icon name="angle-left"/></Button>
-              <Button disabled={pending || endingRecord === totalRecords} onClick={this.changePage.bind(this, currentPage +1, true)}><Icon name="angle-right"/></Button>
-            </div>
+          <Button type="submit" small={true} pending={pending}>Go</Button>
+          {<div>Showing {startingRecord} - {endingRecord} of {totalRecords}</div>}
+          <div >
+            <Button disabled={pending || pageParam === 1} onClick={this.changePage.bind(this, currentPage -1, true)} small={true}><Icon name="angle-left"/></Button>
+            <Button disabled={pending || endingRecord === totalRecords} onClick={this.changePage.bind(this, currentPage +1, true)} small={true}><Icon name="angle-right"/></Button>
+          </div>
+        </Flexbox>
       </Form>
     )
   }

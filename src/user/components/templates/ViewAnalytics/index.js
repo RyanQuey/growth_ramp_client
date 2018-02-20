@@ -109,7 +109,7 @@ class ViewAnalytics extends Component {
     const totalRecords = Helpers.safeDataPath(analytics, `${dataset}.data.rowCount`, 0)
 
     return (
-      <div>
+      <div className={classes.viewAnalytics}>
         <h1>Analytics</h1>
 
         <SocialLogin
