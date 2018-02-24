@@ -132,6 +132,7 @@ class UserCredentials extends Component {
             (view === "SIGN_UP" && !this.state.acceptedTerms)
           )}
           type="submit"
+          title={(view === "SIGN_UP" && !this.state.acceptedTerms) ? "Please read and accept the terms of service before continuing" : ""}
           pending={this.props.pending}
         >
           {this.props.buttonText}
