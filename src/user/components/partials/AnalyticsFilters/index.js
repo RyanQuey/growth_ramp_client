@@ -25,7 +25,6 @@ class AnalyticsFilters extends Component {
 
     this.refreshGAAccounts = this.refreshGAAccounts.bind(this)
     this.setAnalyticsProfileFilter = this.setAnalyticsProfileFilter.bind(this)
-    this.selectChannelGrouping = this.selectChannelGrouping.bind(this)
     this.selectFilterOption = this.selectFilterOption.bind(this)
     this.handleCalendarClick = this.handleCalendarClick.bind(this)
 
@@ -75,36 +74,6 @@ class AnalyticsFilters extends Component {
           startDate: "2005-01-01", //GA started, so can't go before this
           endDate: yesterday.format("YYYY-MM-DD"),
         }
-      },
-    ]
-  }
-
-  channelGroupingFilterOptions () {
-    //default is first option, one week, which is what GA defaults to
-    return [
-      {
-        label: "Select",
-        value: undefined,
-      },
-      {
-        label: "Organic",
-        value: "Organic",
-      },
-      {
-        label: "Social",
-        value: "Social",
-      },
-      {
-        label: "Direct",
-        value: "Direct",
-      },
-      {
-        label: "Referral",
-        value: "Referral",
-      },
-      {
-        label: "(Other)",
-        value: "(Other)",
       },
     ]
   }
@@ -159,18 +128,6 @@ class AnalyticsFilters extends Component {
     this.setState({pending: true})
     this.props.fetchAllGAAccounts({}, cb, onFailure)
   }
-
-  selectChannelGrouping (option) {
-    const dimensionFilter = {
-      dimensionName: `ga:channelGrouping`,
-      operator: "EXACT",
-      expressions: [option.value]
-    }
-
-    this.props.updateDimensionFilter(dimensionFilter)
-  }
-
-
 
   selectFilterOption (option) {
     this.props.setAnalyticsFilters(option.value)
@@ -303,15 +260,6 @@ class AnalyticsFilters extends Component {
               </div>
 
             </Flexbox>
-
-            <Select
-              label="Channel Grouping"
-              className={classes.select}
-              options={channelGroupingFilterOptions}
-              onChange={this.selectChannelGrouping}
-              currentOption={channelGroupingValue || channelGroupingFilterOptions[0]}
-              name="timerange"
-            />
 
             <Button type="submit" pending={pending} disabled={!profileId || !dirty}>Submit</Button>
           </div>
