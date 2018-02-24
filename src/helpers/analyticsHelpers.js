@@ -18,8 +18,12 @@ export default {
       step = 1
 
     } else { //if (filterLength < 30 * 30) {
-      //GA doesn't increment by nthYears, so just do months
+      //GA doesn't increment by nthYears
       unit = "Month"
+      step = 1
+
+    } else {
+      unit = "Year" //TODO not entirely accurate, because doesn't do beginning of year until end of year logic in GA for years. Need to change to just display sample times along the bottom
       step = 1
     }
 
@@ -35,7 +39,9 @@ export default {
     unit = unit.toLowerCase()
 
     let formatString
-    if (unit === "month") {
+    if (unit === "year") {
+      formatString = "YYYY"
+    } else if (unit === "month") {
       formatString = "MMM 'YY"
     } else if (unit === "week") {
       formatString = "ddd M/D "
