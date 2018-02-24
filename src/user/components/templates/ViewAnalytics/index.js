@@ -35,9 +35,10 @@ class ViewAnalytics extends Component {
     const {filters} = this.props
     if (!filters || !filters.startDate) {
       //initialize the filters with just week start date, which is default for GA anyways
+      const yesterday = moment().subtract(1, "day")
       this.setAnalyticsFilters({
-        startDate: moment().subtract(7, "days").format("YYYY-MM-DD"),
-        endDate: moment().format("YYYY-MM-DD"),
+        startDate: yesterday.clone().subtract(7, "days").format("YYYY-MM-DD"),
+        endDate: yesterday.format("YYYY-MM-DD"),
         //could make this plural, so can sort by multiple. but for now, just support sorting by one
         orderBy: {
           fieldName: "ga:pageviews", sortOrder: "DESCENDING"

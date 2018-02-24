@@ -47,6 +47,7 @@ class AnalyticsFilters extends Component {
 
   timeRangeOptions () {
     //default is first option, one week, which is what GA defaults to
+    const yesterday = moment().subtract(1, "day")
     return [
       {
         label: "Select",
@@ -55,22 +56,22 @@ class AnalyticsFilters extends Component {
       {
         label: "Past 7 Days",
         value: {
-          startDate: moment().subtract(7, "days").format("YYYY-MM-DD"),
-          endDate: moment().format("YYYY-MM-DD"),
+          startDate: yesterday.clone().subtract(7, "days").format("YYYY-MM-DD"),
+          endDate: yesterday.format("YYYY-MM-DD"),
         },
       },
       {
         label: "Past 30 Days",
         value: {
-          startDate: moment().subtract(30, "days").format("YYYY-MM-DD"),
-          endDate: moment().format("YYYY-MM-DD"),
+          startDate: yesterday.clone().subtract(30, "days").format("YYYY-MM-DD"),
+          endDate: yesterday.format("YYYY-MM-DD"),
         },
       },
       {
         label: "All",
         value: {
           startDate: "2005-01-01", //GA started, so can't go before this
-          endDate: moment().format("YYYY-MM-DD"),
+          endDate: yesterday.format("YYYY-MM-DD"),
         }
       },
     ]

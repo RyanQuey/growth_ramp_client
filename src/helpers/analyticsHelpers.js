@@ -10,7 +10,7 @@ export default {
 
     let unit, step
     if (filterLength < 10) {
-      unit = "Day"
+      unit = "Day" //titlecase required for GA
       step = 1
 
     } else if (filterLength < 50) {
@@ -28,33 +28,40 @@ export default {
 
     const range = moment.range(start, end)
     const rangeArray = Array.from(range.by(unit, {step: step}))
-    return {rangeArray, unit, step}
+    return {rangeArray, unit, step, endDate: end, startDate: start}
   },
 
-  getHistogramLabels: ({rangeArray, unit, step}, rows) => {
+  getHistogramLabels: (xAxisData, rows) => {
+    let {rangeArray, unit, step, endDate} = xAxisData
+
     const range = [...rangeArray]
+    unit = unit.toLowerCase()
 
     let formatString
-    if (unit === "Year") {
+    if (unit === "year") {
       formatString = "YYYY"
-    } else if (unit === "Month") {
+    } else if (unit === "month") {
       formatString = "MMM"
-    } else if (unit === "Week") {
+    } else if (unit === "week") {
       formatString = "ddd M/D "
-    } else if (unit === "Day") {
+    } else if (unit === "day") {
       formatString = "ddd M/D"
     }
 
     const initialIndex = rows[0].dimensions[0]
 
     const labels = range.map((date, index) => {
-
-      if ((step > 1 || unit === "week") && index !== range.length -1) {
-        //label should reflect that this is date range
-        return `${date.format(formatString)} - ${range[index+1].format(formatString)}`
-      } else if ((step > 1) && index !== range.length -1){
+      const isRangeOfDates = (step > 1 || unit === "week")
+      // if isRangeOfDates, label should reflect that this is date range
+      if (isRangeOfDates && index !== range.length -1 && index !== 0) {
+        // is range and not first of last range
+        return `${date.clone().startOf(unit).format(formatString)} - ${date.clone().endOf(unit).format(formatString)}`
+      } else if (isRangeOfDates && index === 0){
         //is the last of the set
-        return `${date.format(formatString)} - ${date.clone().add(step, unit).format(formatString)}`
+        return `${date.format(formatString)} - ${endDate.clone().format(formatString)}`
+      } else if (isRangeOfDates && index === range.length -1){
+        //is the last of the set
+        return `${date.clone().startOf(unit).format(formatString)} - ${endDate.clone().format(formatString)}`
       } else {
         return `${date.format(formatString)}`
       }

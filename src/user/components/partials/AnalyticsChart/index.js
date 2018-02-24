@@ -39,8 +39,10 @@ class AnalyticsChart extends Component {
 
     const rows = theseAnalytics.rows
 
-    const {rangeArray, unit, step} = analyticsHelpers.getXAxisData(lastUsedFilters)
-    const labels = analyticsHelpers.getHistogramLabels({rangeArray, unit, step}, rows)
+    const xAxisData = analyticsHelpers.getXAxisData(lastUsedFilters)
+    const {rangeArray, unit, step} = xAxisData
+    const labels = analyticsHelpers.getHistogramLabels(xAxisData, rows)
+
     const metricSets = theseAnalytics.columnHeader.metrics.map((metric, index) => (
       {
         label: DIMENSIONS_METRICS_FRIENDLY_NAME[metric.name], //for the legend
