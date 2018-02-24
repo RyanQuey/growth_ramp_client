@@ -5,6 +5,9 @@ import { PostCard, ProviderCard } from 'user/components/partials'
 import { SET_CURRENT_PAGE, SET_CURRENT_MODAL  } from 'constants/actionTypes'
 import { PROVIDERS } from 'constants/providers'
 import { DIMENSIONS_METRICS_FRIENDLY_NAME } from 'constants/analytics'
+import {
+  withRouter,
+} from 'react-router-dom'
 import {formActions} from 'shared/actions'
 import classes from './style.scss'
 
@@ -34,6 +37,31 @@ class AnalyticsTable extends Component {
     formActions.setOptions(this.props.form, this.props.items, {[post.id]: {utms: utmFields}})
   }
 
+  // when click on dimension column within a row
+  chooseDimensionOnRow (dimensionValue, e) {
+    e && e.preventDefault()
+    const {tableDataset, location} = this.props
+
+    if (tableDataset === "website-traffic") {
+
+      //channelGroupings are the row dimensions, so setting that
+      const dimensionFilter = {
+        dimensionName: `ga:channelGrouping`,
+        operator: "EXACT",
+        expressions: [dimensionValue]
+      }
+
+      this.props.updateDimensionFilter(dimensionFilter)
+      this.props.history.push(`/analytics/webpage-traffic`)
+
+    } else if (tableDataset === "webpage-traffic") {
+      const encodedUrl = encodeURIComponent(dimensionValue)
+      this.props.history.push(`/analytics/webpage-traffic?webpage=${encodedUrl}`)
+    }
+
+    this.props.getAnalytics()
+  }
+
   setOrderBy(headerName, e) {
     e && e.preventDefault()
 
@@ -52,12 +80,14 @@ class AnalyticsTable extends Component {
   }
 
   render() {
-    const {tableDataset, analytics, filters} = this.props
+    const {tableDataset, analytics, filters, location} = this.props
     const theseAnalytics = analytics[tableDataset]
 
     if (!analytics || !theseAnalytics) {
       return null
     }
+
+    const webpageQuery = new URLSearchParams(location.search).get("webpage")
 
     const headers = [
       ...theseAnalytics.columnHeader.dimensions,
@@ -95,7 +125,7 @@ class AnalyticsTable extends Component {
               {totals.map((value, index) => {
                 const correspondingHeader = theseAnalytics.columnHeader.metrics[index]
                 const valueType = correspondingHeader.type
-                const totalType = ["INTEGER"].includes(valueType) ? "Total" : "Avg"
+                const totalType = ["INTEGER"].includes(valueType) ? "total" : "average"
 
                 return <div key={index} className={`${classes[`column${index +2}`]}`}>{value} ({totalType})</div>
               })}
@@ -105,19 +135,22 @@ class AnalyticsTable extends Component {
           {rows.map((row, index) => {
             const alternatingClass = (index % 2) == 1 ? "oddRow" : "evenRow"
 
-            const values = [
-              ...row.dimensions,
-              ...row.metrics[0].values,
-            ]
-
             return (
               <Flexbox
                 key={row.dimensions[0]}
                 className={`${classes.tableRow} ${classes[alternatingClass]}`}
                 align="center"
               >
-                {values.map((value, index) =>
-                  <div key={index} className={`${classes[`column${index +1}`]}`}>{value}</div>
+                {row.dimensions.map((value, index) => {
+                  if (tableDataset === "website-traffic" || (tableDataset === "webpage-traffic" && !webpageQuery)) {
+                    return <a key={index} onClick={this.chooseDimensionOnRow.bind(this, value)} className={`${classes[`column${index +1}`]}`}>{value}</a>
+                  } else if (tableDataset === "webpage-traffic" && webpageQuery){
+                    return <div key={index} className={`${classes[`column${index +1}`]}`}>{value}</div>
+                  }
+                })}
+
+                {row.metrics[0].values.map((value, index) =>
+                  <div key={index} className={`${classes[`column${index +1 + row.dimensions.length}`]}`}>{value}</div>
                 )}
               </Flexbox>
             )
@@ -144,6 +177,6 @@ const mapDispatchToProps = (dispatch) => {
   }
 }
 
-const ConnectedAnalyticsTable = connect(mapStateToProps, mapDispatchToProps)(AnalyticsTable)
+const ConnectedAnalyticsTable = withRouter(connect(mapStateToProps, mapDispatchToProps)(AnalyticsTable))
 export default ConnectedAnalyticsTable
 

@@ -7,7 +7,7 @@ import { Button, Flexbox, Icon, Form } from 'shared/components/elements'
 import {
 } from 'user/components/partials'
 import { PaginationMenu, SocialLogin } from 'shared/components/partials'
-import { AnalyticsFilters, AnalyticsTable, AnalyticsChart } from 'user/components/partials'
+import { ChannelGroupingFilter, AnalyticsFilters, AnalyticsTable, AnalyticsChart } from 'user/components/partials'
 import { PROVIDERS, PROVIDER_IDS_MAP } from 'constants/providers'
 import {formActions, alertActions} from 'shared/actions'
 import {
@@ -29,6 +29,7 @@ class ViewAnalytics extends Component {
     this.getChartAnalytics = this.getChartAnalytics.bind(this)
     this.onPageChange = this.onPageChange.bind(this)
     this.onPageSizeChange = this.onPageSizeChange.bind(this)
+    this.updateDimensionFilter = this.updateDimensionFilter.bind(this)
   }
 
   componentWillMount() {
@@ -68,6 +69,37 @@ class ViewAnalytics extends Component {
     formActions.setParams("Analytics", "filters", filter)
   }
 
+  //pass in undefined or null or false to remove all dimension filters
+  //pass in expressions as undefined or null or false to remove all dimension filters to remove a certain filter for the provided dimensionFilter.dimensionName
+  //assumption is that each filter will have a unique dimensionName. Might not always be true in future, but assume for now, can add option for that later
+  updateDimensionFilter (dimensionFilter) {
+    const {filters} = this.props
+    if (!dimensionFilter) {
+      //remove all dimension filters
+      this.setAnalyticsFilters({dimensionFilterClauses: undefined})
+      return
+    }
+
+    let dimensionFilterClauses = filters.dimensionFilterClauses ? filters.dimensionFilterClauses : {operator: "AND", filters: []}
+
+    const targetDimensionIndex = dimensionFilterClauses.filters.findIndex((filterClause) => filterClause.dimensionName === dimensionFilter.dimensionName)
+    if (!dimensionFilter.expressions) {
+      //remove that filter if exists
+      if (targetDimensionIndex !== -1) {
+        dimensionFilterClauses.filters.splice(targetDimensionIndex, 1)
+      }
+
+    } else {
+      //replace that filter if exists or add that filter
+      if (targetDimensionIndex === -1) {
+        dimensionFilterClauses.filters.push(dimensionFilter)
+      } else {
+        dimensionFilterClauses.filters.splice(targetDimensionIndex, 1, dimensionFilter)
+      }
+    }
+    this.setAnalyticsFilters({dimensionFilterClauses})
+  }
+
   getAnalytics(e) {
     e && e.preventDefault()
     //TODO set filters to store, and then use in saga
@@ -92,6 +124,7 @@ class ViewAnalytics extends Component {
     //check if chart also needs to be updated
     const relevantProperties = ["startDate", "endDate", "defaultChannelGrouping", "websiteId", "profileId"]
     const lastUsedFilters = Helpers.safeDataPath(this.props.analytics, `${tableDataset}.lastUsedFilters`, {})
+
     if (_.pick(this.props.filters, relevantProperties) !== _.pick(lastUsedFilters, relevantProperties)) {
       this.getChartAnalytics()
     }
@@ -139,6 +172,9 @@ class ViewAnalytics extends Component {
     const lastRecordShown = Helpers.safeDataPath(analytics, `${tableDataset}.nextPageToken`) //could also use currentPage * currentPageSize
     const totalRecords = Helpers.safeDataPath(analytics, `${tableDataset}.data.rowCount`, 0)
 
+    const query = new URLSearchParams(document.location.search)
+    const webpageQueryValue = query.get("webpage")
+
     return (
       <div className={classes.viewAnalytics}>
         <h1>Analytics</h1>
@@ -166,10 +202,17 @@ class ViewAnalytics extends Component {
           getChartAnalytics={this.getChartAnalytics}
         />
 
+        {tableDataset === "webpage-traffic" && !webpageQueryValue &&
+          <ChannelGroupingFilter
+            updateDimensionFilter={this.updateDimensionFilter}
+          />
+        }
+
         <AnalyticsTable
           tableDataset={tableDataset}
           setAnalyticsFilters={this.setAnalyticsFilters}
           getAnalytics={this.getAnalytics}
+          updateDimensionFilter={this.updateDimensionFilter}
         />
 
         {currentGoogleAccount && (

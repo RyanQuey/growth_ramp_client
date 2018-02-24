@@ -7,6 +7,7 @@ import {
 } from 'constants/actionTypes'
 import { USER_FIELDS_TO_PERSIST, PROVIDER_IDS_MAP  } from 'constants'
 import { errorActions, alertActions } from 'shared/actions'
+import analyticsHelpers from 'helpers/analyticsHelpers'
 
 //disabling environment variables in the front-end; so remove this  ||  when this gets moved to the backend. I will want to throw an error at that point
 function* fetchAllGAAccounts(action) {
@@ -39,9 +40,15 @@ function* getAnalytics(action) {
   try {
     const state = store.getState()
     const dataset = action.dataset
-    const filtersObj = Helpers.safeDataPath(state, `forms.Analytics.filters.params`, {})
+    const translatedQueryObj = analyticsHelpers.translateQueryForFilters(dataset)
+console.log("trans obj", translatedQueryObj);
+    const filtersObj = Object.assign({}, Helpers.safeDataPath(state, `forms.Analytics.filters.params`, {}))
+console.log("fil obj", filtersObj);
+    Object.assign(filtersObj, translatedQueryObj)
+console.log("fil obj", filtersObj);
     //transfomr into array of objs, each obj with single key (a filter param).
     const filters = JSON.stringify(filtersObj)
+
     const res = yield axios.get(`/api/analytics/getAnalytics?filters=${filters}&dataset=${dataset}`) //eventually switch to socket
 
 

@@ -57,6 +57,11 @@
     &.oddRow {
       //background: $light-purple-gray;
     }
+    &.totalsRow {
+      font-weight: bold;
+    }
+
+    //might not be usingnext two classes
     .header {
       font-weight: bold;
     }

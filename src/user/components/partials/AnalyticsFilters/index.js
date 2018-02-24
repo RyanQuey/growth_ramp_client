@@ -25,8 +25,10 @@ class AnalyticsFilters extends Component {
 
     this.refreshGAAccounts = this.refreshGAAccounts.bind(this)
     this.setAnalyticsProfileFilter = this.setAnalyticsProfileFilter.bind(this)
+    this.selectChannelGrouping = this.selectChannelGrouping.bind(this)
     this.selectFilterOption = this.selectFilterOption.bind(this)
     this.handleCalendarClick = this.handleCalendarClick.bind(this)
+
   }
 
   componentDidMount() {
@@ -77,29 +79,32 @@ class AnalyticsFilters extends Component {
     ]
   }
 
-
   channelGroupingFilterOptions () {
     //default is first option, one week, which is what GA defaults to
     return [
       {
         label: "Select",
-        value: {defaultChannelGrouping: undefined},
+        value: undefined,
       },
       {
         label: "Organic",
-        value: {defaultChannelGrouping: "organic"},
+        value: "Organic",
       },
       {
         label: "Social",
-        value: {defaultChannelGrouping: "direct"},
+        value: "Social",
       },
       {
         label: "Direct",
-        value: {defaultChannelGrouping: "social"},
+        value: "Direct",
       },
       {
         label: "Referral",
-        value: {defaultChannelGrouping: "referral"},
+        value: "Referral",
+      },
+      {
+        label: "(Other)",
+        value: "(Other)",
       },
     ]
   }
@@ -155,18 +160,29 @@ class AnalyticsFilters extends Component {
     this.props.fetchAllGAAccounts({}, cb, onFailure)
   }
 
+  selectChannelGrouping (option) {
+    const dimensionFilter = {
+      dimensionName: `ga:channelGrouping`,
+      operator: "EXACT",
+      expressions: [option.value]
+    }
 
-  selectFilterOption(option) {
+    this.props.updateDimensionFilter(dimensionFilter)
+  }
+
+
+
+  selectFilterOption (option) {
     this.props.setAnalyticsFilters(option.value)
   }
 
-  handleCalendarClick(param, dateTime) {
+  handleCalendarClick (param, dateTime) {
 
     this.props.setAnalyticsFilters({[param]: dateTime.format("YYYY-MM-DD")})
   }
 
   //for filtering which websites to show analytics for
-  setWebsiteFilter(website) {
+  setWebsiteFilter (website) {
     //default to first profile
     let defaultProfileId = ""
     if (website.profiles && website.profiles.length) {
@@ -194,7 +210,9 @@ class AnalyticsFilters extends Component {
     if (!filters || !websites) {
       return <Icon name="spinner"/>
     }
-    const {websiteId, profileId, startDate, endDate, defaultChannelGrouping} = filters
+    const {websiteId, profileId, startDate, endDate, dimensionFilterClauses} = filters
+    const channelGroupingFilter = dimensionFilterClauses && dimensionFilterClauses.filters.find((clause) => clause.dimensionName === "ga:channelGrouping")
+    const channelGroupingValue = channelGroupingFilter && channelGroupingFilter.expressions[0] //assuming only one for now
 
     const currentWebsite = websites[websiteId]
     const currentGoogleAccount = googleAccounts && googleAccounts[0]
@@ -204,7 +222,7 @@ class AnalyticsFilters extends Component {
     const timeRangeOptions = this.timeRangeOptions()
     const channelGroupingFilterOptions = this.channelGroupingFilterOptions()
     const currentTimeRangeOption = timeRangeOptions.find((option) => option.value.startDate === startDate)
-    const currentChannelGroupingOption = channelGroupingFilterOptions.find((option) => option.value.defaultChannelGrouping === defaultChannelGrouping)
+    const currentChannelGroupingOption = channelGroupingFilterOptions.find((option) => option.value === channelGroupingValue)
 
     return (
       <Form className={classes.filtersForm} onSubmit={this.props.getAnalytics}>
@@ -290,8 +308,8 @@ class AnalyticsFilters extends Component {
               label="Channel Grouping"
               className={classes.select}
               options={channelGroupingFilterOptions}
-              onChange={this.selectFilterOption}
-              currentOption={currentChannelGroupingOption || channelGroupingFilterOptions[0]}
+              onChange={this.selectChannelGrouping}
+              currentOption={channelGroupingValue || channelGroupingFilterOptions[0]}
               name="timerange"
             />
 

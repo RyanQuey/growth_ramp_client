@@ -16,7 +16,6 @@ const handleQuery = (action) => {
   const rawQuery = action.payload
 
   if (rawQuery) {
-
     let cb, user, doneOptions = {}
     const variables = rawQuery.replace(/^\?/, "").split('&')
     for (let i = 0; i < variables.length; i++) {

@@ -69,5 +69,34 @@ export default {
     })
 
     return labels
-  }
+  },
+
+  translateQueryForFilters: (dataset) => {
+    const query = new URLSearchParams(document.location.search)
+    const webpageQueryValue = query.get("webpage")
+
+
+    let translatedFilters = {}
+    if (webpageQueryValue) {
+      // will override any current dimensionFilterClauses. And that's fine with me :)...for now
+      translatedFilters.dimensionFilterClauses = {
+          operator: "AND",
+          filters: [
+            {
+              dimensionName: "ga:landingPagePath",
+              operator: "PARTIAL", // this should get all for this landing page, including those with crazy queries eg /blogpost?whatever=stuff
+              expressions: [webpageQueryValue],
+            }
+          ]
+        }
+
+      if (dataset === "webpage-traffic") {
+        //since now, only looking at one page's data
+        //but make sure to never override dimensions for charts
+        translatedFilters.dimensions = {name: "ga:channelGrouping"}
+      }
+    }
+
+    return translatedFilters
+  },
 }
