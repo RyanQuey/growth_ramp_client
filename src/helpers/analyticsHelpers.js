@@ -9,20 +9,20 @@ export default {
     const filterLength = end.diff(start) / 1000 / 60 / 60 / 24
 
     let unit, step
-    if (filterLength < 10) {
+    if (filterLength < 30) {
       unit = "Day" //titlecase required for GA
       step = 1
 
-    } else if (filterLength < 50) {
+    } else if (filterLength < 30 * 7) {
       unit = "Week"
       step = 1
 
-    } else if (filterLength < 42) {
+    } else if (filterLength < 30 * 30) {
       unit = "Month"
       step = 1
 
     } else {
-      unit = "Year"
+      unit = "Year" //TODO not entirely accurate, because doesn't do beginning of year until end of year logic in GA for years. Need to change to just display sample times along the bottom
       step = 1
     }
 
@@ -41,7 +41,7 @@ export default {
     if (unit === "year") {
       formatString = "YYYY"
     } else if (unit === "month") {
-      formatString = "MMM"
+      formatString = "MMM 'YY"
     } else if (unit === "week") {
       formatString = "ddd M/D "
     } else if (unit === "day") {
@@ -58,7 +58,7 @@ export default {
         return `${date.clone().startOf(unit).format(formatString)} - ${date.clone().endOf(unit).format(formatString)}`
       } else if (isRangeOfDates && index === 0){
         //is the last of the set
-        return `${date.format(formatString)} - ${endDate.clone().format(formatString)}`
+        return `${date.format(formatString)} - ${date.clone().endOf(unit).format(formatString)}`
       } else if (isRangeOfDates && index === range.length -1){
         //is the last of the set
         return `${date.clone().startOf(unit).format(formatString)} - ${endDate.clone().format(formatString)}`
