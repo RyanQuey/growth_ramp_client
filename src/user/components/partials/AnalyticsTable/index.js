@@ -67,6 +67,7 @@ class AnalyticsTable extends Component {
     ))
 
     const rows = theseAnalytics.rows
+    const totals = Helpers.safeDataPath(theseAnalytics, "data.totals.0.values")
     const orderByFilter = filters && filters.orderBy
 
     return (
@@ -83,6 +84,23 @@ class AnalyticsTable extends Component {
               </div>
             )}
           </Flexbox>
+
+          {totals &&
+            <Flexbox
+              className={`${classes.tableRow} ${classes.oddRow} ${classes.totalsRow}`}
+              align="center"
+            >
+              <div className={`${classes[`column1`]}`}>Totals</div>
+
+              {totals.map((value, index) => {
+                const correspondingHeader = theseAnalytics.columnHeader.metrics[index]
+                const valueType = correspondingHeader.type
+                const totalType = ["INTEGER"].includes(valueType) ? "Total" : "Avg"
+
+                return <div key={index} className={`${classes[`column${index +2}`]}`}>{value} ({totalType})</div>
+              })}
+            </Flexbox>
+          }
 
           {rows.map((row, index) => {
             const alternatingClass = (index % 2) == 1 ? "oddRow" : "evenRow"
