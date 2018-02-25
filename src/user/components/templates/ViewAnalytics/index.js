@@ -7,12 +7,14 @@ import { Button, Flexbox, Icon, Form } from 'shared/components/elements'
 import {
 } from 'user/components/partials'
 import { PaginationMenu, SocialLogin } from 'shared/components/partials'
-import { ChannelGroupingFilter, AnalyticsFilters, AnalyticsTable, AnalyticsChart } from 'user/components/partials'
+import { SelectChannelGrouping, SelectWebpageDetailsSet } from 'user/components/groups'
+import { AnalyticsFilters, AnalyticsTable, AnalyticsChart } from 'user/components/partials'
 import { PROVIDERS, PROVIDER_IDS_MAP } from 'constants/providers'
 import {formActions, alertActions} from 'shared/actions'
 import {
   withRouter,
 } from 'react-router-dom'
+import analyticsHelpers from 'helpers/analyticsHelpers'
 import classes from './style.scss'
 
 class ViewAnalytics extends Component {
@@ -118,12 +120,13 @@ class ViewAnalytics extends Component {
     }
 
     this.setState({pending: true})
-    const tableDataset = Helpers.safeDataPath(this.props, "match.params.tableDataset")
-    this.props.getAnalytics({}, tableDataset, cb, onFailure)
+    const baseOrganization = Helpers.safeDataPath(this.props, "match.params.baseOrganization")
+    const dataset = analyticsHelpers.getDataset("table", this.props.filters, baseOrganization)
+    this.props.getAnalytics({}, dataset, cb, onFailure)
 
     //check if chart also needs to be updated
     const relevantProperties = ["startDate", "endDate", "defaultChannelGrouping", "websiteId", "profileId"]
-    const lastUsedFilters = Helpers.safeDataPath(this.props.analytics, `${tableDataset}.lastUsedFilters`, {})
+    const lastUsedFilters = Helpers.safeDataPath(this.props.analytics, `${baseOrganization}.lastUsedFilters`, {})
 
     if (_.pick(this.props.filters, relevantProperties) !== _.pick(lastUsedFilters, relevantProperties)) {
       this.getChartAnalytics()
@@ -134,6 +137,10 @@ class ViewAnalytics extends Component {
     e && e.preventDefault()
     //TODO set filters to store, and then use in saga
     formActions.formPersisted("Analytics", "chartFilters")
+
+    const baseOrganization = Helpers.safeDataPath(this.props, "match.params.baseOrganization")
+    const dataset = analyticsHelpers.getDataset("chart", this.props.filters, baseOrganization)
+
     const cb = () => {
       this.setState({chartPending: false})
     }
@@ -148,7 +155,7 @@ class ViewAnalytics extends Component {
     }
 
     this.setState({chartPending: true})
-    this.props.getAnalytics({filters: this.props.chartFilters}, "chart-line-time", cb, onFailure)
+    this.props.getAnalytics({filters: this.props.chartFilters}, dataset, cb, onFailure)
 
   }
 
@@ -156,9 +163,8 @@ class ViewAnalytics extends Component {
     const {pending} = this.state
     const {googleAccounts, filters, analytics} = this.props
     const currentGoogleAccount = googleAccounts && googleAccounts[0]
-    //getting tableDataset/what the analytics dashboard view and filters are on this component.
-    //For now, can do it all from the path, but might have to change later
-    const tableDataset = Helpers.safeDataPath(this.props, "match.params.tableDataset")
+    const baseOrganization = Helpers.safeDataPath(this.props, "match.params.baseOrganization")
+    const tableDataset = analyticsHelpers.getDataset("table", filters, baseOrganization)
 
     //wait to finish initializing store at least
     if (!filters) {
@@ -187,7 +193,7 @@ class ViewAnalytics extends Component {
         {currentGoogleAccount ? (
           <AnalyticsFilters
             togglePending={this.togglePending}
-            tableDataset={tableDataset}
+            baseOrganization={baseOrganization}
             setAnalyticsFilters={this.setAnalyticsFilters}
             getAnalytics={this.getAnalytics}
           />
@@ -196,20 +202,20 @@ class ViewAnalytics extends Component {
         )}
 
         <AnalyticsChart
-          tableDataset={tableDataset}
-          chartDataset={"chart-line-time"}
+          baseOrganization={baseOrganization}
+          dataset={"chart-line-time"}
           setAnalyticsFilters={this.setAnalyticsFilters}
           getChartAnalytics={this.getChartAnalytics}
         />
 
-        {tableDataset === "webpage-traffic" && !webpageQueryValue &&
-          <ChannelGroupingFilter
+        {baseOrganization === "landing-pages" && !webpageQueryValue &&
+          <SelectChannelGrouping
             updateDimensionFilter={this.updateDimensionFilter}
           />
         }
 
         <AnalyticsTable
-          tableDataset={tableDataset}
+          baseOrganization={baseOrganization}
           setAnalyticsFilters={this.setAnalyticsFilters}
           getAnalytics={this.getAnalytics}
           updateDimensionFilter={this.updateDimensionFilter}

@@ -9,6 +9,7 @@ import {
   withRouter,
 } from 'react-router-dom'
 import {formActions} from 'shared/actions'
+import analyticsHelpers from 'helpers/analyticsHelpers'
 import classes from './style.scss'
 
 //shows up as buttons in mobile, or sidebar in browser?
@@ -40,10 +41,9 @@ class AnalyticsTable extends Component {
   // when click on dimension column within a row
   chooseDimensionOnRow (dimensionValue, e) {
     e && e.preventDefault()
-    const {tableDataset, location} = this.props
+    const {baseOrganization, location} = this.props
 
-    if (tableDataset === "website-traffic") {
-
+    if (baseOrganization === "website-overview") {
       //channelGroupings are the row dimensions, so setting that
       const dimensionFilter = {
         dimensionName: `ga:channelGrouping`,
@@ -52,11 +52,11 @@ class AnalyticsTable extends Component {
       }
 
       this.props.updateDimensionFilter(dimensionFilter)
-      this.props.history.push(`/analytics/webpage-traffic`)
+      this.props.history.push(`/analytics/landing-pages`)
 
-    } else if (tableDataset === "webpage-traffic") {
+    } else if (baseOrganization === "landing-pages") {
       const encodedUrl = encodeURIComponent(dimensionValue)
-      this.props.history.push(`/analytics/webpage-traffic?webpage=${encodedUrl}`)
+      this.props.history.push(`/analytics/landing-pages?webpage=${encodedUrl}`)
     }
 
     this.props.getAnalytics()
@@ -80,7 +80,8 @@ class AnalyticsTable extends Component {
   }
 
   render() {
-    const {tableDataset, analytics, filters, location} = this.props
+    const {baseOrganization, analytics, filters, location} = this.props
+    const tableDataset = analyticsHelpers.getDataset("table", filters, baseOrganization)
     const theseAnalytics = analytics[tableDataset]
 
     if (!analytics || !theseAnalytics) {
@@ -142,9 +143,9 @@ class AnalyticsTable extends Component {
                 align="center"
               >
                 {row.dimensions.map((value, index) => {
-                  if (tableDataset === "website-traffic" || (tableDataset === "webpage-traffic" && !webpageQuery)) {
+                  if (baseOrganization === "website-overview" || (baseOrganization === "landing-pages" && !webpageQuery)) {
                     return <a key={index} onClick={this.chooseDimensionOnRow.bind(this, value)} className={`${classes[`column${index +1}`]}`}>{value}</a>
-                  } else if (tableDataset === "webpage-traffic" && webpageQuery){
+                  } else if (baseOrganization === "landing-pages" && webpageQuery){
                     return <div key={index} className={`${classes[`column${index +1}`]}`}>{value}</div>
                   }
                 })}

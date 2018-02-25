@@ -22,8 +22,8 @@ class AnalyticsChart extends Component {
   }
 
   render() {
-    const {chartDataset, analytics, filters, chartFilters} = this.props
-    const theseAnalytics = analytics[chartDataset]
+    const {dataset, analytics, filters, chartFilters} = this.props
+    const theseAnalytics = analytics[dataset]
     const lastUsedFilters = Helpers.safeDataPath(this.props.analytics, `chart-line-time.lastUsedFilters`, {})
 
     if (!analytics || !theseAnalytics) {

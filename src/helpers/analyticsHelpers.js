@@ -71,15 +71,14 @@ export default {
     return labels
   },
 
-  translateQueryForFilters: (dataset) => {
+  // probably only use query for webpage filter, since that is nice to be able to get to via url
+  addQueryToFilters: (filtersObj, dataset) => {
     const query = new URLSearchParams(document.location.search)
     const webpageQueryValue = query.get("webpage")
 
-
-    let translatedFilters = {}
     if (webpageQueryValue) {
       // will override any current dimensionFilterClauses. And that's fine with me :)...for now
-      translatedFilters.dimensionFilterClauses = {
+      filtersObj.dimensionFilterClauses = {
           operator: "AND",
           filters: [
             {
@@ -93,10 +92,27 @@ export default {
       if (dataset === "webpage-traffic") {
         //since now, only looking at one page's data
         //but make sure to never override dimensions for charts
-        translatedFilters.dimensions = {name: "ga:channelGrouping"}
+        filtersObj.dimensions = {name: "ga:channelGrouping"}
       }
     }
 
-    return translatedFilters
+    // filtersObj now modified if needed to
+  },
+
+  getDataset: (displayType, filters, baseOrganization) => {
+    let datasetArr = [displayType]
+    if (displayType === "chart") {
+      datasetArr.push("line") //displayStyle
+      datasetArr.push("time") // xAxis
+
+    } else if (displayType === "table") {
+      // get what the rows will be organized by
+      let defaultRowsForBaseOrganization = baseOrganization === "landing-pages" ? "landingPagePath" : "channelGrouping"
+      let rowsOrganizedBy = Helpers.safeDataPath(filters, `dimensions.0.name`, defaultRowsForBaseOrganization).replace("ga:", "")
+      datasetArr.push(rowsOrganizedBy)
+    }
+
+    const dataset = datasetArr.join("-")
+    return dataset
   },
 }

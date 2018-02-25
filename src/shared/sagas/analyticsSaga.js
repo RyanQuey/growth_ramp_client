@@ -40,12 +40,9 @@ function* getAnalytics(action) {
   try {
     const state = store.getState()
     const dataset = action.dataset
-    const translatedQueryObj = analyticsHelpers.translateQueryForFilters(dataset)
-console.log("trans obj", translatedQueryObj);
     const filtersObj = Object.assign({}, Helpers.safeDataPath(state, `forms.Analytics.filters.params`, {}))
-console.log("fil obj", filtersObj);
-    Object.assign(filtersObj, translatedQueryObj)
-console.log("fil obj", filtersObj);
+    analyticsHelpers.addQueryToFilters(filtersObj, dataset)
+
     //transfomr into array of objs, each obj with single key (a filter param).
     const filters = JSON.stringify(filtersObj)
 

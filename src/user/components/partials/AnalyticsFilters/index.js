@@ -40,7 +40,7 @@ class AnalyticsFilters extends Component {
         _.pick(props.filters, ["startDate", "endDate", "defaultChannelGrouping", "websiteId"]),
         _.pick(this.props.filters, ["startDate", "endDate", "defaultChannelGrouping", "websiteId"])
       ) ||*/
-      props.tableDataset !== this.props.tableDataset
+      props.baseOrganization !== this.props.baseOrganization
     ) {
       this.props.getAnalytics()
     }
@@ -168,8 +168,6 @@ class AnalyticsFilters extends Component {
       return <Icon name="spinner"/>
     }
     const {websiteId, profileId, startDate, endDate, dimensionFilterClauses} = filters
-    const channelGroupingFilter = dimensionFilterClauses && dimensionFilterClauses.filters.find((clause) => clause.dimensionName === "ga:channelGrouping")
-    const channelGroupingValue = channelGroupingFilter && channelGroupingFilter.expressions[0] //assuming only one for now
 
     const currentWebsite = websites[websiteId]
     const currentGoogleAccount = googleAccounts && googleAccounts[0]
@@ -177,9 +175,7 @@ class AnalyticsFilters extends Component {
 
     //set by function so date will refresh, in case goes past midnight and they didn't refresh browser or something
     const timeRangeOptions = this.timeRangeOptions()
-    const channelGroupingFilterOptions = this.channelGroupingFilterOptions()
     const currentTimeRangeOption = timeRangeOptions.find((option) => option.value.startDate === startDate)
-    const currentChannelGroupingOption = channelGroupingFilterOptions.find((option) => option.value === channelGroupingValue)
 
     return (
       <Form className={classes.filtersForm} onSubmit={this.props.getAnalytics}>
