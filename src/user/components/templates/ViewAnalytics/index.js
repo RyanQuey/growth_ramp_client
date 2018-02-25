@@ -85,7 +85,7 @@ class ViewAnalytics extends Component {
     let dimensionFilterClauses = filters.dimensionFilterClauses ? filters.dimensionFilterClauses : {operator: "AND", filters: []}
 
     const targetDimensionIndex = dimensionFilterClauses.filters.findIndex((filterClause) => filterClause.dimensionName === dimensionFilter.dimensionName)
-    if (!dimensionFilter.expressions) {
+    if (!dimensionFilter.expressions || !dimensionFilter.expressions.length) {
       //remove that filter if exists
       if (targetDimensionIndex !== -1) {
         dimensionFilterClauses.filters.splice(targetDimensionIndex, 1)
