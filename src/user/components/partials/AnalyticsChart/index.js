@@ -72,7 +72,6 @@ class AnalyticsChart extends Component {
       labels,
       datasets: metricSets //add a dataset to add an additional line to the graph (could add another metric for example)
     }
-console.log("try", dataProp);
     return (
       <div className={`${classes.container} ${this.props.hidden ? classes.hidden : ""}`}>
         <Line data={dataProp} />

@@ -3,7 +3,8 @@ export const ANALYTICS = ""
 export const DIMENSIONS_METRICS_FRIENDLY_NAME = {
   //dimensions
   "ga:landingPagePath": "Landing Page",
-  "ga:channelGrouping": "Default Channel Grouping",
+  "ga:channelGrouping": "Channel Grouping",
+  "ga:keyword": "Keyword",
   //metrics
   "ga:pageviews": "Page Views",
   "ga:uniquePageviews": "Unique Page Views",

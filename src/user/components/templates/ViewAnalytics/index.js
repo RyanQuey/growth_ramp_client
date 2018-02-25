@@ -27,6 +27,7 @@ class ViewAnalytics extends Component {
 
     this.togglePending = this.togglePending.bind(this)
     this.setAnalyticsFilters = this.setAnalyticsFilters.bind(this)
+    this.resetFilters = this.resetFilters.bind(this)
     this.getAnalytics = this.getAnalytics.bind(this)
     this.getChartAnalytics = this.getChartAnalytics.bind(this)
     this.onPageChange = this.onPageChange.bind(this)
@@ -39,16 +40,11 @@ class ViewAnalytics extends Component {
     if (!filters || !filters.startDate) {
       //initialize the filters with just week start date, which is default for GA anyways
       const yesterday = moment().subtract(1, "day")
-      this.setAnalyticsFilters({
+      const options = {
         startDate: yesterday.clone().subtract(7, "days").format("YYYY-MM-DD"),
         endDate: yesterday.format("YYYY-MM-DD"),
-        //could make this plural, so can sort by multiple. but for now, just support sorting by one
-        orderBy: {
-          fieldName: "ga:pageviews", sortOrder: "DESCENDING"
-        },
-        pageSize: 10,
-        page: 1,
-      })
+      }
+      this.resetFilters(options)
     }
   }
 
@@ -69,6 +65,22 @@ class ViewAnalytics extends Component {
   // filter should be object, keys being params that will be overwritten for the analytics filters
   setAnalyticsFilters(filter) {
     formActions.setParams("Analytics", "filters", filter)
+  }
+
+  //mostly run when enough other filters change that pagination, orderBy, that kind of ting needs to just be reset
+  resetFilters (options){
+    const defaults = {
+      //could make this plural, so can sort by multiple. but for now, just support sorting by one
+      orderBy: {
+        fieldName: "ga:pageviews", sortOrder: "DESCENDING"
+      },
+      pageSize: 10,
+      page: 1,
+    }
+
+    const filtersToReset = Object.assign({}, defaults, options)
+
+    this.setAnalyticsFilters(filtersToReset)
   }
 
   //pass in undefined or null or false to remove all dimension filters
@@ -121,14 +133,17 @@ class ViewAnalytics extends Component {
 
     this.setState({pending: true})
     const baseOrganization = Helpers.safeDataPath(this.props, "match.params.baseOrganization")
-    const dataset = analyticsHelpers.getDataset("table", this.props.filters, baseOrganization, this.props.tableDatasetParams)
+    const dataset = analyticsHelpers.getDataset("table", this.props.filters, baseOrganization)
     this.props.getAnalytics({}, dataset, cb, onFailure)
 
     //check if chart also needs to be updated
-    const relevantProperties = ["startDate", "endDate", "defaultChannelGrouping", "websiteId", "profileId"]
+    const relevantProperties = ["startDate", "endDate", "channelGrouping", "websiteId", "profileId"]
     const lastUsedFilters = Helpers.safeDataPath(this.props.analytics, `${baseOrganization}.lastUsedFilters`, {})
 
-    if (_.pick(this.props.filters, relevantProperties) !== _.pick(lastUsedFilters, relevantProperties)) {
+    if (_.isEqual(
+      _.pick(this.props.filters, relevantProperties),
+      _.pick(lastUsedFilters, relevantProperties)
+    )) {
       this.getChartAnalytics()
     }
   }
@@ -139,7 +154,7 @@ class ViewAnalytics extends Component {
     formActions.formPersisted("Analytics", "chartFilters")
 
     const baseOrganization = Helpers.safeDataPath(this.props, "match.params.baseOrganization")
-    const dataset = analyticsHelpers.getDataset("chart", this.props.filters, baseOrganization, this.props.tableDatasetParams)
+    const dataset = analyticsHelpers.getDataset("chart", this.props.filters, baseOrganization)
 
     const cb = () => {
       this.setState({chartPending: false})
@@ -164,7 +179,7 @@ class ViewAnalytics extends Component {
     const {googleAccounts, filters, analytics, tableDatasetParams} = this.props
     const currentGoogleAccount = googleAccounts && googleAccounts[0]
     const baseOrganization = Helpers.safeDataPath(this.props, "match.params.baseOrganization")
-    const tableDataset = analyticsHelpers.getDataset("table", filters, baseOrganization, tableDatasetParams)
+    const tableDataset = analyticsHelpers.getDataset("table", filters, baseOrganization)
 
     //wait to finish initializing store at least
     if (!filters) {
@@ -219,6 +234,7 @@ class ViewAnalytics extends Component {
           <SelectWebpageDetailsSet
             updateDimensionFilter={this.updateDimensionFilter}
             getAnalytics={this.getAnalytics}
+            resetFilters={this.resetFilters}
           />
         }
 
@@ -266,7 +282,6 @@ const mapStateToProps = state => {
     campaigns: state.campaigns,
     googleAccounts: Helpers.safeDataPath(state, "providerAccounts.GOOGLE", []).filter((account) => !account.unsupportedProvider),
     websites: state.websites,
-    currentWebsiteId: Helpers.safeDataPath(state, "form.Analytics.filters.params.websiteId"),
     tableDatasetParams: Helpers.safeDataPath(state, "forms.Analytics.tableDataset.params", {}),
     filters: Helpers.safeDataPath(state, "forms.Analytics.filters.params"),
     chartFilters: Helpers.safeDataPath(state, "forms.Analytics.chartFilters.params"),

@@ -99,7 +99,9 @@ export default {
     // filtersObj now modified if needed to
   },
 
-  getDataset: (displayType, filters, baseOrganization, tableDatasetParams) => {
+  getDataset: (displayType, filters, baseOrganization) => {
+    const tableDatasetParams = Helpers.safeDataPath(store.getState(), "forms.Analytics.tableDataset.params", {})
+
     let datasetArr = [displayType]
     if (displayType === "chart") {
       datasetArr.push("line") //displayStyle
@@ -108,9 +110,11 @@ export default {
     } else if (displayType === "table") {
       // get what the rows will be organized by
       let rowsOrganizedBy
+      const query = new URLSearchParams(document.location.search)
+      const webpageQueryValue = query.get("webpage")
       if (!tableDatasetParams.rowsBy) {
         // use defaults based on baseOrganization
-        let defaultRowsForBaseOrganization = baseOrganization === "landing-pages" ? "landingPagePath" : "channelGrouping"
+        let defaultRowsForBaseOrganization = baseOrganization === "landing-pages" && !webpageQueryValue ? "landingPagePath" : "channelGrouping"
         rowsOrganizedBy = Helpers.safeDataPath(filters, `dimensions.0.name`, defaultRowsForBaseOrganization).replace("ga:", "")
 
       } else {
