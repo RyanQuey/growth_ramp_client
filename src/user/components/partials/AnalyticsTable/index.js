@@ -80,8 +80,8 @@ class AnalyticsTable extends Component {
   }
 
   render() {
-    const {baseOrganization, analytics, filters, location} = this.props
-    const tableDataset = analyticsHelpers.getDataset("table", filters, baseOrganization)
+    const {baseOrganization, analytics, filters, location, tableDatasetParams} = this.props
+    const tableDataset = analyticsHelpers.getDataset("table", filters, baseOrganization, tableDatasetParams)
     const theseAnalytics = analytics[tableDataset]
 
     if (!analytics || !theseAnalytics) {
@@ -168,6 +168,7 @@ const mapStateToProps = state => {
     currentPage: state.currentPage,
     analytics: state.analytics,
     filters: Helpers.safeDataPath(state, "forms.Analytics.filters.params"),
+    tableDatasetParams: Helpers.safeDataPath(state, "forms.Analytics.tableDataset.params", {}),
   }
 }
 const mapDispatchToProps = (dispatch) => {

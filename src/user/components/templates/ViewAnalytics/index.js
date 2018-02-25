@@ -121,7 +121,7 @@ class ViewAnalytics extends Component {
 
     this.setState({pending: true})
     const baseOrganization = Helpers.safeDataPath(this.props, "match.params.baseOrganization")
-    const dataset = analyticsHelpers.getDataset("table", this.props.filters, baseOrganization)
+    const dataset = analyticsHelpers.getDataset("table", this.props.filters, baseOrganization, this.props.tableDatasetParams)
     this.props.getAnalytics({}, dataset, cb, onFailure)
 
     //check if chart also needs to be updated
@@ -139,7 +139,7 @@ class ViewAnalytics extends Component {
     formActions.formPersisted("Analytics", "chartFilters")
 
     const baseOrganization = Helpers.safeDataPath(this.props, "match.params.baseOrganization")
-    const dataset = analyticsHelpers.getDataset("chart", this.props.filters, baseOrganization)
+    const dataset = analyticsHelpers.getDataset("chart", this.props.filters, baseOrganization, this.props.tableDatasetParams)
 
     const cb = () => {
       this.setState({chartPending: false})
@@ -161,10 +161,10 @@ class ViewAnalytics extends Component {
 
   render () {
     const {pending} = this.state
-    const {googleAccounts, filters, analytics} = this.props
+    const {googleAccounts, filters, analytics, tableDatasetParams} = this.props
     const currentGoogleAccount = googleAccounts && googleAccounts[0]
     const baseOrganization = Helpers.safeDataPath(this.props, "match.params.baseOrganization")
-    const tableDataset = analyticsHelpers.getDataset("table", filters, baseOrganization)
+    const tableDataset = analyticsHelpers.getDataset("table", filters, baseOrganization, tableDatasetParams)
 
     //wait to finish initializing store at least
     if (!filters) {
@@ -211,6 +211,14 @@ class ViewAnalytics extends Component {
         {baseOrganization === "landing-pages" && !webpageQueryValue &&
           <SelectChannelGrouping
             updateDimensionFilter={this.updateDimensionFilter}
+            getAnalytics={this.getAnalytics}
+          />
+        }
+
+        {baseOrganization === "landing-pages" && webpageQueryValue &&
+          <SelectWebpageDetailsSet
+            updateDimensionFilter={this.updateDimensionFilter}
+            getAnalytics={this.getAnalytics}
           />
         }
 
@@ -259,6 +267,7 @@ const mapStateToProps = state => {
     googleAccounts: Helpers.safeDataPath(state, "providerAccounts.GOOGLE", []).filter((account) => !account.unsupportedProvider),
     websites: state.websites,
     currentWebsiteId: Helpers.safeDataPath(state, "form.Analytics.filters.params.websiteId"),
+    tableDatasetParams: Helpers.safeDataPath(state, "forms.Analytics.tableDataset.params", {}),
     filters: Helpers.safeDataPath(state, "forms.Analytics.filters.params"),
     chartFilters: Helpers.safeDataPath(state, "forms.Analytics.chartFilters.params"),
   }

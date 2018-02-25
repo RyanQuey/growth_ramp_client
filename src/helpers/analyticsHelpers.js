@@ -99,7 +99,7 @@ export default {
     // filtersObj now modified if needed to
   },
 
-  getDataset: (displayType, filters, baseOrganization) => {
+  getDataset: (displayType, filters, baseOrganization, tableDatasetParams) => {
     let datasetArr = [displayType]
     if (displayType === "chart") {
       datasetArr.push("line") //displayStyle
@@ -107,9 +107,27 @@ export default {
 
     } else if (displayType === "table") {
       // get what the rows will be organized by
-      let defaultRowsForBaseOrganization = baseOrganization === "landing-pages" ? "landingPagePath" : "channelGrouping"
-      let rowsOrganizedBy = Helpers.safeDataPath(filters, `dimensions.0.name`, defaultRowsForBaseOrganization).replace("ga:", "")
+      let rowsOrganizedBy
+      if (!tableDatasetParams.rowsBy) {
+        // use defaults based on baseOrganization
+        let defaultRowsForBaseOrganization = baseOrganization === "landing-pages" ? "landingPagePath" : "channelGrouping"
+        rowsOrganizedBy = Helpers.safeDataPath(filters, `dimensions.0.name`, defaultRowsForBaseOrganization).replace("ga:", "")
+
+      } else {
+        rowsOrganizedBy = tableDatasetParams.rowsBy
+      }
       datasetArr.push(rowsOrganizedBy)
+
+      let columnSets = []
+      if (!tableDatasetParams.columnSets || !tableDatasetParams.columnSets.length ) {
+        // use defaults based on baseOrganization
+        columnSets.push("behavior")
+
+      } else {
+        columnSets = tableDatasetParams.columnSets
+      }
+      let columnSetsStr = columnSets.join(",")
+      datasetArr.push(columnSetsStr)
     }
 
     const dataset = datasetArr.join("-")
