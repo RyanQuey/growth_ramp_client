@@ -42,6 +42,8 @@ class AnalyticsFilters extends Component {
       ) ||*/
       props.baseOrganization !== this.props.baseOrganization
     ) {
+      // clear the extras
+      formActions.clearParams("Analytics", "tableDataset")
       this.props.getAnalytics()
     }
   }
