@@ -51,7 +51,8 @@ class AnalyticsTable extends Component {
         expressions: [dimensionValue]
       }
 
-      this.props.updateDimensionFilter(dimensionFilter)
+      const clearOtherFilters = true
+      this.props.updateDimensionFilter(dimensionFilter, clearOtherFilters)
       this.props.history.push(`/analytics/landing-pages`)
 
     } else if (baseOrganization === "landing-pages") {

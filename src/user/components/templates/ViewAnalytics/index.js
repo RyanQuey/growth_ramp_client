@@ -91,7 +91,7 @@ console.log("should reset", filtersToReset);
   //pass in undefined or null or false to remove all dimension filters
   //pass in expressions as undefined or null or false to remove all dimension filters to remove a certain filter for the provided dimensionFilter.dimensionName
   //assumption is that each filter will have a unique dimensionName. Might not always be true in future, but assume for now, can add option for that later
-  updateDimensionFilter (dimensionFilter) {
+  updateDimensionFilter (dimensionFilter, clearOtherFilters = false) {
     const {filters} = this.props
     if (!dimensionFilter) {
       //remove all dimension filters
@@ -99,7 +99,7 @@ console.log("should reset", filtersToReset);
       return
     }
 
-    let dimensionFilterClauses = filters.dimensionFilterClauses ? filters.dimensionFilterClauses : {operator: "AND", filters: []}
+    let dimensionFilterClauses = !clearOtherFilters && filters.dimensionFilterClauses ? filters.dimensionFilterClauses : {operator: "AND", filters: []}
 
     const targetDimensionIndex = dimensionFilterClauses.filters.findIndex((filterClause) => filterClause.dimensionName === dimensionFilter.dimensionName)
     if (!dimensionFilter.expressions || !dimensionFilter.expressions.length) {
