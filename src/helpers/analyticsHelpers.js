@@ -1,4 +1,6 @@
-export default {
+import urlLib from 'url'
+
+const analyticsHelpers = {
   //currently based solely on dates of data given
   //goal is to have 4-6 labels
   //NOTE keep in sync between frontend and api
@@ -137,4 +139,122 @@ export default {
     const dataset = datasetArr.join("-")
     return dataset
   },
+
+  // Google analytics uses bare bones http url and with no subdomain for its property
+  // GSC uses https (if applicable) and can be with subdomain
+  // for now, will automatically guess the GSC siteUrl from the GA property, though later might let them choose what GA property defaults to what gsc siteURL
+  getGSCUrlFromGAUrl: (gaUrl, gscSites) => {
+    const parsedUrl = urlLib.parse(gaUrl)
+    const hostname = parsedUrl.hostname
+    const parts = hostname.split(".")
+
+    //take only the last two parts to get TLD and no subdomain
+    const tld = parts.pop()
+    const domain = parts.pop()
+
+    const gscUrls = Object.keys(gscSites)
+
+    let matches = gscUrls.filter(url => url.includes(domain))
+
+    let match
+    if (matches.length === 1) {
+      match = matches[0]
+
+    } else if (matches.length === 0) {
+      return //nothing for now
+
+    } else if (matches.length > 1) {
+      let closerMatches = gscUrls.filter(url => url.includes(`${domain}.${tld}`))
+
+      if (closerMatches.length === 1) {
+        match = closerMatches[0]
+
+      } else if (closerMatches.length === 0) {
+        return matches[0]
+
+      } else if (closerMatches.length > 1) {
+        match = closerMatches[0]
+
+      }
+    }
+  },
+
+  // takes dataset string and parses to get relevant data
+  // keep in sync with frontend helper
+  parseDataset: (dataset) => {
+    const datasetParts = dataset.split("-")
+    const displayType = datasetParts[0]
+
+    let rowsBy, columnSetsArr, xAxisBy
+    if (displayType === "table") {
+      rowsBy = datasetParts[1] || ""
+      const columnSetsStr = datasetParts[2] || ""
+      columnSetsArr = columnSetsStr.split(",") || []
+
+    } else if (displayType === "table") {
+      xAxisBy = datasetParts[1] || ""
+    }
+
+    return {datasetParts, displayType, rowsBy, xAxisBy, columnSetsArr}
+  },
+
+  // takes dataset info and returns which api will be requested
+  // keep in sync with frontend helper
+  whomToAsk: (dataset) => {
+    const {datasetParts, displayType, rowsBy, xAxisBy, columnSetsArr} = analyticsHelpers.parseDataset(dataset)
+    const ret = []
+
+    if (displayType === "table") {
+      if (!rowsBy.includes("keyword")) {
+        ret.push("GoogleAnalytics")
+      } else {
+        ret.push("GoogleSearchConsole")
+      }
+    } else if (displayType === "chart") {
+//TODO fix for GSC later
+        ret.push("GoogleAnalytics")
+
+    }
+
+    return ret
+  },
+
+  // checks with analytics apis to see if user has access
+  checkAuthorization: (gaUrl, dataset, websites) => {
+    const targetApis = analyticsHelpers.whomToAsk(dataset)
+console.log(targetApis)
+    let gscStatus = {status: "ready", message: ""}
+
+    let gscUrl
+    if (targetApis.includes("GoogleSearchConsole")) {
+      // check if they have gsc setup with this google acct
+      let gscUrl = analyticsHelpers.getGSCUrlFromGAUrl(gaUrl, websites.gscSites)
+      let gscUrlData = gscUrl && websites.gscSites[gscUrl]
+
+
+      if (gscUrlData && ["siteOwner", "siteRestrictedUser", "siteFullUser"].includes(gscUrlData.permissionLevel)) {
+        // we are currently read-only, so any of these are sufficient
+        gscStatus.status = "ready"
+
+      } else if (!gscUrlData) {
+        // website is not registered with the google accts GR has access to
+        gscStatus.status = "not-found"
+        gscStatus.message = `Google Search Console has not been setup for ${gaUrl} with any of the Google accounts you have linked to Growth Ramp. Link a new Google account that has permission to use Google Search Console for ${gaUrl} or get permission with one of your currently linked Google accounts`
+
+      } else if (["siteUnverifiedUser"].includes(gscUrlData.permissionLevel)) {
+        // they registered, but don't have any permissions, so need to get that
+        // find out which Google acct has it registered
+        let allProviderAccts = Helpers.flattenProviderAccounts()
+        let linkedAccount = allProviderAccts.find((acct) => acct.id === gscUrlData.providerAccountId)
+        let acctUsername = linkedAccount.userName || linkedAccount.email
+
+        gscStatus.status = "unverified"
+        gscStatus.message = `Google Search Console has been setup for ${gaUrl} with your Google account ${acctUsername}. Verify ${gaUrl} with ${acctUsername} to get stats and actionable info from your keyword data.`
+      }
+    }
+
+    return {gscStatus, gscUrl, targetApis}
+  },
 }
+
+export default analyticsHelpers
