@@ -1,6 +1,7 @@
 import {
   GET_ANALYTICS_SUCCESS,
   SIGN_OUT,
+  SORT_GSC_ANALYTICS,
 } from 'constants/actionTypes'
 
 const analyticsReducer = (state = {}, action) => {
@@ -10,6 +11,7 @@ const analyticsReducer = (state = {}, action) => {
   switch (action.type) {
 
     case GET_ANALYTICS_SUCCESS:
+    case SORT_GSC_ANALYTICS:
       // a given GR user might have multiple google accounts
       let {dataset, results, filters} = pld
       results.lastUsedFilters = filters

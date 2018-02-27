@@ -57,10 +57,6 @@ class PaginationMenu extends Component {
 
   changePage(value, autoReload = false) {
     this.props.onPageChange(value)
-
-    if (autoReload === true) {
-      this.props.onSubmit()
-    }
   }
 
   selectPageSizeOption(option) {

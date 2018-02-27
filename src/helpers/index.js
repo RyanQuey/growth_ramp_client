@@ -219,6 +219,7 @@ console.log(post.id, Helpers.channelTypeHasMultiple(null, post.provider, post.ch
     const utmString = utmList.join("&") //might use querystring to make sure there are no extra characters slipping in
     return utmString
   },
+
 }
 
 Helpers = Object.assign(Helpers, campaignHelpers)

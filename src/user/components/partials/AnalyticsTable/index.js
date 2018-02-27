@@ -22,7 +22,6 @@ class AnalyticsTable extends Component {
     }
 
     this.setCurrentPage = this.setCurrentPage.bind(this)
-    this.setOrderBy = this.setOrderBy.bind(this)
   }
   setCurrentPage(post) {
     this.props.setCurrentPage(post, this.props.items)
@@ -63,26 +62,10 @@ class AnalyticsTable extends Component {
     this.props.getAnalytics()
   }
 
-  setOrderBy(headerName, e) {
-    e && e.preventDefault()
-
-    let orderBy = {
-      fieldName: headerName,
-      sortOrder: "DESCENDING",
-    }
-    //if already ordering by this column, reverse direction
-    const currentOrderBy = Helpers.safeDataPath(this.props, `filters.orderBy`, {})
-    if (currentOrderBy.fieldName === headerName) {
-      orderBy.sortOrder = currentOrderBy.sortOrder === "DESCENDING" ? "ASCENDING" : "DESCENDING"
-    }
-
-    this.props.setAnalyticsFilters({orderBy})
-    this.props.getAnalytics()
-  }
-
   render() {
     const {baseOrganization, analytics, filters, location, tableDatasetParams, websites} = this.props
     const tableDataset = analyticsHelpers.getDataset("table", filters, baseOrganization, tableDatasetParams)
+    const {gscStatus, gscUrl, targetApis} = analyticsHelpers.getExternalApiInfo(filters.websiteUrl, tableDataset, websites)
     const theseAnalytics = analytics[tableDataset]
 
     if (!analytics) {
@@ -101,12 +84,16 @@ class AnalyticsTable extends Component {
       ))
 
       rows = theseAnalytics.rows
+      // GSC doesn't sort for us, so we sort and therefore have to paginate ourselves
+      if (targetApis.includes("GoogleSearchConsole")) {
+        rows = analyticsHelpers.paginateManually(rows, filters.page, filters.pageSize)
+      }
+
       totals = Helpers.safeDataPath(theseAnalytics, "data.totals.0.values")
     }
 
     const orderByFilter = filters && filters.orderBy
 
-    const {gscStatus, gscUrl, targetApis} = analyticsHelpers.getExternalApiInfo(filters.websiteUrl, tableDataset, websites)
     const haveAccess = gscStatus.status === "ready"
 
     if (haveAccess && !theseAnalytics) {
@@ -124,7 +111,7 @@ class AnalyticsTable extends Component {
               <Flexbox className={` ${classes.tableHeader}`} direction="row">
                 {headers.map((header, index) =>
                   <div key={header.name} className={`${classes[`column${index +1}`]}`}>
-                    <a onClick={this.setOrderBy.bind(this, header.name)}>{header.title}</a>&nbsp;
+                    <a onClick={this.props.setOrderBy.bind(null, header.name)}>{header.title}</a>&nbsp;
                     {orderByFilter.fieldName === header.name && (
                       <Icon name={orderByFilter.sortOrder === "DESCENDING" ? "caret-down" : "caret-up"}/>
                     )}
@@ -144,7 +131,7 @@ class AnalyticsTable extends Component {
                     const valueType = correspondingHeader.type
                     const totalType = ["INTEGER"].includes(valueType) ? "total" : "average"
 
-                    return <div key={index} className={`${classes[`column${index +2}`]}`}>{value} ({totalType})</div>
+                    return <div key={correspondingHeader.name} className={`${classes[`column${index +2}`]}`}>{value} ({totalType})</div>
                   })}
                 </Flexbox>
               }

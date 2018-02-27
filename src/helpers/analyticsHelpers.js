@@ -1,3 +1,4 @@
+import { SORT_GSC_ANALYTICS,  } from 'constants/actionTypes'
 import urlLib from 'url'
 
 const analyticsHelpers = {
@@ -135,12 +136,19 @@ const analyticsHelpers = {
 
       let columnSets = []
       if (!tableDatasetParams.columnSets || !tableDatasetParams.columnSets.length ) {
-        // use defaults based on baseOrganization
-        columnSets.push("behavior")
+        // use defaults based on baseOrganization and what rows are organized by
+        if (rowsOrganizedBy === "keyword") {
+          columnSets.push("acquisition")
+
+        } else {
+          columnSets.push("behavior")
+
+        }
 
       } else {
         columnSets = tableDatasetParams.columnSets
       }
+
       let columnSetsStr = columnSets.join(",")
       datasetArr.push(columnSetsStr)
     }
@@ -265,6 +273,64 @@ const analyticsHelpers = {
     }
 
     return {gscStatus, gscUrl, targetApis}
+  },
+
+  // manually sorting
+  sortGSCRows: () => {
+    const state = store.getState()
+    const dataset = `table-keyword-acquisition`
+    const gscData = Helpers.safeDataPath(state, `analytics.${dataset}`, {})
+    const gscRows = [...(gscData.rows || [])]
+    const filters = Helpers.safeDataPath(state, `forms.Analytics.filters.params`, {})
+    const orderBy = filters.orderBy || {fieldName: "clicks", sortOrder: "DESCENDING"}
+    const {fieldName, sortOrder} = orderBy
+    const multiplier = sortOrder === "ASCENDING" ? 1 : -1
+
+    const propertyKind = ["query"].includes(fieldName) ? "dimensions" : "metrics"
+    const propertyIndex = gscData.columnHeader[propertyKind].findIndex(metric => fieldName === metric.name)
+    const dataType = gscData.columnHeader[propertyKind][propertyIndex].type
+
+    const sortFunc = (rowA, rowB) => {
+      let aProp = Helpers.safeDataPath(rowA, `${propertyKind}.${propertyKind === "metrics" ? "0.values.": ""}${propertyIndex}`, 0)
+      let bProp = Helpers.safeDataPath(rowB, `${propertyKind}.${propertyKind === "metrics" ? "0.values.": ""}${propertyIndex}`, 0)
+      if (dataType === "PERCENT") {
+        aProp = parseFloat(aProp)
+        bProp = parseFloat(bProp)
+      }
+
+      let aKey = Helpers.safeDataPath(rowA, `dimensions.0`)
+      let bKey = Helpers.safeDataPath(rowB, `dimensions.0`)
+
+      if (aProp < bProp) {
+        return -1 * multiplier
+      } else if (aProp > bProp) {
+        return 1 * multiplier
+
+      } else {
+        // default to the key (which should be keywords)
+        if (aKey < bKey) {
+          return -1 * multiplier
+        } else if (aKey > bKey) {
+          return 1 * multiplier
+        }
+      }
+
+      return 0
+    }
+
+    gscRows.sort(sortFunc)
+
+    const sortedData = Object.assign({}, gscData, {rows: gscRows})
+    store.dispatch({
+      type: SORT_GSC_ANALYTICS,
+      payload: {results: sortedData, dataset, filters}
+    })
+  },
+
+  paginateManually: (rows = [], page = 1, pageSize = 10) => {
+    const firstIndex = (page -1) * pageSize
+    const lastIndex = firstIndex + pageSize
+    return rows.slice(firstIndex, lastIndex)
   },
 }
 

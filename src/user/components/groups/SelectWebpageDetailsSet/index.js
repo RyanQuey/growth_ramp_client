@@ -64,10 +64,21 @@ class SelectWebpageDetailsSet extends Component {
 
     } else if (option.value === "SEO_DATA") {
       params.rowsBy = "keyword"
+      params.columnSets = ["acquisition"]
+
       //params.columnSets = ["acquisition"]
       //keyword doesn't work with acquisisition metrics for some reason; just will have to use google search console
     } else if (option.value === undefined) {
       params.rowsBy = "channelGrouping"
+    }
+
+    const currentOrderBy = Helpers.safeDataPath(this.props.filters, "orderBy.fieldName")
+    if (params.rowsBy === "keyword" && currentOrderBy !== "clicks") {
+      // set new default orderBy
+      this.props.setOrderBy("clicks", null, {skipRefresh: true})
+
+    } else if (currentOrderBy !== "ga:pageviews") {
+      this.props.setOrderBy("ga:pageviews", null, {skipRefresh: true})
     }
 
     formActions.setParams("Analytics", "tableDataset", params)

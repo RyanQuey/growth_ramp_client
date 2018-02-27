@@ -24,7 +24,6 @@ class ViewAnalytics extends Component {
       pending: false,
     }
 
-
     this.togglePending = this.togglePending.bind(this)
     this.setAnalyticsFilters = this.setAnalyticsFilters.bind(this)
     this.resetPagination = this.resetPagination.bind(this)
@@ -33,6 +32,8 @@ class ViewAnalytics extends Component {
     this.onPageChange = this.onPageChange.bind(this)
     this.onPageSizeChange = this.onPageSizeChange.bind(this)
     this.updateDimensionFilter = this.updateDimensionFilter.bind(this)
+    this.setOrderBy = this.setOrderBy.bind(this)
+    this.refreshUnlessGSCOnly = this.refreshUnlessGSCOnly.bind(this)
   }
 
   componentWillMount() {
@@ -52,23 +53,66 @@ class ViewAnalytics extends Component {
     }
   }
 
+  refreshUnlessGSCOnly () {
+    const {baseOrganization, filters} = this.props
+    const dataset = analyticsHelpers.getDataset("table", filters, baseOrganization)
+    const targetApis = analyticsHelpers.whomToAsk(dataset)
+
+    if (targetApis.length !== 1 || targetApis[0] !== "GoogleSearchConsole") {
+      this.getAnalytics()
+    }
+  }
+
   onPageSizeChange(value) {
-    this.setAnalyticsFilters({pageSize: value})
+    this.setAnalyticsFilters({pageSize: value}, {skipResetPagination: true})
+    this.refreshUnlessGSCOnly()
   }
 
   onPageChange(value) {
     //NOTE technically, pageToken is arbitrary string, only retrievable for next page (see GA docs). But, for most part is just the zero-based row index of last row currently shown.
     //If ever get problems, just disallow jumping pages
-    this.setAnalyticsFilters({page: value})
+    this.setAnalyticsFilters({page: value}, {skipResetPagination: true})
+
+    this.refreshUnlessGSCOnly()
   }
 
   togglePending(value = !this.state.pending) {
     this.setState({pending: value}) //only for social login so far
   }
 
+  setOrderBy(headerName, e, options = {}) {
+    e && e.preventDefault()
+
+    let orderBy = {
+      fieldName: headerName,
+      sortOrder: "DESCENDING",
+    }
+
+    //if already ordering by this column, reverse direction
+    const currentOrderBy = Helpers.safeDataPath(this.props, `filters.orderBy`, {})
+    if (currentOrderBy.fieldName === headerName) {
+      orderBy.sortOrder = currentOrderBy.sortOrder === "DESCENDING" ? "ASCENDING" : "DESCENDING"
+    }
+
+    this.setAnalyticsFilters({orderBy})
+
+    // check if should refresh
+    !options.skipRefresh && this.refreshUnlessGSCOnly()
+
+    // check if should sort
+    const {baseOrganization, filters} = this.props
+    const dataset = analyticsHelpers.getDataset("table", filters, baseOrganization)
+    const targetApis = analyticsHelpers.whomToAsk(dataset)
+
+    if (targetApis.includes("GoogleSearchConsole")) {
+      // don't get if only GSC, since we already ahve all of it!
+      analyticsHelpers.sortGSCRows()
+    }
+  }
+
   // filter should be object, keys being params that will be overwritten for the analytics filters
-  setAnalyticsFilters(filter) {
-    if (Object.keys(filter).every((filterKey) => ["page", "pageSize"].includes(filterKey))) {
+  setAnalyticsFilters(filter, options = {}) {
+    if (!options.skipResetPagination && Object.keys(filter).every((filterKey) => !["page", "pageSize"].includes(filterKey))) {
       //unless pagination is the thing getting changed, reset pagination
       this.resetPagination()
     }
@@ -84,7 +128,6 @@ class ViewAnalytics extends Component {
     }
 
     const filtersToReset = Object.assign({}, defaults, options)
-console.log("should reset", filtersToReset);
     this.setAnalyticsFilters(filtersToReset)
   }
 
@@ -241,6 +284,7 @@ console.log("should reset", filtersToReset);
             updateDimensionFilter={this.updateDimensionFilter}
             getAnalytics={this.getAnalytics}
             resetPagination={this.resetPagination}
+            setOrderBy={this.setOrderBy}
           />
         }
 
@@ -249,6 +293,7 @@ console.log("should reset", filtersToReset);
           setAnalyticsFilters={this.setAnalyticsFilters}
           getAnalytics={this.getAnalytics}
           updateDimensionFilter={this.updateDimensionFilter}
+          setOrderBy={this.setOrderBy}
         />
 
         {currentGoogleAccount && (

@@ -60,7 +60,7 @@ function* getAnalytics(action) {
     if (targetApis.includes("GoogleSearchConsole")) {
       filtersObj.gscUrl = gscUrl
     }
-console.log("in the saga",gscUrl, targetApis);
+
     analyticsHelpers.addQueryToFilters(filtersObj, dataset)
 
     //transfomr into array of objs, each obj with single key (a filter param).

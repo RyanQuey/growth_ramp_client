@@ -26,7 +26,6 @@ class AnalyticsChart extends Component {
     const theseAnalytics = analytics[dataset]
     const lastUsedFilters = Helpers.safeDataPath(this.props.analytics, `chart-line-time.lastUsedFilters`, {})
 
-console.log(analytics, dataset);
     if (!analytics || !theseAnalytics) {
       return null
     }
