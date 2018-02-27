@@ -16,17 +16,23 @@ function* fetchAllGAAccounts(action) {
     const res = yield axios.get(`/api/analytics/getAllAnalyticsAccounts/${userId}`)
 
     //organize by provider
-    const allAccounts = res.data.gaAccounts
+    const {gaAccounts, gscAccounts} = res.data
 
 
     yield all([
       put({
         type: FETCH_ALL_GA_ACCOUNTS_SUCCESS,
-        payload: allAccounts,
+        payload: gaAccounts,
+        api: "GoogleAnalytics",
+      }),
+      put({
+        type: FETCH_ALL_GA_ACCOUNTS_SUCCESS,
+        payload: gscAccounts,
+        api: "GoogleSearchConsole",
       })
     ])
 
-    action.cb && action.cb(allAccounts)
+    action.cb && action.cb(res.data)
 
   } catch (err) {
     console.error('all GA accounts fetch failed', err.response || err)

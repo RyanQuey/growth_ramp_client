@@ -82,14 +82,14 @@ class AnalyticsFilters extends Component {
 
   //gets the accounts and all the websites we could filter/show
   refreshGAAccounts(cbcb) {
-    const cb = (googleAccts) => {
+    const cb = ({gaAccounts, gscAccounts}) => {
       this.setState({pending: false})
       const {websiteId, profileId} = this.props
 
       if (!websiteId) {
         //is initializing table for first time; default to first site and first profile of that site (often will be the only profile...total)
         let matchingIndex
-        const gAccountWithSite = googleAccts && googleAccts.find((acct) => {
+        const gAccountWithSite = gaAccounts && gaAccounts.find((acct) => {
           const analyticsAccounts = acct && acct.items
           //find first analytics account with a website and grab that site
           const hasSite = analyticsAccounts.some((account, index) => {
@@ -165,13 +165,14 @@ class AnalyticsFilters extends Component {
   render () {
     const {pending} = this.state
     const {googleAccounts, websites, dirty, filters} = this.props
+    const {gaSites} = websites
 
-    if (!filters || !websites) {
+    if (!filters || !gaSites) {
       return <Icon name="spinner"/>
     }
     const {websiteId, profileId, startDate, endDate, dimensionFilterClauses} = filters
 
-    const currentWebsite = websites[websiteId]
+    const currentWebsite = gaSites[websiteId]
     const currentGoogleAccount = googleAccounts && googleAccounts[0]
 
 
@@ -183,12 +184,12 @@ class AnalyticsFilters extends Component {
       <Form className={classes.filtersForm} onSubmit={this.props.getAnalytics}>
         <div>Google Account: {currentGoogleAccount.userName}</div>
 
-        {Object.keys(websites).length ? (
+        {Object.keys(gaSites).length ? (
           <div>
             <h4>Choose Analytics Set</h4>
             <div>Websites: </div>
-            {Object.keys(websites).map((id) => {
-              let website = websites[id]
+            {Object.keys(gaSites).map((id) => {
+              let website = gaSites[id]
 
               return <Button
                 key={id}

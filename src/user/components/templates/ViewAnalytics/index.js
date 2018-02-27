@@ -140,7 +140,7 @@ class ViewAnalytics extends Component {
     const relevantProperties = ["startDate", "endDate", "channelGrouping", "websiteId", "profileId"]
     const lastUsedFilters = Helpers.safeDataPath(this.props.analytics, `${baseOrganization}.lastUsedFilters`, {})
 
-    if (_.isEqual(
+    if (!_.isEqual(
       _.pick(this.props.filters, relevantProperties),
       _.pick(lastUsedFilters, relevantProperties)
     )) {
