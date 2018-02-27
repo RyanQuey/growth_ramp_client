@@ -27,7 +27,7 @@ class ViewAnalytics extends Component {
 
     this.togglePending = this.togglePending.bind(this)
     this.setAnalyticsFilters = this.setAnalyticsFilters.bind(this)
-    this.resetFilters = this.resetFilters.bind(this)
+    this.resetPagination = this.resetPagination.bind(this)
     this.getAnalytics = this.getAnalytics.bind(this)
     this.getChartAnalytics = this.getChartAnalytics.bind(this)
     this.onPageChange = this.onPageChange.bind(this)
@@ -43,8 +43,12 @@ class ViewAnalytics extends Component {
       const options = {
         startDate: yesterday.clone().subtract(7, "days").format("YYYY-MM-DD"),
         endDate: yesterday.format("YYYY-MM-DD"),
+        orderBy: {
+          fieldName: "ga:pageviews", sortOrder: "DESCENDING"
+        },
       }
-      this.resetFilters(options)
+
+      this.resetPagination(options)
     }
   }
 
@@ -64,22 +68,23 @@ class ViewAnalytics extends Component {
 
   // filter should be object, keys being params that will be overwritten for the analytics filters
   setAnalyticsFilters(filter) {
+    if (Object.keys(filter).every((filterKey) => ["page", "pageSize"].includes(filterKey))) {
+      //unless pagination is the thing getting changed, reset pagination
+      this.resetPagination()
+    }
+
     formActions.setParams("Analytics", "filters", filter)
   }
 
   //mostly run when enough other filters change that pagination, orderBy, that kind of ting needs to just be reset
-  resetFilters (options){
+  resetPagination (options){
     const defaults = {
       //could make this plural, so can sort by multiple. but for now, just support sorting by one
-      orderBy: {
-        fieldName: "ga:pageviews", sortOrder: "DESCENDING"
-      },
-      pageSize: 10,
       page: 1,
     }
 
     const filtersToReset = Object.assign({}, defaults, options)
-
+console.log("should reset", filtersToReset);
     this.setAnalyticsFilters(filtersToReset)
   }
 
@@ -227,6 +232,7 @@ class ViewAnalytics extends Component {
           <SelectChannelGrouping
             updateDimensionFilter={this.updateDimensionFilter}
             getAnalytics={this.getAnalytics}
+            resetPagination={this.resetPagination}
           />
         }
 
@@ -234,7 +240,7 @@ class ViewAnalytics extends Component {
           <SelectWebpageDetailsSet
             updateDimensionFilter={this.updateDimensionFilter}
             getAnalytics={this.getAnalytics}
-            resetFilters={this.resetFilters}
+            resetPagination={this.resetPagination}
           />
         }
 

@@ -72,9 +72,6 @@ class SelectWebpageDetailsSet extends Component {
 
     formActions.setParams("Analytics", "tableDataset", params)
 
-    // reset pagination, orderBy
-    this.props.resetFilters()
-
     //might not use this; might just filter in backend, since these are more intensive operations
     //this.props.updateDimensionFilter(dimensionFilter)
     this.props.getAnalytics()

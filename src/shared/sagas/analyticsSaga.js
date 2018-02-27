@@ -70,7 +70,7 @@ console.log("in the saga",gscUrl, targetApis);
 
 
     yield all([
-      put({type: GET_ANALYTICS_SUCCESS, payload: {results: res.data, dataset, filtersObj}})
+      put({type: GET_ANALYTICS_SUCCESS, payload: {results: res.data, dataset, filters: filtersObj}})
     ])
     action.cb && action.cb(res.data)
 
