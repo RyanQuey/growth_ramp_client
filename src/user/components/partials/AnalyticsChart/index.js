@@ -43,14 +43,23 @@ class AnalyticsChart extends Component {
     const {rangeArray, unit, step} = xAxisData
     const labels = analyticsHelpers.getHistogramLabels(xAxisData, rows)
 
-    const metricSets = theseAnalytics.columnHeader.metrics.map((metric, index) => (
+    const colorSets = [
       {
+        backgroundColor: 'rgba(75,192,192,0.4)',
+        borderColor: 'rgba(75,192,192,1)',
+      },
+      {
+        backgroundColor: 'rgba(75,192,192,0.8)',
+        borderColor: 'rgba(75,192,192,1)',
+      },
+
+    ]
+    const metricSets = theseAnalytics.columnHeader.metrics.map((metric, index) => {
+      const base = {
         label: DIMENSIONS_METRICS_FRIENDLY_NAME[metric.name], //for the legend
         data: rows.map((row) => row.metrics[0].values[index]),
         fill: true,
         lineTension: 0.1,
-        backgroundColor: 'rgba(75,192,192,0.4)',
-        borderColor: 'rgba(75,192,192,1)',
         borderCapStyle: 'butt',
         borderDash: [],
         borderDashOffset: 0.0,
@@ -66,7 +75,8 @@ class AnalyticsChart extends Component {
         pointHitRadius: 10,
       }
 
-    ))
+      return Object.assign({}, base, colorSets[index])
+    })
 
     const dataProp = {
       labels,
