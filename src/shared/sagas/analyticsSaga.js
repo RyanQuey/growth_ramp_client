@@ -46,17 +46,31 @@ function* getAnalytics(action) {
   try {
     const state = store.getState()
     const dataset = action.dataset
+    const websites = state.websites
     const filtersObj = Object.assign({}, Helpers.safeDataPath(state, `forms.Analytics.filters.params`, {}))
+    const {gscStatus, gscUrl, targetApis} = analyticsHelpers.getExternalApiInfo(filtersObj.websiteUrl, dataset, websites)
+    const haveAccess = gscStatus.status === "ready"
+
+    if (!haveAccess) {
+      console.log("not even trying to get analytics data (not security issue, just save time)");
+      return
+    }
+
+
+    if (targetApis.includes("GoogleSearchConsole")) {
+      filtersObj.gscUrl = gscUrl
+    }
+console.log("in the saga",gscUrl, targetApis);
     analyticsHelpers.addQueryToFilters(filtersObj, dataset)
 
     //transfomr into array of objs, each obj with single key (a filter param).
-    const filters = JSON.stringify(filtersObj)
+    const filtersStr = JSON.stringify(filtersObj)
 
-    const res = yield axios.get(`/api/analytics/getAnalytics?filters=${filters}&dataset=${dataset}`) //eventually switch to socket
+    const res = yield axios.get(`/api/analytics/getAnalytics?filters=${filtersStr}&dataset=${dataset}`) //eventually switch to socket
 
 
     yield all([
-      put({type: GET_ANALYTICS_SUCCESS, payload: {results: res.data, dataset, filters}})
+      put({type: GET_ANALYTICS_SUCCESS, payload: {results: res.data, dataset, filtersObj}})
     ])
     action.cb && action.cb(res.data)
 

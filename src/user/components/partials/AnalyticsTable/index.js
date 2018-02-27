@@ -105,9 +105,8 @@ class AnalyticsTable extends Component {
 
     const orderByFilter = filters && filters.orderBy
 
-    const {gscStatus, gscUrl, targetApis} = analyticsHelpers.checkAuthorization(filters.websiteUrl, tableDataset, websites)
-    const haveAccess = !targetApis.includes("GoogleSearchConsole") || !gscStatus.status !== "ready"
-console.log(haveAccess);
+    const {gscStatus, gscUrl, targetApis} = analyticsHelpers.getExternalApiInfo(filters.websiteUrl, tableDataset, websites)
+    const haveAccess = gscStatus.status === "ready"
 
     if (haveAccess && !theseAnalytics) {
       return null

@@ -12,7 +12,7 @@ const analyticsReducer = (state = {}, action) => {
     case GET_ANALYTICS_SUCCESS:
       // a given GR user might have multiple google accounts
       let {dataset, results, filters} = pld
-      results.lastUsedFilters = JSON.parse(filters)
+      results.lastUsedFilters = filters
       newState = Object.assign({}, state)
 
       newState[dataset] = results

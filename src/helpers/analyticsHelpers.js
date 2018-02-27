@@ -74,13 +74,15 @@ const analyticsHelpers = {
   },
 
   // probably only use query for webpage filter, since that is nice to be able to get to via url
-  addQueryToFilters: (filtersObj, dataset) => {
+  addQueryToFilters: (filtersObj, targetApis) => {
     const query = new URLSearchParams(document.location.search)
     const webpageQueryValue = query.get("webpage")
 
     if (webpageQueryValue) {
       // will override any current dimensionFilterClauses. And that's fine with me :)...for now
-      filtersObj.dimensionFilterClauses = {
+
+      if (targetApis.includes("GoogleAnalytics")) {
+        filtersObj.dimensionFilterClauses = {
           operator: "AND",
           filters: [
             {
@@ -90,11 +92,18 @@ const analyticsHelpers = {
             }
           ]
         }
-
-      if (dataset === "webpage-traffic") {
-        //since now, only looking at one page's data
-        //but make sure to never override dimensions for charts
-        filtersObj.dimensions = {name: "ga:channelGrouping"}
+      }
+      if (targetApis.includes("GoogleSearchConsole")) {
+        filtersObj.dimensionFilterGroups = [{
+          groupType: "and",
+          filters: [
+            {
+              dimension: "page",
+              operator: "contains", // this should get all for this landing page, including those with crazy queries eg /blogpost?whatever=stuff
+              expression: webpageQueryValue,
+            }
+          ]
+        }]
       }
     }
 
@@ -143,6 +152,7 @@ const analyticsHelpers = {
   // Google analytics uses bare bones http url and with no subdomain for its property
   // GSC uses https (if applicable) and can be with subdomain
   // for now, will automatically guess the GSC siteUrl from the GA property, though later might let them choose what GA property defaults to what gsc siteURL
+  // keep in sync with backend
   getGSCUrlFromGAUrl: (gaUrl, gscSites) => {
     const parsedUrl = urlLib.parse(gaUrl)
     const hostname = parsedUrl.hostname
@@ -177,6 +187,8 @@ const analyticsHelpers = {
 
       }
     }
+
+    return match
   },
 
   // takes dataset string and parses to get relevant data
@@ -219,18 +231,17 @@ const analyticsHelpers = {
     return ret
   },
 
-  // checks with analytics apis to see if user has access
-  checkAuthorization: (gaUrl, dataset, websites) => {
+  // checks with analytics apis to see if user has access, and gets other info needed for the external api
+  // wrapper around several other helpers
+  getExternalApiInfo: (gaUrl, dataset, websites) => {
     const targetApis = analyticsHelpers.whomToAsk(dataset)
-console.log(targetApis)
     let gscStatus = {status: "ready", message: ""}
 
     let gscUrl
     if (targetApis.includes("GoogleSearchConsole")) {
       // check if they have gsc setup with this google acct
-      let gscUrl = analyticsHelpers.getGSCUrlFromGAUrl(gaUrl, websites.gscSites)
+      gscUrl = analyticsHelpers.getGSCUrlFromGAUrl(gaUrl, websites.gscSites)
       let gscUrlData = gscUrl && websites.gscSites[gscUrl]
-
 
       if (gscUrlData && ["siteOwner", "siteRestrictedUser", "siteFullUser"].includes(gscUrlData.permissionLevel)) {
         // we are currently read-only, so any of these are sufficient

@@ -11,4 +11,16 @@ export const DIMENSIONS_METRICS_FRIENDLY_NAME = {
   "ga:bounceRate": "Bounce Rate",
   "ga:avgTimeOnPage": "Average Time on Page",
   "ga:exitRate": "Exit Rate",
+
+  /////////////////////////
+  //gsc
+
+  //dimensions
+  "query": "Keyword",
+  "page": "Landing Page",
+  //metrics
+  "clicks": "Clicks",
+  "impressions": "Impressions",
+  "ctr": "Click Through Rate",
+  "position": "Position",
 }
