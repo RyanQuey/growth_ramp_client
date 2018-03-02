@@ -68,7 +68,7 @@ class ViewAnalytics extends Component {
       //clear the extras, leave lastUsedTableDataset
       formActions.setParams("Analytics", "tableDataset", {rowsBy: null, columnSets: null, key: null})
 
-      this.getAnalytics()
+      this.getAnalytics(null, newBaseOrganization)
     }
 
   }
@@ -184,7 +184,8 @@ class ViewAnalytics extends Component {
   }
 
   // gets analytics for table, sometimes triggers for chart too
-  getAnalytics(e) {
+  // newBaseOrganization should be passed in if called in componentWillReceiveProps so the right one gets passed in (otherwise, will take from old props)
+  getAnalytics(e, newBaseOrganization) {
     e && e.preventDefault()
     //TODO set filters to store, and then use in saga
     formActions.formPersisted("Analytics", "filters")
@@ -203,9 +204,8 @@ class ViewAnalytics extends Component {
 
     // don't use props, since could be out of date (if just changed filters before props could get propogated)
     const filters = store.getState().forms.Analytics.filters.params
-
     this.setState({pending: true})
-    const baseOrganization = Helpers.safeDataPath(this.props, "match.params.baseOrganization")
+    const baseOrganization = newBaseOrganization || Helpers.safeDataPath(this.props, "match.params.baseOrganization")
     const tableDataset = analyticsHelpers.getDataset("table", filters, baseOrganization)
     const lastUsedFilters = Helpers.safeDataPath(this.props.analytics, `${baseOrganization}.lastUsedFilters`, {})
     const {lastUsedTableDataset} = this.props.tableDatasetParams
@@ -214,7 +214,7 @@ class ViewAnalytics extends Component {
       //big enough change, merits resetting to defaults
       let filtersToMerge = analyticsHelpers.getDatasetDefaultFilters(tableDataset)
 console.log("8888888888888888");
-console.log(filtersToMerge);
+console.log(filtersToMerge, baseOrganization);
 
       // make sure frontend is up to date
       this.setAnalyticsFilters(filtersToMerge)
