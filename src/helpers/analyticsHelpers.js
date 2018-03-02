@@ -332,6 +332,37 @@ const analyticsHelpers = {
     const lastIndex = firstIndex + pageSize
     return rows.slice(firstIndex, lastIndex)
   },
+
+  // takes a dataset and changes filters to defaults
+  getDatasetDefaultFilters: (dataset) => {
+    const {datasetParts, displayType, rowsBy, xAxisBy, columnSetsArr} = analyticsHelpers.parseDataset(dataset)
+    const targetApis = analyticsHelpers.whomToAsk(dataset)
+    // hacky way to test if need to change sort to something else
+    // TODO need to make this better, if filtering by dimension or others that need to change too
+
+    let filtersToMerge = {}
+    //ga searches will need the ga in the fieldName
+    if (targetApis.includes("GoogleSearchConsole")) {
+      filtersToMerge.orderBy = {
+        fieldName: "clicks",
+        sortOrder: "DESCENDING",
+      }
+    } else if (rowsBy === "landingPagePath") {
+      filtersToMerge.orderBy = {
+        fieldName: "ga:pageviews",
+        sortOrder: "DESCENDING",
+      }
+
+    } else if (rowsBy === "channelGrouping") {
+      filtersToMerge.orderBy = {
+        fieldName: "ga:pageviews",
+        sortOrder: "DESCENDING",
+      }
+
+    }
+
+    return filtersToMerge
+  },
 }
 
 export default analyticsHelpers

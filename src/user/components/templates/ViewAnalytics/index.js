@@ -53,6 +53,22 @@ class ViewAnalytics extends Component {
     }
   }
 
+  componentWillReceiveProps(props) {
+    const oldBaseOrganization = Helpers.safeDataPath(this.props, "match.params.baseOrganization")
+    const newBaseOrganization = Helpers.safeDataPath(props, "match.params.baseOrganization")
+console.log(newBaseOrganization, oldBaseOrganization);
+    // currently this works since GSC not used when first changing baseOrganization
+    if (oldBaseOrganization !== newBaseOrganization) {
+      const orderBy = {
+        fieldName: "ga:pageviews",
+        sortOrder: "DESCENDING",
+      }
+
+      this.setAnalyticsFilters(orderBy)
+    }
+
+  }
+
   refreshUnlessGSCOnly () {
     const {baseOrganization, filters} = this.props
     const dataset = analyticsHelpers.getDataset("table", filters, baseOrganization)
@@ -111,13 +127,16 @@ class ViewAnalytics extends Component {
   }
 
   // filter should be object, keys being params that will be overwritten for the analytics filters
-  setAnalyticsFilters(filter, options = {}) {
-    if (!options.skipResetPagination && Object.keys(filter).every((filterKey) => !["page", "pageSize"].includes(filterKey))) {
+  setAnalyticsFilters(filtersToMerge, options = {}) {
+    if (!options.skipResetPagination && Object.keys(filtersToMerge).every((filterKey) => !["page", "pageSize"].includes(filterKey))) {
       //unless pagination is the thing getting changed, reset pagination
       this.resetPagination()
     }
 
-    formActions.setParams("Analytics", "filters", filter)
+    const {baseOrganization, filters} = this.props
+    const dataset = analyticsHelpers.getDataset("table", filters, baseOrganization)
+
+    formActions.setParams("Analytics", "filters", filtersToMerge)
   }
 
   //mostly run when enough other filters change that pagination, orderBy, that kind of ting needs to just be reset
@@ -162,6 +181,7 @@ class ViewAnalytics extends Component {
     this.setAnalyticsFilters({dimensionFilterClauses})
   }
 
+  // gets analytics for table, sometimes triggers for chart too
   getAnalytics(e) {
     e && e.preventDefault()
     //TODO set filters to store, and then use in saga
@@ -181,8 +201,21 @@ class ViewAnalytics extends Component {
 
     this.setState({pending: true})
     const baseOrganization = Helpers.safeDataPath(this.props, "match.params.baseOrganization")
-    const dataset = analyticsHelpers.getDataset("table", this.props.filters, baseOrganization)
-    this.props.getAnalytics({}, dataset, cb, onFailure)
+    const tableDataset = analyticsHelpers.getDataset("table", this.props.filters, baseOrganization)
+    const {lastUsedTableDataset} = this.props.tableDatasetParams
+
+    if (lastUsedTableDataset !== tableDataset) {
+      //big enough change, merits resetting to defaults
+      let filtersToMerge = analyticsHelpers.getDatasetDefaultFilters(tableDataset)
+
+      // make sure frontend is up to date
+      this.setAnalyticsFilters(filtersToMerge)
+    }
+
+    formActions.setParams("Analytics", "tableDataset", {lastUsedTableDataset: tableDataset})
+
+    this.props.getAnalytics({}, tableDataset, cb, onFailure)
+
 
     //check if chart also needs to be updated
     const relevantProperties = ["startDate", "endDate", "channelGrouping", "websiteId", "profileId"]
@@ -334,8 +367,8 @@ const mapStateToProps = state => {
     googleAccounts: Helpers.safeDataPath(state, "providerAccounts.GOOGLE", []).filter((account) => !account.unsupportedProvider),
     websites: state.websites,
     tableDatasetParams: Helpers.safeDataPath(state, "forms.Analytics.tableDataset.params", {}),
-    filters: Helpers.safeDataPath(state, "forms.Analytics.filters.params"),
-    chartFilters: Helpers.safeDataPath(state, "forms.Analytics.chartFilters.params"),
+    filters: Helpers.safeDataPath(state, "forms.Analytics.filters.params", {}),
+    chartFilters: Helpers.safeDataPath(state, "forms.Analytics.chartFilters.params", {}),
   }
 }
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(ViewAnalytics))
