@@ -59,9 +59,6 @@ class ViewAnalytics extends Component {
 
     // currently this works since GSC not used when first changing baseOrganization
     if (oldBaseOrganization !== newBaseOrganization) {
-console.log("new base");
-console.log(oldBaseOrganization, newBaseOrganization);
-      this.setAnalyticsFilters(orderBy)
       //clear the extras, leave lastUsedTableDataset
       formActions.setParams("Analytics", "tableDataset", {rowsBy: null, columnSets: null, key: null})
 
@@ -182,7 +179,7 @@ console.log(oldBaseOrganization, newBaseOrganization);
 
   // gets analytics for table, sometimes triggers for chart too
   // newBaseOrganization should be passed in if called in componentWillReceiveProps so the right one gets passed in (otherwise, will take from old props)
-  getAnalytics(e, newBaseOrganization) {
+  getAnalytics (e, newBaseOrganization) {
     e && e.preventDefault()
     //TODO set filters to store, and then use in saga
     formActions.formPersisted("Analytics", "filters")
@@ -226,10 +223,13 @@ console.log(filtersToMerge, baseOrganization);
     //check if chart also needs to be updated
     const relevantProperties = ["startDate", "endDate", "channelGrouping", "websiteId", "profileId"]
 
-    if (!_.isEqual(
-      _.pick(this.props.filters, relevantProperties),
-      _.pick(lastUsedFilters, relevantProperties)
-    )) {
+    if (
+      !_.isEqual(
+        _.pick(this.props.filters, relevantProperties),
+        _.pick(lastUsedFilters, relevantProperties)
+      ) ||
+      lastUsedTableDataset !== tableDataset
+    ) {
       this.getChartAnalytics()
     }
   }
