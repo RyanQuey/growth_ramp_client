@@ -61,7 +61,7 @@ function* getAnalytics(action) {
       filtersObj.gscUrl = gscUrl
     }
 
-    analyticsHelpers.addQueryToFilters(filtersObj, dataset)
+    analyticsHelpers.addQueryToFilters(filtersObj, targetApis)
 
     //transfomr into array of objs, each obj with single key (a filter param).
     const filtersStr = JSON.stringify(filtersObj)

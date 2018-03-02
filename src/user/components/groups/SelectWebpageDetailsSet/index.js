@@ -51,6 +51,7 @@ class SelectWebpageDetailsSet extends Component {
     // clear previous dimension filters
     this.props.updateDimensionFilter()
 
+    // defaults
     let params = {rowsBy: "landingPagePath", columnSets: ["behavior"], key: option.value}
 
     if (option.value === "SOCIAL_NETWORK_DETAILS") {
@@ -81,6 +82,7 @@ class SelectWebpageDetailsSet extends Component {
       this.props.setOrderBy("ga:pageviews", null, {skipRefresh: true})
     }
 
+console.log("setting for table params", params)
     formActions.setParams("Analytics", "tableDataset", params)
 
     //might not use this; might just filter in backend, since these are more intensive operations
@@ -90,13 +92,14 @@ class SelectWebpageDetailsSet extends Component {
 
 
   render () {
-    const {pending, dirty, filters, tableDatasetParams} = this.props
+    const {pending, dirty, filters, tableDatasetParams, webpageQueryValue} = this.props
 
     const detailsSetOptions = this.detailsSetOptions()
     const currentDetailsSet = detailsSetOptions.find((option) => option.value === tableDatasetParams.key)
 
     return (
       <Form className={classes.filtersForm} onSubmit={this.props.getAnalytics}>
+        For webpage: {webpageQueryValue}
         <Select
           label="Webpage Details Type"
           className={classes.select}

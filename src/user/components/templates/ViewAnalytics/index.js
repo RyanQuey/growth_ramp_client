@@ -59,11 +59,8 @@ class ViewAnalytics extends Component {
 
     // currently this works since GSC not used when first changing baseOrganization
     if (oldBaseOrganization !== newBaseOrganization) {
-      const orderBy = {
-        fieldName: "ga:pageviews",
-        sortOrder: "DESCENDING",
-      }
-
+console.log("new base");
+console.log(oldBaseOrganization, newBaseOrganization);
       this.setAnalyticsFilters(orderBy)
       //clear the extras, leave lastUsedTableDataset
       formActions.setParams("Analytics", "tableDataset", {rowsBy: null, columnSets: null, key: null})
@@ -202,9 +199,10 @@ class ViewAnalytics extends Component {
       })
     }
 
+    this.setState({pending: true})
+
     // don't use props, since could be out of date (if just changed filters before props could get propogated)
     const filters = store.getState().forms.Analytics.filters.params
-    this.setState({pending: true})
     const baseOrganization = newBaseOrganization || Helpers.safeDataPath(this.props, "match.params.baseOrganization")
     const tableDataset = analyticsHelpers.getDataset("table", filters, baseOrganization)
     const lastUsedFilters = Helpers.safeDataPath(this.props.analytics, `${baseOrganization}.lastUsedFilters`, {})
@@ -212,7 +210,7 @@ class ViewAnalytics extends Component {
 
     if (lastUsedTableDataset !== tableDataset) {
       //big enough change, merits resetting to defaults
-      let filtersToMerge = analyticsHelpers.getDatasetDefaultFilters(tableDataset)
+      let filtersToMerge = analyticsHelpers.getDatasetDefaultFilters(tableDataset, newBaseOrganization)
 console.log("8888888888888888");
 console.log(filtersToMerge, baseOrganization);
 
@@ -268,6 +266,7 @@ console.log(filtersToMerge, baseOrganization);
     const currentGoogleAccount = googleAccounts && googleAccounts[0]
     const baseOrganization = Helpers.safeDataPath(this.props, "match.params.baseOrganization")
     const tableDataset = analyticsHelpers.getDataset("table", filters, baseOrganization)
+    const targetApis = analyticsHelpers.whomToAsk(tableDataset)
 
     //wait to finish initializing store at least
     if (!filters) {
@@ -278,8 +277,16 @@ console.log(filtersToMerge, baseOrganization);
     const lastUsedFilters = Helpers.safeDataPath(analytics, `${tableDataset}.lastUsedFilters`, {})
     const currentPage = lastUsedFilters.page || 1
     const currentPageSize = lastUsedFilters.pageSize || 10
-    const lastRecordShown = Helpers.safeDataPath(analytics, `${tableDataset}.nextPageToken`) //could also use currentPage * currentPageSize
-    const totalRecords = Helpers.safeDataPath(analytics, `${tableDataset}.data.rowCount`, 0)
+
+    const theseAnalytics = analytics[tableDataset] || {}
+    let totalRecords
+    if (targetApis.length === 1 && targetApis[0] === "GoogleSearchConsole") {
+      totalRecords = Helpers.safeDataPath(theseAnalytics, "rows", []).length
+
+    } else {
+      totalRecords = Helpers.safeDataPath(theseAnalytics, `data.rowCount`, 0)
+
+    }
 
     const query = new URLSearchParams(document.location.search)
     const webpageQueryValue = query.get("webpage")
@@ -316,6 +323,7 @@ console.log(filtersToMerge, baseOrganization);
             getAnalytics={this.getAnalytics}
             resetPagination={this.resetPagination}
             setOrderBy={this.setOrderBy}
+            webpageQueryValue={webpageQueryValue}
           />
         }
 

@@ -1,5 +1,6 @@
 import { SORT_GSC_ANALYTICS,  } from 'constants/actionTypes'
 import urlLib from 'url'
+import {formActions} from 'shared/actions'
 
 const analyticsHelpers = {
   //currently based solely on dates of data given
@@ -334,13 +335,13 @@ const analyticsHelpers = {
   },
 
   // takes a dataset and changes filters to defaults
-  getDatasetDefaultFilters: (dataset) => {
+  getDatasetDefaultFilters: (dataset, newBaseOrganization) => {
     const {datasetParts, displayType, rowsBy, xAxisBy, columnSetsArr} = analyticsHelpers.parseDataset(dataset)
     const targetApis = analyticsHelpers.whomToAsk(dataset)
     // hacky way to test if need to change sort to something else
     // TODO need to make this better, if filtering by dimension or others that need to change too
 
-    let filtersToMerge = {dimensionFilterClauses: null}
+    let filtersToMerge = {}
     //ga searches will need the ga in the fieldName
     if (targetApis.includes("GoogleSearchConsole")) {
       filtersToMerge.orderBy = {
@@ -358,7 +359,6 @@ const analyticsHelpers = {
         fieldName: "ga:pageviews",
         sortOrder: "DESCENDING",
       }
-
     }
 
     return filtersToMerge
