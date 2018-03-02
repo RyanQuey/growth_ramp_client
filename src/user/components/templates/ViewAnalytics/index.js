@@ -56,7 +56,7 @@ class ViewAnalytics extends Component {
   componentWillReceiveProps(props) {
     const oldBaseOrganization = Helpers.safeDataPath(this.props, "match.params.baseOrganization")
     const newBaseOrganization = Helpers.safeDataPath(props, "match.params.baseOrganization")
-console.log(newBaseOrganization, oldBaseOrganization);
+
     // currently this works since GSC not used when first changing baseOrganization
     if (oldBaseOrganization !== newBaseOrganization) {
       const orderBy = {
@@ -65,6 +65,10 @@ console.log(newBaseOrganization, oldBaseOrganization);
       }
 
       this.setAnalyticsFilters(orderBy)
+      //clear the extras
+      formActions.clearParams("Analytics", "tableDataset")
+
+      this.props.getAnalytics()
     }
 
   }
@@ -281,21 +285,12 @@ console.log(newBaseOrganization, oldBaseOrganization);
       <div className={classes.viewAnalytics}>
         <h1>Analytics</h1>
 
-        <SocialLogin
-          pending={pending}
+        <AnalyticsFilters
           togglePending={this.togglePending}
-          providers={_.pick(PROVIDERS, "GOOGLE")}
+          baseOrganization={baseOrganization}
+          setAnalyticsFilters={this.setAnalyticsFilters}
+          getAnalytics={this.getAnalytics}
         />
-        {currentGoogleAccount ? (
-          <AnalyticsFilters
-            togglePending={this.togglePending}
-            baseOrganization={baseOrganization}
-            setAnalyticsFilters={this.setAnalyticsFilters}
-            getAnalytics={this.getAnalytics}
-          />
-        ) : (
-          <div />
-        )}
 
         <AnalyticsChart
           baseOrganization={baseOrganization}

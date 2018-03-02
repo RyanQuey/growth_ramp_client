@@ -27,25 +27,40 @@ class AnalyticsFilters extends Component {
     this.setAnalyticsProfileFilter = this.setAnalyticsProfileFilter.bind(this)
     this.selectFilterOption = this.selectFilterOption.bind(this)
     this.handleCalendarClick = this.handleCalendarClick.bind(this)
-
+    this.websiteOptions = this.websiteOptions.bind(this)
+    this.profileOptions = this.profileOptions.bind(this)
   }
 
   componentDidMount() {
     this.refreshGAAccounts()
   }
 
-  componentWillReceiveProps (props) {
-    if (
-      /*!_.isEqual(
-        _.pick(props.filters, ["startDate", "endDate", "defaultChannelGrouping", "websiteId"]),
-        _.pick(this.props.filters, ["startDate", "endDate", "defaultChannelGrouping", "websiteId"])
-      ) ||*/
-      props.baseOrganization !== this.props.baseOrganization
-    ) {
-      // clear the extras
-      formActions.clearParams("Analytics", "tableDataset")
-      this.props.getAnalytics()
-    }
+  websiteOptions () {
+    const {googleAccounts, websites, dirty, filters} = this.props
+    const {gaSites} = websites
+
+    return Object.keys(gaSites).map((id) => {
+      let website = gaSites[id]
+
+      return {
+        label: website.name || website.websiteUrl,
+        value: {website},
+        website,
+      }
+    })
+  }
+
+  profileOptions () {
+    const {googleAccounts, websites, dirty, filters} = this.props
+    const {websiteId, profileId, startDate, endDate, dimensionFilterClauses} = filters
+    const {gaSites} = websites
+    const currentWebsite = gaSites[websiteId]
+
+    return currentWebsite && currentWebsite.profiles.map((profile) => ({
+      value: {profile},
+      label: profile.name,
+      profile,
+    }))
   }
 
   timeRangeOptions () {
@@ -53,7 +68,7 @@ class AnalyticsFilters extends Component {
     const yesterday = moment().subtract(1, "day")
     return [
       {
-        label: "Select",
+        label: "Custom",
         value: {}, //will default to week view, but if choosing with calendar will go to this
       },
       {
@@ -133,15 +148,19 @@ class AnalyticsFilters extends Component {
 
   selectFilterOption (option) {
     this.props.setAnalyticsFilters(option.value)
+    this.props.getAnalytics()
   }
 
   handleCalendarClick (param, dateTime) {
 
     this.props.setAnalyticsFilters({[param]: dateTime.format("YYYY-MM-DD")})
+    this.props.getAnalytics()
   }
 
   //for filtering which websites to show analytics for
-  setWebsiteFilter (website) {
+  setWebsiteFilter (websiteOption) {
+    const {website} = websiteOption
+
     //default to first profile
     let defaultProfileId = ""
     if (website.profiles && website.profiles.length) {
@@ -153,13 +172,15 @@ class AnalyticsFilters extends Component {
       providerAccountId: website.providerAccountId,
       profileId: defaultProfileId,
     })
+    this.props.getAnalytics()
   }
 
   // called "view" or "profile" by GA
-  setAnalyticsProfileFilter(profile) {
+  setAnalyticsProfileFilter({profile}) {
     this.props.setAnalyticsFilters({
       profileId: profile.id
     })
+    this.props.getAnalytics()
   }
 
   render () {
@@ -180,43 +201,52 @@ class AnalyticsFilters extends Component {
     const timeRangeOptions = this.timeRangeOptions()
     const currentTimeRangeOption = timeRangeOptions.find((option) => option.value.startDate === startDate)
 
+    const websiteOptions = this.websiteOptions() || []
+    const currentWebsiteOption = websiteOptions.find((option) => option.value.website === websiteId)
+
+    const profileOptions = this.profileOptions() || []
+    const currentProfileOption = profileOptions.find((option) => option.value.profile === profileId)
+
+
     return (
       <Form className={classes.filtersForm} onSubmit={this.props.getAnalytics}>
-        <div>Google Account: {currentGoogleAccount.userName}</div>
+        <Flexbox className={classes.websiteFilters}>
+          <div className={classes.googleBtn}>
+            <SocialLogin
+              pending={pending}
+              togglePending={this.props.togglePending}
+              providers={_.pick(PROVIDERS, "GOOGLE")}
+            />
+            <div>Google Account: {currentGoogleAccount ? currentGoogleAccount.userName : "None available"}</div>
+          </div>
 
-        {Object.keys(gaSites).length ? (
-          <div>
-            <h4>Choose Analytics Set</h4>
-            <div>Websites: </div>
-            {Object.keys(gaSites).map((id) => {
-              let website = gaSites[id]
+          {Object.keys(gaSites).length && (
+            <div className={classes.websiteSelect}>
+              <div>Website: </div>
+              <Select
+                options={websiteOptions}
+                currentOption={currentWebsiteOption || websiteOptions[0]}
+                name="website"
+                onChange={this.setWebsiteFilter}
+              />
+            </div>
+          )}
 
-              return <Button
-                key={id}
-                onClick={this.setWebsiteFilter.bind(this, website)}
-                selected={id === websiteId}
-                small={true}
-              >
-                {website.name || website.websiteUrl}
-              </Button>
-            })}
+          {currentWebsite &&
+            <div className={classes.websiteSelect}>
+              <div>Analytics Profile: </div>
+              <Select
+                options={profileOptions}
+                currentOption={currentProfileOption || profileOptions[0]}
+                name="profileId"
+                onChange={this.setAnalyticsProfileFilter}
+              />
+            </div>
+          }
+        </Flexbox>
 
-            <div>Analytics Profile: </div>
-            {currentWebsite &&
-              <div>
-                {currentWebsite.profiles.map((profile) =>
-                  <Button
-                    key={profile.id}
-                    onClick={this.setAnalyticsProfileFilter.bind(this, profile)}
-                    selected={profile.id === profileId}
-                    small={true}
-                  >
-                    {profile.name}
-                  </Button>
-                )}
-              </div>
-            }
-
+        {currentProfileOption || profileOptions[0] ? (
+          <div className={classes.datetimeFilters}>
             <Flexbox>
               <div>
                 <div>Start Date</div>
@@ -260,7 +290,7 @@ class AnalyticsFilters extends Component {
 
             </Flexbox>
 
-            <Button type="submit" pending={pending} disabled={!profileId || !dirty}>Submit</Button>
+            {false && <Button type="submit" pending={pending} disabled={!profileId || !dirty}>Submit</Button>}
           </div>
         ) : (
           <div>No websites connected to your google account. </div>
