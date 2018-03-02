@@ -73,6 +73,7 @@ class ViewAnalytics extends Component {
 
   }
 
+  // use eg when checking if should refresh chart, since that uses same data if GSC is being called only right now
   refreshUnlessGSCOnly () {
     const {baseOrganization, filters} = this.props
     const dataset = analyticsHelpers.getDataset("table", filters, baseOrganization)
@@ -200,9 +201,13 @@ class ViewAnalytics extends Component {
       })
     }
 
+    // don't use props, since could be out of date (if just changed filters before props could get propogated)
+    const filters = store.getState().forms.Analytics.filters.params
+
     this.setState({pending: true})
     const baseOrganization = Helpers.safeDataPath(this.props, "match.params.baseOrganization")
-    const tableDataset = analyticsHelpers.getDataset("table", this.props.filters, baseOrganization)
+    const tableDataset = analyticsHelpers.getDataset("table", filters, baseOrganization)
+    const lastUsedFilters = Helpers.safeDataPath(this.props.analytics, `${baseOrganization}.lastUsedFilters`, {})
     const {lastUsedTableDataset} = this.props.tableDatasetParams
 
     if (lastUsedTableDataset !== tableDataset) {
@@ -222,7 +227,6 @@ console.log(filtersToMerge);
 
     //check if chart also needs to be updated
     const relevantProperties = ["startDate", "endDate", "channelGrouping", "websiteId", "profileId"]
-    const lastUsedFilters = Helpers.safeDataPath(this.props.analytics, `${baseOrganization}.lastUsedFilters`, {})
 
     if (!_.isEqual(
       _.pick(this.props.filters, relevantProperties),
