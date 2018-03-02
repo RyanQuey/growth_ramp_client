@@ -201,7 +201,7 @@ const analyticsHelpers = {
 
   // takes dataset string and parses to get relevant data
   // keep in sync with frontend helper
-  parseDataset: (dataset) => {
+  parseDataset: (dataset = "") => {
     const datasetParts = dataset.split("-")
     const displayType = datasetParts[0]
 
@@ -340,7 +340,7 @@ const analyticsHelpers = {
     // hacky way to test if need to change sort to something else
     // TODO need to make this better, if filtering by dimension or others that need to change too
 
-    let filtersToMerge = {}
+    let filtersToMerge = {dimensionFilterClauses: null}
     //ga searches will need the ga in the fieldName
     if (targetApis.includes("GoogleSearchConsole")) {
       filtersToMerge.orderBy = {

@@ -65,10 +65,10 @@ class ViewAnalytics extends Component {
       }
 
       this.setAnalyticsFilters(orderBy)
-      //clear the extras
-      formActions.clearParams("Analytics", "tableDataset")
+      //clear the extras, leave lastUsedTableDataset
+      formActions.setParams("Analytics", "tableDataset", {rowsBy: null, columnSets: null, key: null})
 
-      this.props.getAnalytics()
+      this.getAnalytics()
     }
 
   }
@@ -136,9 +136,6 @@ class ViewAnalytics extends Component {
       //unless pagination is the thing getting changed, reset pagination
       this.resetPagination()
     }
-
-    const {baseOrganization, filters} = this.props
-    const dataset = analyticsHelpers.getDataset("table", filters, baseOrganization)
 
     formActions.setParams("Analytics", "filters", filtersToMerge)
   }
@@ -211,6 +208,8 @@ class ViewAnalytics extends Component {
     if (lastUsedTableDataset !== tableDataset) {
       //big enough change, merits resetting to defaults
       let filtersToMerge = analyticsHelpers.getDatasetDefaultFilters(tableDataset)
+console.log("8888888888888888");
+console.log(filtersToMerge);
 
       // make sure frontend is up to date
       this.setAnalyticsFilters(filtersToMerge)
