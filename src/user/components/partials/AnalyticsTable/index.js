@@ -75,7 +75,7 @@ class AnalyticsTable extends Component {
     let headers, rows, totals
     const webpageQuery = new URLSearchParams(location.search).get("webpage")
 
-    if (theseAnalytics) {
+    if (theseAnalytics && Object.keys(theseAnalytics).length) {
       headers = [
         ...theseAnalytics.columnHeader.dimensions,
         ...theseAnalytics.columnHeader.metrics
@@ -95,7 +95,7 @@ class AnalyticsTable extends Component {
     const orderByFilter = filters && filters.orderBy
 
     const haveGSCAccess = gscStatus.status === "ready"
-    if ((targetApis.includes("GoogleSearchConsole") && !haveGSCAccess) && !theseAnalytics) {
+    if ((targetApis.includes("GoogleSearchConsole") && !haveGSCAccess) || !theseAnalytics || !Object.keys(theseAnalytics).length) {
       return null
     }
 
