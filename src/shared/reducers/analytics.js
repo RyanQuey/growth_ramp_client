@@ -14,7 +14,9 @@ const analyticsReducer = (state = {}, action) => {
     case SORT_GSC_ANALYTICS:
       // a given GR user might have multiple google accounts
       let {dataset, results, filters} = pld
-      if (typeof results === "object") results.lastUsedFilters = filters
+      if (typeof results === "object") {
+        results.lastUsedFilters = filters
+      }
 
       newState = Object.assign({}, state)
 
