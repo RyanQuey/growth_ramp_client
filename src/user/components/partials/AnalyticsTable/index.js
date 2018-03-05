@@ -94,16 +94,15 @@ class AnalyticsTable extends Component {
 
     const orderByFilter = filters && filters.orderBy
 
-    const haveAccess = gscStatus.status === "ready"
-
-    if (haveAccess && !theseAnalytics) {
+    const haveGSCAccess = gscStatus.status === "ready"
+    if ((targetApis.includes("GoogleSearchConsole") && !haveGSCAccess) && !theseAnalytics) {
       return null
     }
 
     return (
       <div className={`${classes.container} ${this.props.hidden ? classes.hidden : ""}`}>
 
-        {!haveAccess ? (
+        {false && !haveGSCAccess ? (
           <div>{gscStatus.message}</div>
         ) : (
           <div>
