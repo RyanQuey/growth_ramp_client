@@ -29,6 +29,7 @@ class AnalyticsFilters extends Component {
     this.handleCalendarClick = this.handleCalendarClick.bind(this)
     this.websiteOptions = this.websiteOptions.bind(this)
     this.profileOptions = this.profileOptions.bind(this)
+    this.setWebsiteFilter = this.setWebsiteFilter.bind(this)
   }
 
   componentDidMount() {
@@ -161,6 +162,7 @@ class AnalyticsFilters extends Component {
   setWebsiteFilter (websiteOption) {
     const {website} = websiteOption
 
+console.log("website", website)
     //default to first profile
     let defaultProfileId = ""
     if (website.profiles && website.profiles.length) {
@@ -172,14 +174,18 @@ class AnalyticsFilters extends Component {
       providerAccountId: website.providerAccountId,
       profileId: defaultProfileId,
     })
+
+    // refresh the data
     this.props.getAnalytics()
   }
 
   // called "view" or "profile" by GA
   setAnalyticsProfileFilter({profile}) {
     this.props.setAnalyticsFilters({
-      profileId: profile.id
+      profileId: profile.id,
     })
+
+    // refresh the data
     this.props.getAnalytics()
   }
 
@@ -202,7 +208,7 @@ class AnalyticsFilters extends Component {
     const currentTimeRangeOption = timeRangeOptions.find((option) => option.value.startDate === startDate)
 
     const websiteOptions = this.websiteOptions() || []
-    const currentWebsiteOption = websiteOptions.find((option) => option.value.website === websiteId)
+    const currentWebsiteOption = websiteOptions.find((option) => option.website.id === websiteId)
 
     const profileOptions = this.profileOptions() || []
     const currentProfileOption = profileOptions.find((option) => option.value.profile === profileId)
