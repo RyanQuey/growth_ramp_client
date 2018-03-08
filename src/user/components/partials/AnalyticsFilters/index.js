@@ -211,7 +211,7 @@ console.log("website", website)
     const currentWebsiteOption = websiteOptions.find((option) => option.website.id === websiteId)
 
     const profileOptions = this.profileOptions() || []
-    const currentProfileOption = profileOptions.find((option) => option.value.profile === profileId)
+    const currentProfileOption = profileOptions.find((option) => option.profile.id === profileId)
 
 
     return (
