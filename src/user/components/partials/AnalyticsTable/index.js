@@ -76,12 +76,10 @@ class AnalyticsTable extends Component {
     const webpageQuery = new URLSearchParams(location.search).get("webpage")
 
     if (theseAnalytics && Object.keys(theseAnalytics).length) {
-      headers = [
-        ...theseAnalytics.columnHeader.dimensions,
-        ...theseAnalytics.columnHeader.metrics
-      ].map((header) => Object.assign({}, header,
-        {title: DIMENSIONS_METRICS_FRIENDLY_NAME[header.name]}
-      ))
+      headers = [].concat(theseAnalytics.columnHeader.dimensions, theseAnalytics.columnHeader.metrics)
+        .map((header) => Object.assign({}, header,
+          {title: DIMENSIONS_METRICS_FRIENDLY_NAME[header.name]}
+        ))
 
       rows = theseAnalytics.rows
       // GSC doesn't sort for us, so we sort and therefore have to paginate ourselves
