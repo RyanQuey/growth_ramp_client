@@ -5,6 +5,7 @@ import rootSaga from 'shared/sagas'
 
 import alertReducer from './alerts'
 import analytics from './analytics'
+import contentAudit from './contentAudit'
 import errorReducer from './errors'
 import formsReducer from './forms'
 import campaignsReducer from './campaigns'
@@ -24,6 +25,7 @@ const rootReducer = combineReducers({
   analytics,
   accountSubscription: accountSubscriptionReducer,
   alerts: alertReducer,
+  contentAudit,
   //the plan that the user is currently working on OR viewing
   currentPlan: currentPlanReducer,
   //the postTemplate that the user is currently working on

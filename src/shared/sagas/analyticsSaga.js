@@ -4,6 +4,8 @@ import {
   FETCH_ALL_GA_ACCOUNTS_SUCCESS,
   GET_ANALYTICS_REQUEST,
   GET_ANALYTICS_SUCCESS,
+  AUDIT_CONTENT_REQUEST,
+  AUDIT_CONTENT_SUCCESS,
 } from 'constants/actionTypes'
 import { USER_FIELDS_TO_PERSIST, PROVIDER_IDS_MAP  } from 'constants'
 import { errorActions, alertActions } from 'shared/actions'
@@ -49,10 +51,18 @@ function* getAnalytics(action) {
     const websites = state.websites
     const filtersObj = Object.assign({}, Helpers.safeDataPath(state, `forms.Analytics.filters.params`, {}))
     const {gscStatus, gscUrl, targetApis} = analyticsHelpers.getExternalApiInfo(filtersObj.websiteUrl, dataset, websites)
-    const haveAccess = gscStatus.status === "ready"
 
+    // TODO need to handle
+    const haveAccess = gscStatus.status === "ready"
     if (!haveAccess) {
       console.log("not even trying to get analytics data (not security issue, just save time)");
+      alertActions.newAlert({
+        title: "Failed to get analytics:",
+        message: "Insufficient permissions to access Google Search Console for this website",
+        level: "DANGER",
+        options: {}
+      })
+
       return
     }
 
@@ -81,8 +91,48 @@ function* getAnalytics(action) {
   }
 }
 
+function* auditContent (action) {
+  try {
+    const state = store.getState()
+    const dataset = action.dataset || "auditContent-all"
+    const websites = state.websites
+    const filtersObj = Object.assign({}, Helpers.safeDataPath(state, `forms.AuditContent.filters.params`, {}))
+    const {gscStatus, gscUrl, targetApis} = analyticsHelpers.getExternalApiInfo(filtersObj.websiteUrl, dataset, websites)
+    const haveAccess = gscStatus.status === "ready"
+
+    if (!haveAccess) {
+      console.log("not even trying to get analytics data (not security issue, just save time)");
+      return
+    }
+
+
+    if (targetApis.includes("GoogleSearchConsole")) {
+      filtersObj.gscUrl = gscUrl
+    }
+
+    analyticsHelpers.addQueryToFilters(filtersObj, targetApis)
+
+    //transfomr into array of objs, each obj with single key (a filter param).
+    const filtersStr = JSON.stringify(filtersObj)
+
+    const res = yield axios.get(`/api/analytics/auditContent?filters=${filtersStr}&dataset=${dataset}`) //eventually switch to socket
+
+
+    yield all([
+      put({type: AUDIT_CONTENT_SUCCESS, payload: {results: res.data, dataset, filters: filtersObj}})
+    ])
+    action.cb && action.cb(res.data)
+
+  } catch (err) {
+    console.error('gwet analytics fetch failed', err.response || err)
+    action.onFailure && action.onFailure(err)
+    // yield put(userFetchFailed(err.message))
+  }
+}
+
 export default function* updateProviderSaga() {
   yield takeLatest(FETCH_ALL_GA_ACCOUNTS_REQUEST, fetchAllGAAccounts)
   yield takeEvery(GET_ANALYTICS_REQUEST, getAnalytics)
+  yield takeEvery(AUDIT_CONTENT_REQUEST, auditContent)
 
 }

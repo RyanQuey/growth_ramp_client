@@ -208,8 +208,6 @@ class ViewAnalytics extends Component {
     if (lastUsedTableDataset !== tableDataset) {
       //big enough change, merits resetting to defaults
       let filtersToMerge = analyticsHelpers.getDatasetDefaultFilters(tableDataset, newBaseOrganization)
-console.log("8888888888888888");
-console.log(filtersToMerge, baseOrganization);
 
       // make sure frontend is up to date
       this.setAnalyticsFilters(filtersToMerge)

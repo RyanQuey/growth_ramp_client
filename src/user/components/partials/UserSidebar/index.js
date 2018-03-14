@@ -63,6 +63,7 @@ class UserSidebar extends Component {
               <ul>
                 <MenuChild text="Website Overview" link={`/analytics/website-overview`} nav={true} icon={""}/>
                 <MenuChild text="Landing Pages" link={`/analytics/landing-pages`} nav={true} icon={""}/>
+                <MenuChild text="Content Audit" link={`/analytics/content-audit`} nav={true} icon={""}/>
               </ul>
             </MenuItem>
             {false && <MenuItem link="/workgroups" text="Workgroups" nav={true} icon="users"/>}

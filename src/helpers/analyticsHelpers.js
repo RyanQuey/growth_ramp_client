@@ -250,6 +250,7 @@ const analyticsHelpers = {
     if (targetApis.includes("GoogleSearchConsole")) {
       // check if they have gsc setup with this google acct
       gscUrl = analyticsHelpers.getGSCUrlFromGAUrl(gaUrl, websites.gscSites)
+console.log("gsc url", gscUrl);
       let gscUrlData = gscUrl && websites.gscSites[gscUrl]
 
       if (gscUrlData && ["siteOwner", "siteRestrictedUser", "siteFullUser"].includes(gscUrlData.permissionLevel)) {

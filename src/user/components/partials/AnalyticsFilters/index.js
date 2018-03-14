@@ -33,6 +33,8 @@ class AnalyticsFilters extends Component {
   }
 
   componentDidMount() {
+    // TODO on mount check if website has the webpage we're looking for, rather than just clearing
+    this.props.history.push(this.props.location.pathname)
     this.refreshGAAccounts()
   }
 
@@ -162,7 +164,11 @@ class AnalyticsFilters extends Component {
   setWebsiteFilter (websiteOption) {
     const {website} = websiteOption
 
-console.log("website", website)
+    console.log("website", website)
+    // clear query string since new website wouldn't have the same webpages
+    this.props.history.push(this.props.location.pathname)
+
+
     //default to first profile
     let defaultProfileId = ""
     if (website.profiles && website.profiles.length) {
@@ -173,6 +179,7 @@ console.log("website", website)
       websiteId: website.id,
       providerAccountId: website.providerAccountId,
       profileId: defaultProfileId,
+      websiteUrl: website.websiteUrl,
     })
 
     // refresh the data
