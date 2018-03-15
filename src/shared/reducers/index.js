@@ -9,6 +9,7 @@ import contentAudit from './contentAudit'
 import errorReducer from './errors'
 import formsReducer from './forms'
 import campaignsReducer from './campaigns'
+import goals from './goals'
 import plansReducer from './plans'
 import accountSubscriptionReducer from './accountSubscription'
 import currentPlanReducer from './currentPlan'
@@ -37,6 +38,7 @@ const rootReducer = combineReducers({
   errors: errorReducer,
   campaigns: campaignsReducer,
   forms: formsReducer,
+  goals,
   plans: plansReducer,
   workgroups: workgroupsReducer,
   //all of the provider accounts that user is the owner of, or has permission to use

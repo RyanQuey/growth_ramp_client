@@ -4,6 +4,8 @@ import {
   FETCH_ALL_GA_ACCOUNTS_SUCCESS,
   GET_ANALYTICS_REQUEST,
   GET_ANALYTICS_SUCCESS,
+  GET_GA_GOALS_REQUEST,
+  GET_GA_GOALS_SUCCESS,
   AUDIT_CONTENT_REQUEST,
   AUDIT_CONTENT_SUCCESS,
 } from 'constants/actionTypes'
@@ -90,10 +92,29 @@ function* getAnalytics(action) {
   }
 }
 
+//get analytics for a particular table/chart
+function* getGAGoals(action) {
+  try {
+    //transfomr into array of objs, each obj with single key (a filter param).
+    const {websiteId, providerAccountId} = action.payload
+
+    const res = yield axios.get(`/api/analytics/getGAGoals?websiteId=${websiteId}&providerAccountId=${providerAccountId}`) //eventually switch to socket
+
+    yield all([
+      put({type: GET_GA_GOALS_SUCCESS, payload: {results: res.data, params: action.payload}})
+    ])
+    action.cb && action.cb(res.data)
+
+  } catch (err) {
+    console.error('gwet analytics fetch failed', err.response || err)
+    action.onFailure && action.onFailure(err)
+    // yield put(userFetchFailed(err.message))
+  }
+}
 function* auditContent (action) {
   try {
     const state = store.getState()
-    const dataset = action.dataset || "auditContent-all"
+    const dataset = action.dataset || "auditContent-testGroup-nonGoals"
     const websites = state.websites
     const filtersObj = Object.assign({}, Helpers.safeDataPath(state, `forms.AuditContent.filters.params`, {}))
     const {gscStatus, gscUrl, targetApis} = analyticsHelpers.getExternalApiInfo(filtersObj.websiteUrl, dataset, websites)
@@ -144,6 +165,7 @@ function* auditContent (action) {
 export default function* updateProviderSaga() {
   yield takeLatest(FETCH_ALL_GA_ACCOUNTS_REQUEST, fetchAllGAAccounts)
   yield takeEvery(GET_ANALYTICS_REQUEST, getAnalytics)
+  yield takeEvery(GET_GA_GOALS_REQUEST, getGAGoals)
   yield takeEvery(AUDIT_CONTENT_REQUEST, auditContent)
 
 }

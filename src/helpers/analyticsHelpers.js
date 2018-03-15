@@ -112,7 +112,7 @@ const analyticsHelpers = {
     // filtersObj now modified if needed to
   },
 
-  getDataset: (displayType, filters, baseOrganization) => {
+  getDataset: (displayType, filters, baseOrganization, options = {}) => {
     const tableDatasetParams = Helpers.safeDataPath(store.getState(), "forms.Analytics.tableDataset.params", {})
 
     let datasetArr = [displayType]
@@ -152,6 +152,21 @@ const analyticsHelpers = {
 
       let columnSetsStr = columnSets.join(",")
       datasetArr.push(columnSetsStr)
+
+    } else if (displayType === "contentAudit") {
+      if (options.testGroup) {
+        datasetArr.push("testGroup")
+        datasetArr.push(options.testGroup)
+
+      } else if (options.testKeys) {
+        datasetArr.push("testKeys")
+        datasetArr.push(options.testKeys.join(","))
+
+      } else {
+        datasetArr.push("testGroup")
+        datasetArr.push("all")
+
+      }
     }
 
     const dataset = datasetArr.join("-")

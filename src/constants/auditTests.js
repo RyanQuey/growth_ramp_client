@@ -121,9 +121,6 @@ export const AUDIT_TESTS = {
       searchPositionToImprove: {
         header: "Pages to Improve:",
         metrics: {
-          "clicks": {},
-          "ctr": {},
-          "impressions": {},
           "position": {},
         }
       },
@@ -136,12 +133,14 @@ export const AUDIT_TESTS = {
       brokenExternal: {
         header: "Broken External Links:",
         metrics: {
+          "ga:pagePath": {},
           "ga:sessions": {},
         }
       },
       brokenInternal: {
         header: "Bad Internal Links:",
         metrics: {
+          "ga:pagePath": {},
           "ga:sessions": {},
         }
       }

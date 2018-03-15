@@ -2,12 +2,13 @@ import { Component } from 'react';
 import { connect } from 'react-redux'
 import {
   AUDIT_CONTENT_REQUEST,
+  GET_GA_GOALS_REQUEST,
 } from 'constants/actionTypes'
 import { Button, Flexbox, Icon, Form } from 'shared/components/elements'
 import {
 } from 'user/components/partials'
 import { SocialLogin } from 'shared/components/partials'
-import { SelectChannelGrouping, SelectWebpageDetailsSet } from 'user/components/groups'
+import {  } from 'user/components/groups'
 import { AnalyticsFilters, ContentAuditTable } from 'user/components/partials'
 import { PROVIDERS, PROVIDER_IDS_MAP } from 'constants/providers'
 import {formActions, alertActions} from 'shared/actions'
@@ -30,7 +31,7 @@ class ViewContentAudit extends Component {
   }
 
   componentWillMount() {
-    const {filters} = this.props
+    const {filters, goals} = this.props
     if (!filters || !filters.startDate) {
       //initialize the filters with just week start date, which is default for GA anyways
       const yesterday = moment().subtract(1, "day")
@@ -76,7 +77,8 @@ class ViewContentAudit extends Component {
 
     // don't use props, since could be out of date (if just changed filters before props could get propogated)
     const filters = store.getState().forms.AuditContent.filters.params
-    const dataset = "contentAudit-all"
+    const dataset = analyticsHelpers.getDataset("contentAudit", filters, null, {testGroup: "nonGoals"})
+
     const lastUsedFilters = Helpers.safeDataPath(this.props.contentAudit, `lastUsedFilters`, {})
     const {lastUsedDataset} = this.props.datasetParams
 
@@ -92,16 +94,16 @@ class ViewContentAudit extends Component {
 
     this.props.auditSite({}, dataset, cb, onFailure)
 
-
-    const relevantProperties = ["startDate", "endDate", "channelGrouping", "websiteId", "profileId"]
+    const {websiteId, profileId, webPropertyId, providerAccountId} = filters
+    if (!this.props.goals[websiteId]) {
+      this.props.getGoals({websiteId, providerAccountId}) //only be websiteId for now. can manually sort by profile or webproperty in frontend later too
+    }
   }
 
   render () {
     const {pending} = this.state
     const {googleAccounts, filters, analytics, datasetParams} = this.props
     const currentGoogleAccount = googleAccounts && googleAccounts[0]
-    const dataset = "contentAudit-all"
-    const targetApis = analyticsHelpers.whomToAsk(dataset)
 
     //wait to finish initializing store at least
     if (!filters) {
@@ -139,6 +141,12 @@ class ViewContentAudit extends Component {
 
 const mapDispatchToProps = (dispatch) => {
   return {
+    getGoals: (payload, cb, onFailure) => dispatch({
+      type: GET_GA_GOALS_REQUEST,
+      payload,
+      cb,
+      onFailure,
+    }),
     auditSite: (payload, dataset, cb, onFailure) => dispatch({
       type: AUDIT_CONTENT_REQUEST,
       payload,
@@ -154,7 +162,7 @@ const mapStateToProps = state => {
     analytics: state.analytics,
     contentAudit: state.contentAudit,
     user: state.user,
-    campaigns: state.campaigns,
+    goals: state.goals,
     googleAccounts: Helpers.safeDataPath(state, "providerAccounts.GOOGLE", []).filter((account) => !account.unsupportedProvider),
     websites: state.websites,
     datasetParams: Helpers.safeDataPath(state, "forms.AuditContent.dataset.params", {}),
