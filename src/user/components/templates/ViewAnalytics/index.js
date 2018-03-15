@@ -298,6 +298,7 @@ class ViewAnalytics extends Component {
           baseOrganization={baseOrganization}
           setAnalyticsFilters={this.setAnalyticsFilters}
           getAnalytics={this.getAnalytics}
+          filters={filters}
         />
 
         <AnalyticsChart

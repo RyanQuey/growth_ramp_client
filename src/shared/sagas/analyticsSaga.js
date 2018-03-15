@@ -52,23 +52,22 @@ function* getAnalytics(action) {
     const filtersObj = Object.assign({}, Helpers.safeDataPath(state, `forms.Analytics.filters.params`, {}))
     const {gscStatus, gscUrl, targetApis} = analyticsHelpers.getExternalApiInfo(filtersObj.websiteUrl, dataset, websites)
 
-    // TODO need to handle
-    const haveAccess = gscStatus.status === "ready"
-    if (!haveAccess) {
-      console.log("not even trying to get analytics data (not security issue, just save time)");
-      alertActions.newAlert({
-        title: "Failed to get analytics:",
-        message: "Insufficient permissions to access Google Search Console for this website",
-        level: "DANGER",
-        options: {}
-      })
-
-      return
-    }
-
 
     if (targetApis.includes("GoogleSearchConsole")) {
       filtersObj.gscUrl = gscUrl
+      // TODO need to handle
+      const haveAccess = gscStatus.status === "ready"
+      if (!haveAccess) {
+        console.log("not even trying to get analytics data (not security issue, just save time)");
+        alertActions.newAlert({
+          title: "Failed to get analytics:",
+          message: "Insufficient permissions to access Google Search Console for this website",
+          level: "DANGER",
+          options: {}
+        })
+
+        return
+      }
     }
 
     analyticsHelpers.addQueryToFilters(filtersObj, targetApis)
@@ -100,22 +99,27 @@ function* auditContent (action) {
     const {gscStatus, gscUrl, targetApis} = analyticsHelpers.getExternalApiInfo(filtersObj.websiteUrl, dataset, websites)
     const haveAccess = gscStatus.status === "ready"
 
-    if (!haveAccess) {
-      console.log("not even trying to get analytics data (not security issue, just save time)");
-      return
-    }
-
-
     if (targetApis.includes("GoogleSearchConsole")) {
       filtersObj.gscUrl = gscUrl
-    }
+      const haveAccess = gscStatus.status === "ready"
+      if (!haveAccess) {
+        console.log("not even trying to get analytics data (not security issue, just save time)");
+        alertActions.newAlert({
+          title: "Failed to get analytics:",
+          message: "Insufficient permissions to access Google Search Console for this website",
+          level: "DANGER",
+          options: {}
+        })
 
-    analyticsHelpers.addQueryToFilters(filtersObj, targetApis)
+        return
+      }
+    }
 
     //transfomr into array of objs, each obj with single key (a filter param).
     const filtersStr = JSON.stringify(filtersObj)
 
     const res = yield axios.get(`/api/analytics/auditContent?filters=${filtersStr}&dataset=${dataset}`) //eventually switch to socket
+
 
 
     yield all([
@@ -125,6 +129,13 @@ function* auditContent (action) {
 
   } catch (err) {
     console.error('gwet analytics fetch failed', err.response || err)
+      alertActions.newAlert({
+        title: "Failed to audit content:",
+        message: "Insufficient permissions to access Google Search Console for this website",
+        level: "DANGER",
+        options: {}
+      })
+
     action.onFailure && action.onFailure(err)
     // yield put(userFetchFailed(err.message))
   }

@@ -1,0 +1,121 @@
+@import 'theme/_helpers';
+.container {
+  visibility: visible;
+  opacity: 1;
+  max-height: 2000px ;
+  @include transition(max-height, .8s, ease);
+  overflow-y: hidden;
+
+  &.hidden {
+    max-height: 0;
+    overflow-y: hidden;
+  }
+
+}
+.table {
+  border-bottom: 1px solid $black;
+  h2 {
+    margin-top: 0;
+  }
+
+  .tableHeader {
+    width: 100%;
+    div {
+      font-weight: bold;
+    }
+  }
+  .row {
+    width: 100%;
+
+  }
+  .columnOne {
+    @include cols(4)
+  }
+  // whether I opt to do table or just flex:
+  .columnTwo, .columnThree, .columnFour, .cardWrapper,  {
+    @include mq(sm2) {
+      @include cols(12);
+    }
+    @include mq(xs) {
+      @include cols(12);
+    }
+    @include mq(lg) {
+      @include cols(4);
+    }
+    @include cols(2)
+
+  }
+  .columnThree {
+  }
+  .columnFour {
+  }
+  .columnFive {
+  }
+  .twoColumns {
+    @include cols(4)
+  }
+
+  .auditTestContainer {
+    border-top: 1px solid $black;
+    width: 100%;
+
+    &.evenRow {
+      background: $even-lighter-purple-gray;
+    }
+    &.oddRow {
+      //background: $light-purple-gray;
+    }
+    .header {
+      font-weight: bold;
+      .previewText {
+        font-weight: normal;
+      }
+    }
+    .topRow {
+      cursor: pointer;
+      text-align: left;
+      padding-left: 30px;
+      min-height: 50px;
+      &:hover {
+        background: $light-purple-gray;
+      }
+    }
+
+    h2 {
+      margin-bottom: 0;
+      font-weight: normal;
+    }
+    //flexbox likes to shrink its children if it has overflow, rather than just adding a scrollbar. Min height stops that from happening
+    button {
+      min-height: 38px;
+      //padding: 10px 15px; //was spazzing out, flipping back and forth between the paddings, so just forget it
+    }
+
+    .lists {
+      overflow-y: auto;
+      width: 100%;
+      min-width: 100%;
+      padding: 15px 15px 0 15px;
+    }
+    .cardWrapper {
+      max-width: 95%;
+      width: 200px;
+      overflow: auto;
+    }
+    .postCard {
+      width: 100%;
+      overflow: hidden;
+      //min-width: 200px;
+
+      &.publishedPost {
+        cursor: not-allowed !important;
+        background-color: gray !important;
+        div {
+          border-bottom: gray !important;
+        }
+      }
+
+    }
+  }
+
+}

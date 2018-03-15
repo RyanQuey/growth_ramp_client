@@ -235,6 +235,9 @@ const analyticsHelpers = {
 //TODO fix for GSC later
         ret.push("GoogleAnalytics")
 
+    } else if (displayType === "contentAudit") {
+      ret.push("GoogleAnalytics")
+      ret.push("GoogleSearchConsole")
     }
 
     return ret
@@ -344,7 +347,9 @@ console.log("gsc url", gscUrl);
 
     let filtersToMerge = {}
     //ga searches will need the ga in the fieldName
-    if (targetApis.includes("GoogleSearchConsole")) {
+    if (displayType === "contentAudit") {
+      // nothing yet
+    } else if (targetApis.includes("GoogleSearchConsole")) {
       filtersToMerge.orderBy = {
         fieldName: "clicks",
         sortOrder: "DESCENDING",
