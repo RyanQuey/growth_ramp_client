@@ -133,14 +133,14 @@ export const AUDIT_TESTS = {
       brokenExternal: {
         header: "Broken External Links:",
         metrics: {
-          "ga:pagePath": {},
+          "ga:pageTitle": {}, //not actually a metric, but whatever. Displaying as such
           "ga:sessions": {},
         }
       },
       brokenInternal: {
         header: "Bad Internal Links:",
         metrics: {
-          "ga:pagePath": {},
+          "ga:pageTitle": {},
           "ga:sessions": {},
         }
       }

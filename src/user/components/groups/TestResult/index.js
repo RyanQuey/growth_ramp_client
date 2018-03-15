@@ -31,10 +31,6 @@ class TestResult extends Component {
           let listMetadata = testLists[listKey]
           const listResults = resultLists.find((list) => list.key === listKey)
 
-          if (totalItemsInResult === 0) {
-            return <div>Well done, nothing needs improvement right now!</div>
-          }
-
           return <Flexbox key={listKey} direction="column">
             <Flexbox justify="space-between" align="center">
               <h3>{listMetadata.header}</h3>
@@ -43,14 +39,18 @@ class TestResult extends Component {
               )}
             </Flexbox>
 
-            {listResults.items.map((item) => {
-              return  <Flexbox key={item.dimension} justify="space-between" align="center">
-                <div>{item.dimension}</div>
-                {Object.keys(listMetadata.metrics).map((metric) =>
-                  <div key={metric}>{item[metric]}</div>
-                )}
-              </Flexbox>
-            })}
+            {listResults.items.length === 0 ? (
+              <div>Well done, nothing needs improvement right now!</div>
+            ) : (
+              listResults.items.map((item) => {
+                return  <Flexbox key={item.dimension} justify="space-between" align="center">
+                  <div>{item.dimension}</div>
+                  {Object.keys(listMetadata.metrics).map((metric) =>
+                    <div key={metric}>{item[metric]}</div>
+                  )}
+                </Flexbox>
+              })
+            )}
           </Flexbox>
         })}
 
