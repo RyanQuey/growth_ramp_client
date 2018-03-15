@@ -28,7 +28,7 @@ export const AUDIT_TESTS = {
   */
   headlineStrength: {
     key: "headlineStrength",
-    question: "What headlines need to be improved?",
+    question: "What headlines and meta-descriptions need to be improved?",
     lists: {
       weakHeadlines: {
         header: "Headlines to improve:",
@@ -45,16 +45,70 @@ export const AUDIT_TESTS = {
   browserCompatibility: {
     key: "browserCompatibility",
     question: "What browsers does your site not work well on?",
+    lists: {
+      badBounceRate: {
+        header: "Bad Bounce Rate:",
+        metrics: {
+          "ga:users": {},
+          "ga:bounceRate": {},
+          "ga:avgSessionDuration": {},
+        }
+      },
+      badSessionDuration: {
+        header: "Bad Bounce Rate:",
+        metrics: {
+          "ga:users": {},
+          "ga:bounceRate": {},
+          "ga:avgSessionDuration": {},
+        }
+      }
+    },
   },
 
   deviceCompatibility: {
     key: "deviceCompatibility",
     question: "What devices does your site not work well on?",
+    lists: {
+      badBounceRate: {
+        header: "Bad Bounce Rate:",
+        metrics: {
+          "ga:users": {},
+          "ga:bounceRate": {},
+          "ga:avgSessionDuration": {},
+        }
+      },
+      badSessionDuration: {
+        header: "Bad Bounce Rate:",
+        metrics: {
+          "ga:users": {},
+          "ga:bounceRate": {},
+          "ga:avgSessionDuration": {},
+        }
+      }
+    },
   },
 
   userInteraction: {
     key: "userInteraction",
     question: "What other pages may have issues that need fixed?",
+    lists: {
+      badBounceRate: {
+        header: "Bad Bounce Rate:",
+        metrics: {
+          "ga:users": {},
+          "ga:bounceRate": {},
+          "ga:avgSessionDuration": {},
+        }
+      },
+      badSessionDuration: {
+        header: "Bad Bounce Rate:",
+        metrics: {
+          "ga:users": {},
+          "ga:bounceRate": {},
+          "ga:avgSessionDuration": {},
+        }
+      }
+    },
   },
   pageValue: {
     key: "pageValue",
@@ -63,5 +117,34 @@ export const AUDIT_TESTS = {
   searchPositionToImprove: {
     key: "searchPositionToImprove",
     question: "What pages should you focus on improving the search position?",
+    lists: {
+      searchPositionToImprove: {
+        header: "Pages to Improve:",
+        metrics: {
+          "clicks": {},
+          "ctr": {},
+          "impressions": {},
+          "position": {},
+        }
+      },
+    },
+  },
+  missingPages: {
+    key: "missingPages",
+    question: "What pages are getting 404 errors from internal links? What pages are getting 404 errors from external links?",
+    lists: {
+      brokenExternal: {
+        header: "Broken External Links:",
+        metrics: {
+          "ga:sessions": {},
+        }
+      },
+      brokenInternal: {
+        header: "Bad Internal Links:",
+        metrics: {
+          "ga:sessions": {},
+        }
+      }
+    },
   },
 }

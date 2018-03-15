@@ -178,6 +178,7 @@ class AnalyticsFilters extends Component {
     this.props.setAnalyticsFilters({
       websiteId: website.id,
       providerAccountId: website.providerAccountId,
+      webPropertyId: website.internalWebPropertyId,
       profileId: defaultProfileId,
       websiteUrl: website.websiteUrl,
     })
