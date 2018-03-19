@@ -13,6 +13,7 @@ import forbidAuthenticated from 'lib/forbidAuthenticated'
 import { connect } from 'react-redux'
 import classes from './style.scss'
 
+// not currently using
 class UnauthenticatedContent extends Component {
   render() {
 

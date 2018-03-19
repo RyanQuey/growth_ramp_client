@@ -2,7 +2,7 @@ import { Component } from 'react'
 import PropTypes from 'prop-types'
 import { Flexbox, Navbar } from 'shared/components/elements'
 import classes from './style.scss'
-import { UserLoginModal, UserNavbar, UserSidebar, UserContent } from 'user/components/partials'
+import { UserLoginView, UserNavbar, UserSidebar, UserContent } from 'user/components/partials'
 import { withRouter } from 'react-router-dom'
 import { UnauthenticatedContent } from 'user/components/templates'
 
@@ -17,14 +17,27 @@ class Unauthenticated extends Component {
   }
 
   render() {
-    return (
-      <div>
-        <Flexbox direction="column">
-          <UserNavbar userSettingsOnly={true} forLandingPage={true}/>
-          <UnauthenticatedContent />
-        </Flexbox>
+    // if ?signup=true in query, start with signup view
+    const queryVariables = this.props.location.search.replace(/^\?/, "").split('&')
+    const signupVar = queryVariables.find((set) => set.includes("signup="))
+console.log(signupVar);
+    let signup
+    if (signupVar) {
+      try {
+        const pair = signupVar.split('=')
+        const value = decodeURIComponent(pair[1])
+        signup = value === "true"
 
-        <UserLoginModal />
+      } catch (err) {console.error(err);}
+
+    }
+console.log("sa", signup, signup ? "SIGN_UP" : "LOGIN");
+    return (
+      <div className={classes.mainContainer}>
+        <UserNavbar noLinks={true}/>
+        <UserLoginView
+          initialView={signup ? "SIGN_UP" : "LOGIN"}
+        />
       </div>
     )
   }

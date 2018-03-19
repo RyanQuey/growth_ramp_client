@@ -6,10 +6,11 @@ import classes from 'App.scss';
 import {
   withRouter,
 } from 'react-router-dom'
-import { HANDLE_QUERY } from 'constants/actionTypes'
+import handleQuery from 'helpers/handleQuery'
 
 class App extends Component {
-  componentDidMount() {
+  // make sure runs first, or login/signup currently will just do login, will never start at signup due to race conditions
+  componentWillMount() {
     /*axios.get('/api/test')
     .then(res => console.log("got it: ", res))*/
 
@@ -26,12 +27,7 @@ class App extends Component {
         }
       }
 
-      store.dispatch({
-        type: HANDLE_QUERY,
-        payload: query,
-        cb,
-      })
-
+      handleQuery(query, cb);
     }
   }
 
