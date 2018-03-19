@@ -40,8 +40,7 @@ class UserNavbar extends Component {
   }
 
   render() {
-    const { user, userSettingsOnly, forLandingPage } = this.props
-    //userSettingsOnly is mostly if don't want create campaign button and other things for non-signed in users
+    const { user, noLinks, forLandingPage } = this.props
 
     return (
       <Navbar className={classes.header}>
@@ -50,12 +49,12 @@ class UserNavbar extends Component {
         </Flexbox>}
 
         <Flexbox className={classes.mainNav} justify="space-between">
-          <Flexbox className={classes.leftNav} align="center" justify={!userSettingsOnly ? "space-around" : "flex-start" }>
+          <Flexbox className={classes.leftNav} align="center" justify={!noLinks ? "space-around" : "flex-start" }>
             <Link to="/">
               <Logo />
             </Link>
 
-            {!userSettingsOnly && <Button onClick={this.createCampaign}>
+            {!noLinks && <Button onClick={this.createCampaign}>
               New Campaign
             </Button>}
           </Flexbox>
@@ -76,7 +75,7 @@ class UserNavbar extends Component {
               </div>
             ) : (
               <div>
-                <a href="#" onClick={this.openLoginModal.bind(this, "login")}>Login</a>
+                {false && !noLinks && <a href="#" onClick={this.openLoginModal.bind(this, "login")}>Login</a>}
                 {false && "will add later.." && <a href="#" onClick={this.openLoginModal.bind(this, "signup")}>Signup</a>}
               </div>
 

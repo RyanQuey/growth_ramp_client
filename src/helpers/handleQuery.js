@@ -7,13 +7,13 @@ import {
   FETCH_PLAN_SUCCESS,
   SET_CURRENT_MODAL,
 } from 'constants/actionTypes'
-import { errorActions, alertActions } from 'shared/actions'
+import { errorActions, alertActions, viewSettingActions } from 'shared/actions'
 import { setupSession } from 'lib/socket'
 
-const handleQuery = (action) => {
+const handleQuery = (rawQuery, handleQueryCb) => {
+console.log("running");
   //pulls a global variable from the HTML file, what was dynamically rendered via the front end server
   //TODO: if I ever set other variables, change the way that these variables get passed around , so I don't have to parse more than once
-  const rawQuery = action.payload
 
   if (rawQuery) {
     let cb, user, doneOptions = {}
@@ -86,7 +86,7 @@ const handleQuery = (action) => {
                 throw {code: 400}
               }
 
-              action.cb && action.cb(doneOptions)
+              handleQueryCb && handleQueryCb(doneOptions)
 
             })
             .catch((err) => {
@@ -136,6 +136,12 @@ const handleQuery = (action) => {
             }
 
             break;
+          case "signup":
+            //handling in component; want this set async and not doing that here right now, and easier to do in component and pass through just the way login is built
+
+            let signup = value === "true"
+            viewSettingActions.setViewMode("Login", {initialView: signup ? "SIGN_UP" : "LOGIN"})
+            break;
         }
 
 
@@ -164,13 +170,4 @@ function validUserReceived (user, cb) {
   store.dispatch({type: FETCH_CURRENT_USER_REQUEST, payload: user, cb})
 }
 
-export default function* handleQuerySaga() {
-  //TODO only need to listen on initial page load
-  let listen = true
-  while (listen) {
-    const action = yield take(HANDLE_QUERY)
-console.log(action);
-    handleQuery(action)
-    listen = false
-  }
-}
+export default handleQuery

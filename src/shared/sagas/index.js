@@ -10,7 +10,6 @@ import planSaga from './planSaga'
 import postSaga from './postSaga'
 import postTemplateSaga from './postTemplateSaga'
 import providerSaga from './providerSaga'
-import querySaga from './querySaga'
 import userSaga from './userSaga'
 import workgroupSaga from './workgroupSaga'
 
@@ -22,7 +21,6 @@ export default function* rootSaga() {
     call(campaignSaga),
     call(eventHooksSaga),
     call(linkAccountSaga),
-    call(querySaga),
     call(permissionSaga),
     call(planSaga),
     call(postSaga),
