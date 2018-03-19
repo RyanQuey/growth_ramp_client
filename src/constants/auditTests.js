@@ -110,10 +110,10 @@ export const AUDIT_TESTS = {
       }
     },
   },
-  pageValue: {
+  /*pageValue: {
     key: "pageValue",
     question: "What content adds the most value to an ultimate outcome for your website? What pages should you repurpose and syndicate?",
-  },
+  },*/
   searchPositionToImprove: {
     key: "searchPositionToImprove",
     question: "What pages should you focus on improving the search position?",

@@ -124,16 +124,14 @@ class ViewContentAudit extends Component {
           filters={filters}
         />
 
-                  <Button
-                    onClick={this.auditSite}
-                    className={classes.twoColumns}
-                  >
-                    Audit site
-                  </Button>
+        {false && <Button
+          onClick={this.auditSite}
+          className={classes.twoColumns}
+        >
+          Audit site
+        </Button>}
 
-        <ContentAuditTable
-
-        />
+        <ContentAuditTable/>
       </div>
     )
   }

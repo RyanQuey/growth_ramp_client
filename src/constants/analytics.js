@@ -13,7 +13,7 @@ export const DIMENSIONS_METRICS_FRIENDLY_NAME = {
   "ga:uniquePageviews": "Unique Page Views",
   "ga:bounceRate": "Bounce Rate",
   "ga:avgTimeOnPage": "Average Time on Page",
-  "ga:avgPageLoadTime": "Average Page Load Time",
+  "ga:avgPageLoadTime": "Average Page Load Time (sec)",
   "ga:exitRate": "Exit Rate",
   "ga:source": "Source",
 
