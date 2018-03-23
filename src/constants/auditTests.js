@@ -33,10 +33,8 @@ export const AUDIT_TESTS = {
       weakHeadlines: {
         header: "Headlines to improve:",
         metrics: {
-          "clicks": {},
           "ctr": {},
           "impressions": {},
-          "position": {},
         }
       }
     },
@@ -55,7 +53,7 @@ export const AUDIT_TESTS = {
         }
       },
       badSessionDuration: {
-        header: "Bad Bounce Rate:",
+        header: "Bad Avg Session Duration:",
         metrics: {
           "ga:users": {},
           "ga:bounceRate": {},
@@ -78,7 +76,7 @@ export const AUDIT_TESTS = {
         }
       },
       badSessionDuration: {
-        header: "Bad Bounce Rate:",
+        header: "Bad Avg Session Duration:",
         metrics: {
           "ga:users": {},
           "ga:bounceRate": {},
@@ -101,7 +99,7 @@ export const AUDIT_TESTS = {
         }
       },
       badSessionDuration: {
-        header: "Bad Bounce Rate:",
+        header: "Bad Avg Session Duration:",
         metrics: {
           "ga:users": {},
           "ga:bounceRate": {},
