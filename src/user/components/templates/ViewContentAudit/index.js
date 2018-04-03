@@ -3,13 +3,14 @@ import { connect } from 'react-redux'
 import {
   AUDIT_CONTENT_REQUEST,
   GET_GA_GOALS_REQUEST,
+  FETCH_AUDIT_REQUEST,
 } from 'constants/actionTypes'
 import { Button, Flexbox, Icon, Form } from 'shared/components/elements'
 import {
 } from 'user/components/partials'
 import { SocialLogin } from 'shared/components/partials'
 import {  } from 'user/components/groups'
-import { AnalyticsFilters, ContentAuditTable } from 'user/components/partials'
+import { AuditSiteSetup, ContentAuditTable } from 'user/components/partials'
 import { PROVIDERS, PROVIDER_IDS_MAP } from 'constants/providers'
 import {formActions, alertActions} from 'shared/actions'
 import {
@@ -28,12 +29,13 @@ class ViewContentAudit extends Component {
     this.togglePending = this.togglePending.bind(this)
     this.setFilters = this.setFilters.bind(this)
     this.auditSite = this.auditSite.bind(this)
+    this.fetchAudits = this.fetchAudits.bind(this)
   }
 
   componentWillMount() {
     const {filters, goals} = this.props
+//TODO will set start and end date in api, per test (though start out with all the same)
     if (!filters || !filters.startDate) {
-      //initialize the filters with just week start date, which is default for GA anyways
       const yesterday = moment().subtract(1, "day")
       const options = {
         startDate: yesterday.clone().subtract(1, "year").format("YYYY-MM-DD"),
@@ -45,6 +47,22 @@ class ViewContentAudit extends Component {
 
       this.setFilters(options)
     }
+
+    const currentWebsiteId = Helpers.safeDataPath(this.props, "currentWebsite.id")
+    if (currentWebsiteId) {
+      this.fetchAudits(currentWebsiteId)
+    }
+
+  }
+
+  componentWillReceiveProps(props) {
+    const currentWebsiteId = Helpers.safeDataPath(props, "currentWebsite.id")
+    if (
+      currentWebsiteId &&
+      Helpers.safeDataPath(this.props, "currentWebsite.id") !== currentWebsiteId
+    ) {
+      this.fetchAudits(currentWebsiteId)
+    }
   }
 
   togglePending(value = !this.state.pending) {
@@ -52,8 +70,28 @@ class ViewContentAudit extends Component {
   }
 
   // filter should be object, keys being params that will be overwritten for the analytics filters
+  // TODO get rid of; no longer using
   setFilters(filtersToMerge, options = {}) {
     formActions.setParams("AuditContent", "filters", filtersToMerge)
+  }
+
+  fetchAudits (websiteId) {
+    const cb = () => {
+      this.setState({pending: false})
+    }
+    const onFailure = (err) => {
+      this.setState({pending: false})
+      alertActions.newAlert({
+        title: "Failure to audit content: ",
+        level: "DANGER",
+        message: err.message || "Unknown error",
+        options: {timer: false},
+      })
+    }
+
+    this.setState({pending: true})
+
+    this.props.fetchAudits({websiteId}, cb, onFailure)
   }
 
   auditSite (e) {
@@ -75,35 +113,29 @@ class ViewContentAudit extends Component {
 
     this.setState({pending: true})
 
-    // don't use props, since could be out of date (if just changed filters before props could get propogated)
-    const filters = store.getState().forms.AuditContent.filters.params
+    // be careful using props, since could be out of date (if just changed filters before props could get propogated)
+    const {audits, filters, analytics, datasetParams, currentWebsite, user} = this.props
     const dataset = analyticsHelpers.getDataset("contentAudit", filters, null, {testGroup: "nonGoals"})
 
-    const lastUsedFilters = Helpers.safeDataPath(this.props.contentAudit, `lastUsedFilters`, {})
-    const {lastUsedDataset} = this.props.datasetParams
+    let paramsToMerge = analyticsHelpers.getDatasetDefaultFilters(dataset)
+    const params = Object.assign({}, filters, paramsToMerge, {dataset, userId: user.id}, _.pick(currentWebsite, ["gscSiteUrl", "gaProfileId", "gaSiteUrl", "gaWebPropertyId", "googleAccountId"]))
 
-    if (lastUsedDataset !== dataset) {
-      //big enough change, merits resetting to defaults
-      let filtersToMerge = analyticsHelpers.getDatasetDefaultFilters(dataset)
 
-      // make sure frontend is up to date
-      this.setFilters(filtersToMerge)
-    }
+    //don't need last used anymore
+    //formActions.setParams("AuditContent", "dataset", {lastUsedDataset: dataset})
 
-    formActions.setParams("AuditContent", "dataset", {lastUsedDataset: dataset})
+    this.props.auditSite(params, cb, onFailure)
 
-    this.props.auditSite({}, dataset, cb, onFailure)
-
-    const {websiteId, profileId, webPropertyId, providerAccountId} = filters
-    if (!this.props.goals[websiteId]) {
-      this.props.getGoals({websiteId, providerAccountId}) //only be websiteId for now. can manually sort by profile or webproperty in frontend later too
+    //getting goals now too
+    const {websiteId, profileId, gaWebPropertyId, googleAccountId} = params
+    if (!this.props.goals[gaWebPropertyId]) {
+      this.props.getGoals({gaWebPropertyId, googleAccountId}) //only be websiteId for now. can manually sort by profile or webproperty in frontend later too
     }
   }
 
   render () {
     const {pending} = this.state
-    const {googleAccounts, filters, analytics, datasetParams} = this.props
-    const currentGoogleAccount = googleAccounts && googleAccounts[0]
+    const {audits, filters, analytics, datasetParams, websites, currentWebsite} = this.props
 
     //wait to finish initializing store at least
     if (!filters) {
@@ -117,21 +149,34 @@ class ViewContentAudit extends Component {
       <div className={classes.viewAnalytics}>
         <h1>Content Audit</h1>
 
-        <AnalyticsFilters
-          togglePending={this.togglePending}
-          setAnalyticsFilters={this.setFilters}
-          getAnalytics={this.auditSite}
-          filters={filters}
-        />
+        {!currentWebsite ? (
+          <AuditSiteSetup
+            togglePending={this.togglePending}
+          />
+        ) : (
+          <div>
+            <div>{currentWebsite.name}</div>
+            {Object.keys(audits).length ? (
+              <div>
+                <ContentAuditTable
+                  currentWebsite={currentWebsite}
+                />
+              </div>
+            ) : (
+              <div>
+                No audits yet. Click below to get started!
+                <Button
+                  onClick={this.auditSite}
+                  className={classes.twoColumns}
+                >
+                  Audit site
+                </Button>
+              </div>
+            )}
+          </div>
+        )}
 
-        {false && <Button
-          onClick={this.auditSite}
-          className={classes.twoColumns}
-        >
-          Audit site
-        </Button>}
 
-        <ContentAuditTable/>
       </div>
     )
   }
@@ -141,6 +186,12 @@ const mapDispatchToProps = (dispatch) => {
   return {
     getGoals: (payload, cb, onFailure) => dispatch({
       type: GET_GA_GOALS_REQUEST,
+      payload,
+      cb,
+      onFailure,
+    }),
+    fetchAudits: (payload, cb, onFailure) => dispatch({
+      type: FETCH_AUDIT_REQUEST,
       payload,
       cb,
       onFailure,
@@ -158,11 +209,12 @@ const mapDispatchToProps = (dispatch) => {
 const mapStateToProps = state => {
   return {
     analytics: state.analytics,
+    audits: state.audits || {},
     contentAudit: state.contentAudit,
     user: state.user,
     goals: state.goals,
-    googleAccounts: Helpers.safeDataPath(state, "providerAccounts.GOOGLE", []).filter((account) => !account.unsupportedProvider),
     websites: state.websites,
+    currentWebsite: state.websites && state.websites[0],
     datasetParams: Helpers.safeDataPath(state, "forms.AuditContent.dataset.params", {}),
     filters: Helpers.safeDataPath(state, "forms.AuditContent.filters.params", {}),
   }

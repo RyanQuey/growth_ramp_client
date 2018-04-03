@@ -186,9 +186,9 @@ const analyticsHelpers = {
     const tld = parts.pop()
     const domain = parts.pop()
 
-    const gscUrls = Object.keys(gscSites)
+    const gscSiteUrls = Object.keys(gscSites)
 
-    let matches = gscUrls.filter(url => url.includes(domain))
+    let matches = gscSiteUrls.filter(url => url.includes(domain))
 
     let match
     if (matches.length === 1) {
@@ -198,7 +198,7 @@ const analyticsHelpers = {
       return //nothing for now
 
     } else if (matches.length > 1) {
-      let closerMatches = gscUrls.filter(url => url.includes(`${domain}.${tld}`))
+      let closerMatches = gscSiteUrls.filter(url => url.includes(`${domain}.${tld}`))
 
       if (closerMatches.length === 1) {
         match = closerMatches[0]
@@ -260,16 +260,14 @@ const analyticsHelpers = {
 
   // checks with analytics apis to see if user has access, and gets other info needed for the external api
   // wrapper around several other helpers
-  getExternalApiInfo: (gaUrl, dataset, websites) => {
+  getExternalApiInfo: (gscSiteUrl, dataset, availableWebsites) => {
     const targetApis = analyticsHelpers.whomToAsk(dataset)
     let gscStatus = {status: "ready", message: ""}
 
-    let gscUrl
     if (targetApis.includes("GoogleSearchConsole")) {
       // check if they have gsc setup with this google acct
-      gscUrl = analyticsHelpers.getGSCUrlFromGAUrl(gaUrl, websites.gscSites)
-console.log("gsc url", gscUrl);
-      let gscUrlData = gscUrl && websites.gscSites[gscUrl]
+console.log("gsc url", gscSiteUrl);
+      let gscUrlData = gscSiteUrl && availableWebsites.gscSites[gscSiteUrl]
 
       if (gscUrlData && ["siteOwner", "siteRestrictedUser", "siteFullUser"].includes(gscUrlData.permissionLevel)) {
         // we are currently read-only, so any of these are sufficient
@@ -278,7 +276,7 @@ console.log("gsc url", gscUrl);
       } else if (!gscUrlData) {
         // website is not registered with the google accts GR has access to
         gscStatus.status = "not-found"
-        gscStatus.message = `Google Search Console has not been setup for ${gaUrl} with any of the Google accounts you have linked to Growth Ramp. Link a new Google account that has permission to use Google Search Console for ${gaUrl} or get permission with one of your currently linked Google accounts`
+        gscStatus.message = `Google Search Console has not been setup for ${gscSiteUrl} with any of the Google accounts you have linked to Growth Ramp. Link a new Google account that has permission to use Google Search Console for ${gscSiteUrl} or get permission with one of your currently linked Google accounts`
 
       } else if (["siteUnverifiedUser"].includes(gscUrlData.permissionLevel)) {
         // they registered, but don't have any permissions, so need to get that
@@ -288,11 +286,11 @@ console.log("gsc url", gscUrl);
         let acctUsername = linkedAccount.userName || linkedAccount.email
 
         gscStatus.status = "unverified"
-        gscStatus.message = `Google Search Console has been setup for ${gaUrl} with your Google account ${acctUsername}. Verify ${gaUrl} with ${acctUsername} to get stats and actionable info from your keyword data.`
+        gscStatus.message = `Google Search Console has been setup for ${gscSiteUrl} with your Google account ${acctUsername}. Verify ${gscSiteUrl} with ${acctUsername} to get stats and actionable info from your keyword data.`
       }
     }
 
-    return {gscStatus, gscUrl, targetApis}
+    return {gscStatus, gscSiteUrl, targetApis}
   },
 
   // manually sorting

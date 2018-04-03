@@ -7,6 +7,7 @@ import {
   FETCH_CURRENT_USER_SUCCESS,
   FETCH_PLAN_SUCCESS,
   FETCH_PROVIDER_SUCCESS,
+  FETCH_WEBSITE_SUCCESS,
   HANDLE_ERRORS,
   INITIALIZE_USER_ACCOUNT_SUBSCRIPTION_REQUEST,
   REFRESH_CHANNEL_TYPE_REQUEST,
@@ -253,6 +254,7 @@ function _handleInitialUserData(data, options = {}) {
   store.dispatch({type: FETCH_ACCOUNT_SUBSCRIPTION_SUCCESS, payload: data.accountSubscription})
   store.dispatch({type: FETCH_PROVIDER_SUCCESS, payload: data.providerAccounts})
   store.dispatch({type: FETCH_PLAN_SUCCESS, payload: data.plans})
+  store.dispatch({type: FETCH_WEBSITE_SUCCESS, payload: data.websites})
 
   //refresh all channel lists
   //doesn't need to succeed; so don't raise error if doesn't necesarily, and make sure everything just moves forward
