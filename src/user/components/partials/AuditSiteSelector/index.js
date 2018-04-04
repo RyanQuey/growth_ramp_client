@@ -84,7 +84,7 @@ class AuditSiteSelector extends Component {
     return (
       <div className={classes.auditSiteSelector}>
         <Flexbox className={classes.websiteFilters}>
-          {Object.keys(websites).length && (
+          {Object.keys(websites).length ? (
             <div className={classes.websiteSelect}>
               <div>Website: </div>
               <Select
@@ -94,7 +94,7 @@ class AuditSiteSelector extends Component {
                 onChange={this.setCurrentWebsite}
               />
             </div>
-          )}
+          ) : null}
           {!addingSite ? (
             <Button onClick={this.toggleAddingSite.bind(this, true)}><Icon name="plus-circle"/>&nbsp;Add Site</Button>
           ) : (

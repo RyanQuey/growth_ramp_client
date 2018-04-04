@@ -33,8 +33,6 @@ class AuditSiteSetup extends Component {
   }
 
   componentDidMount() {
-    // TODO on mount check if website has the webpage we're looking for, rather than just clearing
-    this.props.history.push(this.props.location.pathname)
   }
 
   componentWillReceiveProps(props) {
@@ -76,7 +74,7 @@ class AuditSiteSetup extends Component {
     const {gaSites = {}} = availableWebsites
     const chosenWebsite = gaSites[this.state.websiteId]
 
-    return chosenWebsite && currentWebsite.profiles.map((profile) => ({
+    return chosenWebsite && chosenWebsite.profiles.map((profile) => ({
       value: {profile},
       label: profile.name,
       profile,

@@ -63,14 +63,12 @@ class AnalyticsTable extends Component {
   }
 
   render() {
-    const {baseOrganization, analytics, filters, location, tableDatasetParams, websites} = this.props
-    const tableDataset = analyticsHelpers.getDataset("table", filters, baseOrganization, tableDatasetParams)
-    const {gscStatus, gscUrl, targetApis} = analyticsHelpers.getExternalApiInfo(filters.websiteUrl, tableDataset, websites)
-    const theseAnalytics = analytics[tableDataset]
+    const {baseOrganization, analytics, filters, location, tableDatasetParams, websites, currentWebsite} = this.props
+    if (!currentWebsite || !analytics) {return null}
 
-    if (!analytics) {
-      return null
-    }
+    const tableDataset = analyticsHelpers.getDataset("table", filters, baseOrganization, tableDatasetParams)
+    const {gscStatus, gscUrl, targetApis} = analyticsHelpers.getExternalApiInfo(currentWebsite.gscSiteUrl, tableDataset, websites)
+    const theseAnalytics = analytics[tableDataset]
 
     let headers, rows, totals
     const webpageQuery = new URLSearchParams(location.search).get("webpage")
@@ -93,6 +91,7 @@ class AnalyticsTable extends Component {
     const orderByFilter = filters && filters.orderBy
 
     const haveGSCAccess = gscStatus.status === "ready"
+console.log("s", haveGSCAccess, theseAnalytics, tableDataset);
     if ((targetApis.includes("GoogleSearchConsole") && !haveGSCAccess) || !theseAnalytics || !Object.keys(theseAnalytics).length) {
       return null
     }
@@ -168,6 +167,7 @@ const mapStateToProps = state => {
   return {
     //really is campaign posts params
     currentPage: state.currentPage,
+    currentWebsite: state.currentWebsite,
     analytics: state.analytics,
     filters: Helpers.safeDataPath(state, "forms.Analytics.filters.params"),
     websites: state.websites,

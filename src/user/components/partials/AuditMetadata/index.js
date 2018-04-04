@@ -91,19 +91,19 @@ console.log("running");
 
     let prettyDateLength, startDate, endDate
     if (currentAudit) {
-      startDate = moment(currentAudit.createdAt).subtract(1, "day").format("YYYY-MM-DD")
+      endDate = moment(currentAudit.createdAt).subtract(1, "day").format("YYYY-MM-DD")
 
       if (currentAudit.dateLength === "month") {
         prettyDateLength = "Monthly Audit"
-        endDate = moment(startDate).subtract(1, "month").format("YYYY-MM-DD")
+        startDate = moment(startDate).subtract(1, "month").format("YYYY-MM-DD")
 
       } else if (currentAudit.dateLength === "quarter") {
         prettyDateLength = "Quarterly Audit"
-        endDate = moment(startDate).subtract(3, "months").format("YYYY-MM-DD")
+        startDate = moment(startDate).subtract(3, "months").format("YYYY-MM-DD")
 
       } else if (currentAudit.dateLength === "year") {
         prettyDateLength = "Yearly Audit"
-        endDate = moment(startDate).subtract(1, "year").format("YYYY-MM-DD")
+        startDate = moment(startDate).subtract(1, "year").format("YYYY-MM-DD")
       }
     }
 

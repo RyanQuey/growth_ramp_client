@@ -1,5 +1,6 @@
 import {
   FETCH_AUDIT_SUCCESS,
+  AUDIT_CONTENT_SUCCESS,
   SIGN_OUT,
 } from 'constants/actionTypes'
 
@@ -16,6 +17,9 @@ const contentAuditReducer = (state = {}, action) => {
       }
 
       return newState
+    case AUDIT_CONTENT_SUCCESS:
+      newState = Object.assign({}, state)
+      newState[pld.id] = pld
 
     case SIGN_OUT:
       return {}

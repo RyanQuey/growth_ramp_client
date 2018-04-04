@@ -399,6 +399,7 @@ const mapStateToProps = state => {
     campaigns: state.campaigns,
     googleAccounts: Helpers.safeDataPath(state, "providerAccounts.GOOGLE", []).filter((account) => !account.unsupportedProvider),
     websites: state.websites,
+    currentWebsite: state.currentWebsite,
     tableDatasetParams: Helpers.safeDataPath(state, "forms.Analytics.tableDataset.params", {}),
     filters: Helpers.safeDataPath(state, "forms.Analytics.filters.params", {}),
     chartFilters: Helpers.safeDataPath(state, "forms.Analytics.chartFilters.params", {}),

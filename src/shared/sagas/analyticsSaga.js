@@ -240,7 +240,7 @@ function* auditContent (action) {
 
 
     yield all([
-      put({type: AUDIT_CONTENT_SUCCESS, payload: {results: res.data, dataset, filters: filtersObj}})
+      put({type: AUDIT_CONTENT_SUCCESS, payload: res.data.audit})
     ])
     action.cb && action.cb(res.data)
 

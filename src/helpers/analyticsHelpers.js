@@ -264,16 +264,18 @@ const analyticsHelpers = {
 
   // checks with analytics apis to see if user has access, and gets other info needed for the external api
   // wrapper around several other helpers
+//TODO get rid of that first arg
   getExternalApiInfo: (gscSiteUrl, dataset, availableWebsites) => {
     const targetApis = analyticsHelpers.whomToAsk(dataset)
-    let gscStatus = {status: "ready", message: ""}
 
+    const {currentWebsite} = store.getState()
+    gscSiteUrl = gscSiteUrl || currentWebsite.gscSiteUrl
+
+    let gscStatus = {status: "ready", message: ""}
     if (targetApis.includes("GoogleSearchConsole")) {
       // check if they have gsc setup with this google acct
-console.log("gsc url", gscSiteUrl);
-      let gscUrlData = gscSiteUrl && availableWebsites.gscSites[gscSiteUrl]
 
-      if (gscUrlData && ["siteOwner", "siteRestrictedUser", "siteFullUser"].includes(gscUrlData.permissionLevel)) {
+      if (currentWebsite && ["siteOwner", "siteRestrictedUser", "siteFullUser"].includes(currentWebsite.gscPermissionLevel)) {
         // we are currently read-only, so any of these are sufficient
         gscStatus.status = "ready"
 
