@@ -2,7 +2,6 @@ import { Component } from 'react';
 import { connect } from 'react-redux'
 import DatePicker from 'react-datepicker'
 import {
-  FETCH_ALL_GA_ACCOUNTS_REQUEST,
   REACTIVATE_OR_CREATE_WEBSITE_REQUEST,
 } from 'constants/actionTypes'
 import { Button, Flexbox, Icon, Form } from 'shared/components/elements'
@@ -26,9 +25,7 @@ class AuditSiteSetup extends Component {
       profileId: false,
     }
 
-    this.refreshGAAccounts = this.refreshGAAccounts.bind(this)
     this.setAnalyticsProfileFilter = this.setAnalyticsProfileFilter.bind(this)
-    this.selectFilterOption = this.selectFilterOption.bind(this)
     this.websiteOptions = this.websiteOptions.bind(this)
     this.profileOptions = this.profileOptions.bind(this)
     this.setWebsiteFilter = this.setWebsiteFilter.bind(this)
@@ -38,7 +35,25 @@ class AuditSiteSetup extends Component {
   componentDidMount() {
     // TODO on mount check if website has the webpage we're looking for, rather than just clearing
     this.props.history.push(this.props.location.pathname)
-    this.refreshGAAccounts()
+  }
+
+  componentWillReceiveProps(props) {
+    const gaSites = props.availableWebsites.gaSites
+    const {websiteId, profileId} = this.state
+    if (!websiteId && gaSites) {
+      //is initializing table for first time; default to first site and first profile of that site (often will be the only profile...total)
+      let matchingIndex
+      const defaultSite = gaSites[Object.keys(gaSites)[0]]
+      let defaultProfileId
+      if (defaultSite && defaultSite.profiles && defaultSite.profiles.length) {
+        defaultProfileId = defaultSite.profiles[0].id
+      }
+
+      this.setState({
+        websiteId: defaultSite.id,
+        profileId: defaultProfileId,
+      })
+    }
   }
 
   websiteOptions () {
@@ -68,57 +83,6 @@ class AuditSiteSetup extends Component {
     }))
   }
 
-  //gets the accounts and all the availableWebsites we could filter/show
-  refreshGAAccounts(cbcb) {
-    const cb = ({gaAccounts, gscAccounts}) => {
-      this.setState({pending: false})
-      const {websiteId, profileId} = this.state
-
-      if (!websiteId) {
-        //is initializing table for first time; default to first site and first profile of that site (often will be the only profile...total)
-        let matchingIndex
-        const gAccountWithSite = gaAccounts && gaAccounts.find((acct) => {
-          const analyticsAccounts = acct && acct.items
-          //find first analytics account with a website and grab that site
-          const hasSite = analyticsAccounts.some((account, index) => {
-            matchingIndex = index
-            // find first one with at least one web property (aka website) and one profile (aka view)
-            return Helpers.safeDataPath(account, `webProperties.0.profiles.0`, false)
-          })
-
-          return hasSite
-        })
-        const defaultSite = gAccountWithSite && gAccountWithSite.items[matchingIndex].webProperties[0]
-        let defaultProfileId
-
-        if (defaultSite && defaultSite.profiles && defaultSite.profiles.length) {
-          defaultProfileId = defaultSite.profiles[0].id
-        }
-console.log(defaultSite);
-        this.setState({
-          websiteId: defaultSite.id,
-          profileId: defaultProfileId,
-        })
-      }
-    }
-    const onFailure = (err) => {
-      this.setState({pending: false})
-      alertActions.newAlert({
-        title: "Failure to fetch Google Analytics accounts: ",
-        level: "DANGER",
-        message: err.message || "Unknown error",
-        options: {timer: false},
-      })
-    }
-
-
-    this.setState({pending: true})
-    this.props.fetchAllGAAccounts({}, cb, onFailure)
-  }
-
-  selectFilterOption (option) {
-console.log(option);
-  }
 
   //for filtering which availableWebsites to show analytics for
   setWebsiteFilter (websiteOption) {
@@ -266,7 +230,6 @@ console.log(option);
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    fetchAllGAAccounts: (payload, cb, onFailure) => dispatch({type: FETCH_ALL_GA_ACCOUNTS_REQUEST, payload, cb, onFailure}),
     reactivateOrCreateWebsite:  (payload, cb, onFailure) => dispatch({type: REACTIVATE_OR_CREATE_WEBSITE_REQUEST, payload, cb, onFailure}),
   }
 }
@@ -274,7 +237,6 @@ const mapDispatchToProps = (dispatch) => {
 const mapStateToProps = state => {
   return {
     user: state.user,
-    campaigns: state.campaigns,
     googleAccounts: Helpers.safeDataPath(state, "providerAccounts.GOOGLE", []).filter((account) => !account.unsupportedProvider),
     availableWebsites: state.availableWebsites,
     dirty: Helpers.safeDataPath(state, "forms.Analytics.filters.dirty"),

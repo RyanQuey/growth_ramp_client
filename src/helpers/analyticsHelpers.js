@@ -154,6 +154,9 @@ const analyticsHelpers = {
       datasetArr.push(columnSetsStr)
 
     } else if (displayType === "contentAudit") {
+      // contentAudit-${auditType}-${how tests will be specified}-${which keys/groups of tests to run}
+
+/*
       if (options.testGroup) {
         datasetArr.push("testGroup")
         datasetArr.push(options.testGroup)
@@ -167,6 +170,7 @@ const analyticsHelpers = {
         datasetArr.push("all")
 
       }
+*/
     }
 
     const dataset = datasetArr.join("-")

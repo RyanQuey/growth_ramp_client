@@ -1,9 +1,9 @@
 import { Component } from 'react';
 import { connect } from 'react-redux'
 import { Flexbox, Button, Icon, Card } from 'shared/components/elements'
-import {  } from 'user/components/partials'
+import { Select } from 'shared/components/groups'
+import { TestResult } from 'user/components/partials'
 import { SET_CURRENT_POST_TEMPLATE, SET_CURRENT_POST, SET_CURRENT_MODAL, UPDATE_PLAN_REQUEST  } from 'constants/actionTypes'
-import { TestResult } from 'user/components/groups'
 import { AUDIT_TESTS } from 'constants/auditTests'
 import {UTM_TYPES} from 'constants/posts'
 import {formActions} from 'shared/actions'
@@ -26,8 +26,17 @@ class ContentAuditTable extends Component {
   }
 
   render() {
-    const {contentAudit} = this.props
-    if (!Object.keys(contentAudit).length || contentAudit.err) return null
+    const {currentAudit, auditLists, auditListItems} = this.props
+    if (
+      !currentAudit.id || currentAudit.err
+    ) return null
+
+    const currentAuditLists = auditLists[currentAudit.id]
+
+    // check if they picked an audit, but haven't finished loading those lists yet
+    if (
+      !currentAuditLists
+    ) return <Icon name="spinner"/>
 
     return (
       <div className={`${classes.container} ${this.props.hidden ? classes.hidden : ""}`}>
@@ -46,8 +55,27 @@ class ContentAuditTable extends Component {
           {Object.keys(AUDIT_TESTS).map((testKey, index) => {
             let alternatingClass = (index % 2) == 1 ? "oddRow" : "evenRow"
             const testMetadata = AUDIT_TESTS[testKey]
-            const testResult = contentAudit.results[testKey]
-            let totalItemsInResult = testResult && testResult.lists.reduce((acc, list) => (acc + list.items.length), 0)
+
+            const testListsIds = Object.keys(currentAuditLists).filter((listId) => currentAuditLists[listId].testKey === testKey)
+            const testListsArr = testListsIds.map((listId) => currentAuditLists[listId])
+
+            if (
+              !testListsArr
+            ) return <Icon name="spinner"/>
+
+
+            let totalItemsInTestCount = 0
+            let fixedItemsInTestCount = 0
+            let unfixedItemsInTestCount = 0
+            testListsArr && testListsArr.forEach((list) => {
+              if (auditListItems[list.id]) {
+                let listItemForList = Object.keys(auditListItems[list.id])
+
+                totalItemsInTestCount += listItemForList.length
+                fixedItemsInTestCount += listItemForList.filter((item) => item.fixed).length
+                unfixedItemsInTestCount += listItemForList.filter((item) => !item.fixed).length
+              }
+            })
 
             return (
               <Flexbox
@@ -66,22 +94,17 @@ class ContentAuditTable extends Component {
                     <Icon name={this.state[testKey] === "open" ? "angle-down" : "angle-right"} />&nbsp;
                     <Icon name={testKey.toLowerCase()} />&nbsp;
                     {testMetadata.question}&nbsp;
-                    <span className={classes.previewText}>({testResult ? totalItemsInResult : "test coming soon"})</span>
+                    <span className={classes.previewText}>({testListsArr.length ? totalItemsInTestCount : "test coming soon"})</span>
                   </div>
 
                 </Flexbox>
 
                 {this.state[testKey] === "open" &&
                   <Flexbox className={`${classes.lists} ${classes.row}`} direction="column" align="center" flexWrap="wrap" justify="space-between">
-                    {testResult ? (
-                      <TestResult
-                        testKey={testKey}
-                        testResult={testResult}
-                        totalItemsInResult={totalItemsInResult}
-                      />
-                    ) : (
-                      <div>Coming soon</div>
-                    )}
+                    <TestResult
+                      testKey={testKey}
+                      testListsArr={testListsArr}
+                    />
                   </Flexbox>
                 }
               </Flexbox>
@@ -96,9 +119,12 @@ class ContentAuditTable extends Component {
 const mapStateToProps = state => {
   return {
     //really is campaign posts params
+    audit: state.audit,
     user: state.user,
     currentPost: state.currentPost,
-    contentAudit: state.contentAudit,
+    currentAudit: state.currentAudit,
+    auditLists: state.auditLists,
+    auditListItems: state.auditListItems,
   }
 }
 const mapDispatchToProps = (dispatch) => {

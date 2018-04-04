@@ -21,15 +21,15 @@ class TestResult extends Component {
   }
 
   render () {
-    const { testResult, testKey, totalItemsInResult } = this.props
-    const testLists = AUDIT_TESTS[testKey].lists
-    const resultLists = testResult.lists
-
+    const { testListsArr, testKey, auditListItems } = this.props
+    const testListTypes = AUDIT_TESTS[testKey].lists
+console.log("test lists arr", testListsArr);
     return (
       <div className={classes.testResult}>
-        {Object.keys(testLists).map((listKey, index) => {
-          let listMetadata = testLists[listKey]
-          const listResults = resultLists.find((list) => list.key === listKey)
+        {Object.keys(testListTypes).map((listKey, index) => {
+          let listMetadata = testListTypes[listKey]
+          const list = testListsArr.find((list) => list.listKey === listKey)
+          const listItems = auditListItems[list.id]
 
           return <Flexbox key={listKey} direction="column">
             <Flexbox justify="space-between" align="center">
@@ -39,14 +39,15 @@ class TestResult extends Component {
               )}
             </Flexbox>
 
-            {listResults.items.length === 0 ? (
+            {!listItems ? (
               <div>Well done, nothing needs improvement right now!</div>
             ) : (
-              listResults.items.map((item) => {
+              Object.keys(listItems).map((itemId) => {
+                const item = listItems[itemId]
                 return  <Flexbox key={item.dimension} justify="space-between" align="center">
                   <div>{item.dimension}</div>
                   {Object.keys(listMetadata.metrics).map((metric) =>
-                    <div key={metric}>{item[metric]}</div>
+                    <div key={metric}>{item.metrics[metric]}</div>
                   )}
                 </Flexbox>
               })
@@ -67,6 +68,7 @@ const mapDispatchToProps = (dispatch) => {
 
 const mapStateToProps = state => {
   return {
+    auditListItems: state.auditListItems,
   }
 }
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(TestResult))

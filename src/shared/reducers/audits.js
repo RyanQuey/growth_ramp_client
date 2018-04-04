@@ -1,5 +1,5 @@
 import {
-  AUDIT_CONTENT_SUCCESS,
+  FETCH_AUDIT_SUCCESS,
   SIGN_OUT,
 } from 'constants/actionTypes'
 
@@ -9,8 +9,13 @@ const contentAuditReducer = (state = {}, action) => {
   const pld = action.payload
   switch (action.type) {
 
-    case AUDIT_CONTENT_SUCCESS:
-      return Object.assign({}, state, pld);
+    case FETCH_AUDIT_SUCCESS:
+      newState = Object.assign({}, state)
+      for (let audit of pld) {
+        newState[audit.id] = audit
+      }
+
+      return newState
 
     case SIGN_OUT:
       return {}

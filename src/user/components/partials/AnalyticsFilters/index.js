@@ -7,7 +7,7 @@ import {
 } from 'constants/actionTypes'
 import { Button, Flexbox, Icon, Form } from 'shared/components/elements'
 import { Select } from 'shared/components/groups'
-import { SocialLogin } from 'shared/components/partials'
+import { AuditSiteSelector } from 'user/components/partials'
 import { PROVIDERS, PROVIDER_IDS_MAP } from 'constants/providers'
 import { TIME_RANGE_OPTIONS, } from 'constants/analytics'
 import {formActions, alertActions} from 'shared/actions'
@@ -23,47 +23,23 @@ class AnalyticsFilters extends Component {
       pending: true,
     }
 
-    this.refreshGAAccounts = this.refreshGAAccounts.bind(this)
-    this.setAnalyticsProfileFilter = this.setAnalyticsProfileFilter.bind(this)
     this.selectFilterOption = this.selectFilterOption.bind(this)
     this.handleCalendarClick = this.handleCalendarClick.bind(this)
-    this.websiteOptions = this.websiteOptions.bind(this)
-    this.profileOptions = this.profileOptions.bind(this)
-    this.setWebsiteFilter = this.setWebsiteFilter.bind(this)
   }
 
   componentDidMount() {
     // TODO on mount check if website has the webpage we're looking for, rather than just clearing
     this.props.history.push(this.props.location.pathname)
-    this.refreshGAAccounts()
+
+    // need to have availableWebsites
+    if (!this.props.availableWebsites.gaSites) {
+      this.props.refreshGAAccounts()
+    }
   }
-
-  websiteOptions () {
-    const {googleAccounts, availableWebsites, dirty, filters} = this.props
-    const {gaSites} = availableWebsites
-
-    return Object.keys(gaSites).map((id) => {
-      let website = gaSites[id]
-
-      return {
-        label: website.name || website.websiteUrl,
-        value: {website},
-        website,
-      }
-    })
-  }
-
-  profileOptions () {
-    const {googleAccounts, availableWebsites, dirty, filters} = this.props
-    const {websiteId, profileId, startDate, endDate, dimensionFilterClauses} = filters
-    const {gaSites} = availableWebsites
-    const currentWebsite = gaSites[websiteId]
-
-    return currentWebsite && currentWebsite.profiles.map((profile) => ({
-      value: {profile},
-      label: profile.name,
-      profile,
-    }))
+  componentWillReceiveProps(props) {
+    if (Helpers.safeDataPath(props, "currentWebsite.id") !== Helpers.safeDataPath(this.props, "currentWebsite.id")) {
+      this.props.getAnalytics()
+    }
   }
 
   timeRangeOptions () {
@@ -98,57 +74,6 @@ class AnalyticsFilters extends Component {
     ]
   }
 
-  //gets the accounts and all the websites we could filter/show
-  refreshGAAccounts(cbcb) {
-    const cb = ({gaAccounts, gscAccounts}) => {
-      this.setState({pending: false})
-      const {websiteId, profileId} = this.props
-
-      if (!websiteId) {
-        //is initializing table for first time; default to first site and first profile of that site (often will be the only profile...total)
-        let matchingIndex
-        const gAccountWithSite = gaAccounts && gaAccounts.find((acct) => {
-          const analyticsAccounts = acct && acct.items
-          //find first analytics account with a website and grab that site
-          const hasSite = analyticsAccounts.some((account, index) => {
-            matchingIndex = index
-            // find first one with at least one web property (aka website) and one profile (aka view)
-            return Helpers.safeDataPath(account, `webProperties.0.profiles.0`, false)
-          })
-
-          return hasSite
-        })
-        const defaultSite = gAccountWithSite && gAccountWithSite.items[matchingIndex].webProperties[0]
-
-        if (defaultSite) {
-          this.props.setAnalyticsFilters({
-            websiteId: defaultSite.id,
-            websiteUrl: defaultSite.websiteUrl,
-            providerAccountId: defaultSite.providerAccountId,
-            profileId: Helpers.safeDataPath(defaultSite, `profiles.0.id`, ""),
-          })
-
-          this.props.getAnalytics()
-        } else {
-          this.setState({pending: false})
-        }
-      }
-    }
-    const onFailure = (err) => {
-      this.setState({pending: false})
-      alertActions.newAlert({
-        title: "Failure to fetch Google Analytics accounts: ",
-        level: "DANGER",
-        message: err.message || "Unknown error",
-        options: {timer: false},
-      })
-    }
-
-
-    this.setState({pending: true})
-    this.props.fetchAllGAAccounts({}, cb, onFailure)
-  }
-
   selectFilterOption (option) {
     this.props.setAnalyticsFilters(option.value)
     this.props.getAnalytics()
@@ -160,106 +85,26 @@ class AnalyticsFilters extends Component {
     this.props.getAnalytics()
   }
 
-  //for filtering which websites to show analytics for
-  setWebsiteFilter (websiteOption) {
-    const {website} = websiteOption
-
-    console.log("website", website)
-    // clear query string since new website wouldn't have the same webpages
-    this.props.history.push(this.props.location.pathname)
-
-
-    //default to first profile
-    let defaultProfileId = ""
-    if (website.profiles && website.profiles.length) {
-      defaultProfileId = website.profiles[0].id
-    }
-
-    this.props.setAnalyticsFilters({
-      websiteId: website.id,
-      providerAccountId: website.providerAccountId,
-      webPropertyId: website.internalWebPropertyId,
-      profileId: defaultProfileId,
-      websiteUrl: website.websiteUrl,
-    })
-
-    // refresh the data
-    this.props.getAnalytics()
-  }
-
-  // called "view" or "profile" by GA
-  setAnalyticsProfileFilter({profile}) {
-    this.props.setAnalyticsFilters({
-      profileId: profile.id,
-    })
-
-    // refresh the data
-    this.props.getAnalytics()
-  }
-
   render () {
     const {pending} = this.state
-    const {googleAccounts, availableWebsites, dirty, filters} = this.props
-    const {gaSites} = availableWebsites
+    const {dirty, filters, currentWebsite} = this.props
 
-    if (!filters || !gaSites) {
+    if (!filters) {
       return <Icon name="spinner"/>
     }
     const {websiteId, profileId, startDate, endDate, dimensionFilterClauses} = filters
-
-    const currentWebsite = gaSites[websiteId]
-    const currentGoogleAccount = googleAccounts && googleAccounts[0]
-
 
     //set by function so date will refresh, in case goes past midnight and they didn't refresh browser or something
     const timeRangeOptions = this.timeRangeOptions()
     const currentTimeRangeOption = timeRangeOptions.find((option) => option.value.startDate === startDate)
 
-    const websiteOptions = this.websiteOptions() || []
-    const currentWebsiteOption = websiteOptions.find((option) => option.website.id === websiteId)
-
-    const profileOptions = this.profileOptions() || []
-    const currentProfileOption = profileOptions.find((option) => option.profile.id === profileId)
-
-
     return (
       <Form className={classes.filtersForm} onSubmit={this.props.getAnalytics}>
         <Flexbox className={classes.websiteFilters}>
-          <div className={classes.googleBtn}>
-            <SocialLogin
-              pending={pending}
-              togglePending={this.props.togglePending}
-              providers={_.pick(PROVIDERS, "GOOGLE")}
-            />
-            <div>Google Account: {currentGoogleAccount ? currentGoogleAccount.userName : "None available"}</div>
-          </div>
-
-          {Object.keys(gaSites).length && (
-            <div className={classes.websiteSelect}>
-              <div>Website: </div>
-              <Select
-                options={websiteOptions}
-                currentOption={currentWebsiteOption || websiteOptions[0]}
-                name="website"
-                onChange={this.setWebsiteFilter}
-              />
-            </div>
-          )}
-
-          {currentWebsite &&
-            <div className={classes.websiteSelect}>
-              <div>Analytics Profile: </div>
-              <Select
-                options={profileOptions}
-                currentOption={currentProfileOption || profileOptions[0]}
-                name="profileId"
-                onChange={this.setAnalyticsProfileFilter}
-              />
-            </div>
-          }
+          <AuditSiteSelector />
         </Flexbox>
 
-        {currentProfileOption || profileOptions[0] ? (
+        {currentWebsite ? (
           <div className={classes.datetimeFilters}>
             <Flexbox>
               <div>
@@ -323,9 +168,7 @@ const mapDispatchToProps = (dispatch) => {
 
 const mapStateToProps = state => {
   return {
-    user: state.user,
-    campaigns: state.campaigns,
-    googleAccounts: Helpers.safeDataPath(state, "providerAccounts.GOOGLE", []).filter((account) => !account.unsupportedProvider),
+    currentWebsite: state.currentWebsite,
     availableWebsites: state.availableWebsites,
     dirty: Helpers.safeDataPath(state, "forms.Analytics.filters.dirty"),
   }

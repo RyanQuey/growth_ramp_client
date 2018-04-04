@@ -2,6 +2,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux'
 import {
   GET_ANALYTICS_REQUEST,
+  FETCH_ALL_GA_ACCOUNTS_REQUEST, //does gsc too actually, any api with websites
 } from 'constants/actionTypes'
 import { Button, Flexbox, Icon, Form } from 'shared/components/elements'
 import {
@@ -28,6 +29,7 @@ class ViewAnalytics extends Component {
     this.setAnalyticsFilters = this.setAnalyticsFilters.bind(this)
     this.resetPagination = this.resetPagination.bind(this)
     this.getAnalytics = this.getAnalytics.bind(this)
+    this.refreshGAAccounts = this.refreshGAAccounts.bind(this)
     this.getChartAnalytics = this.getChartAnalytics.bind(this)
     this.onPageChange = this.onPageChange.bind(this)
     this.onPageSizeChange = this.onPageSizeChange.bind(this)
@@ -65,6 +67,25 @@ class ViewAnalytics extends Component {
       this.getAnalytics(null, newBaseOrganization)
     }
 
+  }
+
+  //gets the accounts and all the availableWebsites we could filter/show
+  refreshGAAccounts(cbcb) {
+    const cb = ({gaAccounts, gscAccounts}) => {
+      this.setState({pending: false})
+    }
+    const onFailure = (err) => {
+      this.setState({pending: false})
+      alertActions.newAlert({
+        title: "Failure to fetch Google Analytics accounts: ",
+        level: "DANGER",
+        message: err.message || "Unknown error",
+        options: {timer: false},
+      })
+    }
+
+    this.setState({pending: true})
+    this.props.fetchAllGAAccounts({}, cb, onFailure)
   }
 
   // use eg when checking if should refresh chart, since that uses same data if GSC is being called only right now
@@ -299,6 +320,7 @@ class ViewAnalytics extends Component {
           setAnalyticsFilters={this.setAnalyticsFilters}
           getAnalytics={this.getAnalytics}
           filters={filters}
+          refreshGAAccounts={this.refreshGAAccounts}
         />
 
         <AnalyticsChart
@@ -354,6 +376,7 @@ class ViewAnalytics extends Component {
 
 const mapDispatchToProps = (dispatch) => {
   return {
+    fetchAllGAAccounts: (payload, cb, onFailure) => dispatch({type: FETCH_ALL_GA_ACCOUNTS_REQUEST, payload, cb, onFailure}),
     getAnalytics: (payload, dataset, cb, onFailure) => dispatch({
       type: GET_ANALYTICS_REQUEST,
       payload,

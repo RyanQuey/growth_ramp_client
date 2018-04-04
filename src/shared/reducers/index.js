@@ -6,7 +6,11 @@ import rootSaga from 'shared/sagas'
 import alertReducer from './alerts'
 import analytics from './analytics'
 import availableWebsites from './availableWebsites'
-import contentAudit from './contentAudit'
+import audits from './audits'
+import currentAudit from './currentAudit'
+import currentWebsite from './currentWebsite'
+import auditLists from './auditLists'
+import auditListItems from './auditListItems'
 import errorReducer from './errors'
 import formsReducer from './forms'
 import campaignsReducer from './campaigns'
@@ -28,7 +32,10 @@ const rootReducer = combineReducers({
   accountSubscription: accountSubscriptionReducer,
   alerts: alertReducer,
   availableWebsites,
-  contentAudit,
+  audits,
+  auditLists,
+  auditListItems,
+  currentAudit,
   //the plan that the user is currently working on OR viewing
   currentPlan: currentPlanReducer,
   //the postTemplate that the user is currently working on
@@ -37,6 +44,7 @@ const rootReducer = combineReducers({
   currentPost: currentPostReducer,
   //the campaign that the user is currently working on
   currentCampaign: currentCampaignReducer,
+  currentWebsite,
   errors: errorReducer,
   campaigns: campaignsReducer,
   forms: formsReducer,

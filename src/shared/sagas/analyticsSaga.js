@@ -4,6 +4,8 @@ import {
   REACTIVATE_OR_CREATE_WEBSITE_SUCCESS,
   FETCH_ALL_GA_ACCOUNTS_REQUEST,
   FETCH_ALL_GA_ACCOUNTS_SUCCESS,
+  FETCH_AUDIT_LIST_REQUEST,
+  FETCH_AUDIT_LIST_SUCCESS,
   GET_ANALYTICS_REQUEST,
   GET_ANALYTICS_SUCCESS,
   GET_GA_GOALS_REQUEST,
@@ -54,16 +56,19 @@ function* getAnalytics(action) {
   try {
     const state = store.getState()
     const dataset = action.dataset
-    const availableWebsites = state.availableWebsites
-//TODO make consistent with site audit, and send filters in action. That way, makes sure sending right stuff, not worreid about race conditions, can customize, etc
-    const filtersObj = Object.assign({}, Helpers.safeDataPath(state, `forms.Analytics.filters.params`, {}))
-//TODO make consistent with site audit, and call websiteUrl gaSiteUrl
-    const {gscStatus, targetApis} = analyticsHelpers.getExternalApiInfo(filtersObj.gscSiteUrl, dataset, availableWebsites)
+    const {currentWebsite, availableWebsites} = state
 
+//TODO make consistent with site audit, and send filters in action. That way, makes sure sending right stuff, not worreid about race conditions, can customize, etc
+    const paramsObj = Object.assign({}, {
+        dataset
+      },
+      Helpers.safeDataPath(state, `forms.Analytics.filters.params`, {}),
+      _.pick(currentWebsite, "googleAccountId", "gscSiteUrl", "gaProfileId", "gaWebPropertyId", "gaSiteUrl"),
+    )
+//TODO make consistent with site audit, and call websiteUrl gaSiteUrl
+    const {gscStatus, targetApis} = analyticsHelpers.getExternalApiInfo(paramsObj.gscSiteUrl, dataset, availableWebsites)
 
     if (targetApis.includes("GoogleSearchConsole")) {
-      filtersObj.gscUrl = gscUrl
-//TODO make consistent with site audit, and call gscUrl gscSiteUrl
       // TODO need to handle
       const haveAccess = gscStatus.status === "ready"
       if (!haveAccess) {
@@ -79,17 +84,17 @@ function* getAnalytics(action) {
       }
     }
 
-    analyticsHelpers.addQueryToFilters(filtersObj, targetApis)
+    // in case current page's url has a query string
+    analyticsHelpers.addQueryToFilters(paramsObj, targetApis)
 
     //transfomr into array of objs, each obj with single key (a filter param).
-    //TODO just make these individual queries...just easier
-    const filtersStr = JSON.stringify(filtersObj)
-
-    const res = yield axios.get(`/api/analytics/getAnalytics?filters=${filtersStr}&dataset=${dataset}`) //eventually switch to socket
+    const query = Helpers.toQueryString(paramsObj)
+console.log(paramsObj);
+    const res = yield axios.get(`/api/analytics/getAnalytics?${query}`) //eventually switch to socket
 
 
     yield all([
-      put({type: GET_ANALYTICS_SUCCESS, payload: {results: res.data, dataset, filters: filtersObj}})
+      put({type: GET_ANALYTICS_SUCCESS, payload: {results: res.data, dataset, filters: paramsObj}})
     ])
     action.cb && action.cb(res.data)
 
@@ -104,7 +109,7 @@ function* getAnalytics(action) {
 function* getGAGoals(action) {
   try {
     //transfomr into array of objs, each obj with single key (a filter param).
-    const {webPropertyId, googleAccountId} = action.payload
+    const {gaWebPropertyId, googleAccountId} = action.payload
 
     const res = yield axios.get(`/api/analytics/getGAGoals?gaWebPropertyId=${gaWebPropertyId}&googleAccountId=${googleAccountId}`)
 
@@ -120,6 +125,7 @@ function* getGAGoals(action) {
   }
 }
 
+//might use these websites for more than just auditing...but if we do, can changer this func name easily enough
 function* createAuditWebsite(action) {
   try {
     const userId = store.getState().user.id
@@ -150,10 +156,15 @@ function* createAuditWebsite(action) {
 
 function* fetchAllSiteAudits(action) {
   try {
+console.log("running fetch");
     const userId = store.getState().user.id
-    const {websiteId} = action.payload
-
-    const res = yield axios.get(`/api/audits?userId=${userId}&websiteId=${websiteId}&status=ACTIVE`)
+    const pld = action.payload
+    const params = Object.assign({}, pld, {
+      status: "ACTIVE",
+      userId,
+    })
+    const query = Helpers.toQueryString(params)
+    const res = yield axios.get(`/api/audits?${query}`)
 
     //organize by provider
 
@@ -173,27 +184,51 @@ function* fetchAllSiteAudits(action) {
   }
 }
 
+function* fetchAuditList(action) {
+  try {
+    const pld = action.payload
+    const params = Object.assign({}, pld, {
+      status: "ACTIVE",
+      populate: "auditListItems",
+    })
+    const query = Helpers.toQueryString(params)
+
+    const res = yield axios.get(`/api/auditLists?${query}`)
+
+    //organize by provider
+
+    yield all([
+      put({
+        type: FETCH_AUDIT_LIST_SUCCESS,
+        payload: res.data,
+      }),
+    ])
+
+    action.cb && action.cb(res.data)
+
+  } catch (err) {
+    console.error('fetch audits failed', err.response || err)
+    action.onFailure && action.onFailure(err)
+    // yield put(userFetchFailed(err.message))
+  }
+}
+
 function* auditContent (action) {
   try {
     const state = store.getState()
-    const availableWebsites = state.availableWebsites
     const params = action.payload
-    const {gscStatus, targetApis} = analyticsHelpers.getExternalApiInfo(params.gscSiteUrl, params.dataset, availableWebsites)
-    const haveAccess = gscStatus.status === "ready"
+    const site = state.websites[params.websiteId]
+    const haveAccess = ["siteOwner", "siteRestrictedUser", "siteFullUser"].includes(site.gscPermissionLevel)
 
-    if (targetApis.includes("GoogleSearchConsole")) {
-      const haveAccess = gscStatus.status === "ready"
-      if (!haveAccess) {
-        console.log("not even trying to get analytics data (not security issue, just save time)");
-        alertActions.newAlert({
-          title: "Failed to get analytics:",
-          message: "Insufficient permissions to access Google Search Console for this website",
-          level: "DANGER",
-          options: {}
-        })
-
-        return
-      }
+    if (!haveAccess) {
+      console.log("not even trying to get analytics data (not security issue, just save time)");
+      alertActions.newAlert({
+        title: "Failed to get analytics:",
+        message: "Insufficient permissions to access Google Search Console for this website",
+        level: "DANGER",
+        options: {}
+      })
+      return
     }
 
     //transfomr into array of objs, each obj with single key (a filter param).
@@ -224,6 +259,7 @@ function* auditContent (action) {
 export default function* updateProviderSaga() {
   yield takeLatest(FETCH_ALL_GA_ACCOUNTS_REQUEST, fetchAllGAAccounts)
   yield takeLatest(FETCH_AUDIT_REQUEST, fetchAllSiteAudits)
+  yield takeEvery(FETCH_AUDIT_LIST_REQUEST, fetchAuditList)
   yield takeEvery(GET_ANALYTICS_REQUEST, getAnalytics)
   yield takeEvery(GET_GA_GOALS_REQUEST, getGAGoals)
   yield takeEvery(AUDIT_CONTENT_REQUEST, auditContent)
