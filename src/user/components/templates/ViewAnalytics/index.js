@@ -53,6 +53,11 @@ class ViewAnalytics extends Component {
 
       this.resetPagination(options)
     }
+
+    if (this.props.currentWebsite) {
+      // this will end getting analytics if coming from other page, which is necessary, but not if GR landing page was the dashboard itself (in which case, once everything is ready, will get analytics anyways)
+      this.getAnalytics()
+    }
   }
 
   componentWillReceiveProps(props) {

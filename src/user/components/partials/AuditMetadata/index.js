@@ -31,19 +31,23 @@ class AuditMetadata extends Component {
   }
 
   componentDidMount() {
-    if (this.props.audits.length && !this.props.currentAudit) {
-      this.setCurrentAudit(this.props.audits[0])
+    if (Object.keys(this.props.audits).length && !this.props.currentAudit) {
+      let auditsArr = Object.keys(this.props.audits).map((auditId) => this.props.audits[auditId])
+      // latest audit ... can just do last in array for now :) (will want it sorted like that anyways)
+      let latestAudit = auditsArr[auditsArr.length -1]
+      this.setCurrentAudit(latestAudit)
     }
   }
 
   auditOptions () {
     const {audits} = this.props
 
-    return Object.keys(audits).map((id) => {
+    return Object.keys(audits).map((id, index) => {
       let audit = audits[id]
+      let isLatest = index === Object.keys(audits).length -1
 
       return {
-        label: audit.createdAt,
+        label: `${moment(audit.createdAt).format("YYYY-MM-DD")}${isLatest ? " (latest)" : ""}`,
         value: audit.id,
         audit,
       }
@@ -85,14 +89,21 @@ console.log("running");
     const auditOptions = this.auditOptions() || []
     const currentAuditOption = currentAudit && auditOptions.find((option) => option.value === currentAudit.id)
 
-    let prettyDateLength
+    let prettyDateLength, startDate, endDate
     if (currentAudit) {
+      startDate = moment(currentAudit.createdAt).subtract(1, "day").format("YYYY-MM-DD")
+
       if (currentAudit.dateLength === "month") {
         prettyDateLength = "Monthly Audit"
-      } else if (currentAudit.dateLength === "year") {
-        prettyDateLength = "Yearly Audit"
+        endDate = moment(startDate).subtract(1, "month").format("YYYY-MM-DD")
+
       } else if (currentAudit.dateLength === "quarter") {
         prettyDateLength = "Quarterly Audit"
+        endDate = moment(startDate).subtract(3, "months").format("YYYY-MM-DD")
+
+      } else if (currentAudit.dateLength === "year") {
+        prettyDateLength = "Yearly Audit"
+        endDate = moment(startDate).subtract(1, "year").format("YYYY-MM-DD")
       }
     }
 
@@ -101,7 +112,7 @@ console.log("running");
         <Flexbox className={classes.websiteFilters}>
           {Object.keys(audits).length && (
             <div className={classes.websiteSelect}>
-              <div>Current Audit: </div>
+              <strong>Current Audit: </strong>
               <Select
                 options={auditOptions}
                 currentOption={currentAuditOption}
@@ -111,15 +122,13 @@ console.log("running");
             </div>
           )}
 
-          {currentAudit ? (
+          {currentAudit && (
             <div className={classes.auditDetails}>
-              <Flexbox>
-                <div className={classes.detail}>Audit Type: {prettyDateLength}</div>
+              <Flexbox direction="column">
+                <div className={classes.detail}><strong>Audit Type:</strong></div>
+                <div>{prettyDateLength} ({startDate} - {endDate})</div>
               </Flexbox>
-
             </div>
-          ) : (
-            <div>No analytics profiles connected to your google account. </div>
           )}
         </Flexbox>
       </Form>

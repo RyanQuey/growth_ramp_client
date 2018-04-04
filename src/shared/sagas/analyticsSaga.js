@@ -14,6 +14,8 @@ import {
   AUDIT_CONTENT_SUCCESS,
   FETCH_AUDIT_REQUEST,
   FETCH_AUDIT_SUCCESS,
+  UPDATE_AUDIT_LIST_ITEM_REQUEST,
+  UPDATE_AUDIT_LIST_ITEM_SUCCESS,
 } from 'constants/actionTypes'
 import { USER_FIELDS_TO_PERSIST, PROVIDER_IDS_MAP  } from 'constants'
 import { errorActions, alertActions } from 'shared/actions'
@@ -256,6 +258,31 @@ function* auditContent (action) {
   }
 }
 
+function* updateAuditListItem (action) {
+  try {
+    const state = store.getState()
+    const params = action.payload
+
+    const res = yield axios.put(`/api/auditListItems/${params.id}`, params) //eventually switch to socket
+
+    yield all([
+      put({type: UPDATE_AUDIT_LIST_ITEM_SUCCESS, payload: res.data})
+    ])
+    action.cb && action.cb(res.data)
+
+  } catch (err) {
+    console.error('update audit list item failed', err.response || err)
+      alertActions.newAlert({
+        title: "Failed to Update Audit Item",
+        level: "DANGER",
+        options: {}
+      })
+
+    action.onFailure && action.onFailure(err)
+    // yield put(userFetchFailed(err.message))
+  }
+}
+
 export default function* updateProviderSaga() {
   yield takeLatest(FETCH_ALL_GA_ACCOUNTS_REQUEST, fetchAllGAAccounts)
   yield takeLatest(FETCH_AUDIT_REQUEST, fetchAllSiteAudits)
@@ -264,5 +291,6 @@ export default function* updateProviderSaga() {
   yield takeEvery(GET_GA_GOALS_REQUEST, getGAGoals)
   yield takeEvery(AUDIT_CONTENT_REQUEST, auditContent)
   yield takeLatest(REACTIVATE_OR_CREATE_WEBSITE_REQUEST, createAuditWebsite)
+  yield takeEvery(UPDATE_AUDIT_LIST_ITEM_REQUEST, updateAuditListItem)
 
 }

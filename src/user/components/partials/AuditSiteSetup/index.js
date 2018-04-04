@@ -20,7 +20,7 @@ class AuditSiteSetup extends Component {
   constructor() {
     super()
     this.state = {
-      pending: true,
+      pending: false,
       websiteId: false,
       profileId: false,
     }
@@ -74,9 +74,9 @@ class AuditSiteSetup extends Component {
   profileOptions () {
     const {googleAccounts, websites, availableWebsites, dirty} = this.props
     const {gaSites = {}} = availableWebsites
-    const currentWebsite = gaSites[this.state.websiteId]
+    const chosenWebsite = gaSites[this.state.websiteId]
 
-    return currentWebsite && currentWebsite.profiles.map((profile) => ({
+    return chosenWebsite && currentWebsite.profiles.map((profile) => ({
       value: {profile},
       label: profile.name,
       profile,
@@ -122,21 +122,21 @@ class AuditSiteSetup extends Component {
 
     const {gaSites, gscSites} = availableWebsites
     const currentGoogleAccount = googleAccounts && googleAccounts[0]
-    const currentWebsite = gaSites && gaSites[websiteId]
+    const chosenWebsite = gaSites && gaSites[websiteId]
 
-    const gaSiteUrl = currentWebsite.websiteUrl
+    const gaSiteUrl = chosenWebsite.websiteUrl
     const gscSiteUrl = analyticsHelpers.getGSCUrlFromGAUrl(gaSiteUrl, gscSites) || ""
     const gscData = gscSiteUrl && gscSites[gscSiteUrl]
 
     const params = {
       gaWebPropertyId: websiteId,
       gaProfileId: profileId,
-      name: currentWebsite.name,
+      name: chosenWebsite.name,
       gscSiteUrl,
       gscPermissionLevel: gscData ? gscData.permissionLevel : "",
       gaSiteUrl,
       googleAccountId: currentGoogleAccount.id,
-      externalGaAccountId: currentWebsite.externalGaAccountId,
+      externalGaAccountId: chosenWebsite.externalGaAccountId,
     }
 
     const cb = (result) => {
@@ -156,23 +156,26 @@ class AuditSiteSetup extends Component {
 
   render () {
     const {pending} = this.state
-    const {googleAccounts, availableWebsites, dirty} = this.props
+    const {googleAccounts, availableWebsites, dirty, websites} = this.props
     const {gaSites = {}} = availableWebsites
 
     const {websiteId, profileId} = this.state
 
-    const currentWebsite = gaSites && gaSites[websiteId]
+    const chosenWebsite = gaSites && gaSites[websiteId]
     //TODO have a dropdown
     const currentGoogleAccount = googleAccounts && googleAccounts[0]
 
     //set by function so date will refresh, in case goes past midnight and they didn't refresh browser or something
 
     const websiteOptions = this.websiteOptions() || []
-    const currentWebsiteOption = websiteOptions.find((option) => option.website.id === websiteId)
+    const chosenWebsiteOption = websiteOptions.find((option) => option.website.id === websiteId)
 
     const profileOptions = this.profileOptions() || []
     const currentProfileOption = profileOptions.find((option) => option.profile.id === profileId)
 
+    if (Object.keys(websites).length ) {
+      return <div>Only one website allowed at a time</div>
+    }
 
     // curently only can do one site. So saving will just overwrite the one website record they have. If they have a website set, will just skip this step
     // In the future though, users can create several website records if their subscription allows for it
@@ -180,12 +183,12 @@ class AuditSiteSetup extends Component {
       <Form className={classes.filtersForm} onSubmit={this.setSite}>
         <Flexbox className={classes.websiteFilters}>
           <div className={classes.googleBtn}>
+            <div>Google Account: {currentGoogleAccount ? currentGoogleAccount.userName : "None available"}</div>
             <SocialLogin
               pending={pending}
               togglePending={this.props.togglePending}
               providers={_.pick(PROVIDERS, "GOOGLE")}
             />
-            <div>Google Account: {currentGoogleAccount ? currentGoogleAccount.userName : "None available"}</div>
           </div>
 
           {Object.keys(gaSites).length && (
@@ -193,14 +196,14 @@ class AuditSiteSetup extends Component {
               <div>Website: </div>
               <Select
                 options={websiteOptions}
-                currentOption={currentWebsiteOption || websiteOptions[0]}
+                currentOption={chosenWebsiteOption || websiteOptions[0]}
                 name="website"
                 onChange={this.setWebsiteFilter}
               />
             </div>
           )}
 
-          {currentWebsite &&
+          {chosenWebsite &&
             <div className={classes.websiteSelect}>
               <div>Analytics Profile: </div>
               <Select
@@ -239,6 +242,8 @@ const mapStateToProps = state => {
     user: state.user,
     googleAccounts: Helpers.safeDataPath(state, "providerAccounts.GOOGLE", []).filter((account) => !account.unsupportedProvider),
     availableWebsites: state.availableWebsites,
+    currentWebsite: state.currentWebsite,
+    websites: state.websites,
     dirty: Helpers.safeDataPath(state, "forms.Analytics.filters.dirty"),
   }
 }

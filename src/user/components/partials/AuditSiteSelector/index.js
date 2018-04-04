@@ -35,7 +35,6 @@ class AuditSiteSelector extends Component {
     const {currentWebsite, websites} = props
 
     if (!currentWebsite && Object.keys(websites).length) {
-console.log("setting current website");
       const defaultSite = websites[Object.keys(websites)[0]]
 
       this.setCurrentWebsite({website: defaultSite})
@@ -69,7 +68,6 @@ console.log("setting current website");
   setCurrentWebsite (websiteOption) {
     const {website} = websiteOption
 
-console.log("really setting current website");
     this.props.setCurrentWebsite(website)
   }
 
@@ -83,7 +81,6 @@ console.log("really setting current website");
     const websiteOptions = this.websiteOptions()
     const currentWebsiteOption = currentWebsite && websiteOptions.find((option) => option.website.id === currentWebsite.id)
 
-//TODO add button to open up AuditSiteSetup to add a new website
     return (
       <div className={classes.auditSiteSelector}>
         <Flexbox className={classes.websiteFilters}>
@@ -103,10 +100,10 @@ console.log("really setting current website");
           ) : (
             <div>
               <Button onClick={this.toggleAddingSite.bind(this, false)}>Cancel</Button>
-              <AuditSiteSetup />
             </div>
           )}
         </Flexbox>
+        {addingSite && <AuditSiteSetup />}
       </div>
     )
   }

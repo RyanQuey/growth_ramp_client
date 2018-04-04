@@ -2,8 +2,9 @@ import { Component } from 'react';
 import { connect } from 'react-redux'
 import {
 } from 'constants/actionTypes'
-import { Button, Flexbox, Icon, Form } from 'shared/components/elements'
+import { Button, Flexbox, Icon, Form, Checkbox } from 'shared/components/elements'
 import { Select } from 'shared/components/groups'
+import { AuditListItemRow } from 'user/components/groups'
 import { AUDIT_TESTS } from 'constants/auditTests'
 import {DIMENSIONS_METRICS_FRIENDLY_NAME} from 'constants/analytics'
 import {formActions, alertActions} from 'shared/actions'
@@ -18,6 +19,7 @@ class TestResult extends Component {
 
     this.state = {
     }
+
   }
 
   render () {
@@ -44,12 +46,11 @@ console.log("test lists arr", testListsArr);
             ) : (
               Object.keys(listItems).map((itemId) => {
                 const item = listItems[itemId]
-                return  <Flexbox key={item.dimension} justify="space-between" align="center">
-                  <div>{item.dimension}</div>
-                  {Object.keys(listMetadata.metrics).map((metric) =>
-                    <div key={metric}>{item.metrics[metric]}</div>
-                  )}
-                </Flexbox>
+                return <AuditListItemRow
+                  key={item.id}
+                  item={item}
+                  listMetadata={listMetadata}
+                />
               })
             )}
           </Flexbox>
