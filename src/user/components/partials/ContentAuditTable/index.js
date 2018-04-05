@@ -26,7 +26,7 @@ class ContentAuditTable extends Component {
   }
 
   render() {
-    const {currentAudit, auditLists, auditListItems} = this.props
+    const {currentAudit, auditLists, auditListItems, user} = this.props
     if (
       !currentAudit.id || currentAudit.err
     ) return null
@@ -66,14 +66,12 @@ class ContentAuditTable extends Component {
 
             let totalItemsInTestCount = 0
             let fixedItemsInTestCount = 0
-            let unfixedItemsInTestCount = 0
             testListsArr && testListsArr.forEach((list) => {
               if (auditListItems[list.id]) {
-                let listItemForList = Object.keys(auditListItems[list.id])
+                let itemsForList = Object.keys(auditListItems[list.id]).map((itemId) => auditListItems[list.id][itemId])
 
-                totalItemsInTestCount += listItemForList.length
-                fixedItemsInTestCount += listItemForList.filter((item) => item.fixed).length
-                unfixedItemsInTestCount += listItemForList.filter((item) => !item.fixed).length
+                totalItemsInTestCount += itemsForList.length
+                fixedItemsInTestCount += itemsForList.filter((item) => item.fixed).length
               }
             })
 
@@ -94,7 +92,7 @@ class ContentAuditTable extends Component {
                     <Icon name={this.state[testKey] === "open" ? "angle-down" : "angle-right"} />&nbsp;
                     <Icon name={testKey.toLowerCase()} />&nbsp;
                     {testMetadata.question}&nbsp;
-                    <span className={classes.previewText}>({testListsArr.length ? totalItemsInTestCount : "test coming soon"})</span>
+                    <span className={classes.previewText}>({testListsArr.length ? `${fixedItemsInTestCount}/${totalItemsInTestCount}` : "test coming soon"})</span>
                   </div>
 
                 </Flexbox>

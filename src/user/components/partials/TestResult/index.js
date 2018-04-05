@@ -23,7 +23,7 @@ class TestResult extends Component {
   }
 
   render () {
-    const { testListsArr, testKey, auditListItems } = this.props
+    const { testListsArr, testKey, auditListItems, user } = this.props
     const testListTypes = AUDIT_TESTS[testKey].lists
 console.log("test lists arr", testListsArr);
     return (
@@ -32,6 +32,7 @@ console.log("test lists arr", testListsArr);
           let listMetadata = testListTypes[listKey]
           const list = testListsArr.find((list) => list.listKey === listKey)
           const listItems = auditListItems[list.id]
+          const listItemsArr = Object.keys(listItems).map((itemId) => listItems[itemId])
 
           return <Flexbox key={listKey} direction="column">
             <Flexbox justify="space-between" align="center">
@@ -41,11 +42,12 @@ console.log("test lists arr", testListsArr);
               )}
             </Flexbox>
 
-            {!listItems ? (
+            {!listItemsArr.length ? (
               <div>Well done, nothing needs improvement right now!</div>
             ) : (
-              Object.keys(listItems).map((itemId) => {
-                const item = listItems[itemId]
+              listItemsArr.map((item) => {
+                if (user.hideFixedAuditItems && item.fixed) return null
+
                 return <AuditListItemRow
                   key={item.id}
                   item={item}
@@ -70,6 +72,7 @@ const mapDispatchToProps = (dispatch) => {
 const mapStateToProps = state => {
   return {
     auditListItems: state.auditListItems,
+    user: state.user,
   }
 }
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(TestResult))
