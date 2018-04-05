@@ -6,7 +6,7 @@ import { Button, Flexbox, Icon, Form, Checkbox } from 'shared/components/element
 import { Select } from 'shared/components/groups'
 import { AuditListItemRow } from 'user/components/groups'
 import { AUDIT_TESTS } from 'constants/auditTests'
-import {DIMENSIONS_METRICS_FRIENDLY_NAME} from 'constants/analytics'
+import {DIMENSIONS_METRICS_FRIENDLY_NAME, METRICS_WITH_AVERAGES} from 'constants/analytics'
 import {formActions, alertActions} from 'shared/actions'
 import {
   withRouter,
@@ -33,6 +33,8 @@ class TestResult extends Component {
           const listItems = auditListItems[list.id]
           const listItemsArr = Object.keys(listItems).map((itemId) => listItems[itemId])
 
+          const totals = list.summaryData.totals
+
           return <Flexbox key={listKey} className={`${classes.table}`} direction="column">
             <h3>{listMetadata.header}</h3>
             {!listItemsArr.length ? (
@@ -42,9 +44,23 @@ class TestResult extends Component {
                 <tr className={`${classes.tableHeader}`}>
                   <th className={`${classes[`column0`]}`}>Fixed</th>
                   <th className={`${classes[`column1`]}`}>Issue</th>
-                  {Object.keys(listMetadata.metrics).map((metric) =>
-                    <th key={metric} className={`${classes[`column${index +2}`]}`}>{DIMENSIONS_METRICS_FRIENDLY_NAME[metric]}</th>
+                  {Object.keys(listMetadata.metrics).map((metricName, index) =>
+                    <th key={metricName} className={`${classes[`column${index +2}`]}`}>{DIMENSIONS_METRICS_FRIENDLY_NAME[metricName]}</th>
                   )}
+                </tr>
+
+                <tr
+                  className={`${classes.tableRow} ${classes.oddRow} ${classes.totalsRow}`}
+                >
+                  <td className={`${classes[`column0`]}`}></td>
+                  <td className={`${classes[`column1`]}`}></td>
+
+                  {Object.keys(listMetadata.metrics).map((metricName, index) => {
+                    const value = totals[metricName]
+                    const totalType = METRICS_WITH_AVERAGES.includes(metricName) ? "average" : "total"
+
+                    return <td key={metricName} className={`${classes[`column${index +2}`]}`}>{value} ({totalType})</td>
+                  })}
                 </tr>
 
                 {listItemsArr.map((item) => {

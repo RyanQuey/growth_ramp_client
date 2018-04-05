@@ -4,7 +4,7 @@ import { Flexbox, Button, Icon, Card } from 'shared/components/elements'
 import { PostCard, ProviderCard } from 'user/components/partials'
 import { SET_CURRENT_PAGE, SET_CURRENT_MODAL  } from 'constants/actionTypes'
 import { PROVIDERS } from 'constants/providers'
-import { DIMENSIONS_METRICS_FRIENDLY_NAME, DIMENSIONS_WITH_PATHS } from 'constants/analytics'
+import { DIMENSIONS_METRICS_FRIENDLY_NAME, DIMENSIONS_WITH_PATHS, METRICS_WITH_AVERAGES } from 'constants/analytics'
 import {
   withRouter,
 } from 'react-router-dom'
@@ -123,10 +123,10 @@ class AnalyticsTable extends Component {
 
                   {totals.map((value, index) => {
                     const correspondingHeader = theseAnalytics.columnHeader.metrics[index]
-                    const valueType = correspondingHeader.type
-                    const totalType = ["INTEGER"].includes(valueType) ? "total" : "average"
+                    const metricName = correspondingHeader.name
+                    const totalType = METRICS_WITH_AVERAGES.includes(metricName) ? "average" : "total"
 
-                    return <div key={correspondingHeader.name} className={`${classes[`column${index +2}`]}`}>{value} ({totalType})</div>
+                    return <div key={metricName} className={`${classes[`column${index +2}`]}`}>{value} ({totalType})</div>
                   })}
                 </Flexbox>
               }

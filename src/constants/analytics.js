@@ -31,6 +31,17 @@ export const DIMENSIONS_METRICS_FRIENDLY_NAME = {
   "ctr": "Click Through Rate",
   "position": "Position",
 }
+
+//array of metrisc that use averages rather than sums for the totals in GA/GSC
+export const METRICS_WITH_AVERAGES = [
+  "ctr",
+  "position",
+  "ga:avgSessionDuration",
+  "ga:bounceRate",
+  "ga:avgTimeOnPage",
+  "ga:avgPageLoadTime",
+  "ga:exitRate",
+]
 export const DIMENSIONS_WITH_PATHS = [
   "ga:landingPagePath",
   "ga:pagePath",
