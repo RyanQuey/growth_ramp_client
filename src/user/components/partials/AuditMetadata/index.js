@@ -4,8 +4,9 @@ import DatePicker from 'react-datepicker'
 import {
   SET_CURRENT_AUDIT,
   FETCH_AUDIT_LIST_REQUEST,
+  UPDATE_USER_REQUEST,
 } from 'constants/actionTypes'
-import { Button, Flexbox, Icon, Form } from 'shared/components/elements'
+import { Button, Flexbox, Icon, Form, Checkbox } from 'shared/components/elements'
 import { Select } from 'shared/components/groups'
 import { SocialLogin } from 'shared/components/partials'
 import { PROVIDERS, PROVIDER_IDS_MAP } from 'constants/providers'
@@ -28,6 +29,7 @@ class AuditMetadata extends Component {
 
     this.selectAuditOption = this.selectAuditOption.bind(this)
     this.setCurrentAudit = this.setCurrentAudit.bind(this)
+    this.toggleHideWhenFixed = this.toggleHideWhenFixed.bind(this)
   }
 
   componentDidMount() {
@@ -54,19 +56,29 @@ class AuditMetadata extends Component {
     })
   }
 
+  toggleHideWhenFixed (value) {
+    const {user} = this.props
+    const cb = (result) => {
+      this.setState({pending: false})
+    }
+
+    const onFailure = (err) => {
+      this.setState({pending: false})
+    }
+
+    this.props.updateUser({id: user.id, hideFixedAuditItems: value}, cb, onFailure)
+  }
+
   selectAuditOption (option) {
     this.setCurrentAudit(option.audit)
   }
 
   setCurrentAudit (audit) {
-console.log("started");
     const cb = (result) => {
-      console.log("finished in callback");
       this.setState({pending: false})
     }
 
     const onFailure = (err) => {
-      console.log("finished in failure");
       this.setState({pending: false})
     }
 
@@ -74,7 +86,7 @@ console.log("started");
 
     // sets this syncronously
     this.props.setCurrentAudit(audit)
-console.log("running");
+
     // get all lists and their items
     this.props.fetchAuditLists({auditId: audit.id, userId: audit.userId}, cb, onFailure)
   }
@@ -82,9 +94,7 @@ console.log("running");
 
   render () {
     const {pending} = this.state
-    const {audits, currentAudit} = this.props
-
-    const {} = this.state
+    const {audits, currentAudit, user} = this.props
 
     const auditOptions = this.auditOptions() || []
     const currentAuditOption = currentAudit && auditOptions.find((option) => option.value === currentAudit.id)
@@ -109,7 +119,7 @@ console.log("running");
 
     return (
       <Form className={classes.filtersForm} onSubmit={this.setSite}>
-        <Flexbox className={classes.websiteFilters}>
+        <Flexbox className={classes.websiteFilters} flexWrap="wrap">
           {Object.keys(audits).length && (
             <div className={classes.websiteSelect}>
               <strong>Current Audit: </strong>
@@ -130,6 +140,12 @@ console.log("running");
               </Flexbox>
             </div>
           )}
+          {currentAudit && (
+            <div className={classes.checkbox}>
+              <Checkbox onChange={this.toggleHideWhenFixed} value={user.hideFixedAuditItems} label="Hide fixed issues"/>
+            </div>
+          )}
+
         </Flexbox>
       </Form>
     )
@@ -140,6 +156,7 @@ const mapDispatchToProps = (dispatch) => {
   return {
     setCurrentAudit: (audit) => dispatch({type: SET_CURRENT_AUDIT, payload: audit}),
     fetchAuditLists: (payload, cb, onFailure) => dispatch({type: FETCH_AUDIT_LIST_REQUEST, payload, cb, onFailure}),
+    updateUser: (payload, cb, onFailure) => dispatch({type: UPDATE_USER_REQUEST, payload, cb, onFailure}),
   }
 }
 
