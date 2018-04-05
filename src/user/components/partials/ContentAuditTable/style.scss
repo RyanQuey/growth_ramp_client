@@ -28,32 +28,6 @@
     width: 100%;
 
   }
-  .columnOne {
-    @include cols(4)
-  }
-  // whether I opt to do table or just flex:
-  .columnTwo, .columnThree, .columnFour, .cardWrapper,  {
-    @include mq(sm2) {
-      @include cols(12);
-    }
-    @include mq(xs) {
-      @include cols(12);
-    }
-    @include mq(lg) {
-      @include cols(4);
-    }
-    @include cols(2)
-
-  }
-  .columnThree {
-  }
-  .columnFour {
-  }
-  .columnFive {
-  }
-  .twoColumns {
-    @include cols(4)
-  }
 
   .auditTestContainer {
     border-top: 1px solid $black;
@@ -90,33 +64,5 @@
       min-height: 38px;
       //padding: 10px 15px; //was spazzing out, flipping back and forth between the paddings, so just forget it
     }
-
-    .lists {
-      overflow-y: auto;
-      width: 100%;
-      min-width: 100%;
-      max-height: 500px;
-      padding: 15px 15px 0 15px;
-    }
-    .cardWrapper {
-      max-width: 95%;
-      width: 200px;
-      overflow: auto;
-    }
-    .postCard {
-      width: 100%;
-      overflow: hidden;
-      //min-width: 200px;
-
-      &.publishedPost {
-        cursor: not-allowed !important;
-        background-color: gray !important;
-        div {
-          border-bottom: gray !important;
-        }
-      }
-
-    }
   }
-
 }

@@ -1,7 +1,21 @@
+@import 'theme/_helpers';
 .viewAnalytics {
   margin-bottom: 25px;
   text-align: left;
 }
-.topNewCampaignButton {
-  margin-bottom: 30px;
+.settings {
+  opacity: 1;
+  @include transition(max-height, .8s, ease);
+  overflow-y: visible;
+
+  &.open {
+    max-height: 2000px;
+  }
+  &.closed {
+    max-height: 0px;
+    overflow-y: hidden;
+  }
+}
+.toggleSettingsBtn {
+  padding-left: 20px;
 }

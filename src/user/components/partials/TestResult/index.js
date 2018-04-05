@@ -25,7 +25,6 @@ class TestResult extends Component {
   render () {
     const { testListsArr, testKey, auditListItems, user } = this.props
     const testListTypes = AUDIT_TESTS[testKey].lists
-console.log("test lists arr", testListsArr);
     return (
       <div className={classes.testResult}>
         {Object.keys(testListTypes).map((listKey, index) => {
@@ -34,27 +33,32 @@ console.log("test lists arr", testListsArr);
           const listItems = auditListItems[list.id]
           const listItemsArr = Object.keys(listItems).map((itemId) => listItems[itemId])
 
-          return <Flexbox key={listKey} direction="column">
-            <Flexbox justify="space-between" align="center">
-              <h3>{listMetadata.header}</h3>
-              {Object.keys(listMetadata.metrics).map((metric) =>
-                <h3 key={metric}>{DIMENSIONS_METRICS_FRIENDLY_NAME[metric]}</h3>
-              )}
-            </Flexbox>
-
+          return <Flexbox key={listKey} className={`${classes.table}`} direction="column">
+            <h3>{listMetadata.header}</h3>
             {!listItemsArr.length ? (
               <div>Well done, nothing needs improvement right now!</div>
             ) : (
-              listItemsArr.map((item) => {
-                if (user.hideFixedAuditItems && item.fixed) return null
+              <table>
+                <tr className={`${classes.tableHeader}`}>
+                  <th className={`${classes[`column0`]}`}>Fixed</th>
+                  <th className={`${classes[`column1`]}`}>Issue</th>
+                  {Object.keys(listMetadata.metrics).map((metric) =>
+                    <th key={metric} className={`${classes[`column${index +2}`]}`}>{DIMENSIONS_METRICS_FRIENDLY_NAME[metric]}</th>
+                  )}
+                </tr>
 
-                return <AuditListItemRow
-                  key={item.id}
-                  item={item}
-                  listMetadata={listMetadata}
-                />
-              })
+                {listItemsArr.map((item) => {
+                  if (user.hideFixedAuditItems && item.fixed) return null
+
+                  return <AuditListItemRow
+                    key={item.id}
+                    item={item}
+                    listMetadata={listMetadata}
+                  />
+                })}
+              </table>
             )}
+
           </Flexbox>
         })}
 

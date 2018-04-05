@@ -93,7 +93,7 @@ class AuditMetadata extends Component {
 
 
   render () {
-    const {pending} = this.state
+    const {pending, open} = this.state
     const {audits, currentAudit, user} = this.props
 
     const auditOptions = this.auditOptions() || []
@@ -118,11 +118,11 @@ class AuditMetadata extends Component {
     }
 
     return (
-      <Form className={classes.filtersForm} onSubmit={this.setSite}>
-        <Flexbox className={classes.websiteFilters} flexWrap="wrap">
+      <Form className={`${classes.filtersForm}`} onSubmit={this.setSite}>
+        <Flexbox className={classes.auditFilters} direction="column">
           {Object.keys(audits).length && (
-            <div className={classes.websiteSelect}>
-              <strong>Current Audit: </strong>
+            <div className={classes.auditSelect}>
+              <h3>Current Audit:</h3>
               <Select
                 options={auditOptions}
                 currentOption={currentAuditOption}
@@ -135,14 +135,18 @@ class AuditMetadata extends Component {
           {currentAudit && (
             <div className={classes.auditDetails}>
               <Flexbox direction="column">
-                <div className={classes.detail}><strong>Audit Type:</strong></div>
-                <div>{prettyDateLength} ({startDate} - {endDate})</div>
+                <div className={classes.detail}>{prettyDateLength} ({startDate} - {endDate})</div>
               </Flexbox>
             </div>
           )}
           {currentAudit && (
-            <div className={classes.checkbox}>
-              <Checkbox onChange={this.toggleHideWhenFixed} value={user.hideFixedAuditItems} label="Hide fixed issues"/>
+            <div className={classes.auditOptions}>
+              <Flexbox direction="column">
+                <h3>Options:</h3>
+                <div className={classes.checkbox}>
+                  <Checkbox onChange={this.toggleHideWhenFixed} value={user.hideFixedAuditItems} label="Hide fixed issues"/>
+                </div>
+              </Flexbox>
             </div>
           )}
 

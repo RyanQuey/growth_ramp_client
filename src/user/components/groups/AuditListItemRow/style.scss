@@ -1,4 +1,35 @@
-.testResult {
+@import 'theme/_helpers';
+.itemRow {
   width: 100%;
   padding: 0 0 20px 0;
+
+  .column0 {
+    text-align: center;
+  }
+
+  .column1 {
+    text-align: left;
+    padding: .5rem 0 .5rem .5rem;
+    position: relative; // so the externalLink floats to right properly
+    overflow: hidden;
+
+    .dimensionTextWrapper {
+      width: calc(100% - 30px);
+      .dimensionLink {
+        display: inline-block;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+      }
+    }
+
+    a.externalLink {
+      position: absolute;
+      right: 5px;
+      z-index: 2;
+    }
+  }
+  .column2, .column3, .column4 {
+    text-align: center;
+  }
 }

@@ -72,7 +72,8 @@ class ChannelGroupingFilter extends Component {
 
 
     const channelGroupingFilterOptions = this.channelGroupingFilterOptions()
-    const currentChannelGroupingOption = channelGroupingFilterOptions.find((option) => option.value === channelGroupingValue)
+    // == so null can == undefined
+    const currentChannelGroupingOption = channelGroupingFilterOptions.find((option) => option.value == channelGroupingValue)
 
     return (
       <Form className={classes.filtersForm} onSubmit={this.props.getAnalytics}>

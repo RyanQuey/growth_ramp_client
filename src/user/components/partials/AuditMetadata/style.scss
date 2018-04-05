@@ -1,23 +1,22 @@
+@import 'theme/_helpers';
 .filtersForm {
+  .auditFilters  {
+    padding: 0 20px;
 
-  .websiteFilters  {
-    padding: 20px 0px;
-
-    .websiteSelect {
-      width: 40%;
-      padding: 0 20px;
+    .auditSelect {
+      width: 200px;
     }
-    .checkbox {
-      margin: 20px;
-      width: 250px;
-      label {
-        display: inline-block;
-        cursor: pointer;
+    .auditDetails {
+
+    }
+    .auditOptions {
+      .checkbox {
+        width: 250px;
+        label {
+          display: inline-block;
+          cursor: pointer;
+        }
       }
     }
   }
-
-}
-.topNewCampaignButton {
-  margin-bottom: 30px;
 }

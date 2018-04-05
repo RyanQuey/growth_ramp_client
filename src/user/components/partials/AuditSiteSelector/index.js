@@ -83,10 +83,10 @@ class AuditSiteSelector extends Component {
 
     return (
       <div className={classes.auditSiteSelector}>
-        <Flexbox className={classes.websiteFilters}>
+        <Flexbox className={classes.websiteFilters} direction="column">
           {Object.keys(websites).length ? (
             <div className={classes.websiteSelect}>
-              <div>Website: </div>
+              <h3>Website: </h3>
               <Select
                 options={websiteOptions}
                 currentOption={currentWebsiteOption || websiteOptions[0]}
@@ -96,7 +96,9 @@ class AuditSiteSelector extends Component {
             </div>
           ) : null}
           {!addingSite ? (
-            <Button onClick={this.toggleAddingSite.bind(this, true)}><Icon name="plus-circle"/>&nbsp;Add Site</Button>
+            <div>
+              <Button onClick={this.toggleAddingSite.bind(this, true)}><Icon name="plus-circle"/>&nbsp;Add Site</Button>
+            </div>
           ) : (
             <div>
               <Button onClick={this.toggleAddingSite.bind(this, false)}>Cancel</Button>

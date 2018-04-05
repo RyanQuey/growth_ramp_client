@@ -67,6 +67,14 @@ function* getAnalytics(action) {
       Helpers.safeDataPath(state, `forms.Analytics.filters.params`, {}),
       _.pick(currentWebsite, "googleAccountId", "gscSiteUrl", "gaProfileId", "gaWebPropertyId", "gaSiteUrl"),
     )
+
+    // don't send any params that are null/undefined (those are to be counted as non-params...else will be sent as a string "undefined" ...)
+    for (let paramKey of Object.keys(paramsObj)) {
+      if ([undefined, null].includes(paramsObj[paramKey])) {
+        delete paramsObj[paramKey]
+      }
+    }
+
 //TODO make consistent with site audit, and call websiteUrl gaSiteUrl
     const {gscStatus, targetApis} = analyticsHelpers.getExternalApiInfo(paramsObj.gscSiteUrl, dataset, availableWebsites)
 

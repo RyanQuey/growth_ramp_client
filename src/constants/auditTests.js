@@ -5,6 +5,7 @@ export const AUDIT_TESTS = {
     lists: {
       slowPages: {
         header: "Slow Pages",
+        primaryDimension: "ga:pagePath",
         metrics: {
           "ga:avgPageLoadTime": {},
           "ga:pageviews": {},
@@ -32,6 +33,7 @@ export const AUDIT_TESTS = {
     lists: {
       weakHeadlines: {
         header: "Headlines to improve:",
+        primaryDimension: "page", //gsc
         metrics: {
           "ctr": {},
           "impressions": {},
@@ -46,6 +48,7 @@ export const AUDIT_TESTS = {
     lists: {
       badBounceRate: {
         header: "Bad Bounce Rate:",
+        primaryDimension: "ga:browser",
         metrics: {
           "ga:users": {},
           "ga:bounceRate": {},
@@ -54,6 +57,7 @@ export const AUDIT_TESTS = {
       },
       badSessionDuration: {
         header: "Bad Avg Session Duration:",
+        primaryDimension: "ga:browser",
         metrics: {
           "ga:users": {},
           "ga:bounceRate": {},
@@ -69,6 +73,7 @@ export const AUDIT_TESTS = {
     lists: {
       badBounceRate: {
         header: "Bad Bounce Rate:",
+        primaryDimension: "ga:deviceCategory",
         metrics: {
           "ga:users": {},
           "ga:bounceRate": {},
@@ -77,6 +82,7 @@ export const AUDIT_TESTS = {
       },
       badSessionDuration: {
         header: "Bad Avg Session Duration:",
+        primaryDimension: "ga:deviceCategory",
         metrics: {
           "ga:users": {},
           "ga:bounceRate": {},
@@ -92,6 +98,7 @@ export const AUDIT_TESTS = {
     lists: {
       badBounceRate: {
         header: "Bad Bounce Rate:",
+        primaryDimension: "ga:landingPagePath",
         metrics: {
           "ga:users": {},
           "ga:bounceRate": {},
@@ -100,6 +107,7 @@ export const AUDIT_TESTS = {
       },
       badSessionDuration: {
         header: "Bad Avg Session Duration:",
+        primaryDimension: "ga:landingPagePath",
         metrics: {
           "ga:users": {},
           "ga:bounceRate": {},
@@ -118,6 +126,7 @@ export const AUDIT_TESTS = {
     lists: {
       searchPositionToImprove: {
         header: "Pages to Improve:",
+        primaryDimension: "page",
         metrics: {
           "position": {},
         }
@@ -130,6 +139,7 @@ export const AUDIT_TESTS = {
     lists: {
       brokenExternal: {
         header: "Broken External Links:",
+        primaryDimension: "ga:pagePath",
         metrics: {
           "ga:pageTitle": {}, //not actually a metric, but whatever. Displaying as such
           "ga:sessions": {},

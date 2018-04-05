@@ -1,4 +1,37 @@
+@import 'theme/_helpers';
 .testResult {
   width: 100%;
   padding: 0 0 20px 0;
+}
+.table {
+  padding: 0 20px;
+  h2 {
+    margin-top: 0;
+  }
+
+  .tableHeader {
+    width: 100%;
+    div {
+      font-weight: bold;
+    }
+  }
+  .row {
+    width: 100%;
+
+  }
+
+  th {
+    padding: 0 0 20px 0;
+    text-align: center;
+  }
+
+  // doing tables so easy to do widths from parent component
+  .column0 {
+  }
+
+  .column1 {
+
+  }
+  .column2, .column3, .column4 {
+  }
 }

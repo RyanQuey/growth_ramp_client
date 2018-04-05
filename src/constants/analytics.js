@@ -31,3 +31,9 @@ export const DIMENSIONS_METRICS_FRIENDLY_NAME = {
   "ctr": "Click Through Rate",
   "position": "Position",
 }
+export const DIMENSIONS_WITH_PATHS = [
+  "ga:landingPagePath",
+  "ga:pagePath",
+  //hacked so is a path, not full url
+  "page",
+]

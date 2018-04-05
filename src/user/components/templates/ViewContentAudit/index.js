@@ -26,6 +26,7 @@ class ViewContentAudit extends Component {
     super()
     this.state = {
       pending: false,
+      settingsOpen: true,
     }
 
     this.togglePending = this.togglePending.bind(this)
@@ -33,6 +34,7 @@ class ViewContentAudit extends Component {
     this.auditSite = this.auditSite.bind(this)
     this.fetchAudits = this.fetchAudits.bind(this)
     this.refreshGAAccounts = this.refreshGAAccounts.bind(this)
+    this.toggleSettings = this.toggleSettings.bind(this)
   }
 
   componentWillMount() {
@@ -58,6 +60,10 @@ class ViewContentAudit extends Component {
 
   togglePending(value = !this.state.pending) {
     this.setState({pending: value}) //only for social login so far
+  }
+
+  toggleSettings (value = !this.state.settingsOpen, e) {
+    this.setState({settingsOpen: value})
   }
 
   // filter should be object, keys being params that will be overwritten for the analytics filters
@@ -150,7 +156,7 @@ class ViewContentAudit extends Component {
   }
 
   render () {
-    const {pending} = this.state
+    const {pending, settingsOpen} = this.state
     const {audits, analytics, websites, currentAudit, currentWebsite} = this.props
     //wait to finish initializing store at least
     if (false) {
@@ -163,15 +169,25 @@ class ViewContentAudit extends Component {
     return (
       <div className={classes.viewAnalytics}>
         <h1>Content Audit</h1>
+        <div>
+          {currentWebsite ? currentWebsite.name : ""}
+        </div>
 
-        <AuditSiteSelector
-          togglePending={this.togglePending}
-        />
+        <h2>Settings</h2>
+        <a className={classes.toggleSettingsBtn} onClick={this.toggleSettings.bind(this, !settingsOpen)}>{settingsOpen ? "Hide Settings" : "Show Settings"}</a>
+        <div className={`${classes.settings} ${settingsOpen ? classes.open : classes.closed}`}>
+          <AuditSiteSelector
+            togglePending={this.togglePending}
+          />
+
+          {currentWebsite && Object.keys(audits).length && (
+            <AuditMetadata />
+          )}
+        </div>
 
         {currentWebsite && (
           Object.keys(audits).length ? (
             <div>
-              <AuditMetadata />
               {currentAudit &&
                 <div>
                   <ContentAuditTable

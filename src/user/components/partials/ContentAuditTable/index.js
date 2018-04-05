@@ -44,14 +44,6 @@ class ContentAuditTable extends Component {
         <h2>Audit Results</h2>
 
         <Flexbox className={classes.table} direction="column" align="center">
-          {false && <Flexbox className={` ${classes.tableHeader}`} direction="row">
-            <div className={`${classes.columnOne}`}></div>
-            <div className={`${classes.columnTwo}`}></div>
-            <div className={`${classes.columnThree}`}></div>
-            <div className={`${classes.columnFour}`}></div>
-            <div className={`${classes.columnFive}`}></div>
-          </Flexbox>}
-
           {Object.keys(AUDIT_TESTS).map((testKey, index) => {
             let alternatingClass = (index % 2) == 1 ? "oddRow" : "evenRow"
             const testMetadata = AUDIT_TESTS[testKey]
@@ -94,7 +86,6 @@ class ContentAuditTable extends Component {
                     {testMetadata.question}&nbsp;
                     <span className={classes.previewText}>({testListsArr.length ? `${fixedItemsInTestCount}/${totalItemsInTestCount}` : "test coming soon"})</span>
                   </div>
-
                 </Flexbox>
 
                 {this.state[testKey] === "open" &&
