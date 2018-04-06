@@ -5,8 +5,8 @@ import {
 import { Button, Flexbox, Icon, Form, Checkbox } from 'shared/components/elements'
 import { Select } from 'shared/components/groups'
 import { AuditListItemRow } from 'user/components/groups'
-import { AUDIT_TESTS } from 'constants/auditTests'
-import {DIMENSIONS_METRICS_FRIENDLY_NAME, METRICS_WITH_AVERAGES} from 'constants/analytics'
+import { AUDIT_TESTS,  } from 'constants/auditTests'
+import {DIMENSIONS_METRICS_FRIENDLY_NAME, METRICS_WITH_AVERAGES, } from 'constants/analytics'
 import {formActions, alertActions} from 'shared/actions'
 import {
   withRouter,

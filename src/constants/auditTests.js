@@ -1,7 +1,7 @@
 export const AUDIT_TESTS = {
   pageSpeed: {
     key: "pageSpeed",
-    question: "Which of your pages are too slow and need to be fixed?",
+    question: "Which of your pages are too slow?",
     lists: {
       slowPages: {
         header: "Slow Pages",
@@ -94,7 +94,7 @@ export const AUDIT_TESTS = {
 
   userInteraction: {
     key: "userInteraction",
-    question: "What other pages may have issues that need fixed?",
+    question: "What other pages may have issues that affect performance?",
     lists: {
       badBounceRate: {
         header: "Bad Bounce Rate:",
@@ -122,7 +122,7 @@ export const AUDIT_TESTS = {
   },*/
   searchPositionToImprove: {
     key: "searchPositionToImprove",
-    question: "What pages should you focus on improving the search position?",
+    question: "What pages should you focus on for improving their search position?",
     lists: {
       searchPositionToImprove: {
         header: "Pages to Improve:",
@@ -135,7 +135,7 @@ export const AUDIT_TESTS = {
   },
   missingPages: {
     key: "missingPages",
-    question: "What pages are getting 404 errors from internal links? What pages are getting 404 errors from external links?",
+    question: "What pages are getting 404 errors from internal and external links?",
     lists: {
       brokenExternal: {
         header: "Broken External Links:",
@@ -171,4 +171,31 @@ export const AUDIT_RESULTS_SECTIONS = {
     title: "Maybe Fixed",
 
   },
+}
+
+// labels to put on different tests
+export const AUDIT_TEST_FLAGS = {
+  pageSpeed: {
+  },
+
+  headlineStrength: {
+    difficulty: "easy"
+  },
+
+  browserCompatibility: {
+    difficulty: "hard"
+  },
+
+  deviceCompatibility: {
+    difficulty: "hard"
+  },
+
+  userInteraction: {
+  },
+  searchPositionToImprove: {
+  },
+  missingPages: {
+    difficulty: "easy"
+  },
+
 }

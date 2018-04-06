@@ -1,12 +1,13 @@
 import { Component } from 'react';
 import { connect } from 'react-redux'
-import { Flexbox, Button, Icon, Card } from 'shared/components/elements'
+import { Flexbox, Button, Icon, Card, Flag } from 'shared/components/elements'
 import { Select } from 'shared/components/groups'
 import { TestResult } from 'user/components/partials'
 import { SET_CURRENT_POST_TEMPLATE, SET_CURRENT_POST, SET_CURRENT_MODAL, UPDATE_PLAN_REQUEST  } from 'constants/actionTypes'
-import { AUDIT_TESTS } from 'constants/auditTests'
+import { AUDIT_TESTS, AUDIT_TEST_FLAGS, } from 'constants/auditTests'
 import {UTM_TYPES} from 'constants/posts'
 import {formActions} from 'shared/actions'
+import theme from 'theme'
 import classes from './style.scss'
 
 //shows up as buttons in mobile, or sidebar in browser?
@@ -141,6 +142,8 @@ class ContentAuditTable extends Component {
               summaryText = `(${totalItemsInTest.length})`
             }
 
+            const difficultyFlag = AUDIT_TEST_FLAGS[testKey].difficulty
+
             return (
               <Flexbox
                 key={testKey}
@@ -159,6 +162,20 @@ class ContentAuditTable extends Component {
                     <Icon name={testKey.toLowerCase()} />&nbsp;
                     {testMetadata.question}&nbsp;
                     <span className={classes.previewText}>{summaryText}</span>
+                    <div className={classes.flags}>
+                      {currentAuditSection &&
+                        completedItemsInTest.length === totalItemsInTest.length ? (
+                          <Flag background="green"><Icon name="check"/></Flag>
+
+                        ) : (
+                          <span>
+                            {difficultyFlag === "easy" && <Flag background="#86c286">Easy</Flag>}
+                            {difficultyFlag === "hard" && <Flag background="#7f7fca">Hard</Flag>}
+                          </span>
+
+                        )
+                      }
+                    </div>
                   </div>
                 </Flexbox>
 
