@@ -155,3 +155,20 @@ export const AUDIT_TESTS = {
     },
   },
 }
+
+export const AUDIT_RESULTS_SECTIONS = {
+  currentIssues: {
+    title: "Current Issues",
+  },
+  // issues fixed from last time
+  fixed: {
+    title: "Fixed",
+
+  },
+
+  // issues that are marked as complete, but was completed too recently to tell whether actually fixed or not
+  maybeFixed: {
+    title: "Maybe Fixed",
+
+  },
+}

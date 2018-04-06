@@ -23,16 +23,16 @@ class TestResult extends Component {
   }
 
   render () {
-    const { testListsArr, testKey, auditListItems, user } = this.props
+    const { listsArr, testKey, auditListItems, itemsToShowByList, user, currentAuditSection, currentAudit, previousAudit } = this.props
     const testListTypes = AUDIT_TESTS[testKey].lists
+    const auditToCheck = currentAuditSection === "currentIssues" ? currentAudit : previousAudit
+
     return (
       <div className={classes.testResult}>
         {Object.keys(testListTypes).map((listKey, index) => {
           let listMetadata = testListTypes[listKey]
-          const list = testListsArr.find((list) => list.listKey === listKey)
-          const listItems = auditListItems[list.id]
-          const listItemsArr = Object.keys(listItems).map((itemId) => listItems[itemId])
-
+          const list = listsArr.find((list) => list.listKey === listKey)
+          const listItemsArr = itemsToShowByList[list.id]
           const totals = list.summaryData.totals
 
           return <Flexbox key={listKey} className={`${classes.table}`} direction="column">
@@ -64,7 +64,11 @@ class TestResult extends Component {
                 </tr>
 
                 {listItemsArr.map((item) => {
-                  if (user.hideCompletedAuditItems && item.completed) return null
+                  if (
+                    currentAuditSection === "currentIssues" &&
+                    user.hideCompletedAuditItems &&
+                    item.completed
+                  ) return null
 
                   return <AuditListItemRow
                     key={item.id}
@@ -91,6 +95,9 @@ const mapDispatchToProps = (dispatch) => {
 
 const mapStateToProps = state => {
   return {
+    currentAudit: state.currentAudit,
+    previousAudit: state.previousAudit,
+    currentAuditSection: state.currentAuditSection,
     auditListItems: state.auditListItems,
     user: state.user,
   }

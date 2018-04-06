@@ -205,11 +205,9 @@ function* fetchAuditList(action) {
 
     if (options.withListsForPreviousAudit) {
       //get previous audit lists for point of comparison
-      let thisAudit = store.getState().audits[params.auditId]
-console.log(thisAudit);
-      let previousAudit = analyticsHelpers.getLatestAuditBefore(thisAudit.createdAt)
+      let previousAudit = store.getState().previousAudit
 
-      params.auditId = [thisAudit.id, previousAudit.id]
+      params.auditId = [params.auditId, previousAudit.id]
     }
 
     const query = Helpers.toQueryString(params)

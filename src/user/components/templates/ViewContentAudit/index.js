@@ -5,20 +5,23 @@ import {
   GET_GA_GOALS_REQUEST,
   FETCH_AUDIT_REQUEST,
   FETCH_ALL_GA_ACCOUNTS_REQUEST,
+  SET_CURRENT_AUDIT_SECTION,
 } from 'constants/actionTypes'
-import { Button, Flexbox, Icon, Form } from 'shared/components/elements'
+import { Button, Flexbox, Icon, Form, Navbar } from 'shared/components/elements'
 import { Select } from 'shared/components/groups'
 import {
 } from 'user/components/partials'
 import { SocialLogin } from 'shared/components/partials'
 import {  } from 'user/components/groups'
 import { AuditMetadata, AuditSiteSelector, ContentAuditTable } from 'user/components/partials'
+import { AUDIT_RESULTS_SECTIONS, } from 'constants/auditTests'
 import { PROVIDERS, PROVIDER_IDS_MAP } from 'constants/providers'
 import {formActions, alertActions} from 'shared/actions'
 import {
   withRouter,
 } from 'react-router-dom'
 import analyticsHelpers from 'helpers/analyticsHelpers'
+import theme from 'theme'
 import classes from './style.scss'
 
 class ViewContentAudit extends Component {
@@ -33,6 +36,7 @@ class ViewContentAudit extends Component {
     this.setFilters = this.setFilters.bind(this)
     this.auditSite = this.auditSite.bind(this)
     this.fetchAudits = this.fetchAudits.bind(this)
+    this.setCurrentAuditSection = this.setCurrentAuditSection.bind(this)
     this.refreshGAAccounts = this.refreshGAAccounts.bind(this)
     this.toggleSettings = this.toggleSettings.bind(this)
   }
@@ -44,6 +48,7 @@ class ViewContentAudit extends Component {
     if (currentWebsiteId) {
       this.fetchAudits(currentWebsiteId)
     }
+    this.setCurrentAuditSection(Object.keys(AUDIT_RESULTS_SECTIONS)[0])
 
     this.refreshGAAccounts()
   }
@@ -155,9 +160,13 @@ class ViewContentAudit extends Component {
     }
   }
 
+  setCurrentAuditSection (auditSection) {
+    this.props.setCurrentAuditSection(auditSection)
+  }
+
   render () {
     const {pending, settingsOpen} = this.state
-    const {audits, analytics, websites, currentAudit, currentWebsite} = this.props
+    const {audits, analytics, websites, currentAudit, previousAudit, currentAuditSection, currentWebsite} = this.props
     //wait to finish initializing store at least
     if (false) {
       return <Icon name="spinner"/>
@@ -193,9 +202,34 @@ class ViewContentAudit extends Component {
             <div>
               {currentAudit &&
                 <div>
-                  <ContentAuditTable
-                    currentWebsite={currentWebsite}
-                  />
+                  <h2>Audit Results</h2>
+                  <Navbar className="" justifyTabs="flex-start" background={theme.color.moduleGrayOne} color={theme.color.text} tabs={true}>
+                    <ul>
+                      {Object.keys(AUDIT_RESULTS_SECTIONS).map((section) => {
+                        const sectionData = AUDIT_RESULTS_SECTIONS[section]
+                        const title = sectionData.title
+
+                        if (["fixed", "maybeFixed"].includes(section) && !previousAudit.id) {
+                          return null
+                        }
+
+                        return <li
+                          key={title}
+                          ref={title}
+                          className={`${classes.tab} ${currentAuditSection === section ? classes.selected : ""}`}
+                          onClick={this.setCurrentAuditSection.bind(this, section)}
+                        >
+                          <span>{title}</span>
+                        </li>
+                      })}
+                    </ul>
+                  </Navbar>
+
+                  <div className={classes.tabContent}>
+                    <ContentAuditTable
+                      currentWebsite={currentWebsite}
+                    />
+                  </div>
                 </div>
               }
             </div>
@@ -218,6 +252,7 @@ class ViewContentAudit extends Component {
 
 const mapDispatchToProps = (dispatch) => {
   return {
+    setCurrentAuditSection: (audit) => dispatch({type: SET_CURRENT_AUDIT_SECTION, payload: audit}),
     fetchAllGAAccounts: (payload, cb, onFailure) => dispatch({type: FETCH_ALL_GA_ACCOUNTS_REQUEST, payload, cb, onFailure}),
     getGoals: (payload, cb, onFailure) => dispatch({
       type: GET_GA_GOALS_REQUEST,
@@ -246,6 +281,8 @@ const mapStateToProps = state => {
     analytics: state.analytics,
     audits: state.audits || {},
     currentAudit: state.currentAudit,
+    previousAudit: state.previousAudit,
+    currentAuditSection: state.currentAuditSection,
     user: state.user,
     goals: state.goals,
     websites: state.websites,

@@ -26,22 +26,23 @@ class ContentAuditTable extends Component {
   }
 
   render() {
-    const {currentAudit, auditLists, auditListItems, user} = this.props
+    const {currentAudit, previousAudit, currentAuditSection, auditLists, auditListItems, user} = this.props
     if (
       !currentAudit.id || currentAudit.err
     ) return null
 
     const currentAuditLists = auditLists[currentAudit.id]
+    const previousAuditLists = auditLists[previousAudit.id]
 
     // check if they picked an audit, but haven't finished loading those lists yet
     if (
-      !currentAuditLists
+      !currentAuditLists ||
+      (["fixed", "maybeFixed"].includes(currentAuditSection) && !previousAuditLists)
     ) return <Icon name="spinner"/>
 
     return (
       <div className={`${classes.container} ${this.props.hidden ? classes.hidden : ""}`}>
 
-        <h2>Audit Results</h2>
 
         <Flexbox className={classes.table} direction="column" align="center">
           {Object.keys(AUDIT_TESTS).map((testKey, index) => {
@@ -51,21 +52,94 @@ class ContentAuditTable extends Component {
             const testListsIds = Object.keys(currentAuditLists).filter((listId) => currentAuditLists[listId].testKey === testKey)
             const testListsArr = testListsIds.map((listId) => currentAuditLists[listId])
 
+            const previousAuditTestListsIds = previousAuditLists && Object.keys(previousAuditLists).filter((listId) => previousAuditLists[listId].testKey === testKey)
+            const previousAuditTestListsArr = previousAuditTestListsIds && previousAuditTestListsIds.map((listId) => previousAuditLists[listId])
+
             if (
               !testListsArr
             ) return <Icon name="spinner"/>
 
 
-            let totalItemsInTestCount = 0
-            let completedItemsInTestCount = 0
-            testListsArr && testListsArr.forEach((list) => {
-              if (auditListItems[list.id]) {
-                let itemsForList = Object.keys(auditListItems[list.id]).map((itemId) => auditListItems[list.id][itemId])
+            let totalItemsInTest = []
+            let completedItemsInTest = []
+            let itemsToShowByList = {}
+            let twoWeeksBeforeCurrentAudit = moment(currentAudit.createdAt).subtract(2, "weeks")
+            let summaryText
 
-                totalItemsInTestCount += itemsForList.length
-                completedItemsInTestCount += itemsForList.filter((item) => item.completed).length
+//TODO probably want to break these out into separate components...? would be awfully similar though, at least for now
+            if (currentAuditSection === "currentIssues") {
+              testListsArr.forEach((list) => {
+                let itemsForList = Object.keys(auditListItems[list.id]).map((itemId) => auditListItems[list.id][itemId])
+                totalItemsInTest = totalItemsInTest.concat(itemsForList)
+                let completedItemsForList = itemsForList.filter((item) => item.completed)
+                completedItemsInTest = completedItemsInTest.concat(completedItemsForList)
+
+                itemsToShowByList[list.id] = itemsForList
+              })
+
+              summaryText = `(${completedItemsInTest.length}/${totalItemsInTest.length})`
+
+            } else if (currentAuditSection === "maybeFixed") {
+              // marked as completed in previous audit, and still shows up in currentAudit, but was only marked complete within last couple weeks
+
+              previousAuditTestListsArr.forEach((list) => {
+                /* TODO really what we should do is, in the audit, only get 404s that happened since the date previous audit marked it as completed. Otherwise, really could by maybe fixed
+                if (["brokenInternal", "brokenExternal"].includes(list.listKey)) {
+                  //any times this shows up, even if recent, means it's still broken. Returning empty array
+                  itemsToShowByList[list.id] = []
+                  return
+                }*/
+
+                let correspondingList = testListsArr.find((l) => l.listKey === list.listKey)
+                let correspondingListItems = auditListItems[correspondingList.id]
+                let correspondingListItemsArr = Object.keys(correspondingListItems).map((id) => correspondingListItems[id])
+
+                let itemsForList = Object.keys(auditListItems[list.id])
+                .map((itemId) => auditListItems[list.id][itemId])
+                .filter((item) => {
+                  let matchInCurrentAudit = correspondingListItemsArr.find((i) => i.dimension === item.dimension)
+
+                  return matchInCurrentAudit && item.completed && twoWeeksBeforeCurrentAudit.isBefore(item.completedAt)
+                })
+
+                totalItemsInTest = totalItemsInTest.concat(itemsForList)
+
+                itemsToShowByList[list.id] = itemsForList
+              })
+
+              // don't need to show it if there's nothing
+              if (!totalItemsInTest.length) {
+                return null
               }
-            })
+
+              summaryText = `(${totalItemsInTest.length})`
+
+            } else if (currentAuditSection === "fixed") {
+              previousAuditTestListsArr.forEach((list) => {
+                let correspondingList = testListsArr.find((l) => l.listKey === list.listKey)
+                let correspondingListItems = auditListItems[correspondingList.id]
+                let correspondingListItemsArr = Object.keys(correspondingListItems).map((id) => correspondingListItems[id])
+
+                let itemsForList = Object.keys(auditListItems[list.id])
+                .map((itemId) => auditListItems[list.id][itemId])
+                .filter((item) => {
+                  let matchInCurrentAudit = correspondingListItemsArr.find((i) => i.dimension === item.dimension)
+
+                  return !matchInCurrentAudit
+                })
+
+                totalItemsInTest = totalItemsInTest.concat(itemsForList)
+
+                itemsToShowByList[list.id] = itemsForList
+              })
+
+              // don't need to show it if there's nothing
+              if (!totalItemsInTest.length) {
+                return null
+              }
+
+              summaryText = `(${totalItemsInTest.length})`
+            }
 
             return (
               <Flexbox
@@ -80,11 +154,11 @@ class ContentAuditTable extends Component {
                   justify="space-between"
                   onClick={this.toggleOpen.bind(this, testKey, this.state[testKey] === "open" ? "closed" : "open")}
                 >
-                  <div className={` ${classes.header}`}>
+                  <div className={`${classes.header}`}>
                     <Icon name={this.state[testKey] === "open" ? "angle-down" : "angle-right"} />&nbsp;
                     <Icon name={testKey.toLowerCase()} />&nbsp;
                     {testMetadata.question}&nbsp;
-                    <span className={classes.previewText}>({testListsArr.length ? `${completedItemsInTestCount}/${totalItemsInTestCount}` : "test coming soon"})</span>
+                    <span className={classes.previewText}>{summaryText}</span>
                   </div>
                 </Flexbox>
 
@@ -92,7 +166,8 @@ class ContentAuditTable extends Component {
                   <Flexbox className={`${classes.lists} ${classes.row}`} direction="column" align="center" flexWrap="wrap" justify="space-between">
                     <TestResult
                       testKey={testKey}
-                      testListsArr={testListsArr}
+                      listsArr={currentAuditSection === "currentIssues" ? testListsArr : previousAuditTestListsArr}
+                      itemsToShowByList={itemsToShowByList}
                     />
                   </Flexbox>
                 }
@@ -112,6 +187,8 @@ const mapStateToProps = state => {
     user: state.user,
     currentPost: state.currentPost,
     currentAudit: state.currentAudit,
+    previousAudit: state.previousAudit,
+    currentAuditSection: state.currentAuditSection,
     auditLists: state.auditLists,
     auditListItems: state.auditListItems,
   }

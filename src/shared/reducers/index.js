@@ -8,6 +8,8 @@ import analytics from './analytics'
 import availableWebsites from './availableWebsites'
 import audits from './audits'
 import currentAudit from './currentAudit'
+import previousAudit from './previousAudit'
+import currentAuditSection from './currentAuditSection'
 import currentWebsite from './currentWebsite'
 import auditLists from './auditLists'
 import auditListItems from './auditListItems'
@@ -36,6 +38,7 @@ const rootReducer = combineReducers({
   auditLists,
   auditListItems,
   currentAudit,
+  currentAuditSection,
   //the plan that the user is currently working on OR viewing
   currentPlan: currentPlanReducer,
   //the postTemplate that the user is currently working on
@@ -50,6 +53,7 @@ const rootReducer = combineReducers({
   forms: formsReducer,
   goals,
   plans: plansReducer,
+  previousAudit,
   workgroups: workgroupsReducer,
   //all of the provider accounts that user is the owner of, or has permission to use
   providerAccounts: providerAccountsReducer,

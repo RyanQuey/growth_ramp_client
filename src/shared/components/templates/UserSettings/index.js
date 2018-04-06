@@ -76,6 +76,7 @@ class UserSettings extends Component {
     const currentSection = this.props.match.params.view
     const Tag = (sections[currentSection] && sections[currentSection].component) || AccountSubscription
 
+//TODO can borrow code from the content audit tabs
     return (
       <main className={classes.userSettings}>
         <Prompt when={this.props.dirty} message={(location) => 'Form not saved; Are you sure you want to leave?'}/>
@@ -97,12 +98,12 @@ class UserSettings extends Component {
         </Navbar>
 
         <div className={classes.tabContent}>
-            <Tag
-              pending={this.state.pending}
-              switchTo={this.switchTo}
-              initialOpening={this.state.initialOpening}
-              resetComposeView={this.resetComposeView}
-            />
+          <Tag
+            pending={this.state.pending}
+            switchTo={this.switchTo}
+            initialOpening={this.state.initialOpening}
+            resetComposeView={this.resetComposeView}
+          />
         </div>
       </main>
     );
