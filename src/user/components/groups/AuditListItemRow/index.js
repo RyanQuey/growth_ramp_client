@@ -20,16 +20,16 @@ class AuditListItemRow extends Component {
     this.state = {
     }
 
-    this.toggleFixed = this.toggleFixed.bind(this)
+    this.toggleCompleted = this.toggleCompleted.bind(this)
   }
 
-  toggleFixed (value) {
+  toggleCompleted (value) {
     const {item} = this.props
     this.props.updateAuditListItem({
       id: item.id,
       userId: item.userId,
-      fixed: value,
-      fixedAt: moment().format(),
+      completed: value,
+      completedAt: moment().format(),
     })
   }
 
@@ -40,8 +40,8 @@ class AuditListItemRow extends Component {
 
     return (
       <tr className={classes.itemRow}>
-        <td className={`${classes.column0}`} title={item.fixed ? "Mark issue as incomplete" : "Mark issue as complete"}>
-          <Checkbox onChange={this.toggleFixed} value={item.fixed} />
+        <td className={`${classes.column0}`} title={item.completed ? "Mark issue as incomplete" : "Mark issue as complete"}>
+          <Checkbox onChange={this.toggleCompleted} value={item.completed} />
         </td>
 
         <td className={`${classes.column1}`}>

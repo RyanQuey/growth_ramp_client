@@ -284,7 +284,6 @@ function _handleInitialUserData(data, options = {}) {
 
   //check if there's a stripe acct. If not, go make one real quick
   let accountSubscription = data.accountSubscription
-  console.log(accountSubscription);
   if (!accountSubscription) {
     //they don't have a customer record in stripe yet. Initialize for them
     //don't want this in afterCreate cb, since that would either delay the ttfb, or if stripe api is bugging, make things even worse, etc. So just do it here

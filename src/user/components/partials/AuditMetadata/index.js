@@ -29,14 +29,12 @@ class AuditMetadata extends Component {
 
     this.selectAuditOption = this.selectAuditOption.bind(this)
     this.setCurrentAudit = this.setCurrentAudit.bind(this)
-    this.toggleHideWhenFixed = this.toggleHideWhenFixed.bind(this)
+    this.toggleHideWhenCompleted = this.toggleHideWhenCompleted.bind(this)
   }
 
   componentDidMount() {
     if (Object.keys(this.props.audits).length && !this.props.currentAudit) {
-      let auditsArr = Object.keys(this.props.audits).map((auditId) => this.props.audits[auditId])
-      // latest audit ... can just do last in array for now :) (will want it sorted like that anyways)
-      let latestAudit = auditsArr[auditsArr.length -1]
+      let latestAudit = analyticsHelpers.getLatestAudit()
       this.setCurrentAudit(latestAudit)
     }
   }
@@ -56,7 +54,7 @@ class AuditMetadata extends Component {
     })
   }
 
-  toggleHideWhenFixed (value) {
+  toggleHideWhenCompleted (value) {
     const {user} = this.props
     const cb = (result) => {
       this.setState({pending: false})
@@ -66,7 +64,7 @@ class AuditMetadata extends Component {
       this.setState({pending: false})
     }
 
-    this.props.updateUser({id: user.id, hideFixedAuditItems: value}, cb, onFailure)
+    this.props.updateUser({id: user.id, hideCompletedAuditItems: value}, cb, onFailure)
   }
 
   selectAuditOption (option) {
@@ -88,7 +86,7 @@ class AuditMetadata extends Component {
     this.props.setCurrentAudit(audit)
 
     // get all lists and their items
-    this.props.fetchAuditLists({auditId: audit.id, userId: audit.userId}, cb, onFailure)
+    this.props.fetchAuditLists({auditId: audit.id, userId: audit.userId}, cb, onFailure, {withListsForPreviousAudit: true})
   }
 
 
@@ -144,7 +142,7 @@ class AuditMetadata extends Component {
               <Flexbox direction="column">
                 <h3>Options:</h3>
                 <div className={classes.checkbox}>
-                  <Checkbox onChange={this.toggleHideWhenFixed} value={user.hideFixedAuditItems} label="Hide fixed issues"/>
+                  <Checkbox onChange={this.toggleHideWhenCompleted} value={user.hideCompletedAuditItems} label="Hide completed issues"/>
                 </div>
               </Flexbox>
             </div>
@@ -159,7 +157,7 @@ class AuditMetadata extends Component {
 const mapDispatchToProps = (dispatch) => {
   return {
     setCurrentAudit: (audit) => dispatch({type: SET_CURRENT_AUDIT, payload: audit}),
-    fetchAuditLists: (payload, cb, onFailure) => dispatch({type: FETCH_AUDIT_LIST_REQUEST, payload, cb, onFailure}),
+    fetchAuditLists: (payload, cb, onFailure, options) => dispatch({type: FETCH_AUDIT_LIST_REQUEST, payload, cb, onFailure, options}),
     updateUser: (payload, cb, onFailure) => dispatch({type: UPDATE_USER_REQUEST, payload, cb, onFailure}),
   }
 }

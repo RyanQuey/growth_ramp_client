@@ -166,6 +166,9 @@ class ViewContentAudit extends Component {
     const query = new URLSearchParams(document.location.search)
     const webpageQueryValue = query.get("webpage")
 
+
+//TODO add goal selector here
+
     return (
       <div className={classes.viewAnalytics}>
         <h1>Content Audit</h1>

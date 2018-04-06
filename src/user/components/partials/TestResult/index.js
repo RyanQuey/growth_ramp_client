@@ -42,7 +42,7 @@ class TestResult extends Component {
             ) : (
               <table>
                 <tr className={`${classes.tableHeader}`}>
-                  <th className={`${classes[`column0`]}`}>Fixed</th>
+                  <th className={`${classes[`column0`]}`}>Done</th>
                   <th className={`${classes[`column1`]}`}>Issue</th>
                   {Object.keys(listMetadata.metrics).map((metricName, index) =>
                     <th key={metricName} className={`${classes[`column${index +2}`]}`}>{DIMENSIONS_METRICS_FRIENDLY_NAME[metricName]}</th>
@@ -64,7 +64,7 @@ class TestResult extends Component {
                 </tr>
 
                 {listItemsArr.map((item) => {
-                  if (user.hideFixedAuditItems && item.fixed) return null
+                  if (user.hideCompletedAuditItems && item.completed) return null
 
                   return <AuditListItemRow
                     key={item.id}

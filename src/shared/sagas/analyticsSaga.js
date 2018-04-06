@@ -197,10 +197,21 @@ console.log("running fetch");
 function* fetchAuditList(action) {
   try {
     const pld = action.payload
+    const {options = {}} = action
     const params = Object.assign({}, pld, {
       status: "ACTIVE",
       populate: "auditListItems",
     })
+
+    if (options.withListsForPreviousAudit) {
+      //get previous audit lists for point of comparison
+      let thisAudit = store.getState().audits[params.auditId]
+console.log(thisAudit);
+      let previousAudit = analyticsHelpers.getLatestAuditBefore(thisAudit.createdAt)
+
+      params.auditId = [thisAudit.id, previousAudit.id]
+    }
+
     const query = Helpers.toQueryString(params)
 
     const res = yield axios.get(`/api/auditLists?${query}`)

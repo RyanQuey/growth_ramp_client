@@ -388,6 +388,28 @@ const analyticsHelpers = {
 
     return filtersToMerge
   },
+
+  // latest audit ... can just do last in array for now :) (will want it sorted like that anyways)
+  getLatestAudit: (options = {}) => {
+    let {audits} = store.getState()
+    let auditsArr = Object.keys(audits).map((id) => audits[id])
+
+    if (options.filterFunc) {
+      auditsArr = auditsArr.filter(options.filterFunc)
+    }
+
+    let latestAudit = auditsArr[auditsArr.length -1]
+    return latestAudit
+  },
+
+  // endTime should be YYYY-MM-DDTHH:MM:SS format, in utc
+  // mostly for passing in another audit's createdAt time
+  getLatestAuditBefore: (endDate) => {
+console.log("endDate");
+    const filterFunc = (audit) => (audit.createdAt < endDate)
+    let latestAudit = analyticsHelpers.getLatestAudit({filterFunc})
+    return latestAudit
+  },
 }
 
 export default analyticsHelpers

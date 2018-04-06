@@ -12,16 +12,11 @@ export default (state = {}, action) => {
 
     case FETCH_AUDIT_LIST_SUCCESS:
       let newState = Object.assign({}, state)
-      let auditId = pld[0].auditId //just sample auditList
-      if (!newState[auditId]) {
-        newState[auditId] = {}
-      }
-
       for (let list of pld) {
         //remove populated data; store that in its own store
         let plainList = _.omit(list, ["auditListItems"])
 
-        newState[list.auditId][list.id] = plainList
+        _.set(newState, `${list.auditId}.${list.id}`, plainList)
       }
       return newState
 
