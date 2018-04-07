@@ -34,15 +34,26 @@ class AuditMetadata extends Component {
 
   componentDidMount() {
     if (Object.keys(this.props.audits).length && !this.props.currentAudit) {
-      let latestAudit = analyticsHelpers.getLatestAudit()
+      const filterFunc = (audit) => (audit.websiteId === this.props.currentWebsite.id)
+      let latestAudit = analyticsHelpers.getLatestAudit({filterFunc})
+      this.setCurrentAudit(latestAudit)
+    }
+  }
+
+  componentWillReceiveProps (props) {
+    if (props.currentWebsite.id !== this.props.currentWebsite.id) {
+      const filterFunc = (audit) => (audit.websiteId === this.props.currentWebsite.id)
+      let latestAudit = analyticsHelpers.getLatestAudit({filterFunc})
       this.setCurrentAudit(latestAudit)
     }
   }
 
   auditOptions () {
-    const {audits} = this.props
+    const {audits, currentWebsite} = this.props
 
-    return Object.keys(audits).map((id, index) => {
+    return Object.keys(audits)
+    .filter((id) => audits[id].websiteId === currentWebsite.id)
+    .map((id, index) => {
       let audit = audits[id]
       let isLatest = index === Object.keys(audits).length -1
 
