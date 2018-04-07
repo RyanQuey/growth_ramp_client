@@ -148,7 +148,7 @@ class MaybeFixedIssues extends Component {
           <ContentAuditRows
             testFilterFunc={this.getCompletedAndMaybeFixedIssues}
             getSummaryText={this.getSummaryText}
-            ifAllEmptyComponent=""
+            ifAllEmptyComponent="Nothing to show!"
           />
         </Flexbox>
       </div>
