@@ -16,12 +16,12 @@ const Flag = ({ background, children, color, border, onClick, className, hover =
   })
 
   return (
-    <div
+    <span
       className={`${className} ${classes.flag} ${css(inlineStyles.flag)}`}
       onClick={onClick}
     >
       {children}
-    </div>
+    </span>
   )
 }
 

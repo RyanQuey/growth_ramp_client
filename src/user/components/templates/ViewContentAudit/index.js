@@ -13,7 +13,7 @@ import {
 } from 'user/components/partials'
 import { SocialLogin } from 'shared/components/partials'
 import {  } from 'user/components/groups'
-import { AuditMetadata, AuditSiteSelector, ContentAuditTable } from 'user/components/partials'
+import { AuditMetadata, AuditSiteSelector, MaybeFixedIssues, FixedIssues, CurrentIssues } from 'user/components/partials'
 import { AUDIT_RESULTS_SECTIONS, } from 'constants/auditTests'
 import { PROVIDERS, PROVIDER_IDS_MAP } from 'constants/providers'
 import {formActions, alertActions} from 'shared/actions'
@@ -175,7 +175,14 @@ class ViewContentAudit extends Component {
     const query = new URLSearchParams(document.location.search)
     const webpageQueryValue = query.get("webpage")
 
-
+    let TabContent
+    if (currentAuditSection === "currentIssues") {
+      TabContent = CurrentIssues
+    } else if (currentAuditSection === "fixed") {
+      TabContent = FixedIssues
+    } else if (currentAuditSection === "maybeFixed") {
+      TabContent = MaybeFixedIssues
+    }
 //TODO add goal selector here
 
     return (
@@ -209,10 +216,6 @@ class ViewContentAudit extends Component {
                         const sectionData = AUDIT_RESULTS_SECTIONS[section]
                         const title = sectionData.title
 
-                        if (["fixed", "maybeFixed"].includes(section) && !previousAudit.id) {
-                          return null
-                        }
-
                         return <li
                           key={title}
                           ref={title}
@@ -226,9 +229,7 @@ class ViewContentAudit extends Component {
                   </Navbar>
 
                   <div className={classes.tabContent}>
-                    <ContentAuditTable
-                      currentWebsite={currentWebsite}
-                    />
+                    <TabContent />
                   </div>
                 </div>
               }
