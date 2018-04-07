@@ -6,7 +6,6 @@ import {
 } from 'constants/actionTypes'
 import { Button, Flexbox, Icon, Form } from 'shared/components/elements'
 import { Select } from 'shared/components/groups'
-import { AuditSiteSetup } from 'user/components/partials'
 import { PROVIDERS, PROVIDER_IDS_MAP } from 'constants/providers'
 import { TIME_RANGE_OPTIONS, } from 'constants/analytics'
 import {formActions, alertActions} from 'shared/actions'
@@ -20,12 +19,10 @@ class AuditSiteSelector extends Component {
   constructor() {
     super()
     this.state = {
-      addingSite: false,
     }
 
     this.websiteOptions = this.websiteOptions.bind(this)
     this.setCurrentWebsite = this.setCurrentWebsite.bind(this)
-    this.toggleAddingSite = this.toggleAddingSite.bind(this)
   }
 
   componentDidMount() {
@@ -39,10 +36,6 @@ class AuditSiteSelector extends Component {
 
       this.setCurrentWebsite({website: defaultSite})
     }
-  }
-
-  toggleAddingSite (value = !this.state.addingSite) {
-    this.setState({addingSite: value})
   }
 
   websiteOptions () {
@@ -73,7 +66,6 @@ class AuditSiteSelector extends Component {
 
   render () {
     const {websites, dirty, currentWebsite} = this.props
-    const {addingSite} = this.state
     const {gaSites = {}} = websites
 
     //set by function so date will refresh, in case goes past midnight and they didn't refresh browser or something
@@ -84,7 +76,7 @@ class AuditSiteSelector extends Component {
     return (
       <div className={classes.auditSiteSelector}>
         <Flexbox className={classes.websiteFilters} direction="column">
-          {Object.keys(websites).length ? (
+          {Object.keys(websites).length > 0 && (
             <div className={classes.websiteSelect}>
               <h3>Website: </h3>
               <Select
@@ -94,18 +86,8 @@ class AuditSiteSelector extends Component {
                 onChange={this.setCurrentWebsite}
               />
             </div>
-          ) : null}
-          {!addingSite ? (
-            <div>
-              <Button onClick={this.toggleAddingSite.bind(this, true)}><Icon name="plus-circle"/>&nbsp;Add Site</Button>
-            </div>
-          ) : (
-            <div>
-              <Button onClick={this.toggleAddingSite.bind(this, false)}>Cancel</Button>
-            </div>
           )}
         </Flexbox>
-        {addingSite && <AuditSiteSetup />}
       </div>
     )
   }

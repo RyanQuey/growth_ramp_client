@@ -29,7 +29,7 @@ class ViewContentAudit extends Component {
     super()
     this.state = {
       pending: false,
-      settingsOpen: true,
+      settingsOpen: false,
     }
 
     this.togglePending = this.togglePending.bind(this)
@@ -39,6 +39,7 @@ class ViewContentAudit extends Component {
     this.setCurrentAuditSection = this.setCurrentAuditSection.bind(this)
     this.refreshGAAccounts = this.refreshGAAccounts.bind(this)
     this.toggleSettings = this.toggleSettings.bind(this)
+    this.configureWebsites = this.configureWebsites.bind(this)
   }
 
   componentWillMount() {
@@ -70,6 +71,13 @@ class ViewContentAudit extends Component {
   toggleSettings (value = !this.state.settingsOpen, e) {
     this.setState({settingsOpen: value})
   }
+
+  configureWebsites (e) {
+    e && e.preventDefault()
+
+    this.props.history.push("/settings/websites")
+  }
+
 
   // filter should be object, keys being params that will be overwritten for the analytics filters
   // TODO get rid of; no longer using
@@ -189,20 +197,27 @@ class ViewContentAudit extends Component {
       <div className={classes.viewAnalytics}>
         <h1>Content Audit</h1>
         <div>
-          {currentWebsite ? currentWebsite.name : ""}
+          {currentWebsite ? currentWebsite.name : "No websites yet; configure websites by clicking below to get started"}
         </div>
 
         <h2>Settings</h2>
-        <a className={classes.toggleSettingsBtn} onClick={this.toggleSettings.bind(this, !settingsOpen)}>{settingsOpen ? "Hide Settings" : "Show Settings"}</a>
-        <div className={`${classes.settings} ${settingsOpen ? classes.open : classes.closed}`}>
-          <AuditSiteSelector
-            togglePending={this.togglePending}
-          />
+        {Object.keys(websites).length > 0 ? (
+          <div>
+            <a className={classes.toggleSettingsBtn} onClick={this.toggleSettings.bind(this, !settingsOpen)}>{settingsOpen ? "Hide Settings" : "Show Settings"}</a>
+            <div className={`${classes.settings} ${settingsOpen ? classes.open : classes.closed}`}>
+              <AuditSiteSelector
+                togglePending={this.togglePending}
+              />
 
-          {currentWebsite && Object.keys(audits).length && (
-            <AuditMetadata />
-          )}
-        </div>
+              <a onClick={this.configureWebsites}>Configure Websites</a>
+              {Object.keys(audits).length && (
+                <AuditMetadata />
+              )}
+            </div>
+          </div>
+        ) : (
+          <a onClick={this.configureWebsites}>Add a Website</a>
+        )}
 
         {currentWebsite && (
           Object.keys(audits).length ? (

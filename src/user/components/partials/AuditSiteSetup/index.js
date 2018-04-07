@@ -189,7 +189,7 @@ class AuditSiteSetup extends Component {
             />
           </div>
 
-          {Object.keys(gaSites).length && (
+          {Object.keys(gaSites).length > 0 && (
             <div className={classes.websiteSelect}>
               <div>Website: </div>
               <Select
