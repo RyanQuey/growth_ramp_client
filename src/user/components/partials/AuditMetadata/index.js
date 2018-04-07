@@ -178,6 +178,7 @@ const mapStateToProps = state => {
     user: state.user,
     audits: state.audits || {},
     currentAudit: state.currentAudit,
+    currentWebsite: state.currentWebsite,
   }
 }
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(AuditMetadata))
