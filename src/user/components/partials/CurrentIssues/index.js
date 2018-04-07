@@ -34,14 +34,14 @@ class CurrentIssues extends Component {
 
     testListsArr.forEach((list) => {
       // only including here if not maybe fixed from previous audit
-      let previousAuditList = previousAuditTestListsArr.find((l) => l.listKey === list.listKey)
-      let previousAuditListItems = auditListItems[previousAuditList.id]
-      let previousAuditListItemsArr = Object.keys(previousAuditListItems).map((id) => previousAuditListItems[id])
+      let previousAuditList = previousAuditTestListsArr && previousAuditTestListsArr.find((l) => l.listKey === list.listKey)
+      let previousAuditListItems = previousAuditList && auditListItems[previousAuditList.id]
+      let previousAuditListItemsArr = previousAuditListItems && Object.keys(previousAuditListItems).map((id) => previousAuditListItems[id])
 
       let itemsForList = Object.keys(auditListItems[list.id])
       .map((itemId) => auditListItems[list.id][itemId])
       .filter((item) => {
-        let matchInPreviousAudit = previousAuditListItemsArr.find((i) => i.dimension === item.dimension)
+        let matchInPreviousAudit = previousAuditListItemsArr && previousAuditListItemsArr.find((i) => i.dimension === item.dimension)
 
         return !matchInPreviousAudit || !matchInPreviousAudit.completed || twoWeeksBeforeCurrentAudit.isBefore(matchInPreviousAudit.completedAt)
       })
@@ -73,7 +73,7 @@ class CurrentIssues extends Component {
     // check if they picked an audit, but haven't finished loading those lists yet
     if (
       !currentAuditLists ||
-      !previousAuditLists
+      (previousAudit && !previousAuditLists)
     ) return <Icon name="spinner"/>
 
     return (
