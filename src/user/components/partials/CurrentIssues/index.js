@@ -73,7 +73,7 @@ class CurrentIssues extends Component {
     // check if they picked an audit, but haven't finished loading those lists yet
     if (
       !currentAuditLists ||
-      (previousAudit && !previousAuditLists)
+      (previousAudit.id && !previousAuditLists)
     ) return <Icon name="spinner"/>
 
     return (
