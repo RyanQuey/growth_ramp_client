@@ -299,8 +299,10 @@ class ViewAnalytics extends Component {
 
     //pagination stuff
     const lastUsedFilters = Helpers.safeDataPath(analytics, `${tableDataset}.lastUsedFilters`, {})
-    const currentPage = lastUsedFilters.page || 1
-    const currentPageSize = lastUsedFilters.pageSize || 10
+//TODO not updating lastUsedFilters well, at least for now
+//but only used for pagination up to this point, so can just use filters data, since we're not keeping last use and current filters different yet.
+    const currentPage = filters.page || 1
+    const currentPageSize = filters.pageSize || 10
 
     const theseAnalytics = analytics[tableDataset] || {}
     let totalRecords
