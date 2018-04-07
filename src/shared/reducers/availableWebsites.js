@@ -3,7 +3,7 @@ import {
   SIGN_OUT,
 } from 'constants/actionTypes'
 
-const websitesReducer = (state = {}, action) => {
+const availableWebsitesReducer = (state = {}, action) => {
   let newState, accounts, account, websites = {}, googleUserAccounts, api
 
   const pld = action.payload
@@ -22,6 +22,10 @@ const websitesReducer = (state = {}, action) => {
           let analyticsAccounts = googleUserAccount.items || []
           for (let analyticsAccount of analyticsAccounts) {
             // websites this analytics account has
+            if (!analyticsAccount.webProperties) {
+              // if this ga account doesn't have web properties attached, don't use
+              continue
+            }
 
             //each site will become a key in websites
             for (let property of analyticsAccount.webProperties) {
@@ -65,5 +69,5 @@ const websitesReducer = (state = {}, action) => {
   }
 }
 
-export default websitesReducer
+export default availableWebsitesReducer
 
