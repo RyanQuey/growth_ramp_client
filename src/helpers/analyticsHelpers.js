@@ -311,6 +311,10 @@ const analyticsHelpers = {
     const multiplier = sortOrder === "ASCENDING" ? 1 : -1
 
     const propertyKind = ["query"].includes(fieldName) ? "dimensions" : "metrics"
+    if (!gscData || !gscData.columnHeader) {
+      // no data yet, probably just changed a filter so needs to wait to receive data first
+      return
+    }
     const propertyIndex = gscData.columnHeader[propertyKind].findIndex(metric => fieldName === metric.name)
     const dataType = gscData.columnHeader[propertyKind][propertyIndex].type
 

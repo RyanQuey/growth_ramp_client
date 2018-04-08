@@ -49,7 +49,8 @@ class ViewContentAudit extends Component {
     if (currentWebsite) {
       this.fetchAudits(currentWebsite.id)
       if (!this.props.goals[currentWebsite.gaWebPropertyId]) {
-        this.props.getGoals({gaWebPropertyId, googleAccountId}) //only be websiteId for now. can manually sort by profile or webproperty in frontend later too
+        const {gaWebPropertyId, googleAccountId, externalGaAccountId} = currentWebsite
+        this.props.getGoals({gaWebPropertyId, googleAccountId, externalGaAccountId}) //only be websiteId for now. can manually sort by profile or webproperty in frontend later too
       }
     }
     this.setCurrentAuditSection(Object.keys(AUDIT_RESULTS_SECTIONS)[0])

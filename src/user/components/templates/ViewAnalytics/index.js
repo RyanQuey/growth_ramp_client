@@ -96,7 +96,8 @@ class ViewAnalytics extends Component {
 
   // use eg when checking if should refresh chart, since that uses same data if GSC is being called only right now
   refreshUnlessGSCOnly () {
-    const {baseOrganization, filters} = this.props
+    const {filters} = this.props
+    const baseOrganization = Helpers.safeDataPath(this.props, "match.params.baseOrganization")
     const dataset = analyticsHelpers.getDataset("table", filters, baseOrganization)
     const targetApis = analyticsHelpers.whomToAsk(dataset)
 
@@ -142,8 +143,11 @@ class ViewAnalytics extends Component {
     !options.skipRefresh && this.refreshUnlessGSCOnly()
 
     // check if should sort
-    const {baseOrganization, filters} = this.props
+    // can't get filters from props, since all this gets called before props gets refreshed
+    const filters = Helpers.safeDataPath(store.getState(), "forms.Analytics.filters.params", {})
+    const baseOrganization = Helpers.safeDataPath(this.props, "match.params.baseOrganization")
     const dataset = analyticsHelpers.getDataset("table", filters, baseOrganization)
+console.log(baseOrganization, filters, dataset);
     const targetApis = analyticsHelpers.whomToAsk(dataset)
 
     if (targetApis.includes("GoogleSearchConsole")) {
