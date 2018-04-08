@@ -9,7 +9,7 @@ import {
 } from 'user/components/partials'
 import { PaginationMenu, SocialLogin } from 'shared/components/partials'
 import { SelectChannelGrouping, SelectWebpageDetailsSet } from 'user/components/groups'
-import { AnalyticsFilters, AnalyticsTable, AnalyticsChart } from 'user/components/partials'
+import { AnalyticsFilters, AnalyticsTable, AnalyticsChart, AuditSiteSelector } from 'user/components/partials'
 import { PROVIDERS, PROVIDER_IDS_MAP } from 'constants/providers'
 import {formActions, alertActions} from 'shared/actions'
 import {
@@ -36,6 +36,7 @@ class ViewAnalytics extends Component {
     this.updateDimensionFilter = this.updateDimensionFilter.bind(this)
     this.setOrderBy = this.setOrderBy.bind(this)
     this.refreshUnlessGSCOnly = this.refreshUnlessGSCOnly.bind(this)
+    this.configureWebsites = this.configureWebsites.bind(this)
   }
 
   componentWillMount() {
@@ -258,6 +259,12 @@ class ViewAnalytics extends Component {
     }
   }
 
+  configureWebsites (e) {
+    e && e.preventDefault()
+
+    this.props.history.push("/settings/websites")
+  }
+
   getChartAnalytics(e) {
     e && e.preventDefault()
     //TODO set filters to store, and then use in saga
@@ -324,24 +331,19 @@ class ViewAnalytics extends Component {
           {currentWebsite ? currentWebsite.name : "No websites yet; configure websites by clicking below to get started"}
         </div>
 
-        <h2>Settings</h2>
-        {Object.keys(websites).length > 0 ? (
-          <div>
-            <a className={classes.toggleSettingsBtn} onClick={this.toggleSettings.bind(this, !settingsOpen)}>{settingsOpen ? "Hide Settings" : "Show Settings"}</a>
-            <div className={`${classes.settings} ${settingsOpen ? classes.open : classes.closed}`}>
+        <div className={classes.websiteSettings}>
+          {Object.keys(websites).length > 0 ? (
+            <div>
               <AuditSiteSelector
                 togglePending={this.togglePending}
               />
 
               <a onClick={this.configureWebsites}>Configure Websites</a>
-              {Object.keys(audits).length > 0 && (
-                <AuditMetadata />
-              )}
             </div>
-          </div>
-        ) : (
-          <a onClick={this.configureWebsites}>Add a Website</a>
-        )}
+          ) : (
+            <a onClick={this.configureWebsites}>Add a Website</a>
+          )}
+        </div>
 
         <AnalyticsFilters
           togglePending={this.togglePending}

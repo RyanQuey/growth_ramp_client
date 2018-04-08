@@ -267,7 +267,7 @@ function* auditContent (action) {
 
     yield all([
       put({type: AUDIT_CONTENT_SUCCESS, payload: res.data.audit}),
-      call(fetchAllSiteAudits, {payload: params})
+      call(fetchAllSiteAudits, {payload: {websiteId: params.websiteId,}})
     ])
     action.cb && action.cb(res.data)
 
