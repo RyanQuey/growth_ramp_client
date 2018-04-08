@@ -108,7 +108,6 @@ function* getAnalytics(action) {
 
     //transfomr into array of objs, each obj with single key (a filter param).
     const query = Helpers.toQueryString(paramsObj)
-console.log(paramsObj);
     const res = yield axios.get(`/api/analytics/getAnalytics?${query}`) //eventually switch to socket
 
 
@@ -127,10 +126,8 @@ console.log(paramsObj);
 //get analytics for a particular table/chart
 function* getGAGoals(action) {
   try {
-    //transfomr into array of objs, each obj with single key (a filter param).
-    const {gaWebPropertyId, googleAccountId} = action.payload
-
-    const res = yield axios.get(`/api/analytics/getGAGoals?gaWebPropertyId=${gaWebPropertyId}&googleAccountId=${googleAccountId}`)
+    const query = Helpers.toQueryString(action.payload)
+    const res = yield axios.get(`/api/analytics/getGAGoals?${query}`)
 
     yield all([
       put({type: GET_GA_GOALS_SUCCESS, payload: {results: res.data, params: action.payload}})
@@ -138,7 +135,7 @@ function* getGAGoals(action) {
     action.cb && action.cb(res.data)
 
   } catch (err) {
-    console.error('gwet analytics fetch failed', err.response || err)
+    console.error('get goals failed', err.response || err)
     action.onFailure && action.onFailure(err)
     // yield put(userFetchFailed(err.message))
   }
