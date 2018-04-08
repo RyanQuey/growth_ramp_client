@@ -286,8 +286,7 @@ class ViewAnalytics extends Component {
 
   render () {
     const {pending} = this.state
-    const {googleAccounts, filters, analytics, tableDatasetParams} = this.props
-    const currentGoogleAccount = googleAccounts && googleAccounts[0]
+    const {currentWebsite, filters, analytics, tableDatasetParams, websites} = this.props
     const baseOrganization = Helpers.safeDataPath(this.props, "match.params.baseOrganization")
     const tableDataset = analyticsHelpers.getDataset("table", filters, baseOrganization)
     const targetApis = analyticsHelpers.whomToAsk(tableDataset)
@@ -320,6 +319,29 @@ class ViewAnalytics extends Component {
     return (
       <div className={classes.viewAnalytics}>
         <h1>Analytics</h1>
+
+        <div>
+          {currentWebsite ? currentWebsite.name : "No websites yet; configure websites by clicking below to get started"}
+        </div>
+
+        <h2>Settings</h2>
+        {Object.keys(websites).length > 0 ? (
+          <div>
+            <a className={classes.toggleSettingsBtn} onClick={this.toggleSettings.bind(this, !settingsOpen)}>{settingsOpen ? "Hide Settings" : "Show Settings"}</a>
+            <div className={`${classes.settings} ${settingsOpen ? classes.open : classes.closed}`}>
+              <AuditSiteSelector
+                togglePending={this.togglePending}
+              />
+
+              <a onClick={this.configureWebsites}>Configure Websites</a>
+              {Object.keys(audits).length > 0 && (
+                <AuditMetadata />
+              )}
+            </div>
+          </div>
+        ) : (
+          <a onClick={this.configureWebsites}>Add a Website</a>
+        )}
 
         <AnalyticsFilters
           togglePending={this.togglePending}
@@ -363,7 +385,7 @@ class ViewAnalytics extends Component {
           setOrderBy={this.setOrderBy}
         />
 
-        {currentGoogleAccount && (
+        {currentWebsite && (
           <PaginationMenu
             onSubmit={this.getAnalytics}
             onPageSizeChange={this.onPageSizeChange}
@@ -399,7 +421,6 @@ const mapStateToProps = state => {
     analytics: state.analytics,
     user: state.user,
     campaigns: state.campaigns,
-    googleAccounts: Helpers.safeDataPath(state, "providerAccounts.GOOGLE", []).filter((account) => !account.unsupportedProvider),
     websites: state.websites,
     currentWebsite: state.currentWebsite,
     tableDatasetParams: Helpers.safeDataPath(state, "forms.Analytics.tableDataset.params", {}),

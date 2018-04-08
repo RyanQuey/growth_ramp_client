@@ -89,7 +89,7 @@ class AnalyticsFilters extends Component {
     const {pending} = this.state
     const {dirty, filters, currentWebsite} = this.props
 
-    if (!filters) {
+    if (!filters || !currentWebsite) {
       return <Icon name="spinner"/>
     }
     const {websiteId, profileId, startDate, endDate, dimensionFilterClauses} = filters
@@ -100,10 +100,6 @@ class AnalyticsFilters extends Component {
 
     return (
       <Form className={classes.filtersForm} onSubmit={this.props.getAnalytics}>
-        <Flexbox className={classes.websiteFilters}>
-          <AuditSiteSelector />
-        </Flexbox>
-
         {currentWebsite ? (
           <div className={classes.datetimeFilters}>
             <Flexbox>

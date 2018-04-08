@@ -206,7 +206,7 @@ class ViewContentAudit extends Component {
               />
 
               <a onClick={this.configureWebsites}>Configure Websites</a>
-              {Object.keys(audits).length && (
+              {Object.keys(audits).length > 0 && (
                 <AuditMetadata />
               )}
             </div>

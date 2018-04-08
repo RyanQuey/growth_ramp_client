@@ -161,7 +161,15 @@ function* createWebsite(action) {
     action.cb && action.cb(res.data)
 
   } catch (err) {
-    console.error('all GA accounts fetch failed', err.response || err)
+    console.error('Create website record failed', err.response || err)
+    if (Helpers.safeDataPath(err, "response.data.message") === "too-much-back-and-forth") {
+      alertActions.newAlert({
+        title: "Irregular Activity Detected:",
+        message: <div>It looks like you recently deactivated this website. In order to prevent abuse, this website's audits will remain archived for at least two weeks. Please upgrade your account or contact us at <a href="mailto:hello@growthramp.io">hello@growthramp.io</a> for help</div>,
+        level: "DANGER",
+        options: {timer: false}
+      })
+    }
     action.onFailure && action.onFailure(err)
     // yield put(websiteCreateFailed(err.message))
   }
@@ -245,9 +253,9 @@ function* auditContent (action) {
       console.log("not even trying to get analytics data (not security issue, just save time)");
       alertActions.newAlert({
         title: "Failed to get analytics:",
-        message: "Insufficient permissions to access Google Search Console for this website",
+        message: "Please setup Google Search Console for this website before auditing",
         level: "DANGER",
-        options: {}
+        options: {timer: false}
       })
 
       return

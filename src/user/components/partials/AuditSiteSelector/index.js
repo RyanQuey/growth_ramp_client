@@ -30,7 +30,7 @@ class AuditSiteSelector extends Component {
 
     if (
       (!currentWebsite && Object.keys(websites).length) ||
-      !websites[currentWebsite.id]
+      (currentWebsite && !websites[currentWebsite.id])
     ) {
       const defaultSite = Object.keys(websites)[0] && websites[Object.keys(websites)[0]]
 
@@ -43,7 +43,7 @@ class AuditSiteSelector extends Component {
 
     if (
       (!currentWebsite && Object.keys(websites).length) ||
-      !websites[currentWebsite.id]
+      (currentWebsite && !websites[currentWebsite.id])
     ) {
       const defaultSite = Object.keys(websites)[0] && websites[Object.keys(websites)[0]]
 

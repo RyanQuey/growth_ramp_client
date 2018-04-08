@@ -168,7 +168,7 @@ class AuditSiteSetup extends Component {
 
 
     const chosenWebsite = gaSites && gaSites[websiteId]
-    //TODO have a dropdown
+    //TODO have a dropdown, when supporting multiple sites
     const currentGoogleAccount = googleAccounts && googleAccounts[0]
 
     //set by function so date will refresh, in case goes past midnight and they didn't refresh browser or something
