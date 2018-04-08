@@ -14,6 +14,7 @@ import {
   AUDIT_CONTENT_SUCCESS,
   FETCH_AUDIT_REQUEST,
   FETCH_AUDIT_SUCCESS,
+  SET_CURRENT_WEBSITE,
   UPDATE_AUDIT_LIST_ITEM_REQUEST,
   UPDATE_AUDIT_LIST_ITEM_SUCCESS,
   UPDATE_WEBSITE_REQUEST,
@@ -317,9 +318,20 @@ function* updateWebsite (action) {
 
     const res = yield axios.put(`/api/websites/${params.id}`, params) //eventually switch to socket
 
-    yield all([
+    const yields = [
       put({type: UPDATE_WEBSITE_SUCCESS, payload: res.data})
-    ])
+    ]
+
+    // check if current audit
+    const {currentWebsite} = state
+    if (currentWebsite && currentWebsite.id === res.data.id) {
+      const archived = res.data.status === "ARCHIVED"
+
+      yields.push({type: SET_CURRENT_WEBSITE, payload: archived ? null : res.data})
+    }
+
+    yield all(yields)
+
     action.cb && action.cb(res.data)
 
   } catch (err) {

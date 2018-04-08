@@ -103,7 +103,7 @@ class AuditMetadata extends Component {
     // sets this syncronously
     this.props.setCurrentAudit(audit)
 
-    // get all lists and their items
+    // get all lists and their items UNLESS setting audit as false
     this.props.fetchAuditLists({auditId: audit.id, userId: audit.userId}, cb, onFailure, {withListsForPreviousAudit: true})
   }
 

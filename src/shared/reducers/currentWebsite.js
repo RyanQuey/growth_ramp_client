@@ -10,7 +10,7 @@ export default (state = null, action) => {
   switch (action.type) {
 
     case SET_CURRENT_WEBSITE:
-      return Object.assign({}, action.payload)
+      return pld ? Object.assign({}, action.payload) : null
 
     default:
       return state
