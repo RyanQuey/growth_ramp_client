@@ -30,12 +30,14 @@ class AuditSiteSetup extends Component {
     this.profileOptions = this.profileOptions.bind(this)
     this.setWebsiteFilter = this.setWebsiteFilter.bind(this)
     this.setSite = this.setSite.bind(this)
+    this.viewAudits = this.viewAudits.bind(this)
   }
 
   componentDidMount() {
   }
 
   componentWillReceiveProps(props) {
+    // when async call to get all ga sites comes in
     const gaSites = props.availableWebsites.gaSites
     const {websiteId, profileId} = this.state
     if (!websiteId && gaSites) {
@@ -46,7 +48,6 @@ class AuditSiteSetup extends Component {
       if (defaultSite && defaultSite.profiles && defaultSite.profiles.length) {
         defaultProfileId = defaultSite.profiles[0].id
       }
-
       this.setState({
         websiteId: defaultSite.id,
         profileId: defaultProfileId,
@@ -86,11 +87,6 @@ class AuditSiteSetup extends Component {
   setWebsiteFilter (websiteOption) {
     const {website} = websiteOption
 
-    console.log("website", website)
-    // clear query string since new website wouldn't have the same webpages
-    this.props.history.push(this.props.location.pathname)
-
-
     //default to first profile
     let defaultProfileId = ""
     if (website.profiles && website.profiles.length) {
@@ -110,6 +106,13 @@ class AuditSiteSetup extends Component {
 
   }
 
+  viewAudits (e) {
+    e && e.preventDefault()
+    alertActions.closeAlerts()
+    this.props.history.push("/analytics/content-audit")
+  }
+
+  // when they pick the website for good
   setSite (e) {
     e && e.preventDefault()
     // find or create a website record with this exact combination
@@ -138,12 +141,18 @@ class AuditSiteSetup extends Component {
     }
 
     const cb = (result) => {
-      console.log("finished in callback");
+      this.props.toggleAddingSite(false)
       this.setState({pending: false})
+      alertActions.newAlert({
+        title: "Successfully Chose Website!",
+        message: <Button onClick={this.viewAudits}>Get Started</Button>,
+        level: "SUCCESS",
+        options: {timer: false}
+      })
+
     }
 
     const onFailure = (err) => {
-      console.log("finished in failure");
       this.setState({pending: false})
     }
 
@@ -153,11 +162,10 @@ class AuditSiteSetup extends Component {
 
 
   render () {
-    const {pending} = this.state
+    const {pending, websiteId, profileId} = this.state
     const {googleAccounts, availableWebsites, dirty, websites} = this.props
     const {gaSites = {}} = availableWebsites
 
-    const {websiteId, profileId} = this.state
 
     const chosenWebsite = gaSites && gaSites[websiteId]
     //TODO have a dropdown
@@ -178,8 +186,8 @@ class AuditSiteSetup extends Component {
     // curently only can do one site. So saving will just overwrite the one website record they have. If they have a website set, will just skip this step
     // In the future though, users can create several website records if their subscription allows for it
     return (
-      <Form className={classes.filtersForm} onSubmit={this.setSite}>
-        <Flexbox className={classes.websiteFilters}>
+      <Form className={classes.siteForm} onSubmit={this.setSite}>
+        <Flexbox className={classes.websiteFilters} direction="column">
           <div className={classes.googleBtn}>
             <div>Google Account: {currentGoogleAccount ? currentGoogleAccount.userName : "None available"}</div>
             <SocialLogin
@@ -189,32 +197,34 @@ class AuditSiteSetup extends Component {
             />
           </div>
 
-          {Object.keys(gaSites).length > 0 && (
-            <div className={classes.websiteSelect}>
-              <div>Website: </div>
-              <Select
-                options={websiteOptions}
-                currentOption={chosenWebsiteOption || websiteOptions[0]}
-                name="website"
-                onChange={this.setWebsiteFilter}
-              />
-            </div>
-          )}
+          <Flexbox justify="space-between">
+            {Object.keys(gaSites).length > 0 && (
+              <div className={classes.websiteSelect}>
+                <div>Website: </div>
+                <Select
+                  options={websiteOptions}
+                  currentOption={chosenWebsiteOption}
+                  name="website"
+                  onChange={this.setWebsiteFilter}
+                />
+              </div>
+            )}
 
-          {chosenWebsite &&
-            <div className={classes.websiteSelect}>
-              <div>Analytics Profile: </div>
-              <Select
-                options={profileOptions}
-                currentOption={currentProfileOption || profileOptions[0]}
-                name="profileId"
-                onChange={this.setAnalyticsProfileFilter}
-              />
-            </div>
-          }
+            {chosenWebsite &&
+              <div className={classes.websiteSelect}>
+                <div>Analytics Profile: </div>
+                <Select
+                  options={profileOptions}
+                  currentOption={currentProfileOption || profileOptions[0]}
+                  name="profileId"
+                  onChange={this.setAnalyticsProfileFilter}
+                />
+              </div>
+            }
+          </Flexbox>
         </Flexbox>
 
-        {currentProfileOption || profileOptions[0] ? (
+        {(currentProfileOption || profileOptions[0]) ? (
           <div className={classes.datetimeFilters}>
             <Flexbox>
             </Flexbox>
@@ -222,7 +232,7 @@ class AuditSiteSetup extends Component {
             {<Button type="submit" pending={pending} disabled={!profileId}>Choose Site to Audit</Button>}
           </div>
         ) : (
-          <div>No analytics profiles connected to your google account. </div>
+          chosenWebsite && <div>No analytics profiles connected to this google account.</div>
         )}
       </Form>
     )

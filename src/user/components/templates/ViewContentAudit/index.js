@@ -43,7 +43,7 @@ class ViewContentAudit extends Component {
   }
 
   componentWillMount() {
-    const {filters, goals} = this.props
+    const {filters, goals, availableWebsites} = this.props
 
     const currentWebsiteId = Helpers.safeDataPath(this.props, "currentWebsite.id")
     if (currentWebsiteId) {
@@ -51,7 +51,9 @@ class ViewContentAudit extends Component {
     }
     this.setCurrentAuditSection(Object.keys(AUDIT_RESULTS_SECTIONS)[0])
 
-    this.refreshGAAccounts()
+    if (!Object.keys(availableWebsites).length ) {
+      this.refreshGAAccounts()
+    }
   }
 
   componentWillReceiveProps(props) {
@@ -111,12 +113,6 @@ class ViewContentAudit extends Component {
     }
     const onFailure = (err) => {
       this.setState({pending: false})
-      alertActions.newAlert({
-        title: "Failure to fetch Google Analytics accounts: ",
-        level: "DANGER",
-        message: err.message || "Unknown error",
-        options: {timer: false},
-      })
     }
 
     this.setState({pending: true})
@@ -219,8 +215,7 @@ class ViewContentAudit extends Component {
           <a onClick={this.configureWebsites}>Add a Website</a>
         )}
 
-        {currentWebsite && (
-          Object.keys(audits).length ? (
+        {Object.keys(audits).length > 0 ? (
             <div>
               {currentAudit &&
                 <div>
@@ -250,7 +245,7 @@ class ViewContentAudit extends Component {
               }
             </div>
           ) : (
-            <div>
+            currentWebsite && <div>
               No audits yet. Click below to get started!
               <Button
                 onClick={this.auditSite}
@@ -260,7 +255,7 @@ class ViewContentAudit extends Component {
               </Button>
             </div>
           )
-        )}
+        }
       </div>
     )
   }
@@ -296,6 +291,7 @@ const mapStateToProps = state => {
   return {
     analytics: state.analytics,
     audits: state.audits || {},
+    availableWebsites: state.availableWebsites,
     currentAudit: state.currentAudit,
     previousAudit: state.previousAudit,
     currentAuditSection: state.currentAuditSection,

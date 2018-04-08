@@ -33,7 +33,10 @@ class AuditMetadata extends Component {
   }
 
   componentDidMount() {
-    if (Object.keys(this.props.audits).length && !this.props.currentAudit) {
+    if (
+      (Object.keys(this.props.audits).length && !this.props.currentAudit) ||
+      (this.props.currentAudit && this.props.currentAudit.websiteId !== this.props.currentWebsite.id)
+    ) {
       const filterFunc = (audit) => (audit.websiteId === this.props.currentWebsite.id)
       let latestAudit = analyticsHelpers.getLatestAudit({filterFunc})
       this.setCurrentAudit(latestAudit)
@@ -41,8 +44,12 @@ class AuditMetadata extends Component {
   }
 
   componentWillReceiveProps (props) {
-    if (props.currentWebsite.id !== this.props.currentWebsite.id) {
-      const filterFunc = (audit) => (audit.websiteId === this.props.currentWebsite.id)
+//TODO this looks buggy...should be more in line with teh component did mount I would think
+    if (
+      (props.currentWebsite.id !== this.props.currentWebsite.id) ||
+      (props.currentAudit && props.currentAudit.websiteId !== props.currentWebsite.id)
+    ) {
+      const filterFunc = (audit) => (audit.websiteId === props.currentWebsite.id)
       let latestAudit = analyticsHelpers.getLatestAudit({filterFunc})
       this.setCurrentAudit(latestAudit)
     }

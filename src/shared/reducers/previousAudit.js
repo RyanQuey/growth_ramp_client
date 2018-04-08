@@ -13,12 +13,12 @@ export default (state = null, action) => {
 
     case FETCH_CURRENT_AUDIT_SUCCESS:
       thisAudit = pld;
-      previousAudit = analyticsHelpers.getLatestAuditBefore(thisAudit.createdAt)
+      previousAudit = analyticsHelpers.getLatestAuditBefore({endDate: thisAudit.createdAt, websiteId: thisAudit.websiteId})
       return Object.assign({}, previousAudit)
 
     case SET_CURRENT_AUDIT:
       thisAudit = pld;
-      previousAudit = analyticsHelpers.getLatestAuditBefore(thisAudit.createdAt)
+      previousAudit = analyticsHelpers.getLatestAuditBefore({endDate: thisAudit.createdAt, websiteId: thisAudit.websiteId})
       return Object.assign({}, previousAudit)
 
     default:

@@ -15,6 +15,10 @@
     max-height: 0px;
     overflow-y: hidden;
   }
+
+  & > a {
+    margin-left: 20px;
+  }
 }
 .toggleSettingsBtn {
   padding-left: 20px;

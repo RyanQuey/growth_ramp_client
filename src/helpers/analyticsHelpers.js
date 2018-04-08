@@ -404,9 +404,8 @@ const analyticsHelpers = {
 
   // endTime should be YYYY-MM-DDTHH:MM:SS format, in utc
   // mostly for passing in another audit's createdAt time
-  getLatestAuditBefore: (endDate) => {
-console.log("endDate");
-    const filterFunc = (audit) => (audit.createdAt < endDate)
+  getLatestAuditBefore: ({endDate, websiteId}) => {
+    const filterFunc = (audit) => (audit.createdAt < endDate && audit.websiteId === websiteId)
     let latestAudit = analyticsHelpers.getLatestAudit({filterFunc})
     return latestAudit
   },

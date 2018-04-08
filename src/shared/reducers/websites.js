@@ -1,5 +1,6 @@
 import {
   FETCH_WEBSITE_SUCCESS,
+  UPDATE_WEBSITE_SUCCESS,
   SIGN_OUT,
   REACTIVATE_OR_CREATE_WEBSITE_SUCCESS,
 } from 'constants/actionTypes'
@@ -14,6 +15,16 @@ const websitesReducer = (state = {}, action) => {
       //add this site to the list
       newState = Object.assign({}, state)
       newState[pld.id] = pld
+      return newState
+
+    case UPDATE_WEBSITE_SUCCESS:
+      //add this site to the list
+      newState = Object.assign({}, state)
+      if (pld.status === "ARCHIVED") {
+        delete newState[pld.id]
+      } else {
+        newState[pld.id] = pld
+      }
       return newState
 
     case FETCH_WEBSITE_SUCCESS:

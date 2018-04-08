@@ -26,13 +26,26 @@ class AuditSiteSelector extends Component {
   }
 
   componentDidMount() {
+    const {currentWebsite, websites} = this.props
+
+    if (
+      (!currentWebsite && Object.keys(websites).length) ||
+      !websites[currentWebsite.id]
+    ) {
+      const defaultSite = Object.keys(websites)[0] && websites[Object.keys(websites)[0]]
+
+      this.setCurrentWebsite({website: defaultSite})
+    }
   }
 
   componentWillReceiveProps(props) {
     const {currentWebsite, websites} = props
 
-    if (!currentWebsite && Object.keys(websites).length) {
-      const defaultSite = websites[Object.keys(websites)[0]]
+    if (
+      (!currentWebsite && Object.keys(websites).length) ||
+      !websites[currentWebsite.id]
+    ) {
+      const defaultSite = Object.keys(websites)[0] && websites[Object.keys(websites)[0]]
 
       this.setCurrentWebsite({website: defaultSite})
     }
@@ -60,6 +73,8 @@ class AuditSiteSelector extends Component {
   //for filtering which websites to show analytics for
   setCurrentWebsite (websiteOption) {
     const {website} = websiteOption
+
+    // also, clear the current audit
 
     this.props.setCurrentWebsite(website)
   }

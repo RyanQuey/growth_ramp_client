@@ -16,6 +16,8 @@ import {
   FETCH_AUDIT_SUCCESS,
   UPDATE_AUDIT_LIST_ITEM_REQUEST,
   UPDATE_AUDIT_LIST_ITEM_SUCCESS,
+  UPDATE_WEBSITE_REQUEST,
+  UPDATE_WEBSITE_SUCCESS,
 } from 'constants/actionTypes'
 import { USER_FIELDS_TO_PERSIST, PROVIDER_IDS_MAP  } from 'constants'
 import { errorActions, alertActions } from 'shared/actions'
@@ -48,6 +50,12 @@ function* fetchAllGAAccounts(action) {
 
   } catch (err) {
     console.error('all GA accounts fetch failed', err.response || err)
+      alertActions.newAlert({
+        title: "Failure to fetch Google Analytics accounts: ",
+        level: "DANGER",
+        message: err.message || "Unknown error",
+        options: {timer: false},
+      })
     action.onFailure && action.onFailure(err)
     // yield put(userFetchFailed(err.message))
   }
@@ -136,7 +144,7 @@ function* getGAGoals(action) {
 }
 
 //might use these websites for more than just auditing...but if we do, can changer this func name easily enough
-function* createAuditWebsite(action) {
+function* createWebsite(action) {
   try {
     const userId = store.getState().user.id
     const params = Object.assign({}, action.payload, {userId})
@@ -152,11 +160,6 @@ function* createAuditWebsite(action) {
 
     action.cb && action.cb(res.data)
 
-    alertActions.newAlert({
-      title: "Successfully Chose Website!",
-      level: "SUCCESS",
-    })
-
   } catch (err) {
     console.error('all GA accounts fetch failed', err.response || err)
     action.onFailure && action.onFailure(err)
@@ -166,7 +169,6 @@ function* createAuditWebsite(action) {
 
 function* fetchAllSiteAudits(action) {
   try {
-console.log("running fetch");
     const userId = store.getState().user.id
     const pld = action.payload
     const params = Object.assign({}, pld, {
@@ -247,6 +249,7 @@ function* auditContent (action) {
         level: "DANGER",
         options: {}
       })
+
       return
     }
 
@@ -254,10 +257,9 @@ function* auditContent (action) {
 
     const res = yield axios.post(`/api/audits/auditContent`, params) //eventually switch to socket
 
-
-
     yield all([
-      put({type: AUDIT_CONTENT_SUCCESS, payload: res.data.audit})
+      put({type: AUDIT_CONTENT_SUCCESS, payload: res.data.audit}),
+      call(fetchAllSiteAudits, {payload: params})
     ])
     action.cb && action.cb(res.data)
 
@@ -300,6 +302,26 @@ function* updateAuditListItem (action) {
   }
 }
 
+function* updateWebsite (action) {
+  try {
+    const state = store.getState()
+    const params = action.payload
+
+    const res = yield axios.put(`/api/websites/${params.id}`, params) //eventually switch to socket
+
+    yield all([
+      put({type: UPDATE_WEBSITE_SUCCESS, payload: res.data})
+    ])
+    action.cb && action.cb(res.data)
+
+  } catch (err) {
+    console.error('update website failed', err.response || err)
+
+    action.onFailure && action.onFailure(err)
+    // yield put(userFetchFailed(err.message))
+  }
+}
+
 export default function* updateProviderSaga() {
   yield takeLatest(FETCH_ALL_GA_ACCOUNTS_REQUEST, fetchAllGAAccounts)
   yield takeLatest(FETCH_AUDIT_REQUEST, fetchAllSiteAudits)
@@ -307,7 +329,8 @@ export default function* updateProviderSaga() {
   yield takeEvery(GET_ANALYTICS_REQUEST, getAnalytics)
   yield takeEvery(GET_GA_GOALS_REQUEST, getGAGoals)
   yield takeEvery(AUDIT_CONTENT_REQUEST, auditContent)
-  yield takeLatest(REACTIVATE_OR_CREATE_WEBSITE_REQUEST, createAuditWebsite)
+  yield takeLatest(REACTIVATE_OR_CREATE_WEBSITE_REQUEST, createWebsite)
   yield takeEvery(UPDATE_AUDIT_LIST_ITEM_REQUEST, updateAuditListItem)
-
+  yield takeEvery(UPDATE_WEBSITE_REQUEST, updateWebsite)
+UPDATE_WEBSITE_REQUEST
 }
