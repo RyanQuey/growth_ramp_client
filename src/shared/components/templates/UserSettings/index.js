@@ -2,7 +2,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux'
 import { withRouter, Prompt } from 'react-router-dom'
 import { Navbar } from 'shared/components/elements'
-import { AccountSubscription, ConfigureWebsites } from 'shared/components/partials'
+import { AccountSubscription, ConfigureWebsites, AccountSettings } from 'shared/components/partials'
 import {  } from 'user/components/partials'
 import {  } from 'constants/actionTypes'
 import theme from 'theme'
@@ -10,13 +10,17 @@ import { formActions } from 'shared/actions'
 import classes from './style.scss'
 
 const sections = {
+  websites: { //key should be url param
+    title: "Configure Websites",
+    component: ConfigureWebsites,
+  },
   paymentDetails: { //key should be url param
     title: "Payment Details",
     component: AccountSubscription,
   },
-  websites: { //key should be url param
-    title: "Configure Websites",
-    component: ConfigureWebsites,
+  accountSettings: { //key should be url param
+    title: "Account Settings",
+    component: AccountSettings,
   },
 }
 const defaultSection = Object.keys(sections)[0]
@@ -79,7 +83,7 @@ class UserSettings extends Component {
   render() {
     const c = this;
     const currentSection = this.props.match.params.view
-    const Tag = (sections[currentSection] && sections[currentSection].component) || AccountSubscription
+    const Tag = (sections[currentSection] && sections[currentSection].component) || ConfigureWebsites
 
 //TODO can borrow code from the content audit tabs
     return (
