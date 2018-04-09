@@ -30,6 +30,7 @@ class AuditMetadata extends Component {
     this.selectAuditOption = this.selectAuditOption.bind(this)
     this.setCurrentAudit = this.setCurrentAudit.bind(this)
     this.toggleHideWhenCompleted = this.toggleHideWhenCompleted.bind(this)
+    this.updateUserSettings = this.updateUserSettings.bind(this)
   }
 
   componentDidMount() {
@@ -73,7 +74,14 @@ class AuditMetadata extends Component {
   }
 
   toggleHideWhenCompleted (value) {
+    this.updateUserSettings({hideCompletedAuditItems: value})
+  }
+
+  // new setting should be obj with whatever keys and values to merge in
+  updateUserSettings (newSettings) {
     const {user} = this.props
+    const updatedSettings = Object.assign({}, user.settings || {}, newSettings)
+
     const cb = (result) => {
       this.setState({pending: false})
     }
@@ -82,7 +90,7 @@ class AuditMetadata extends Component {
       this.setState({pending: false})
     }
 
-    this.props.updateUser({id: user.id, hideCompletedAuditItems: value}, cb, onFailure)
+    this.props.updateUser({id: user.id, settings: updatedSettings}, cb, onFailure)
   }
 
   selectAuditOption (option) {
@@ -160,7 +168,7 @@ class AuditMetadata extends Component {
               <Flexbox direction="column">
                 <h3>Options:</h3>
                 <div className={classes.checkbox}>
-                  <Checkbox onChange={this.toggleHideWhenCompleted} value={user.hideCompletedAuditItems} label="Hide completed issues"/>
+                  <Checkbox onChange={this.toggleHideWhenCompleted} value={user.settings && user.settings.hideCompletedAuditItems} label="Hide completed issues"/>
                 </div>
               </Flexbox>
             </div>

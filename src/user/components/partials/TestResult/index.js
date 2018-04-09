@@ -32,7 +32,13 @@ class TestResult extends Component {
         {Object.keys(testListTypes).map((listKey, index) => {
           let listMetadata = testListTypes[listKey]
           const list = listsArr.find((list) => list.listKey === listKey)
-          const listItemsArr = itemsToShowByList[list.id]
+          const listItemsArr = itemsToShowByList[list.id].filter((item) =>
+            // filter out completed issues if that setting is set
+            currentAuditSection !== "currentIssues" ||
+            !user.settings || !user.settings.hideCompletedAuditItems ||
+            !item.completed
+          )
+
           const totals = list.summaryData.totals
 
           return <Flexbox key={listKey} className={`${classes.table}`} direction="column">
@@ -64,12 +70,6 @@ class TestResult extends Component {
                 </tr>
 
                 {listItemsArr.map((item) => {
-                  if (
-                    currentAuditSection === "currentIssues" &&
-                    user.hideCompletedAuditItems &&
-                    item.completed
-                  ) return null
-
                   return <AuditListItemRow
                     key={item.id}
                     item={item}
