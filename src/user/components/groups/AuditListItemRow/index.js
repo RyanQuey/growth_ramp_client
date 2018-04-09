@@ -34,21 +34,21 @@ class AuditListItemRow extends Component {
   }
 
   render () {
-    const { item, listMetadata, currentWebsite } = this.props
+    const { item, listMetadata, currentWebsite, classKey } = this.props
     const dimensionIsPath = DIMENSIONS_WITH_PATHS.includes(listMetadata.primaryDimension)
     const externalLink = dimensionIsPath ? `${currentWebsite.gaSiteUrl}${item.dimension}` : null
 
     return (
-      <tr className={classes.itemRow}>
+      <tr className={`${classes.itemRow} ${classes[classKey]}`}>
         <td className={`${classes.column0}`} title={item.completed ? "Mark issue as incomplete" : "Mark issue as complete"}>
           <Checkbox onChange={this.toggleCompleted} value={item.completed} />
         </td>
 
-        <td className={`${classes.column1}`}>
+        <td className={`${classes.column1} ${dimensionIsPath ? classes.pathColumn : ""}`}>
           <Flexbox justify="space-between">
-            <Flexbox className={classes.dimensionTextWrapper} align="center">
+            <Flexbox className={dimensionIsPath ? classes.dimensionLinkWrapper : classes.dimensionTextWrapper} align="center">
               &nbsp;
-              <div className={classes.dimensionLink} title={item.dimension}>{item.dimension}</div>
+              <div className={dimensionIsPath ? classes.dimensionLink : classes.dimensionText} title={item.dimension}>{item.dimension}</div>
             </Flexbox>
             {externalLink && <a className={classes.externalLink} target="_blank" href={externalLink} title={`Open ${item.dimension} in new window`} ><Icon name="external-link"/></a>}
           </Flexbox>

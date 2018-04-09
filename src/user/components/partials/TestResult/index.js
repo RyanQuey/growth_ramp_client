@@ -50,30 +50,23 @@ class TestResult extends Component {
                 <tr className={`${classes.tableHeader}`}>
                   <th className={`${classes[`column0`]}`}>Done</th>
                   <th className={`${classes[`column1`]}`}>Issue</th>
-                  {Object.keys(listMetadata.metrics).map((metricName, index) =>
-                    <th key={metricName} className={`${classes[`column${index +2}`]}`}>{DIMENSIONS_METRICS_FRIENDLY_NAME[metricName]}</th>
-                  )}
-                </tr>
-
-                <tr
-                  className={`${classes.tableRow} ${classes.oddRow} ${classes.totalsRow}`}
-                >
-                  <td className={`${classes[`column0`]}`}></td>
-                  <td className={`${classes[`column1`]}`}></td>
-
                   {Object.keys(listMetadata.metrics).map((metricName, index) => {
                     const value = totals[metricName]
-                    const totalType = METRICS_WITH_AVERAGES.includes(metricName) ? "average" : "total"
-
-                    return <td key={metricName} className={`${classes[`column${index +2}`]}`}>{value} ({totalType})</td>
+                    const totalType = METRICS_WITH_AVERAGES.includes(metricName) ? "Avg" : "Total"
+                    return <th key={metricName} className={`${classes[`column${index +2}`]}`}>
+                      {DIMENSIONS_METRICS_FRIENDLY_NAME[metricName]}
+                      <div className={classes.headerCaption}>({totalType}: {value})</div>
+                    </th>
                   })}
                 </tr>
 
-                {listItemsArr.map((item) => {
+                {listItemsArr.map((item, index) => {
+                  let alternatingClass = (index % 2) == 1 ? "oddRow" : "evenRow"
                   return <AuditListItemRow
                     key={item.id}
                     item={item}
                     listMetadata={listMetadata}
+                    classKey={alternatingClass}
                   />
                 })}
               </table>

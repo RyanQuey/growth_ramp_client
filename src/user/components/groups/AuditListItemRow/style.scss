@@ -9,20 +9,35 @@
 
   .column1 {
     text-align: left;
-    padding: .5rem 0 .5rem .5rem;
+    padding: .5rem;
     position: relative; // so the externalLink floats to right properly
     overflow: hidden;
+    min-width: 150px;
 
-    .dimensionTextWrapper {
-      width: calc(100% - 30px);
-      .dimensionLink {
-        display: inline-block;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        overflow: hidden;
+    &.pathColumn {
+      padding: .5rem 0 .5rem .5rem;
+      .dimensionLinkWrapper {
+        width: calc(100% - 30px); //for the external link btn
+        .dimensionLink {
+          display: inline-block;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+          text-align: left;
+          overflow: hidden;
+        }
       }
     }
 
+    .dimensionTextWrapper {
+      .dimensionText {
+        display: inline-block;
+        min-width: 100px;
+        width: 100%;
+        text-align: center;
+      }
+    }
+
+    // little tags and whatnot that go after the dimension itself
     a.externalLink {
       position: absolute;
       right: 5px;
@@ -32,4 +47,10 @@
   .column2, .column3, .column4 {
     text-align: center;
   }
+}
+.evenRow {
+  background: $white;;
+}
+.oddRow {
+  background: $module_gray-1;
 }

@@ -119,7 +119,7 @@ class MaybeFixedIssues extends Component {
 
     if (!previousAudit.id) return (
       <div>
-        <h3>Nothing to show yet!</h3>
+        <h3 style={{"margin-top": "0"}}>Nothing to show yet!</h3>
         <div>Once you receive your second audit, we'll display what issues might have been resolved since your previous audit, but require more information for us to be sure. This will help you prevent any issues from falling between the cracks.</div>
       </div>
     )

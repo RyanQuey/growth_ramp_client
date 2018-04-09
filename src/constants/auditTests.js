@@ -32,7 +32,7 @@ export const AUDIT_TESTS = {
     question: "What headlines and meta-descriptions need to be improved?",
     lists: {
       weakHeadlines: {
-        header: "Headlines to improve:",
+        header: "Headlines to improve",
         primaryDimension: "page", //gsc
         metrics: {
           "ctr": {},
@@ -47,20 +47,18 @@ export const AUDIT_TESTS = {
     question: "What browsers does your site not work well on?",
     lists: {
       badBounceRate: {
-        header: "Bad Bounce Rate:",
+        header: "Bad Bounce Rate",
         primaryDimension: "ga:browser",
         metrics: {
           "ga:users": {},
           "ga:bounceRate": {},
-          "ga:avgSessionDuration": {},
         }
       },
       badSessionDuration: {
-        header: "Bad Avg Session Duration:",
+        header: "Bad Average Session Duration",
         primaryDimension: "ga:browser",
         metrics: {
           "ga:users": {},
-          "ga:bounceRate": {},
           "ga:avgSessionDuration": {},
         }
       }
@@ -72,20 +70,18 @@ export const AUDIT_TESTS = {
     question: "What devices does your site not work well on?",
     lists: {
       badBounceRate: {
-        header: "Bad Bounce Rate:",
+        header: "Bad Bounce Rate",
         primaryDimension: "ga:deviceCategory",
         metrics: {
           "ga:users": {},
           "ga:bounceRate": {},
-          "ga:avgSessionDuration": {},
         }
       },
       badSessionDuration: {
-        header: "Bad Avg Session Duration:",
+        header: "Bad Avg Session Duration",
         primaryDimension: "ga:deviceCategory",
         metrics: {
           "ga:users": {},
-          "ga:bounceRate": {},
           "ga:avgSessionDuration": {},
         }
       }
@@ -97,20 +93,18 @@ export const AUDIT_TESTS = {
     question: "What other pages may have issues that affect performance?",
     lists: {
       badBounceRate: {
-        header: "Bad Bounce Rate:",
+        header: "Bad Bounce Rate",
         primaryDimension: "ga:landingPagePath",
         metrics: {
           "ga:users": {},
           "ga:bounceRate": {},
-          "ga:avgSessionDuration": {},
         }
       },
       badSessionDuration: {
-        header: "Bad Avg Session Duration:",
+        header: "Bad Avg Session Duration",
         primaryDimension: "ga:landingPagePath",
         metrics: {
           "ga:users": {},
-          "ga:bounceRate": {},
           "ga:avgSessionDuration": {},
         }
       }
@@ -125,7 +119,7 @@ export const AUDIT_TESTS = {
     question: "What pages should you focus on for improving their search position?",
     lists: {
       searchPositionToImprove: {
-        header: "Pages to Improve:",
+        header: "Pages to Improve",
         primaryDimension: "page",
         metrics: {
           "position": {},
@@ -138,7 +132,7 @@ export const AUDIT_TESTS = {
     question: "What pages are getting 404 errors from internal and external links?",
     lists: {
       brokenExternal: {
-        header: "Broken External Links:",
+        header: "Broken External Links",
         primaryDimension: "ga:pagePath",
         metrics: {
           "ga:pageTitle": {}, //not actually a metric, but whatever. Displaying as such
@@ -146,7 +140,7 @@ export const AUDIT_TESTS = {
         }
       },
       brokenInternal: {
-        header: "Bad Internal Links:",
+        header: "Bad Internal Links",
         metrics: {
           "ga:pageTitle": {},
           "ga:sessions": {},

@@ -69,7 +69,7 @@ class FixedIssues extends Component {
     ) return null
     if (!previousAudit.id) return (
       <div>
-        <h3>Nothing to show yet!</h3>
+        <h3 style={{"margin-top": "0"}}>Nothing to show yet!</h3>
         <div>Once you receive your second audit, we'll display what issues you successfully solved from your previous audit.</div>
       </div>
     )

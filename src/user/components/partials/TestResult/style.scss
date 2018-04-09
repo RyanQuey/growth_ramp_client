@@ -11,8 +11,18 @@
 
   .tableHeader {
     width: 100%;
-    div {
-      font-weight: bold;
+    background-color: #394e7f;
+    color: #fffffff7;
+    th {
+      padding: 10px;
+      text-align: center;
+      white-space: nowrap;
+      //border: gray 1px solid;
+    }
+
+    .headerCaption {
+      font-weight: normal;
+      white-space: nowrap;
     }
   }
   .row {
@@ -20,10 +30,6 @@
 
   }
 
-  th {
-    padding: 0 10px 0px 10px;
-    text-align: center;
-  }
 
   // doing tables so easy to do widths from parent component
   .column0 {
