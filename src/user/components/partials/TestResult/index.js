@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import {
 } from 'constants/actionTypes'
 import { Button, Flexbox, Icon, Form, Checkbox } from 'shared/components/elements'
-import { Select } from 'shared/components/groups'
+import { Select, Popup } from 'shared/components/groups'
 import { AuditListItemRow } from 'user/components/groups'
 import { AUDIT_TESTS,  } from 'constants/auditTests'
 import {DIMENSIONS_METRICS_FRIENDLY_NAME, METRICS_WITH_AVERAGES, } from 'constants/analytics'
@@ -18,8 +18,14 @@ class TestResult extends Component {
     super()
 
     this.state = {
+      viewingInfoPopup: "",
     }
 
+  }
+
+  //value should be string for that list key, so only one shows at a time
+  toggleInfoPopup (value = "") {
+    this.setState({viewingInfoPopup: value})
   }
 
   render () {
@@ -40,9 +46,32 @@ class TestResult extends Component {
           )
 
           const totals = list.summaryData.totals
+          const infoIsOpen = this.state.viewingInfoPopup === listKey
 
           return <Flexbox key={listKey} className={`${classes.table}`} direction="column">
-            <h3>{listMetadata.header}</h3>
+            <Flexbox justify="space-between">
+              <h3>
+                {listMetadata.header}
+                &nbsp;
+                <div className={classes.popupWrapper}>
+                  <Icon name="info-circle" className={classes.helpBtn} onClick={this.toggleInfoPopup.bind(this, infoIsOpen ? false : listKey)}/>
+                  <Popup
+                    side="top"
+                    float="center"
+                    handleClickOutside={this.toggleInfoPopup.bind(this, false)}
+                    show={infoIsOpen}
+                    containerClass={classes.popupContainer}
+                  >
+                    <div className={classes.helpBox}>
+                      <div className={classes.description}>
+                        <div className={classes.title}>What's this issue?</div>
+                        <div>{listMetadata.description}</div>
+                      </div>
+                    </div>
+                  </Popup>
+                </div>
+              </h3>
+            </Flexbox>
             {!listItemsArr.length ? (
               <div>Well done, nothing needs improvement right now!</div>
             ) : (

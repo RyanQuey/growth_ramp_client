@@ -1,16 +1,7 @@
 @import 'theme/_helpers';
 .container {
-  visibility: visible;
-  opacity: 1;
-  max-height: 2000px ;
+  overflow: visible;
   width: 100%;
-  @include transition(max-height, .8s, ease);
-  overflow-y: hidden;
-
-  &.hidden {
-    max-height: 0;
-    overflow-y: hidden;
-  }
 
 }
 .table {

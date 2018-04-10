@@ -51,3 +51,42 @@
     }
   }
 }
+.popupWrapper {
+  position: relative;
+  display: inline-block;
+
+    i {
+      width: 20px;
+      text-align: center;
+    }
+}
+.helpBtn {
+  cursor: pointer;
+}
+.helpBox {
+  margin: 5px;
+  .description {
+    @include rems(14)
+    line-height: 1rem;
+    text-align: left;
+    padding: 10px 10px 0 10px;
+    font-weight: normal;
+
+    .title {
+      font-weight: bold;
+      white-space: nowrap;
+    }
+
+    h5 {
+      font-size: 1rem;
+    }
+    div {
+      padding-bottom: 1rem;
+    }
+  }
+  button {
+    @include rems(14)
+    line-height: 1rem;
+    white-space: nowrap;
+  }
+}

@@ -9,7 +9,8 @@ export const AUDIT_TESTS = {
         metrics: {
           "ga:avgPageLoadTime": {},
           "ga:pageviews": {},
-        }
+        },
+        description: "Description coming soon!",
       }
     },
   },
@@ -37,7 +38,8 @@ export const AUDIT_TESTS = {
         metrics: {
           "ctr": {},
           "impressions": {},
-        }
+        },
+        description: "Description coming soon!",
       }
     },
   },
@@ -52,7 +54,8 @@ export const AUDIT_TESTS = {
         metrics: {
           "ga:users": {},
           "ga:bounceRate": {},
-        }
+        },
+        description: "Description coming soon!",
       },
       badSessionDuration: {
         header: "Bad Average Session Duration",
@@ -60,7 +63,8 @@ export const AUDIT_TESTS = {
         metrics: {
           "ga:users": {},
           "ga:avgSessionDuration": {},
-        }
+        },
+        description: "Description coming soon!",
       }
     },
   },
@@ -75,7 +79,8 @@ export const AUDIT_TESTS = {
         metrics: {
           "ga:users": {},
           "ga:bounceRate": {},
-        }
+        },
+        description: "Description coming soon!",
       },
       badSessionDuration: {
         header: "Bad Avg Session Duration",
@@ -83,7 +88,8 @@ export const AUDIT_TESTS = {
         metrics: {
           "ga:users": {},
           "ga:avgSessionDuration": {},
-        }
+        },
+        description: "Description coming soon!",
       }
     },
   },
@@ -98,7 +104,8 @@ export const AUDIT_TESTS = {
         metrics: {
           "ga:users": {},
           "ga:bounceRate": {},
-        }
+        },
+        description: "Description coming soon!",
       },
       badSessionDuration: {
         header: "Bad Avg Session Duration",
@@ -106,7 +113,8 @@ export const AUDIT_TESTS = {
         metrics: {
           "ga:users": {},
           "ga:avgSessionDuration": {},
-        }
+        },
+        description: "Description coming soon!",
       }
     },
   },
@@ -123,7 +131,8 @@ export const AUDIT_TESTS = {
         primaryDimension: "page",
         metrics: {
           "position": {},
-        }
+        },
+        description: "Description coming soon!",
       },
     },
   },
@@ -137,14 +146,16 @@ export const AUDIT_TESTS = {
         metrics: {
           "ga:pageTitle": {}, //not actually a metric, but whatever. Displaying as such
           "ga:sessions": {},
-        }
+        },
+        description: "Description coming soon!",
       },
       brokenInternal: {
         header: "Bad Internal Links",
         metrics: {
           "ga:pageTitle": {},
           "ga:sessions": {},
-        }
+        },
+        description: "Description coming soon!",
       }
     },
   },
