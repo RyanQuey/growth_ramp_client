@@ -102,7 +102,8 @@ class CustomListForm extends Component {
   }
 
   handleComparisonValue (value, e, errors) {
-    if (value && (!parseInt(value) || value < -1)) {
+    // test if integer that is 0 or more, or empty string (in which case, raise the required error somewhere else)
+    if ((!parseInt(value) && parseInt(value) !== 0 && ![""].includes(value)) || value < 0 || value.includes(".")) {
       alertActions.newAlert({
         title: "Value must be a positive integer",
         level: "DANGER",
