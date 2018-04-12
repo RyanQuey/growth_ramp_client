@@ -15,7 +15,7 @@ import {
   FETCH_CUSTOM_LIST_REQUEST,
 } from 'constants/actionTypes'
 import { Button, Form, Card, Flexbox, Icon } from 'shared/components/elements'
-import { ConfirmationPopup } from 'shared/components/groups'
+import { ConfirmationPopup, Popup } from 'shared/components/groups'
 import { AccountSubscription } from 'shared/components/partials'
 import { CustomListForm} from 'user/components/partials'
 import { ButtonGroup } from 'shared/components/groups'
@@ -75,6 +75,10 @@ class WebsiteSettingsModal extends Component {
     this.setState({pending: value})
   }
 
+  toggleInfoPopup (value = !this.state.infoIsOpen) {
+    this.setState({infoIsOpen: value})
+  }
+
   toggleRemovingSite (value = !this.state.removingWebsite) {
     this.setState({removingWebsite: value})
   }
@@ -126,7 +130,7 @@ class WebsiteSettingsModal extends Component {
 
   render (){
     const {website, siteGoals, customLists} = this.props
-    const {editingCustomList, creatingCustomList} = this.state
+    const {editingCustomList, creatingCustomList, infoIsOpen} = this.state
 
     const customListsArr = Object.keys(customLists).map((id) => customLists[id]).filter((list) => list.websiteId === website.id)
 
@@ -147,19 +151,38 @@ class WebsiteSettingsModal extends Component {
           <ModalBody>
             {!formIsOpen ? (
               <div className={classes.formSection}>
-                <h2>Custom Lists</h2>
+                <h2>
+                  Custom Lists
+                  <div className={classes.popupWrapper}>
+                    <Icon name="info-circle" className={classes.helpBtn} onClick={this.toggleInfoPopup.bind(this, !infoIsOpen)}/>
+                    <Popup
+                      side="bottom"
+                      float="center"
+                      handleClickOutside={this.toggleInfoPopup.bind(this, false)}
+                      show={infoIsOpen}
+                      containerClass={classes.popupContainer}
+                    >
+                      <div className={classes.helpBox}>
+                        <div className={classes.description}>
+                          <div className={classes.title}></div>
+                          <div>Create criteria for a custom list that will be part of your next audit</div>
+                        </div>
+                      </div>
+                    </Popup>
+                  </div>
+                </h2>
                 {!customListsArr.length ? (
                   <div>Click below to make a custom list for your future audits</div>
                 ) : (
                   customListsArr.map((customList) =>
-                    <Flexbox justify="space-between" key={customList.id}>
+                    <Flexbox justify="space-between" key={customList.id} className={`${classes.customListRow}`}>
                       <div className={classes.settingLabel}>
                         <div className={classes.main}>{customList.name}</div>
                         &nbsp;
-                        <Icon name="gear" onClick={this.toggleEditingCustomList.bind(this, customList)}/>
                       </div>
 
                       <div className={classes.settingValue}>
+                        <Icon name="gear" onClick={this.toggleEditingCustomList.bind(this, customList)}/>
                       </div>
                     </Flexbox>
                   )
@@ -180,7 +203,7 @@ class WebsiteSettingsModal extends Component {
                 {false && <Button>Save Settings</Button>}
               </div>
 
-              <div className={classes.popupWrapper}>
+              <div className={`${classes.popupWrapper} ${classes.removeBtn}`}>
                 {!formIsOpen && <Button style="danger" onClick={this.toggleRemovingSite} small={true}>Remove Site</Button>}
                 <ConfirmationPopup
                   show={this.state.removingWebsite}

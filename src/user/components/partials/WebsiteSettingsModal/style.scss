@@ -43,8 +43,25 @@
   }
 }
 .popupWrapper {
+  display: inline-block;
   position: relative;
-  width: 170px;
-  float: right;
   text-align: center !important;
+  width: 50px;
+
+  &.removeBtn {
+    float: right;
+    width: 170px;
+  }
+
+  .popupContainer {
+    font-weight: normal;
+    font-size: 1rem;
+    min-width: 200px;
+  }
+}
+.customListRow {
+  padding: 10px;
+  &:hover {
+    background: $light-purple-gray;
+  }
 }
