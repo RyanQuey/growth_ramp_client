@@ -48,9 +48,9 @@ class ViewContentAudit extends Component {
     const currentWebsite = Helpers.safeDataPath(this.props, "currentWebsite")
     if (currentWebsite) {
       this.fetchAudits(currentWebsite.id)
-      if (!this.props.goals[currentWebsite.gaWebPropertyId]) {
+      if (!this.props.goals[currentWebsite.id]) {
         const {gaWebPropertyId, googleAccountId, externalGaAccountId} = currentWebsite
-        this.props.getGoals({gaWebPropertyId, googleAccountId, externalGaAccountId}) //only be websiteId for now. can manually sort by profile or webproperty in frontend later too
+        this.props.getGoals({gaWebPropertyId, googleAccountId, externalGaAccountId, websiteId: currentWebsite.id}) //only be filtering by websiteId for now. can manually sort by profile or webproperty in frontend later too
       }
     }
     this.setCurrentAuditSection(Object.keys(AUDIT_RESULTS_SECTIONS)[0])
@@ -67,9 +67,9 @@ class ViewContentAudit extends Component {
       Helpers.safeDataPath(this.props, "currentWebsite.id") !== currentWebsite.id
     ) {
       this.fetchAudits(currentWebsite.id)
-      if (!this.props.goals[currentWebsite.gaWebPropertyId]) {
+      if (!this.props.goals[currentWebsite.id]) {
         const {gaWebPropertyId, googleAccountId, externalGaAccountId} = currentWebsite
-        this.props.getGoals({gaWebPropertyId, googleAccountId, externalGaAccountId}) //only be websiteId for now. can manually sort by profile or webproperty in frontend later too
+        this.props.getGoals({gaWebPropertyId, googleAccountId, externalGaAccountId, websiteId: currentWebsite.id}) //only filtering by websiteId for now. can manually sort by profile or webproperty in frontend later too
       }
     }
   }
@@ -175,7 +175,7 @@ class ViewContentAudit extends Component {
 
   render () {
     const {pending, settingsOpen} = this.state
-    const {audits, analytics, websites, currentAudit, previousAudit, currentAuditSection, currentWebsite} = this.props
+    const {audits, analytics, websites, currentAudit, previousAudit, currentAuditSection, currentWebsite, user} = this.props
     //wait to finish initializing store at least
     if (false) {
       return <Icon name="spinner"/>
@@ -261,6 +261,17 @@ class ViewContentAudit extends Component {
             </div>
           )
         }
+        {Helpers.isSuper(user) && <div>
+          <h2>Super Admin Bonuses:</h2>
+          <h3>Run Custom Audits</h3>
+          <div>BEWARE: will be like every other audit and could mess up the fixed/maybe fixed data, as well as preventing other regular audits to run, if the audit end date is irregular. Will not work if end date is after today either</div>
+              <Button
+                onClick={this.auditSite}
+                className={classes.twoColumns}
+              >
+                Audit site
+              </Button>
+        </div>}
       </div>
     )
   }

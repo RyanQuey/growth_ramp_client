@@ -39,7 +39,9 @@ class AuditMetadata extends Component {
       (this.props.currentAudit && this.props.currentAudit.websiteId !== this.props.currentWebsite.id)
     ) {
       const filterFunc = (audit) => (audit.websiteId === this.props.currentWebsite.id)
-      let latestAudit = analyticsHelpers.getLatestAudit({filterFunc})
+      let audits = this.props.audits
+      let auditsArr = Object.keys(audits).map((id) => audits[id])
+      let latestAudit = analyticsHelpers.getLatestAudit(auditsArr, {filterFunc})
       this.setCurrentAudit(latestAudit)
     }
   }
@@ -125,7 +127,8 @@ class AuditMetadata extends Component {
 
     let prettyDateLength, startDate, endDate
     if (currentAudit) {
-      endDate = moment(currentAudit.createdAt).subtract(1, "day").format("YYYY-MM-DD")
+      // createdAt fall back should only apply to those early audits in test env before we added baseDate
+      endDate = moment(currentAudit.baseDate || currentAudit.createdAt).format("YYYY-MM-DD")
 
       if (currentAudit.dateLength === "month") {
         prettyDateLength = "Monthly Audit"

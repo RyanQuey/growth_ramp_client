@@ -1,3 +1,4 @@
+import { React, Component } from 'react';
 export const AUDIT_TESTS = {
   pageSpeed: {
     key: "pageSpeed",
@@ -10,7 +11,6 @@ export const AUDIT_TESTS = {
           "ga:avgPageLoadTime": {},
           "ga:pageviews": {},
         },
-        description: "Description coming soon!",
       }
     },
   },
@@ -39,7 +39,6 @@ export const AUDIT_TESTS = {
           "ctr": {},
           "impressions": {},
         },
-        description: "Description coming soon!",
       }
     },
   },
@@ -55,7 +54,6 @@ export const AUDIT_TESTS = {
           "ga:users": {},
           "ga:bounceRate": {},
         },
-        description: "Description coming soon!",
       },
       badSessionDuration: {
         header: "Bad Average Session Duration",
@@ -64,7 +62,6 @@ export const AUDIT_TESTS = {
           "ga:users": {},
           "ga:avgSessionDuration": {},
         },
-        description: "Description coming soon!",
       }
     },
   },
@@ -80,7 +77,6 @@ export const AUDIT_TESTS = {
           "ga:users": {},
           "ga:bounceRate": {},
         },
-        description: "Description coming soon!",
       },
       badSessionDuration: {
         header: "Bad Avg Session Duration",
@@ -89,7 +85,6 @@ export const AUDIT_TESTS = {
           "ga:users": {},
           "ga:avgSessionDuration": {},
         },
-        description: "Description coming soon!",
       }
     },
   },
@@ -105,7 +100,6 @@ export const AUDIT_TESTS = {
           "ga:users": {},
           "ga:bounceRate": {},
         },
-        description: "Description coming soon!",
       },
       badSessionDuration: {
         header: "Bad Avg Session Duration",
@@ -114,7 +108,6 @@ export const AUDIT_TESTS = {
           "ga:users": {},
           "ga:avgSessionDuration": {},
         },
-        description: "Description coming soon!",
       }
     },
   },
@@ -132,7 +125,6 @@ export const AUDIT_TESTS = {
         metrics: {
           "position": {},
         },
-        description: "Description coming soon!",
       },
     },
   },
@@ -147,7 +139,6 @@ export const AUDIT_TESTS = {
           "ga:pageTitle": {}, //not actually a metric, but whatever. Displaying as such
           "ga:sessions": {},
         },
-        description: "Description coming soon!",
       },
       brokenInternal: {
         header: "Bad Internal Links",
@@ -155,7 +146,6 @@ export const AUDIT_TESTS = {
           "ga:pageTitle": {},
           "ga:sessions": {},
         },
-        description: "Description coming soon!",
       }
     },
   },
@@ -175,7 +165,6 @@ export const getCustomListMetadata = (customAuditList) => {
     header: customAuditList.name,
     primaryDimension: customAuditList.dimensions[0].name,
     metrics,
-    description: customAuditList.description || "A custom metric",
     isCustomList: true,
   }
 

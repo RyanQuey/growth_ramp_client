@@ -54,7 +54,8 @@
 .popupWrapper {
   position: relative;
   display: inline-block;
-
+  width: 160px;
+  margin: 0 10px;
     i {
       width: 20px;
       text-align: center;
@@ -63,8 +64,12 @@
 .helpBtn {
   cursor: pointer;
 }
+.solutionsBtn {
+  width: 150px;
+}
 .helpBox {
   margin: 5px;
+  min-width: 300px;
   .description {
     @include rems(14)
     line-height: 1rem;
@@ -89,4 +94,8 @@
     line-height: 1rem;
     white-space: nowrap;
   }
+}
+
+.bottomRow {
+  margin: 20px;
 }

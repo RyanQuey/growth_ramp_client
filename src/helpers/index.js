@@ -231,7 +231,11 @@ console.log(post.id, Helpers.channelTypeHasMultiple(null, post.provider, post.ch
       return `${param}=${value}`
     })
     return `${paramArr.join("&")}`
-  }
+  },
+
+  isSuper: (user) => {
+    return ["rlquey2@gmail.com", "jdquey@gmail.com"].includes(user.email)
+  },
 }
 
 Helpers = Object.assign(Helpers, campaignHelpers)

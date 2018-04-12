@@ -37,15 +37,16 @@ class ModalContainer extends Component {
       modalTitle,
       modalSubtitle,
       modalBody,
-      closeButton
+      closeButton,
     } = (classes);
 
     const handleSubmit = this.props.handleSubmit
     let innerContent = [];
 
-    if (!this.props.disableClose || this.props.title || this.props.subtitle) {
+    if (!this.props.disableClose || this.props.title || this.props.subtitle) { //Maybe also || this.props.headerImgUrl...but haven't ran into anything yet so wait
+      let hasBorder = this.props.title || this.props.subtitle || this.props.headerImgUrl
       innerContent.push(
-        <div key="header" className={modalHeader}>
+        <div key="header" className={`${modalHeader} ${hasBorder ? classes.hasBorder : ""}`}>
           {!this.props.disableClose && <button type="button" className={closeButton} data-dismiss="modal" aria-label="Close" onClick={this.props.onClose}>
             <span aria-hidden="true">×</span>
           </button>}

@@ -6,19 +6,23 @@ import {
 } from 'constants/actionTypes'
 
 export default (state = null, action) => {
-  let newState, thisAudit, previousAudit
+  let newState, thisAudit, previousAudit, audits, auditsArr
 
   const pld = action.payload
   switch (action.type) {
 
     case FETCH_CURRENT_AUDIT_SUCCESS:
       thisAudit = pld;
-      previousAudit = thisAudit && analyticsHelpers.getLatestAuditBefore({endDate: thisAudit.createdAt, websiteId: thisAudit.websiteId})
+      audits = store.getState().audits
+      auditsArr = Object.keys(audits).map((id) => audits[id])
+      previousAudit = thisAudit && analyticsHelpers.getLatestAuditBefore(auditsArr, {endDate: thisAudit.baseDate, websiteId: thisAudit.websiteId})
       return Object.assign({}, previousAudit)
 
     case SET_CURRENT_AUDIT:
       thisAudit = pld;
-      previousAudit = thisAudit && analyticsHelpers.getLatestAuditBefore({endDate: thisAudit.createdAt, websiteId: thisAudit.websiteId})
+      audits = store.getState().audits
+      auditsArr = Object.keys(audits).map((id) => audits[id])
+      previousAudit = thisAudit && analyticsHelpers.getLatestAuditBefore(auditsArr, {endDate: thisAudit.baseDate, websiteId: thisAudit.websiteId})
       return Object.assign({}, previousAudit)
 
     default:

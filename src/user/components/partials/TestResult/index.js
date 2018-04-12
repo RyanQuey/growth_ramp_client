@@ -1,10 +1,12 @@
 import { Component } from 'react';
 import { connect } from 'react-redux'
 import {
+  SET_CURRENT_MODAL,
 } from 'constants/actionTypes'
 import { Button, Flexbox, Icon, Form, Checkbox } from 'shared/components/elements'
 import { Select, Popup } from 'shared/components/groups'
-import { AuditListItemRow } from 'user/components/groups'
+import { AuditListItemRow, TestDescription } from 'user/components/groups'
+import { SolutionsModal } from 'user/components/partials'
 import { AUDIT_TESTS, getCustomListMetadata } from 'constants/auditTests'
 import {DIMENSIONS_METRICS_FRIENDLY_NAME, METRICS_WITH_AVERAGES, } from 'constants/analytics'
 import {formActions, alertActions} from 'shared/actions'
@@ -21,19 +23,26 @@ class TestResult extends Component {
       viewingInfoPopup: "",
     }
 
+    this.openSolutionModal = this.openSolutionModal.bind(this)
   }
 
   //value should be string for that list key, so only one shows at a time
-  toggleInfoPopup (value = "") {
+  toggleInfoPopup (value = "", e) {
+    e && e.preventDefault()
     this.setState({viewingInfoPopup: value})
   }
 
+  openSolutionModal () {
+    const { testKey, } = this.props
+    this.props.setCurrentModal("SolutionsModal", {testKey})
+  }
+
   render () {
-    const { listsArr, testKey, auditListItems, itemsToShowByList, user, currentAuditSection, currentAudit, previousAudit } = this.props
+    const { listsArr, testKey, auditListItems, itemsToShowByList, user, currentAuditSection, currentAudit, previousAudit, totalItemsInTest, completedItemsInTest } = this.props
     const auditToCheck = currentAuditSection === "currentIssues" ? currentAudit : previousAudit
-console.log("twists", listsArr);
+
     const testCustomLists = listsArr.filter((list) => list.isCustomList) // not checking a user's current custom lists, but the custom lists they had when the audit was ran. So check by AuditLists
-    const defaultTestListTypesObj = AUDIT_TESTS[testKey].lists
+    const defaultTestListTypesObj = AUDIT_TESTS[testKey].lists //default ie not custom
     const defaultTestListTypesArr = Object.keys(defaultTestListTypesObj).map((key) => Object.assign({listKey: key}, defaultTestListTypesObj[key]))
     const allTestListTypesArr = defaultTestListTypesArr.concat(
       testCustomLists.map((customAuditListRecord) => {
@@ -42,6 +51,9 @@ console.log("twists", listsArr);
         return listMetadata
       })
     )
+
+    const infoIsOpen = this.state.viewingInfoPopup
+    const hasIncompleteItems = totalItemsInTest > completedItemsInTest
 
     return (
       <div className={classes.testResult}>
@@ -57,32 +69,15 @@ console.log("ok", listKey, listsArr.map((l) => l.listKey));
           )
 
           const totals = list.summaryData.totals
-          const infoIsOpen = this.state.viewingInfoPopup === listKey
 
           return <Flexbox key={listKey} className={`${classes.table}`} direction="column">
             <Flexbox justify="space-between">
               <h3>
                 {listMetadata.header}
                 &nbsp;
-                <div className={classes.popupWrapper}>
-                  <Icon name="info-circle" className={classes.helpBtn} onClick={this.toggleInfoPopup.bind(this, infoIsOpen ? false : listKey)}/>
-                  <Popup
-                    side="top"
-                    float="center"
-                    handleClickOutside={this.toggleInfoPopup.bind(this, false)}
-                    show={infoIsOpen}
-                    containerClass={classes.popupContainer}
-                  >
-                    <div className={classes.helpBox}>
-                      <div className={classes.description}>
-                        <div className={classes.title}>What's this issue?</div>
-                        <div>{listMetadata.description}</div>
-                      </div>
-                    </div>
-                  </Popup>
-                </div>
               </h3>
             </Flexbox>
+
             {!listItemsArr.length ? (
               <div>Well done, nothing needs improvement right now!</div>
             ) : (
@@ -117,7 +112,36 @@ console.log("mn", metricName);
           </Flexbox>
         })}
 
+        <div className={classes.bottomRow}>
+          {hasIncompleteItems &&
+            <Button
+              onClick={this.openSolutionModal}
+              className={classes.solutionsBtn}
+              small={true}
+            >
+              How to Solve
+            </Button>
+          }
 
+          <div className={classes.popupWrapper}>
+            <a className={classes.helpBtn} onClick={this.toggleInfoPopup.bind(this, !infoIsOpen)}>What is this issue?</a>
+            <Popup
+              side="top"
+              body="right"
+              handleClickOutside={this.toggleInfoPopup.bind(this, false)}
+              show={infoIsOpen}
+              containerClass={classes.popupContainer}
+            >
+              <div className={classes.helpBox}>
+                <div className={classes.description}>
+                  <TestDescription testKey={testKey}/>
+                </div>
+              </div>
+            </Popup>
+          </div>
+        </div>
+
+        <SolutionsModal />
       </div>
     )
   }
@@ -125,6 +149,7 @@ console.log("mn", metricName);
 
 const mapDispatchToProps = (dispatch) => {
   return {
+    setCurrentModal: (payload, modalOptions) => dispatch({type: SET_CURRENT_MODAL, payload, options: modalOptions}),
   }
 }
 

@@ -88,8 +88,7 @@ class ContentAuditRows extends Component {
                   onClick={this.toggleOpen.bind(this, testKey, this.state[testKey] === "open" ? "closed" : "open")}
                 >
                   <div className={`${classes.header}`}>
-                    <Icon name={this.state[testKey] === "open" ? "angle-down" : "angle-right"} />&nbsp;
-                    <Icon name={testKey.toLowerCase()} />&nbsp;
+                    <Icon name={this.state[testKey] === "open" ? "angle-down" : "angle-right"} />&nbsp;&nbsp;
                     {testMetadata.question}&nbsp;
                     <span className={classes.previewText}>{summaryText}</span>
                     <div className={classes.flags}>
@@ -112,8 +111,9 @@ class ContentAuditRows extends Component {
                     <TestResult
                       testKey={testKey}
                       listsArr={currentAuditSection === "currentIssues" ? testListsArr : previousAuditTestListsArr}
-                      customListsArr={currentAuditSection === "currentIssues" ? testListsArr : previousAuditTestListsArr}
                       itemsToShowByList={itemsToShowByList}
+                      totalItemsInTest={totalItemsInTest}
+                      completedItemsInTest={completedItemsInTest}
                     />
                   </Flexbox>
                 }
