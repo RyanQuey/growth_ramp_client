@@ -89,7 +89,7 @@ class FixedIssues extends Component {
           <ContentAuditRows
             testFilterFunc={this.getFixedIssues}
             getSummaryText={this.getSummaryText}
-            ifAllEmptyComponent="Nothing to show!"
+            ifAllEmptyComponent="Nothing has been successfully fixed since last audit"
           />
         </Flexbox>
       </div>

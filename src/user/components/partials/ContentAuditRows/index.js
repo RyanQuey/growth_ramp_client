@@ -112,6 +112,7 @@ class ContentAuditRows extends Component {
                     <TestResult
                       testKey={testKey}
                       listsArr={currentAuditSection === "currentIssues" ? testListsArr : previousAuditTestListsArr}
+                      customListsArr={currentAuditSection === "currentIssues" ? testListsArr : previousAuditTestListsArr}
                       itemsToShowByList={itemsToShowByList}
                     />
                   </Flexbox>

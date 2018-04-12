@@ -159,6 +159,26 @@ export const AUDIT_TESTS = {
       }
     },
   },
+
+}
+// all custom lists will use this, instead of the contants from AUDIT_TESTS
+// takes the auditList record as arg
+// not a constant...but related to the constant above...so whatever
+export const getCustomListMetadata = (customAuditList) => {
+  let metrics = {}
+  for (let metricFilter of customAuditList.metricFilters) {
+    metrics[metricFilter.metricName] = {}
+  }
+
+  return {
+    listKey: `customList${customAuditList.customListId}`,
+    header: customAuditList.name,
+    primaryDimension: customAuditList.dimensions[0].name,
+    metrics,
+    description: customAuditList.description || "A custom metric",
+    isCustomList: true,
+  }
+
 }
 
 export const AUDIT_RESULTS_SECTIONS = {

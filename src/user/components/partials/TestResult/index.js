@@ -5,7 +5,7 @@ import {
 import { Button, Flexbox, Icon, Form, Checkbox } from 'shared/components/elements'
 import { Select, Popup } from 'shared/components/groups'
 import { AuditListItemRow } from 'user/components/groups'
-import { AUDIT_TESTS,  } from 'constants/auditTests'
+import { AUDIT_TESTS, getCustomListMetadata } from 'constants/auditTests'
 import {DIMENSIONS_METRICS_FRIENDLY_NAME, METRICS_WITH_AVERAGES, } from 'constants/analytics'
 import {formActions, alertActions} from 'shared/actions'
 import {
@@ -30,13 +30,24 @@ class TestResult extends Component {
 
   render () {
     const { listsArr, testKey, auditListItems, itemsToShowByList, user, currentAuditSection, currentAudit, previousAudit } = this.props
-    const testListTypes = AUDIT_TESTS[testKey].lists
     const auditToCheck = currentAuditSection === "currentIssues" ? currentAudit : previousAudit
+console.log("twists", listsArr);
+    const testCustomLists = listsArr.filter((list) => list.isCustomList) // not checking a user's current custom lists, but the custom lists they had when the audit was ran. So check by AuditLists
+    const defaultTestListTypesObj = AUDIT_TESTS[testKey].lists
+    const defaultTestListTypesArr = Object.keys(defaultTestListTypesObj).map((key) => Object.assign({listKey: key}, defaultTestListTypesObj[key]))
+    const allTestListTypesArr = defaultTestListTypesArr.concat(
+      testCustomLists.map((customAuditListRecord) => {
+        let listMetadata = getCustomListMetadata(customAuditListRecord)
+
+        return listMetadata
+      })
+    )
 
     return (
       <div className={classes.testResult}>
-        {Object.keys(testListTypes).map((listKey, index) => {
-          let listMetadata = testListTypes[listKey]
+        {allTestListTypesArr.map((listMetadata, index) => {
+          let listKey = listMetadata.listKey
+console.log("ok", listKey, listsArr.map((l) => l.listKey));
           const list = listsArr.find((list) => list.listKey === listKey)
           const listItemsArr = itemsToShowByList[list.id].filter((item) =>
             // filter out completed issues if that setting is set
@@ -80,10 +91,12 @@ class TestResult extends Component {
                   <th className={`${classes[`column0`]}`}>Done</th>
                   <th className={`${classes[`column1`]}`}>Issue</th>
                   {Object.keys(listMetadata.metrics).map((metricName, index) => {
+                    const friendlyName = metricName.includes("goal") ? "Goal Completions"  : DIMENSIONS_METRICS_FRIENDLY_NAME[metricName]
+console.log("mn", metricName);
                     const value = totals[metricName]
                     const totalType = METRICS_WITH_AVERAGES.includes(metricName) ? "Avg" : "Total"
                     return <th key={metricName} className={`${classes[`column${index +2}`]}`}>
-                      {DIMENSIONS_METRICS_FRIENDLY_NAME[metricName]}
+                      {friendlyName}
                       <div className={classes.headerCaption}>({totalType}: {value})</div>
                     </th>
                   })}

@@ -29,6 +29,7 @@ class CustomListForm extends Component {
 
     this.handleErrors = this.handleErrors.bind(this)
     this.handleChangeName = this.handleChangeName.bind(this)
+    this.handleChangeDescription = this.handleChangeDescription.bind(this)
     this.save = this.save.bind(this)
     this.archive = this.archive.bind(this)
 
@@ -84,6 +85,10 @@ class CustomListForm extends Component {
     formActions.setParams("CustomList", "data", {testKey: option.value})
   }
 
+  handleChangeDescription (value, e, errors) {
+    formActions.setParams("CustomList", "data", {description: value})
+  }
+
   handleChangeName (value, e, errors) {
     formActions.setParams("CustomList", "data", {name: value})
   }
@@ -97,7 +102,7 @@ class CustomListForm extends Component {
   }
 
   handleComparisonValue (value, e, errors) {
-    if (value && (!parseInt(value) || value < 0)) {
+    if (value && (!parseInt(value) || value < -1)) {
       alertActions.newAlert({
         title: "Value must be a positive integer",
         level: "DANGER",
@@ -176,7 +181,7 @@ class CustomListForm extends Component {
     return (
       <form onSubmit={this.save}>
         <h2>{editing ? `Editing ${params.name}` : "New Custom List"}</h2>
-        <h4>Name</h4>
+        <h4>Name*</h4>
         <Input
           className={classes.input}
           value={params.name}
@@ -185,6 +190,13 @@ class CustomListForm extends Component {
         />
         <br/>
 
+        <h4>Description</h4>
+        <Input
+          className={classes.input}
+          value={params.description}
+          onChange={this.handleChangeDescription}
+        />
+        <br/>
         <h4>Filter</h4>
         <div className={classes.filterForms}>
           <span>Return every page that has</span>
