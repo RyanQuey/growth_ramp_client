@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { withRouter, Prompt } from 'react-router-dom'
 import { Navbar } from 'shared/components/elements'
 import { AccountSubscription, ConfigureWebsites, AccountSettings } from 'shared/components/partials'
-import {  } from 'user/components/partials'
+import { WebsiteSettingsModal } from 'user/components/partials'
 import {  } from 'constants/actionTypes'
 import theme from 'theme'
 import { formActions } from 'shared/actions'
@@ -115,6 +115,7 @@ class UserSettings extends Component {
             resetComposeView={this.resetComposeView}
           />
         </div>
+        <WebsiteSettingsModal />
       </main>
     );
   }

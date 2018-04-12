@@ -1,16 +1,21 @@
 @import 'theme/_helpers';
-.configureWebsites {
-  h2 {
-    margin-top: 0;
+.modal {
+  h1 {
+    text-align: center;
+    font-size: 24px;
   }
-  .viewAuditsButton {
-    display: block;
-    margin: 30px 0 0 0;
+  h2 {
+    text-align: center;
   }
 }
 .formSection {
-  margin-bottom: 10px;
+  margin: 0 10px 10px 10px;
+  h2 {
+    margin-top: 0;
+  }
   .settingLabel {
+    display: flex;
+    align-items: center;
     .main {
       font-weight: bold;
     }
@@ -31,6 +36,10 @@
   //when toggled is closed, when opened though, is this
   .expandedForm {
     margin-top: 30px;
+  }
+
+  .createBtn {
+    margin-top: 25px;
   }
 }
 .popupWrapper {

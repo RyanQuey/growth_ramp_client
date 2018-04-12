@@ -8,6 +8,7 @@ import analytics from './analytics'
 import availableWebsites from './availableWebsites'
 import audits from './audits'
 import currentAudit from './currentAudit'
+import customLists from './customLists'
 import previousAudit from './previousAudit'
 import currentAuditSection from './currentAuditSection'
 import currentWebsite from './currentWebsite'
@@ -48,6 +49,7 @@ const rootReducer = combineReducers({
   //the campaign that the user is currently working on
   currentCampaign: currentCampaignReducer,
   currentWebsite,
+  customLists,
   errors: errorReducer,
   campaigns: campaignsReducer,
   forms: formsReducer,

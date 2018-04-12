@@ -1,0 +1,28 @@
+.filterForms {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  h2 {
+  }
+
+  .select {
+    display: inline-block;
+
+    &.operator {
+      width: 150px;
+    }
+    &.goal {
+      width: 300px;
+    }
+  }
+  .input {
+    display: inline-block;
+    width: 100px;
+  }
+}
+.popupWrapper {
+  position: relative;
+  width: 170px;
+  float: right;
+  text-align: center !important;
+}

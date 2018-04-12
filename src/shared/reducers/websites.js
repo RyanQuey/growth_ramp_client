@@ -18,7 +18,6 @@ const websitesReducer = (state = {}, action) => {
       return newState
 
     case UPDATE_WEBSITE_SUCCESS:
-      //add this site to the list
       newState = Object.assign({}, state)
       if (pld.status === "ARCHIVED") {
         delete newState[pld.id]

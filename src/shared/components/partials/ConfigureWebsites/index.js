@@ -10,6 +10,7 @@ import { withRouter } from 'react-router-dom'
 import {
   UPDATE_WEBSITE_REQUEST,
   FETCH_ALL_GA_ACCOUNTS_REQUEST,
+  SET_CURRENT_MODAL,
 } from 'constants/actionTypes'
 import { errorActions, formActions, alertActions } from 'shared/actions'
 
@@ -26,7 +27,6 @@ class ConfigureWebsites extends Component {
     this.toggleAddingSite = this.toggleAddingSite.bind(this)
     this.viewAudits = this.viewAudits.bind(this)
     this.refreshGAAccounts = this.refreshGAAccounts.bind(this)
-    this.removeSite = this.removeSite.bind(this)
   }
 
   componentWillMount() {
@@ -34,6 +34,10 @@ class ConfigureWebsites extends Component {
     if (!Object.keys(availableWebsites).length ) {
       this.refreshGAAccounts()
     }
+  }
+
+  openSettingsModal(website) {
+    this.props.setCurrentModal("WebsiteSettingsModal", {website})
   }
 
   //gets the accounts and all the availableWebsites we could filter/show
@@ -55,31 +59,6 @@ class ConfigureWebsites extends Component {
 
   toggleAddingSite (value = !this.state.addingSite) {
     this.setState({addingSite: value})
-  }
-
-  toggleRemovingSite (value = !this.state.removingWebsite) {
-    this.setState({removingWebsite: value})
-  }
-
-  removeSite (website) {
-    this.setState({deletePending: true})
-
-    const cb = () => {
-      this.setState({deletePending: false, removingWebsite: false})
-    }
-    const onFailure = (err) => {
-      this.setState({deletePending: false})
-      alertActions.newAlert({
-        title: "Failure to remove website: ",
-        level: "DANGER",
-        message: err.message || "Unknown error",
-        options: {timer: false},
-      })
-    }
-
-    const params = {id: website.id, status: "ARCHIVED", userId: website.userId}
-
-    this.props.updateWebsite(params, cb, onFailure)
   }
 
   viewAudits (e) {
@@ -104,22 +83,10 @@ class ConfigureWebsites extends Component {
 
           return <div className={classes.formSection} key={website.id}>
             <Flexbox justify="space-between">
-              <div className={classes.settingLabel}>{website.name}{profileName ? `- ${profileName}`: ""}</div>
+              <div className={classes.settingLabel}><div className={classes.main}>{website.name}:</div>{profileName ? `${profileName}`: ""}</div>
               <div className={classes.settingValue}>
-                <div>{website.gaSiteUrl}</div>
                 <div>
-                  <div className={classes.popupWrapper}>
-                    <Button style="danger" onClick={this.toggleRemovingSite.bind(this, website.id)}>Remove Site</Button>
-                    <ConfirmationPopup
-                      show={this.state.removingWebsite === website.id}
-                      handleClickOutside={this.toggleRemovingSite.bind(this, false)}
-                      onConfirm={this.removeSite.bind(this, website)}
-                      onCancel={this.toggleRemovingSite.bind(this, false)}
-                      pending={this.state.deletePending}
-                      dangerous={true}
-                      side="top"
-                    />
-                  </div>
+                  <Button style="inverted" onClick={this.openSettingsModal.bind(this, website)} small={true}>Edit Settings</Button>
                 </div>
               </div>
             </Flexbox>
@@ -131,7 +98,7 @@ class ConfigureWebsites extends Component {
 
         {!addingSite ? (
           <div>
-            <Button onClick={this.toggleAddingSite.bind(this, true)}><Icon name="plus-circle"/>&nbsp;Add Site</Button>
+            <Button onClick={this.toggleAddingSite.bind(this, true)} small={true}><Icon name="plus-circle"/>&nbsp;Add Site</Button>
           </div>
         ) : (
           <div>
@@ -153,13 +120,13 @@ const mapStateToProps = (state) => {
     errors: state.errors,
     user: state.user,
     websites: state.websites,
-    goals: state.goals,
   }
 }
 const mapDispatchToProps = (dispatch) => {
   return {
     updateWebsite: (payload, cb, onFailure) => dispatch({type: UPDATE_WEBSITE_REQUEST, payload, cb, onFailure}),
     fetchAllGAAccounts: (payload, cb, onFailure) => dispatch({type: FETCH_ALL_GA_ACCOUNTS_REQUEST, payload, cb, onFailure}),
+    setCurrentModal: (payload, modalOptions) => dispatch({type: SET_CURRENT_MODAL, payload, options: modalOptions}),
   }
 }
 
