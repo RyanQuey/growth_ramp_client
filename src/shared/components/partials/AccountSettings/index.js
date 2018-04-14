@@ -59,7 +59,7 @@ class AccountSettings extends Component {
 
   render (){
     const {user} = this.props
-    const {settings = {}} = user
+    const {settings} = user
 
     return (
       <div>
@@ -68,7 +68,7 @@ class AccountSettings extends Component {
             <div className={classes.settingLabel}>Receive Email Updates:&nbsp;</div>
             <div className={classes.settingValue}>
               <div className={classes.checkbox}>
-                <Checkbox onChange={this.handleInverseCheckboxChange.bind(this, "doNotReceiveEmails")} value={!settings.doNotReceiveEmails}/>
+                <Checkbox onChange={this.handleInverseCheckboxChange.bind(this, "doNotReceiveEmails")} value={!settings || !settings.doNotReceiveEmails}/>
               </div>
             </div>
           </Flexbox>
