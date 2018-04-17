@@ -1,0 +1,41 @@
+@import 'theme/_helpers';
+.configureWebsites {
+  h2 {
+    margin-top: 0;
+  }
+  .viewAuditsButton {
+    display: block;
+    margin: 30px 0 0 0;
+  }
+}
+.formSection {
+  margin-bottom: 10px;
+  .settingLabel {
+    .main {
+      font-weight: bold;
+    }
+  }
+
+  .settingValue {
+    text-align: right;
+    width: 120px;
+    .toggleButton {
+    }
+    & > div, & > a {
+      width: 100%;
+      text-align: center;
+      float: right;
+    }
+  }
+
+  //when toggled is closed, when opened though, is this
+  .expandedForm {
+    margin-top: 30px;
+  }
+}
+.popupWrapper {
+  position: relative;
+  width: 170px;
+  float: right;
+  text-align: center !important;
+}

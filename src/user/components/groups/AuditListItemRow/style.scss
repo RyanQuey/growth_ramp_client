@@ -1,0 +1,58 @@
+@import 'theme/_helpers';
+.itemRow {
+  width: 100%;
+  padding: 0 0 20px 0;
+
+  .column0 {
+    text-align: center;
+  }
+
+  .column1 {
+    text-align: left;
+    padding: .5rem;
+    position: relative; // so the externalLink floats to right properly
+    overflow: hidden;
+    min-width: 150px;
+    max-width: 600px; //arbitrary # chosen, to make sure overzealous query strings in urls don't make huge tables
+
+    &.pathColumn {
+      padding: .5rem 0 .5rem .5rem;
+      .dimensionLinkWrapper {
+        width: calc(100% - 30px); //for the external link btn
+        .dimensionLink {
+          display: inline-block;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+          text-align: left;
+          overflow: hidden;
+        }
+      }
+    }
+
+    .dimensionTextWrapper {
+      width: 100%;
+      .dimensionText {
+        display: inline-block;
+        min-width: 100px;
+        width: 100%;
+        text-align: center;
+      }
+    }
+
+    // little tags and whatnot that go after the dimension itself
+    a.externalLink {
+      position: absolute;
+      right: 5px;
+      z-index: 2;
+    }
+  }
+  .column2, .column3, .column4 {
+    text-align: center;
+  }
+}
+.evenRow {
+  background: $white;;
+}
+.oddRow {
+  background: $module_gray-1;
+}

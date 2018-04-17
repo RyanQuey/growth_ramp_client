@@ -73,6 +73,8 @@ class Popup extends Component {
       return null
     }
 
+    // TODO this is obviously broken, not using hte float var at all, and reusing body haha
+
     return (
       <div
         className={`${classes.popup} ${classes[`float-${body}`]} ${classes[`body-${body}`]} ${classes[`side-${side}`]} ${className}`}

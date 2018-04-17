@@ -220,6 +220,22 @@ console.log(post.id, Helpers.channelTypeHasMultiple(null, post.provider, post.ch
     return utmString
   },
 
+  // for sending objs as query strings
+  toQueryString: (params) => {
+    let paramArr = Object.keys(params).map((param) => {
+      let value = params[param]
+      if (typeof value === "object") {
+        value = JSON.stringify(value)
+      }
+
+      return `${param}=${value}`
+    })
+    return `${paramArr.join("&")}`
+  },
+
+  isSuper: (user) => {
+    return ["rlquey2@gmail.com", "jdquey@gmail.com"].includes(user.email)
+  },
 }
 
 Helpers = Object.assign(Helpers, campaignHelpers)

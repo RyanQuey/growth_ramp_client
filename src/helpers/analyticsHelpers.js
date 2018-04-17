@@ -112,7 +112,7 @@ const analyticsHelpers = {
     // filtersObj now modified if needed to
   },
 
-  getDataset: (displayType, filters, baseOrganization) => {
+  getDataset: (displayType, filters, baseOrganization, options = {}) => {
     const tableDatasetParams = Helpers.safeDataPath(store.getState(), "forms.Analytics.tableDataset.params", {})
 
     let datasetArr = [displayType]
@@ -152,6 +152,25 @@ const analyticsHelpers = {
 
       let columnSetsStr = columnSets.join(",")
       datasetArr.push(columnSetsStr)
+
+    } else if (displayType === "contentAudit") {
+      // contentAudit-${auditType}-${how tests will be specified}-${which keys/groups of tests to run}
+
+/*
+      if (options.testGroup) {
+        datasetArr.push("testGroup")
+        datasetArr.push(options.testGroup)
+
+      } else if (options.testKeys) {
+        datasetArr.push("testKeys")
+        datasetArr.push(options.testKeys.join(","))
+
+      } else {
+        datasetArr.push("testGroup")
+        datasetArr.push("all")
+
+      }
+*/
     }
 
     const dataset = datasetArr.join("-")
@@ -171,9 +190,9 @@ const analyticsHelpers = {
     const tld = parts.pop()
     const domain = parts.pop()
 
-    const gscUrls = Object.keys(gscSites)
+    const gscSiteUrls = Object.keys(gscSites)
 
-    let matches = gscUrls.filter(url => url.includes(domain))
+    let matches = gscSiteUrls.filter(url => url.includes(domain))
 
     let match
     if (matches.length === 1) {
@@ -183,7 +202,7 @@ const analyticsHelpers = {
       return //nothing for now
 
     } else if (matches.length > 1) {
-      let closerMatches = gscUrls.filter(url => url.includes(`${domain}.${tld}`))
+      let closerMatches = gscSiteUrls.filter(url => url.includes(`${domain}.${tld}`))
 
       if (closerMatches.length === 1) {
         match = closerMatches[0]
@@ -235,6 +254,9 @@ const analyticsHelpers = {
 //TODO fix for GSC later
         ret.push("GoogleAnalytics")
 
+    } else if (displayType === "contentAudit") {
+      ret.push("GoogleAnalytics")
+      ret.push("GoogleSearchConsole")
     }
 
     return ret
@@ -242,24 +264,25 @@ const analyticsHelpers = {
 
   // checks with analytics apis to see if user has access, and gets other info needed for the external api
   // wrapper around several other helpers
-  getExternalApiInfo: (gaUrl, dataset, websites) => {
+//TODO get rid of that first arg
+  getExternalApiInfo: (gscSiteUrl, dataset, availableWebsites) => {
     const targetApis = analyticsHelpers.whomToAsk(dataset)
-    let gscStatus = {status: "ready", message: ""}
 
-    let gscUrl
+    const {currentWebsite} = store.getState()
+    gscSiteUrl = gscSiteUrl || currentWebsite.gscSiteUrl
+
+    let gscStatus = {status: "ready", message: ""}
     if (targetApis.includes("GoogleSearchConsole")) {
       // check if they have gsc setup with this google acct
-      gscUrl = analyticsHelpers.getGSCUrlFromGAUrl(gaUrl, websites.gscSites)
-      let gscUrlData = gscUrl && websites.gscSites[gscUrl]
 
-      if (gscUrlData && ["siteOwner", "siteRestrictedUser", "siteFullUser"].includes(gscUrlData.permissionLevel)) {
+      if (currentWebsite && ["siteOwner", "siteRestrictedUser", "siteFullUser"].includes(currentWebsite.gscPermissionLevel)) {
         // we are currently read-only, so any of these are sufficient
         gscStatus.status = "ready"
 
       } else if (!gscUrlData) {
         // website is not registered with the google accts GR has access to
         gscStatus.status = "not-found"
-        gscStatus.message = `Google Search Console has not been setup for ${gaUrl} with any of the Google accounts you have linked to Growth Ramp. Link a new Google account that has permission to use Google Search Console for ${gaUrl} or get permission with one of your currently linked Google accounts`
+        gscStatus.message = `Google Search Console has not been setup for ${gscSiteUrl} with any of the Google accounts you have linked to Growth Ramp. Link a new Google account that has permission to use Google Search Console for ${gscSiteUrl} or get permission with one of your currently linked Google accounts`
 
       } else if (["siteUnverifiedUser"].includes(gscUrlData.permissionLevel)) {
         // they registered, but don't have any permissions, so need to get that
@@ -269,11 +292,11 @@ const analyticsHelpers = {
         let acctUsername = linkedAccount.userName || linkedAccount.email
 
         gscStatus.status = "unverified"
-        gscStatus.message = `Google Search Console has been setup for ${gaUrl} with your Google account ${acctUsername}. Verify ${gaUrl} with ${acctUsername} to get stats and actionable info from your keyword data.`
+        gscStatus.message = `Google Search Console has been setup for ${gscSiteUrl} with your Google account ${acctUsername}. Verify ${gscSiteUrl} with ${acctUsername} to get stats and actionable info from your keyword data.`
       }
     }
 
-    return {gscStatus, gscUrl, targetApis}
+    return {gscStatus, gscSiteUrl, targetApis}
   },
 
   // manually sorting
@@ -288,6 +311,10 @@ const analyticsHelpers = {
     const multiplier = sortOrder === "ASCENDING" ? 1 : -1
 
     const propertyKind = ["query"].includes(fieldName) ? "dimensions" : "metrics"
+    if (!gscData || !gscData.columnHeader) {
+      // no data yet, probably just changed a filter so needs to wait to receive data first
+      return
+    }
     const propertyIndex = gscData.columnHeader[propertyKind].findIndex(metric => fieldName === metric.name)
     const dataType = gscData.columnHeader[propertyKind][propertyIndex].type
 
@@ -343,7 +370,9 @@ const analyticsHelpers = {
 
     let filtersToMerge = {}
     //ga searches will need the ga in the fieldName
-    if (targetApis.includes("GoogleSearchConsole")) {
+    if (displayType === "contentAudit") {
+      // nothing yet
+    } else if (targetApis.includes("GoogleSearchConsole")) {
       filtersToMerge.orderBy = {
         fieldName: "clicks",
         sortOrder: "DESCENDING",
@@ -362,6 +391,32 @@ const analyticsHelpers = {
     }
 
     return filtersToMerge
+  },
+
+  // latest audit by baseDate
+  getLatestAudit: (auditsArr, options = {}) => {
+
+    if (options.filterFunc) {
+      auditsArr = auditsArr.filter(options.filterFunc)
+    }
+
+    // default to the last one
+    let latestAudit = auditsArr[auditsArr.length -1]
+
+    for (let audit of auditsArr) {
+      if (moment(audit.baseDate).isAfter(latestAudit.baseDate)) {
+        latestAudit = audit
+      }
+    }
+
+    return latestAudit
+  },
+
+  // mostly for passing in another audit's baseDate
+  getLatestAuditBefore: (auditsArr, {endDate, websiteId}) => {
+    const filterFunc = (audit) => (audit.websiteId === websiteId && moment(audit.baseDate).isBefore(endDate))
+    let latestAudit = analyticsHelpers.getLatestAudit(auditsArr, {filterFunc})
+    return latestAudit
   },
 }
 

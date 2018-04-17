@@ -4,7 +4,7 @@ import { Flexbox, Button, Icon, Card } from 'shared/components/elements'
 import { PostCard, ProviderCard } from 'user/components/partials'
 import { SET_CURRENT_PAGE, SET_CURRENT_MODAL  } from 'constants/actionTypes'
 import { PROVIDERS } from 'constants/providers'
-import { DIMENSIONS_METRICS_FRIENDLY_NAME } from 'constants/analytics'
+import { DIMENSIONS_METRICS_FRIENDLY_NAME, DIMENSIONS_WITH_PATHS, METRICS_WITH_AVERAGES } from 'constants/analytics'
 import {
   withRouter,
 } from 'react-router-dom'
@@ -63,14 +63,12 @@ class AnalyticsTable extends Component {
   }
 
   render() {
-    const {baseOrganization, analytics, filters, location, tableDatasetParams, websites} = this.props
-    const tableDataset = analyticsHelpers.getDataset("table", filters, baseOrganization, tableDatasetParams)
-    const {gscStatus, gscUrl, targetApis} = analyticsHelpers.getExternalApiInfo(filters.websiteUrl, tableDataset, websites)
-    const theseAnalytics = analytics[tableDataset]
+    const {baseOrganization, analytics, filters, location, tableDatasetParams, websites, currentWebsite} = this.props
+    if (!currentWebsite || !analytics) {return null}
 
-    if (!analytics) {
-      return null
-    }
+    const tableDataset = analyticsHelpers.getDataset("table", filters, baseOrganization, tableDatasetParams)
+    const {gscStatus, gscUrl, targetApis} = analyticsHelpers.getExternalApiInfo(currentWebsite.gscSiteUrl, tableDataset, websites)
+    const theseAnalytics = analytics[tableDataset]
 
     let headers, rows, totals
     const webpageQuery = new URLSearchParams(location.search).get("webpage")
@@ -125,10 +123,10 @@ class AnalyticsTable extends Component {
 
                   {totals.map((value, index) => {
                     const correspondingHeader = theseAnalytics.columnHeader.metrics[index]
-                    const valueType = correspondingHeader.type
-                    const totalType = ["INTEGER"].includes(valueType) ? "total" : "average"
+                    const metricName = correspondingHeader.name
+                    const totalType = METRICS_WITH_AVERAGES.includes(metricName) ? "average" : "total"
 
-                    return <div key={correspondingHeader.name} className={`${classes[`column${index +2}`]}`}>{value} ({totalType})</div>
+                    return <div key={metricName} className={`${classes[`column${index +2}`]}`}>{value} ({totalType})</div>
                   })}
                 </Flexbox>
               }
@@ -143,11 +141,21 @@ class AnalyticsTable extends Component {
                     align="center"
                   >
                     {row.dimensions.map((value, index) => {
-                      if (baseOrganization === "website-overview" || (baseOrganization === "landing-pages" && !webpageQuery)) {
-                        return <a key={index} onClick={this.chooseDimensionOnRow.bind(this, value)} className={`${classes[`column${index +1}`]}`}>{value}</a>
-                      } else if (baseOrganization === "landing-pages" && webpageQuery){
-                        return <div key={index} className={`${classes[`column${index +1}`]}`}>{value}</div>
-                      }
+                      const correspondingHeader = theseAnalytics.columnHeader.dimensions[index]
+                      const dimensionIsPath = DIMENSIONS_WITH_PATHS.includes(correspondingHeader.name)
+                      const externalLink = dimensionIsPath ? `${currentWebsite.gaSiteUrl}${value}` : null
+
+                      return <div key={index} className={`${classes[`column${index +1}`]}`} title={dimensionIsPath ? value : ""}>
+                        {(baseOrganization === "website-overview" || (baseOrganization === "landing-pages" && !webpageQuery)) &&
+                          <a className={classes.dimensionLink} onClick={this.chooseDimensionOnRow.bind(this, value)} title={`Get details for ${value}`}>{value}</a>
+                        }
+
+                        {baseOrganization === "landing-pages" && webpageQuery &&
+                          <div className={classes.dimensionText}>{value}</div>
+                        }
+                        &nbsp;
+                        {externalLink && <a className={classes.externalLink} href={externalLink} title="Open your content in new window" target="_blank" >&nbsp;<Icon name="external-link"/></a>}
+                      </div>
                     })}
 
                     {row.metrics[0].values.map((value, index) =>
@@ -168,9 +176,11 @@ const mapStateToProps = state => {
   return {
     //really is campaign posts params
     currentPage: state.currentPage,
+    currentWebsite: state.currentWebsite,
     analytics: state.analytics,
     filters: Helpers.safeDataPath(state, "forms.Analytics.filters.params"),
     websites: state.websites,
+    availableWebsites: state.websites,
     providerAccounts: state.providerAccounts,
     tableDatasetParams: Helpers.safeDataPath(state, "forms.Analytics.tableDataset.params", {}),
   }

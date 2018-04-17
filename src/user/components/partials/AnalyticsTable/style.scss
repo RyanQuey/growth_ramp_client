@@ -32,6 +32,26 @@
   }
   .column1 {
     @include cols(4)
+    padding: .5rem 0 .5rem .5rem;
+    position: relative; // so the externalLink floats to right properly
+    overflow: hidden;
+
+    .dimensionText {
+      display: inline-block;
+    }
+
+    .dimensionLink {
+      display: inline-block;
+      width: calc(100% - 30px);
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+
+    a.externalLink {
+      position: absolute;
+      right: 0;
+    }
   }
   // whether I opt to do table or just flex:
   .column2, .column3, .column4, .column5, .column6, .column7, .cardWrapper,  {
@@ -60,6 +80,9 @@
     }
     &.totalsRow {
       font-weight: bold;
+      .column1 {
+        text-align: center;
+      }
     }
 
     //might not be usingnext two classes

@@ -1,0 +1,47 @@
+.fullForm {
+  .input {
+    display: inline-block;
+  }
+  h4 {
+    display: inline-block;
+    margin: 0 20px 0 0;
+  }
+
+  .formSection {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+
+    input.input {
+      width: 500px;
+    }
+  }
+}
+.filterForms {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  h2 {
+  }
+
+  .select {
+    display: inline-block;
+
+    &.operator {
+      width: 150px;
+    }
+    &.goal {
+      width: 300px;
+    }
+  }
+  .input {
+    width: 100px;
+  }
+}
+.popupWrapper {
+  position: relative;
+  width: 90px;
+  float: right;
+  text-align: center !important;
+}

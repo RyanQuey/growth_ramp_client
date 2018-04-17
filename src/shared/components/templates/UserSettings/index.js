@@ -2,16 +2,25 @@ import { Component } from 'react';
 import { connect } from 'react-redux'
 import { withRouter, Prompt } from 'react-router-dom'
 import { Navbar } from 'shared/components/elements'
-import { AccountSubscription } from 'shared/components/templates'
+import { AccountSubscription, ConfigureWebsites, AccountSettings } from 'shared/components/partials'
+import { WebsiteSettingsModal } from 'user/components/partials'
 import {  } from 'constants/actionTypes'
 import theme from 'theme'
 import { formActions } from 'shared/actions'
 import classes from './style.scss'
 
 const sections = {
+  websites: { //key should be url param
+    title: "Configure Websites",
+    component: ConfigureWebsites,
+  },
   paymentDetails: { //key should be url param
     title: "Payment Details",
     component: AccountSubscription,
+  },
+  accountSettings: { //key should be url param
+    title: "Account Settings",
+    component: AccountSettings,
   },
 }
 const defaultSection = Object.keys(sections)[0]
@@ -74,36 +83,39 @@ class UserSettings extends Component {
   render() {
     const c = this;
     const currentSection = this.props.match.params.view
-    const Tag = (sections[currentSection] && sections[currentSection].component) || AccountSubscription
+    const Tag = (sections[currentSection] && sections[currentSection].component) || ConfigureWebsites
 
+//TODO can borrow code from the content audit tabs
     return (
       <main className={classes.userSettings}>
         <Prompt when={this.props.dirty} message={(location) => 'Form not saved; Are you sure you want to leave?'}/>
-        <h2>Settings</h2>
+        <h1>Settings</h1>
         <Navbar className="" justifyTabs="flex-start" background={theme.color.moduleGrayOne} color={theme.color.text} tabs={true}>
           <ul>
             {Object.keys(sections).map((section) => {
               const title = sections[section].title
 
-              return <li key={title} ref={title}>
-                {currentSection === section ? (
-                  <span>{title}</span>
-                ) : (
-                  <span>{title}</span>
-                )}
+              return <li
+                key={title}
+                ref={title}
+                className={`${classes.tab} ${currentSection === section ? classes.selected : ""}`}
+                onClick={this.switchTo.bind(this, section)}
+              >
+                <span>{title}</span>
               </li>
             })}
           </ul>
         </Navbar>
 
         <div className={classes.tabContent}>
-            <Tag
-              pending={this.state.pending}
-              switchTo={this.switchTo}
-              initialOpening={this.state.initialOpening}
-              resetComposeView={this.resetComposeView}
-            />
+          <Tag
+            pending={this.state.pending}
+            switchTo={this.switchTo}
+            initialOpening={this.state.initialOpening}
+            resetComposeView={this.resetComposeView}
+          />
         </div>
+        <WebsiteSettingsModal />
       </main>
     );
   }

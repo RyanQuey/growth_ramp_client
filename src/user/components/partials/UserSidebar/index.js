@@ -59,13 +59,14 @@ class UserSidebar extends Component {
               </ul>
             </MenuItem>
 
-            {false && <MenuItem link={false && "/analytics"} text="Traffic Dashboard" selected={this.state.trafficDashboard} onClick={this.handleClick.bind(this, "trafficDashboard")} icon="bar-chart">
+            <MenuItem link={`/analytics/content-audit`} text="Content Audit" nav={true} icon={"newspaper-o"}/>
+            <MenuItem link={false && "/analytics"} text="Traffic Dashboard" selected={this.state.trafficDashboard} onClick={this.handleClick.bind(this, "trafficDashboard")} icon="bar-chart">
               <ul>
-                <MenuChild text="Website Overview" link={`/analytics/website-overview`} nav={true} icon={""}/>
-                <MenuChild text="Landing Pages" link={`/analytics/landing-pages`} nav={true} icon={""}/>
+                <MenuChild text="- Website Overview" link={`/analytics/website-overview`} nav={true} icon={""}/>
+                <MenuChild text="- Landing Pages" link={`/analytics/landing-pages`} nav={true} icon={""}/>
               </ul>
-            </MenuItem>}
-            {false && <MenuItem link="/workgroups" text="Workgroups" nav={true} icon="users"/>}
+            </MenuItem>
+            {false && <MenuItem link="/workgroups" text="Workgroups" nav={true} icon=""/>}
 
           </ul>
         </div>

@@ -73,6 +73,9 @@ class SelectWebpageDetailsSet extends Component {
       params.rowsBy = "channelGrouping"
     }
 
+    // set this first, since the sortOrderBy depends upon it ultimately
+    formActions.setParams("Analytics", "tableDataset", params)
+
     const currentOrderBy = Helpers.safeDataPath(this.props.filters, "orderBy.fieldName")
     if (params.rowsBy === "keyword" && currentOrderBy !== "clicks") {
       // set new default orderBy
@@ -82,8 +85,6 @@ class SelectWebpageDetailsSet extends Component {
       this.props.setOrderBy("ga:pageviews", null, {skipRefresh: true})
     }
 
-console.log("setting for table params", params)
-    formActions.setParams("Analytics", "tableDataset", params)
 
     //might not use this; might just filter in backend, since these are more intensive operations
     //this.props.updateDimensionFilter(dimensionFilter)

@@ -2,13 +2,14 @@ import { Component } from 'react';
 import { connect } from 'react-redux'
 import {
   GET_ANALYTICS_REQUEST,
+  FETCH_ALL_GA_ACCOUNTS_REQUEST, //does gsc too actually, any api with websites
 } from 'constants/actionTypes'
 import { Button, Flexbox, Icon, Form } from 'shared/components/elements'
 import {
 } from 'user/components/partials'
 import { PaginationMenu, SocialLogin } from 'shared/components/partials'
 import { SelectChannelGrouping, SelectWebpageDetailsSet } from 'user/components/groups'
-import { AnalyticsFilters, AnalyticsTable, AnalyticsChart } from 'user/components/partials'
+import { AnalyticsFilters, AnalyticsTable, AnalyticsChart, AuditSiteSelector } from 'user/components/partials'
 import { PROVIDERS, PROVIDER_IDS_MAP } from 'constants/providers'
 import {formActions, alertActions} from 'shared/actions'
 import {
@@ -28,12 +29,14 @@ class ViewAnalytics extends Component {
     this.setAnalyticsFilters = this.setAnalyticsFilters.bind(this)
     this.resetPagination = this.resetPagination.bind(this)
     this.getAnalytics = this.getAnalytics.bind(this)
+    this.refreshGAAccounts = this.refreshGAAccounts.bind(this)
     this.getChartAnalytics = this.getChartAnalytics.bind(this)
     this.onPageChange = this.onPageChange.bind(this)
     this.onPageSizeChange = this.onPageSizeChange.bind(this)
     this.updateDimensionFilter = this.updateDimensionFilter.bind(this)
     this.setOrderBy = this.setOrderBy.bind(this)
     this.refreshUnlessGSCOnly = this.refreshUnlessGSCOnly.bind(this)
+    this.configureWebsites = this.configureWebsites.bind(this)
   }
 
   componentWillMount() {
@@ -51,6 +54,11 @@ class ViewAnalytics extends Component {
 
       this.resetPagination(options)
     }
+
+    if (this.props.currentWebsite) {
+      // this will end getting analytics if coming from other page, which is necessary, but not if GR landing page was the dashboard itself (in which case, once everything is ready, will get analytics anyways)
+      this.getAnalytics()
+    }
   }
 
   componentWillReceiveProps(props) {
@@ -67,9 +75,29 @@ class ViewAnalytics extends Component {
 
   }
 
+  //gets the accounts and all the availableWebsites we could filter/show
+  refreshGAAccounts(cbcb) {
+    const cb = ({gaAccounts, gscAccounts}) => {
+      this.setState({pending: false})
+    }
+    const onFailure = (err) => {
+      this.setState({pending: false})
+      alertActions.newAlert({
+        title: "Failure to fetch Google Analytics accounts: ",
+        level: "DANGER",
+        message: err.message || "Unknown error",
+        options: {timer: false},
+      })
+    }
+
+    this.setState({pending: true})
+    this.props.fetchAllGAAccounts({}, cb, onFailure)
+  }
+
   // use eg when checking if should refresh chart, since that uses same data if GSC is being called only right now
   refreshUnlessGSCOnly () {
-    const {baseOrganization, filters} = this.props
+    const {filters} = this.props
+    const baseOrganization = Helpers.safeDataPath(this.props, "match.params.baseOrganization")
     const dataset = analyticsHelpers.getDataset("table", filters, baseOrganization)
     const targetApis = analyticsHelpers.whomToAsk(dataset)
 
@@ -115,8 +143,11 @@ class ViewAnalytics extends Component {
     !options.skipRefresh && this.refreshUnlessGSCOnly()
 
     // check if should sort
-    const {baseOrganization, filters} = this.props
+    // can't get filters from props, since all this gets called before props gets refreshed
+    const filters = Helpers.safeDataPath(store.getState(), "forms.Analytics.filters.params", {})
+    const baseOrganization = Helpers.safeDataPath(this.props, "match.params.baseOrganization")
     const dataset = analyticsHelpers.getDataset("table", filters, baseOrganization)
+console.log(baseOrganization, filters, dataset);
     const targetApis = analyticsHelpers.whomToAsk(dataset)
 
     if (targetApis.includes("GoogleSearchConsole")) {
@@ -208,8 +239,6 @@ class ViewAnalytics extends Component {
     if (lastUsedTableDataset !== tableDataset) {
       //big enough change, merits resetting to defaults
       let filtersToMerge = analyticsHelpers.getDatasetDefaultFilters(tableDataset, newBaseOrganization)
-console.log("8888888888888888");
-console.log(filtersToMerge, baseOrganization);
 
       // make sure frontend is up to date
       this.setAnalyticsFilters(filtersToMerge)
@@ -232,6 +261,12 @@ console.log(filtersToMerge, baseOrganization);
     ) {
       this.getChartAnalytics()
     }
+  }
+
+  configureWebsites (e) {
+    e && e.preventDefault()
+
+    this.props.history.push("/settings/websites")
   }
 
   getChartAnalytics(e) {
@@ -262,8 +297,7 @@ console.log(filtersToMerge, baseOrganization);
 
   render () {
     const {pending} = this.state
-    const {googleAccounts, filters, analytics, tableDatasetParams} = this.props
-    const currentGoogleAccount = googleAccounts && googleAccounts[0]
+    const {currentWebsite, filters, analytics, tableDatasetParams, websites} = this.props
     const baseOrganization = Helpers.safeDataPath(this.props, "match.params.baseOrganization")
     const tableDataset = analyticsHelpers.getDataset("table", filters, baseOrganization)
     const targetApis = analyticsHelpers.whomToAsk(tableDataset)
@@ -275,8 +309,10 @@ console.log(filtersToMerge, baseOrganization);
 
     //pagination stuff
     const lastUsedFilters = Helpers.safeDataPath(analytics, `${tableDataset}.lastUsedFilters`, {})
-    const currentPage = lastUsedFilters.page || 1
-    const currentPageSize = lastUsedFilters.pageSize || 10
+//TODO not updating lastUsedFilters well, at least for now
+//but only used for pagination up to this point, so can just use filters data, since we're not keeping last use and current filters different yet.
+    const currentPage = filters.page || 1
+    const currentPageSize = filters.pageSize || 10
 
     const theseAnalytics = analytics[tableDataset] || {}
     let totalRecords
@@ -295,11 +331,31 @@ console.log(filtersToMerge, baseOrganization);
       <div className={classes.viewAnalytics}>
         <h1>Analytics</h1>
 
+        <div>
+          {currentWebsite ? currentWebsite.name : "No websites yet; configure websites by clicking below to get started"}
+        </div>
+
+        <div className={classes.websiteSettings}>
+          {Object.keys(websites).length > 0 ? (
+            <div>
+              <AuditSiteSelector
+                togglePending={this.togglePending}
+              />
+
+              <a onClick={this.configureWebsites}>Configure Websites</a>
+            </div>
+          ) : (
+            <a onClick={this.configureWebsites}>Add a Website</a>
+          )}
+        </div>
+
         <AnalyticsFilters
           togglePending={this.togglePending}
           baseOrganization={baseOrganization}
           setAnalyticsFilters={this.setAnalyticsFilters}
           getAnalytics={this.getAnalytics}
+          filters={filters}
+          refreshGAAccounts={this.refreshGAAccounts}
         />
 
         <AnalyticsChart
@@ -335,7 +391,7 @@ console.log(filtersToMerge, baseOrganization);
           setOrderBy={this.setOrderBy}
         />
 
-        {currentGoogleAccount && (
+        {currentWebsite && (
           <PaginationMenu
             onSubmit={this.getAnalytics}
             onPageSizeChange={this.onPageSizeChange}
@@ -355,6 +411,7 @@ console.log(filtersToMerge, baseOrganization);
 
 const mapDispatchToProps = (dispatch) => {
   return {
+    fetchAllGAAccounts: (payload, cb, onFailure) => dispatch({type: FETCH_ALL_GA_ACCOUNTS_REQUEST, payload, cb, onFailure}),
     getAnalytics: (payload, dataset, cb, onFailure) => dispatch({
       type: GET_ANALYTICS_REQUEST,
       payload,
@@ -370,8 +427,8 @@ const mapStateToProps = state => {
     analytics: state.analytics,
     user: state.user,
     campaigns: state.campaigns,
-    googleAccounts: Helpers.safeDataPath(state, "providerAccounts.GOOGLE", []).filter((account) => !account.unsupportedProvider),
     websites: state.websites,
+    currentWebsite: state.currentWebsite,
     tableDatasetParams: Helpers.safeDataPath(state, "forms.Analytics.tableDataset.params", {}),
     filters: Helpers.safeDataPath(state, "forms.Analytics.filters.params", {}),
     chartFilters: Helpers.safeDataPath(state, "forms.Analytics.chartFilters.params", {}),

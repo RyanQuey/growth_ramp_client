@@ -7,7 +7,7 @@ import {
   ModalFooter,
 } from 'shared/components/partials/Modal'
 import { CLOSE_MODAL, LINK_ACCOUNT_REQUEST, SET_CURRENT_MODAL } from 'constants/actionTypes'
-import { AccountSubscription } from 'shared/components/templates'
+import { AccountSubscription } from 'shared/components/partials'
 import { Button, Form, Card, Flexbox, Icon } from 'shared/components/elements'
 import { ButtonGroup } from 'shared/components/groups'
 import { PROVIDERS } from 'constants/providers'

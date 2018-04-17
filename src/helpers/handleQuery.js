@@ -10,6 +10,7 @@ import {
 import { errorActions, alertActions, viewSettingActions } from 'shared/actions'
 import { setupSession } from 'lib/socket'
 
+// handles query strings in url
 const handleQuery = (rawQuery, handleQueryCb) => {
 console.log("running");
   //pulls a global variable from the HTML file, what was dynamically rendered via the front end server

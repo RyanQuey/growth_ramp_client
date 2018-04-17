@@ -171,7 +171,7 @@ class PostEditor extends Component {
 
     return (
       <Flexbox direction="column" className={classes.paramsFields}>
-        <h2>{Helpers.providerFriendlyName(params.provider)} {params.channelType.titleCase()}{type === "postTemplate" ? " Template" : ""}{isFake ? "(Building Link Only)" : ""}</h2>
+        <h2>{Helpers.providerFriendlyName(params.provider)} {params.channelType.titleCase()}{type === "postTemplate" ? " Template" : ""}{isFake ? " (Building Link Only)" : ""}</h2>
         {account.photoUrl && <img className={classes.profilePic} src={account.photoUrl}/>}
         <div className={classes.accountInfo}>
           <div>{account.userName} ({account.email || "No email on file"})</div>

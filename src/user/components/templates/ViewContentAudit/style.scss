@@ -1,0 +1,44 @@
+@import 'theme/_helpers';
+.viewAnalytics {
+  margin-bottom: 25px;
+  text-align: left;
+}
+.settings {
+  opacity: 1;
+  @include transition(max-height, .8s, ease);
+  overflow-y: visible;
+
+  &.open {
+    max-height: 2000px;
+  }
+  &.closed {
+    max-height: 0px;
+    overflow-y: hidden;
+  }
+
+  & > a {
+    margin-left: 20px;
+  }
+}
+.toggleSettingsBtn {
+  padding-left: 20px;
+}
+.tab {
+  border-bottom: 1px solid #ccc;
+
+  &.selected {
+    border-style: solid;
+    border-color: #ccc;
+    font-weight: bold;
+    border-bottom-color: #fff;
+    border-width: 1px 1px 0px 1px;
+  }
+  &:hover {
+    font-weight: bold;
+  }
+}
+.tabContent {
+  background-color: white;
+  padding: 20px;
+  border: solid 1px #ccc;
+}

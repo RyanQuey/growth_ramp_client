@@ -1,0 +1,67 @@
+@import 'theme/_helpers';
+.modal {
+  h1 {
+    text-align: center;
+    font-size: 32px;
+  }
+  h2 {
+    text-align: center;
+  }
+}
+.formSection {
+  margin: 0 10px 10px 10px;
+  h2 {
+    margin-top: 0;
+  }
+  .settingLabel {
+    display: flex;
+    align-items: center;
+    .main {
+      font-weight: bold;
+    }
+  }
+
+  .settingValue {
+    text-align: right;
+    width: 120px;
+    .toggleButton {
+    }
+    & > div, & > a {
+      width: 100%;
+      text-align: center;
+      float: right;
+    }
+  }
+
+  //when toggled is closed, when opened though, is this
+  .expandedForm {
+    margin-top: 30px;
+  }
+
+  .createBtn {
+    margin-top: 25px;
+  }
+}
+.popupWrapper {
+  display: inline-block;
+  position: relative;
+  text-align: center !important;
+  width: 50px;
+
+  &.removeBtn {
+    float: right;
+    width: 170px;
+  }
+
+  .popupContainer {
+    font-weight: normal;
+    font-size: 1rem;
+    min-width: 200px;
+  }
+}
+.customListRow {
+  padding: 10px;
+  &:hover {
+    background: $light-purple-gray;
+  }
+}

@@ -1,0 +1,101 @@
+@import 'theme/_helpers';
+.testResult {
+  width: 100%;
+  padding: 0 0 20px 0;
+}
+.table {
+  padding: 0 20px;
+  h2 {
+    margin-top: 0;
+  }
+
+  .tableHeader {
+    width: 100%;
+    background-color: #394e7f;
+    color: #fffffff7;
+    th {
+      padding: 10px;
+      text-align: center;
+      white-space: nowrap;
+      //border: gray 1px solid;
+    }
+
+    .headerCaption {
+      font-weight: normal;
+      white-space: nowrap;
+    }
+  }
+  .row {
+    width: 100%;
+
+  }
+
+
+  // doing tables so easy to do widths from parent component
+  .column0 {
+  }
+
+  .column1 {
+
+  }
+  .column2, .column3, .column4 {
+    text-align: center;
+  }
+  .totalsRow {
+    .column0, .column1, .column2, .column3, .column4  {
+      padding: 0 0 1rem 0;
+    }
+    .column1 {
+      text-align: left;
+      padding-left: .5rem;
+    }
+  }
+}
+.popupWrapper {
+  position: relative;
+  display: inline-block;
+  width: 160px;
+  margin: 0 10px;
+    i {
+      width: 20px;
+      text-align: center;
+    }
+}
+.helpBtn {
+  cursor: pointer;
+}
+.solutionsBtn {
+  width: 150px;
+}
+.helpBox {
+  margin: 5px;
+  min-width: 300px;
+  .description {
+    @include rems(14)
+    line-height: 1rem;
+    text-align: left;
+    padding: 10px 10px 0 10px;
+    font-weight: normal;
+
+    .title {
+      font-weight: bold;
+      white-space: nowrap;
+    }
+
+    h5 {
+      font-size: 1rem;
+    }
+    div {
+      padding-bottom: 1rem;
+    }
+  }
+  button {
+    @include rems(14)
+    line-height: 1rem;
+    white-space: nowrap;
+  }
+}
+
+.bottomRow {
+  margin: 20px;
+}

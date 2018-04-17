@@ -5,9 +5,19 @@ import rootSaga from 'shared/sagas'
 
 import alertReducer from './alerts'
 import analytics from './analytics'
+import availableWebsites from './availableWebsites'
+import audits from './audits'
+import currentAudit from './currentAudit'
+import customLists from './customLists'
+import previousAudit from './previousAudit'
+import currentAuditSection from './currentAuditSection'
+import currentWebsite from './currentWebsite'
+import auditLists from './auditLists'
+import auditListItems from './auditListItems'
 import errorReducer from './errors'
 import formsReducer from './forms'
 import campaignsReducer from './campaigns'
+import goals from './goals'
 import plansReducer from './plans'
 import accountSubscriptionReducer from './accountSubscription'
 import currentPlanReducer from './currentPlan'
@@ -24,6 +34,12 @@ const rootReducer = combineReducers({
   analytics,
   accountSubscription: accountSubscriptionReducer,
   alerts: alertReducer,
+  availableWebsites,
+  audits,
+  auditLists,
+  auditListItems,
+  currentAudit,
+  currentAuditSection,
   //the plan that the user is currently working on OR viewing
   currentPlan: currentPlanReducer,
   //the postTemplate that the user is currently working on
@@ -32,10 +48,14 @@ const rootReducer = combineReducers({
   currentPost: currentPostReducer,
   //the campaign that the user is currently working on
   currentCampaign: currentCampaignReducer,
+  currentWebsite,
+  customLists,
   errors: errorReducer,
   campaigns: campaignsReducer,
   forms: formsReducer,
+  goals,
   plans: plansReducer,
+  previousAudit,
   workgroups: workgroupsReducer,
   //all of the provider accounts that user is the owner of, or has permission to use
   providerAccounts: providerAccountsReducer,
