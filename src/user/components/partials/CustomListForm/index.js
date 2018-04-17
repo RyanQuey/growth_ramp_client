@@ -180,56 +180,62 @@ class CustomListForm extends Component {
     const editing = !!params.id
 
     return (
-      <form onSubmit={this.save}>
+      <form className={classes.fullForm} onSubmit={this.save}>
         <h2>{editing ? `Editing ${params.name}` : "New Custom List"}</h2>
-        <h4>Name*</h4>
-        <Input
-          className={classes.input}
-          value={params.name}
-          validations={["required"]}
-          onChange={this.handleChangeName}
-        />
-        <br/>
-
-        <h4>Description</h4>
-        <Input
-          className={classes.input}
-          value={params.description}
-          onChange={this.handleChangeDescription}
-        />
-        <br/>
-        <h4>Filter</h4>
-        <div className={classes.filterForms}>
-          <span>Return every page that has</span>
-          &nbsp;
-          <Select
-            className={`${classes.select} ${classes.operator}`}
-            options={operatorOptions}
-            onChange={this.selectOperator}
-            currentOption={currentOperatorOption}
-            name="select-operator"
-          />
-          &nbsp;
+        <div className={classes.formSection}>
+          <h4>Name*</h4>
           <Input
             className={classes.input}
-            value={Helpers.safeDataPath(params, `metricFilters.0.comparisonValue`, "")}
+            value={params.name}
             validations={["required"]}
-            onChange={this.handleComparisonValue}
+            onChange={this.handleChangeName}
           />
-          &nbsp;
-          <span>goal conversions</span>
         </div>
 
-        <div className={classes.filterForms}>
-          <span>for goal</span>
-          &nbsp;
-          <Select
-            className={`${classes.select} ${classes.goal}`}
-            options={goalOptions}
-            onChange={this.selectGoal}
-            currentOption={currentGoalOption}
-            name="select-goal"
+        <div className={classes.formSection}>
+          <h4>Description</h4>
+          <Input
+            className={classes.input}
+            value={params.description}
+            onChange={this.handleChangeDescription}
           />
+        </div>
+
+        <div className={classes.inlineFormSection}>
+          <h4>Filter</h4>
+          <div className={classes.filterForms}>
+            <span>Return every page that has</span>
+            &nbsp;
+            <Select
+              className={`${classes.select} ${classes.operator}`}
+              options={operatorOptions}
+              onChange={this.selectOperator}
+              currentOption={currentOperatorOption}
+              name="select-operator"
+            />
+            &nbsp;
+            <Input
+              className={classes.input}
+              value={Helpers.safeDataPath(params, `metricFilters.0.comparisonValue`, "")}
+              validations={["required"]}
+              onChange={this.handleComparisonValue}
+              placeholder="e.g., 5"
+            />
+            &nbsp;
+            <span>goal conversions</span>
+          </div>
+
+          <div className={classes.filterForms}>
+            <span>for goal</span>
+            &nbsp;
+            <Select
+              className={`${classes.select} ${classes.goal}`}
+              options={goalOptions}
+              onChange={this.selectGoal}
+              currentOption={currentGoalOption}
+              name="select-goal"
+            />
+          </div>
         </div>
 
         <br/>

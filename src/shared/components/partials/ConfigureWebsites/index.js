@@ -108,7 +108,7 @@ class ConfigureWebsites extends Component {
             <Button style="inverted" onClick={this.toggleAddingSite.bind(this, false)}>Cancel</Button>
           </div>
         )}
-        <a className={classes.viewAuditsButton} onClick={this.viewAudits}>View Audits</a>
+        <a className={classes.viewAuditsButton} onClick={this.viewAudits}>View Past Audits</a>
       </div>
     )
   }
