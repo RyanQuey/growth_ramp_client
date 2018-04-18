@@ -114,9 +114,10 @@ function* auditContent (action) {
     action.cb && action.cb(res.data)
 
   } catch (err) {
+    console.log("here?")
     console.error('audit failed', err.response || err)
     alertActions.newAlert({
-      title: "Failed to audit content:",
+      title: "Failed to Audit Content:",
       message: Helpers.safeDataPath(err, "response.data.message") || "Unknown Error",
       level: "DANGER",
       options: {}

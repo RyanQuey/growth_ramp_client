@@ -102,7 +102,7 @@ class ViewContentAudit extends Component {
     const onFailure = (err) => {
       this.setState({pending: false})
       alertActions.newAlert({
-        title: "Failure to audit content: ",
+        title: "Failure to retrieve audits: ",
         level: "DANGER",
         message: err.message || "Unknown error",
         options: {timer: false},
@@ -136,12 +136,6 @@ class ViewContentAudit extends Component {
     }
     const onFailure = (err) => {
       this.setState({pending: false})
-      alertActions.newAlert({
-        title: "Failure to audit content: ",
-        level: "DANGER",
-        message: err.message || "Unknown error",
-        options: {timer: false},
-      })
     }
 
     this.setState({pending: true})
@@ -298,10 +292,9 @@ const mapDispatchToProps = (dispatch) => {
       cb,
       onFailure,
     }),
-    auditSite: (payload, dataset, cb, onFailure) => dispatch({
+    auditSite: (payload, cb, onFailure) => dispatch({
       type: AUDIT_CONTENT_REQUEST,
       payload,
-      dataset,
       cb,
       onFailure,
     }),

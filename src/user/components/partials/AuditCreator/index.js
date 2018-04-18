@@ -94,7 +94,7 @@ console.log(startDate, endDate);
     return (
       <Form className={classes.filtersForm} onSubmit={this.audit}>
           <div className={classes.datetimeFilters}>
-            <Flexbox>
+            <Flexbox justify="space-around">
               <div>
                 <div>Start Date</div>
                 {startDate}
