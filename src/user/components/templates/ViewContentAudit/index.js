@@ -268,6 +268,7 @@ class ViewContentAudit extends Component {
           <div>BEWARE: will be like every other audit and could mess up the fixed/maybe fixed data, as well as preventing other regular audits to run, if the audit end date is irregular.</div>
           <AuditCreator
             auditSite={this.auditSite}
+            pending={pending}
           />
           </div>
         }

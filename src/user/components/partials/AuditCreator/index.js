@@ -43,11 +43,10 @@ class AuditCreator extends Component {
 
     let latestBase = latestAudit ? latestAudit.baseDate || moment.utc(latestAudit.createdAt).subtract(1, "day").format() : null
     let currentMoment = latestBase ? moment.utc(latestBase).subtract(1, "month") : moment().subtract(1, "month")
-console.log("checking audits", allAudits);
     let count = 0
 
     while (count < 36) {
-      if (!allBaseDates.some((baseDate) => currentMoment.isSame(baseDate, "day"))) {
+      if (!allBaseDates.some((baseDate) => currentMoment.isSame(baseDate, "day")) && currentMoment.isAfter(2004, "year")) {
         options.push({
           label: currentMoment.format("YYYY-MM-DD"),
           value: {
@@ -79,8 +78,8 @@ console.log("checking audits", allAudits);
   }
 
   render () {
-    const {pending, endDate, startDate} = this.state
-    const {dirty, currentWebsite, audits} = this.props
+    const {endDate, startDate} = this.state
+    const {pending, dirty, currentWebsite, audits} = this.props
 
     if (!currentWebsite || !audits) {
       return null
@@ -96,13 +95,15 @@ console.log(startDate, endDate);
           <div className={classes.datetimeFilters}>
             <Flexbox justify="space-around">
               <div>
-                <div>Start Date</div>
-                {startDate}
+                <h3>Start Date</h3>
+                <div>
+                  {startDate || "(Pick an end date to set)"}
+                </div>
               </div>
 
               {false &&
-              <div>
-                <div>End Date</div>
+              <div className={classes.paramsValue}>
+                <h3>End Date</h3>
                 <DatePicker
                   selected={endDate && moment(endDate)}
                   onChange={this.handleCalendarClick.bind(this, "endDate")}
@@ -118,8 +119,7 @@ console.log(startDate, endDate);
               }
 
               <div className={classes.timeRangeSelect}>
-                <div>End Date</div>
-                <div>&nbsp;</div>
+                <h3>End Date</h3>
                 <Select
                   options={timeRangeOptions}
                   onChange={this.selectFilterOption}
@@ -129,7 +129,6 @@ console.log(startDate, endDate);
               </div>
 
             </Flexbox>
-
               <Button
                 className={classes.twoColumns}
                 type="submit"
