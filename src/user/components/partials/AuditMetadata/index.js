@@ -42,6 +42,7 @@ class AuditMetadata extends Component {
       let audits = this.props.audits
       let auditsArr = Object.keys(audits).map((id) => audits[id])
       let latestAudit = analyticsHelpers.getLatestAudit(auditsArr, {filterFunc})
+
       this.setCurrentAudit(latestAudit)
     }
   }
@@ -61,14 +62,16 @@ class AuditMetadata extends Component {
   auditOptions () {
     const {audits, currentWebsite} = this.props
 
-    return Object.keys(audits)
-    .filter((id) => audits[id].websiteId === currentWebsite.id)
-    .map((id, index) => {
-      let audit = audits[id]
-      let isLatest = index === Object.keys(audits).length -1
+    const auditsArr = Object.keys(audits).map((id) => audits[id])
+    let latestAudit = analyticsHelpers.getLatestAudit(auditsArr)
+
+    return auditsArr
+    .filter((audit) => audit.websiteId === currentWebsite.id)
+    .map((audit, index) => {
+      let isLatest = latestAudit.id === audit.id
 
       return {
-        label: `${moment(audit.createdAt).format("YYYY-MM-DD")}${isLatest ? " (latest)" : ""}`,
+        label: `${moment.utc(audit.baseDate || audit.createdAt).format("YYYY-MM-DD")}${isLatest ? " (latest)" : ""}`,
         value: audit.id,
         audit,
       }

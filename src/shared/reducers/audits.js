@@ -4,7 +4,7 @@ import {
   SIGN_OUT,
 } from 'constants/actionTypes'
 
-const contentAuditReducer = (state = {}, action) => {
+const auditReducer = (state = {}, action) => {
   let newState
 
   const pld = action.payload
@@ -29,5 +29,5 @@ const contentAuditReducer = (state = {}, action) => {
   }
 }
 
-export default contentAuditReducer
+export default auditReducer
 

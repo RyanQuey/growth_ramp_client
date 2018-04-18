@@ -90,7 +90,7 @@ function* auditContent (action) {
     if (!haveAccess) {
       console.log("not even trying to get analytics data (not security issue, just save time)");
       alertActions.newAlert({
-        title: "Failed to get analytics:",
+        title: "Failed to perform audit:",
         message: "Please setup Google Search Console for this website before auditing",
         level: "DANGER",
         options: {timer: false}
@@ -103,6 +103,10 @@ function* auditContent (action) {
 
     const res = yield axios.post(`/api/audits/auditContent`, params) //eventually switch to socket
 
+    if (res.data.err) {
+      throw res.data.err
+    }
+
     yield all([
       put({type: AUDIT_CONTENT_SUCCESS, payload: res.data.audit}),
       call(fetchAllSiteAudits, {payload: {websiteId: params.websiteId,}})
@@ -110,13 +114,13 @@ function* auditContent (action) {
     action.cb && action.cb(res.data)
 
   } catch (err) {
-    console.error('get analytics fetch failed', err.response || err)
-      alertActions.newAlert({
-        title: "Failed to audit content:",
-        message: "Insufficient permissions to access Google Search Console for this website",
-        level: "DANGER",
-        options: {}
-      })
+    console.error('audit failed', err.response || err)
+    alertActions.newAlert({
+      title: "Failed to audit content:",
+      message: Helpers.safeDataPath(err, "response.data.message") || "Unknown Error",
+      level: "DANGER",
+      options: {}
+    })
 
     action.onFailure && action.onFailure(err)
     // yield put(userFetchFailed(err.message))

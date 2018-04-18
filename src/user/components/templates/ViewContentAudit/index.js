@@ -13,7 +13,7 @@ import {
 } from 'user/components/partials'
 import { SocialLogin } from 'shared/components/partials'
 import {  } from 'user/components/groups'
-import { AuditMetadata, AuditSiteSelector, MaybeFixedIssues, FixedIssues, CurrentIssues } from 'user/components/partials'
+import { AuditMetadata, AuditSiteSelector, MaybeFixedIssues, FixedIssues, CurrentIssues, AuditCreator } from 'user/components/partials'
 import { AUDIT_RESULTS_SECTIONS, } from 'constants/auditTests'
 import { PROVIDERS, PROVIDER_IDS_MAP } from 'constants/providers'
 import {formActions, alertActions} from 'shared/actions'
@@ -127,7 +127,7 @@ class ViewContentAudit extends Component {
     this.props.fetchAllGAAccounts({}, cb, onFailure)
   }
 
-  auditSite (e) {
+  auditSite (e, options = {}) {
     e && e.preventDefault()
     //TODO set filters to store, and then use in saga
     formActions.formPersisted("AuditContent", "filters")
@@ -151,11 +151,17 @@ class ViewContentAudit extends Component {
     const dataset = analyticsHelpers.getDataset("contentAudit", filters, null, {testGroup: "nonGoals"})
 
     let paramsToMerge = analyticsHelpers.getDatasetDefaultFilters(dataset)
-    const params = Object.assign({}, filters, paramsToMerge, {
-      testGroup: "nonGoals",
-      dateLength: "month",
-      userId: user.id,
-      websiteId: currentWebsite.id},
+    if (options.extraParams) {
+      Object.assign(paramsToMerge, options.extraParams)
+    }
+
+    const params = Object.assign({}, filters, paramsToMerge,
+      {
+        testGroup: "nonGoals",
+        dateLength: "month",
+        userId: user.id,
+        websiteId: currentWebsite.id
+      },
       _.pick(currentWebsite, ["gscSiteUrl", "gaProfileId", "gaSiteUrl", "gaWebPropertyId", "googleAccountId"]),
     )
 
@@ -261,17 +267,16 @@ class ViewContentAudit extends Component {
             </div>
           )
         }
-        {Helpers.isSuper(user) && <div>
+        {Helpers.isSuper(user) &&
+          <div>
           <h2>Super Admin Bonuses:</h2>
           <h3>Run Custom Audits</h3>
-          <div>BEWARE: will be like every other audit and could mess up the fixed/maybe fixed data, as well as preventing other regular audits to run, if the audit end date is irregular. Will not work if end date is after today either</div>
-              <Button
-                onClick={this.auditSite}
-                className={classes.twoColumns}
-              >
-                Audit site
-              </Button>
-        </div>}
+          <div>BEWARE: will be like every other audit and could mess up the fixed/maybe fixed data, as well as preventing other regular audits to run, if the audit end date is irregular.</div>
+          <AuditCreator
+            auditSite={this.auditSite}
+          />
+          </div>
+        }
       </div>
     )
   }

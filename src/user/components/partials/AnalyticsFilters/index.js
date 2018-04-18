@@ -80,7 +80,6 @@ class AnalyticsFilters extends Component {
   }
 
   handleCalendarClick (param, dateTime) {
-
     this.props.setAnalyticsFilters({[param]: dateTime.format("YYYY-MM-DD")})
     this.props.getAnalytics()
   }
