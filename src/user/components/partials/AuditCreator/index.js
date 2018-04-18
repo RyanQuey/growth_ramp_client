@@ -72,6 +72,7 @@ class AuditCreator extends Component {
     this.setState({[param]: dateTime.format("YYYY-MM-DD")})
   }
 
+  // creates a new audit
   audit (e) {
     // start date will be calculated based on the baseDate.
     const cb = () => {

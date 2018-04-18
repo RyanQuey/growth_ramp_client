@@ -304,6 +304,7 @@ class ViewContentAudit extends Component {
               pending={pending}
             />
             <h3>Run Custom Audits</h3>
+            <div>WARNING: Does not refresh the current audit you are looking at; to refresh those audit lists and their items, switch to a different audit then switch back</div>
             <Button
               onClick={this.refreshWebsiteAudits}
               className={classes.twoColumns}
