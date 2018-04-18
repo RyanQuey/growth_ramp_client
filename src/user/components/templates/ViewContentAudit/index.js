@@ -13,7 +13,7 @@ import {
 } from 'user/components/partials'
 import { SocialLogin } from 'shared/components/partials'
 import {  } from 'user/components/groups'
-import { AuditMetadata, AuditSiteSelector, MaybeFixedIssues, FixedIssues, CurrentIssues } from 'user/components/partials'
+import { AuditMetadata, AuditSiteSelector, MaybeFixedIssues, FixedIssues, CurrentIssues, AuditCreator } from 'user/components/partials'
 import { AUDIT_RESULTS_SECTIONS, } from 'constants/auditTests'
 import { PROVIDERS, PROVIDER_IDS_MAP } from 'constants/providers'
 import {formActions, alertActions} from 'shared/actions'
@@ -35,6 +35,7 @@ class ViewContentAudit extends Component {
     this.togglePending = this.togglePending.bind(this)
     this.setFilters = this.setFilters.bind(this)
     this.auditSite = this.auditSite.bind(this)
+    this.refreshWebsiteAudits = this.refreshWebsiteAudits.bind(this)
     this.fetchAudits = this.fetchAudits.bind(this)
     this.setCurrentAuditSection = this.setCurrentAuditSection.bind(this)
     this.refreshGAAccounts = this.refreshGAAccounts.bind(this)
@@ -102,7 +103,7 @@ class ViewContentAudit extends Component {
     const onFailure = (err) => {
       this.setState({pending: false})
       alertActions.newAlert({
-        title: "Failure to audit content: ",
+        title: "Failure to retrieve audits: ",
         level: "DANGER",
         message: err.message || "Unknown error",
         options: {timer: false},
@@ -127,21 +128,23 @@ class ViewContentAudit extends Component {
     this.props.fetchAllGAAccounts({}, cb, onFailure)
   }
 
-  auditSite (e) {
+  auditSite (e, options = {}) {
     e && e.preventDefault()
     //TODO set filters to store, and then use in saga
     formActions.formPersisted("AuditContent", "filters")
     const cb = () => {
+      alertActions.newAlert({
+        title: "Successfully audited site!",
+        level: "SUCCESS",
+        options: {}
+      })
+
       this.setState({pending: false})
+
+      options.cb && options.cb()
     }
     const onFailure = (err) => {
       this.setState({pending: false})
-      alertActions.newAlert({
-        title: "Failure to audit content: ",
-        level: "DANGER",
-        message: err.message || "Unknown error",
-        options: {timer: false},
-      })
     }
 
     this.setState({pending: true})
@@ -151,11 +154,17 @@ class ViewContentAudit extends Component {
     const dataset = analyticsHelpers.getDataset("contentAudit", filters, null, {testGroup: "nonGoals"})
 
     let paramsToMerge = analyticsHelpers.getDatasetDefaultFilters(dataset)
-    const params = Object.assign({}, filters, paramsToMerge, {
-      testGroup: "nonGoals",
-      dateLength: "month",
-      userId: user.id,
-      websiteId: currentWebsite.id},
+    if (options.extraParams) {
+      Object.assign(paramsToMerge, options.extraParams)
+    }
+
+    const params = Object.assign({}, filters, paramsToMerge,
+      {
+        testGroup: "nonGoals",
+        dateLength: "month",
+        userId: user.id,
+        websiteId: currentWebsite.id
+      },
       _.pick(currentWebsite, ["gscSiteUrl", "gaProfileId", "gaSiteUrl", "gaWebPropertyId", "googleAccountId"]),
     )
 
@@ -164,9 +173,34 @@ class ViewContentAudit extends Component {
     //formActions.setParams("AuditContent", "dataset", {lastUsedDataset: dataset})
 
     this.props.auditSite(params, cb, onFailure)
+  }
 
-    //getting goals now too
-    const {websiteId, profileId, gaWebPropertyId, googleAccountId} = params
+  // NOTE we also have a func to update just one audit if we want to do that, but not sure of many use cases yet, besides testing
+  refreshWebsiteAudits () {
+    const {currentWebsite, user} = this.props
+    const cb = () => {
+      alertActions.newAlert({
+        title: "Successfully refreshed audits for site!",
+        level: "SUCCESS",
+        options: {}
+      })
+
+      this.setState({pending: false})
+
+      options.cb && options.cb()
+    }
+    const onFailure = (err) => {
+      this.setState({pending: false})
+    }
+
+    const params = {
+      userId: user.id,
+      websiteId: currentWebsite.id
+    }
+
+    this.setState({pending: true})
+    this.props.refreshWebsiteAudits(params, cb, onFailure)
+
   }
 
   setCurrentAuditSection (auditSection) {
@@ -261,17 +295,24 @@ class ViewContentAudit extends Component {
             </div>
           )
         }
-        {Helpers.isSuper(user) && <div>
-          <h2>Super Admin Bonuses:</h2>
-          <h3>Run Custom Audits</h3>
-          <div>BEWARE: will be like every other audit and could mess up the fixed/maybe fixed data, as well as preventing other regular audits to run, if the audit end date is irregular. Will not work if end date is after today either</div>
-              <Button
-                onClick={this.auditSite}
-                className={classes.twoColumns}
-              >
-                Audit site
-              </Button>
-        </div>}
+        {Helpers.isSuper(user) &&
+          <div>
+            <h2>Super Admin Bonuses</h2>
+            <h3>Run Custom Audits</h3>
+            <AuditCreator
+              auditSite={this.auditSite}
+              pending={pending}
+            />
+            <h3>Run Custom Audits</h3>
+            <div>WARNING: Does not refresh the current audit you are looking at; to refresh those audit lists and their items, switch to a different audit then switch back</div>
+            <Button
+              onClick={this.refreshWebsiteAudits}
+              className={classes.twoColumns}
+            >
+              Refresh Audits for Site
+            </Button>
+          </div>
+        }
       </div>
     )
   }
@@ -293,13 +334,23 @@ const mapDispatchToProps = (dispatch) => {
       cb,
       onFailure,
     }),
-    auditSite: (payload, dataset, cb, onFailure) => dispatch({
+    auditSite: (payload, cb, onFailure) => dispatch({
       type: AUDIT_CONTENT_REQUEST,
       payload,
-      dataset,
       cb,
       onFailure,
     }),
+    //TODO setup proper actions etc when we know we want to do it this way
+    refreshWebsiteAudits: (payload, cb, onFailure) => {
+      axios.post("/api/audits/refreshWebsiteAudits", payload)
+      .then((result) => {
+        cb(result)
+      })
+      .catch((err) => {
+        console.error(err);
+        onFailure(err)
+      })
+    }
   }
 }
 

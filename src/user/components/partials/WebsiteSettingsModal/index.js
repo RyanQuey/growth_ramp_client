@@ -102,7 +102,10 @@ class WebsiteSettingsModal extends Component {
 
     const cb = () => {
       this.setState({deletePending: false, removingWebsite: false})
+
+      this.handleClose()
     }
+
     const onFailure = (err) => {
       this.setState({deletePending: false})
       alertActions.newAlert({
