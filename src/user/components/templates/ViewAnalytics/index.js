@@ -365,7 +365,7 @@ console.log(baseOrganization, filters, dataset);
           getChartAnalytics={this.getChartAnalytics}
         />
 
-        {baseOrganization === "landing-pages" && !webpageQueryValue &&
+        {currentWebsite && baseOrganization === "landing-pages" && !webpageQueryValue &&
           <SelectChannelGrouping
             updateDimensionFilter={this.updateDimensionFilter}
             getAnalytics={this.getAnalytics}
@@ -373,7 +373,7 @@ console.log(baseOrganization, filters, dataset);
           />
         }
 
-        {baseOrganization === "landing-pages" && webpageQueryValue &&
+        {currentWebsite && baseOrganization === "landing-pages" && webpageQueryValue &&
           <SelectWebpageDetailsSet
             updateDimensionFilter={this.updateDimensionFilter}
             getAnalytics={this.getAnalytics}
