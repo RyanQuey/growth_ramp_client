@@ -66,7 +66,7 @@ class ViewAnalytics extends Component {
     const newBaseOrganization = Helpers.safeDataPath(props, "match.params.baseOrganization")
 
     // currently this works since GSC not used when first changing baseOrganization
-    if (oldBaseOrganization !== newBaseOrganization) {
+    if (props.currentWebsite && oldBaseOrganization !== newBaseOrganization) {
       //clear the extras, leave lastUsedTableDataset
       formActions.setParams("Analytics", "tableDataset", {rowsBy: null, columnSets: null, key: null})
 
