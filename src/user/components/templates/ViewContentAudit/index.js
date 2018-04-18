@@ -132,7 +132,15 @@ class ViewContentAudit extends Component {
     //TODO set filters to store, and then use in saga
     formActions.formPersisted("AuditContent", "filters")
     const cb = () => {
+      alertActions.newAlert({
+        title: "Successfully audited site!",
+        level: "SUCCESS",
+        options: {}
+      })
+
       this.setState({pending: false})
+
+      options.cb && options.cb()
     }
     const onFailure = (err) => {
       this.setState({pending: false})
@@ -263,9 +271,8 @@ class ViewContentAudit extends Component {
         }
         {Helpers.isSuper(user) &&
           <div>
-          <h2>Super Admin Bonuses:</h2>
+          <h2>Super Admin Bonuses</h2>
           <h3>Run Custom Audits</h3>
-          <div>BEWARE: will be like every other audit and could mess up the fixed/maybe fixed data, as well as preventing other regular audits to run, if the audit end date is irregular.</div>
           <AuditCreator
             auditSite={this.auditSite}
             pending={pending}

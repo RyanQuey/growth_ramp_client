@@ -74,7 +74,11 @@ class AuditCreator extends Component {
 
   audit (e) {
     // start date will be calculated based on the baseDate.
-    this.props.auditSite(e, {extraParams: {baseDate: this.state.endDate}})
+    const cb = () => {
+      this.setState({startDate: "", endDate: ""})
+    }
+
+    this.props.auditSite(e, {cb, extraParams: {baseDate: this.state.endDate}})
   }
 
   render () {
@@ -133,6 +137,7 @@ console.log(startDate, endDate);
                 className={classes.twoColumns}
                 type="submit"
                 pending={pending}
+                disabled={!endDate}
               >
                 Audit site
               </Button>
