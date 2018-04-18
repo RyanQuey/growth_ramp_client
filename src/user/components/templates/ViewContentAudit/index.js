@@ -199,7 +199,7 @@ class ViewContentAudit extends Component {
     }
 
     this.setState({pending: true})
-    this.props.auditSite(params, cb, onFailure)
+    this.props.refreshWebsiteAudits(params, cb, onFailure)
 
   }
 
@@ -346,6 +346,7 @@ const mapDispatchToProps = (dispatch) => {
         cb(result)
       })
       .catch((err) => {
+        console.error(err);
         onFailure(err)
       })
     }
