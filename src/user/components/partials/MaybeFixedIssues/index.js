@@ -41,6 +41,10 @@ class MaybeFixedIssues extends Component {
       }*/
 
       let correspondingList = testListsArr.find((l) => l.listKey === list.listKey)
+      // unless we changed what lists we return OR they added a custom list since last time and didn't refresh the old audit, there should be a corresponding list.
+      // currently: just don't show that previous list!
+      if (!correspondingList) {return}
+
       let correspondingListItems = auditListItems[correspondingList.id]
       let correspondingListItemsArr = Object.keys(correspondingListItems).map((id) => correspondingListItems[id])
 
@@ -82,6 +86,10 @@ class MaybeFixedIssues extends Component {
       }*/
 
       let correspondingList = testListsArr.find((l) => l.listKey === list.listKey)
+      // unless we changed what lists we return OR they added a custom list since last time and didn't refresh the old audit, there should be a corresponding list.
+      // currently: just don't show that previous list!
+      if (!correspondingList) {return}
+
       let correspondingListItems = auditListItems[correspondingList.id]
       let correspondingListItemsArr = Object.keys(correspondingListItems).map((id) => correspondingListItems[id])
 

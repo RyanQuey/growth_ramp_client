@@ -35,6 +35,7 @@ class ViewContentAudit extends Component {
     this.togglePending = this.togglePending.bind(this)
     this.setFilters = this.setFilters.bind(this)
     this.auditSite = this.auditSite.bind(this)
+    this.refreshWebsiteAudits = this.refreshWebsiteAudits.bind(this)
     this.fetchAudits = this.fetchAudits.bind(this)
     this.setCurrentAuditSection = this.setCurrentAuditSection.bind(this)
     this.refreshGAAccounts = this.refreshGAAccounts.bind(this)
@@ -172,9 +173,34 @@ class ViewContentAudit extends Component {
     //formActions.setParams("AuditContent", "dataset", {lastUsedDataset: dataset})
 
     this.props.auditSite(params, cb, onFailure)
+  }
 
-    //getting goals now too
-    const {websiteId, profileId, gaWebPropertyId, googleAccountId} = params
+  // NOTE we also have a func to update just one audit if we want to do that, but not sure of many use cases yet, besides testing
+  refreshWebsiteAudits () {
+    const {currentWebsite, user} = this.props
+    const cb = () => {
+      alertActions.newAlert({
+        title: "Successfully refreshed audits for site!",
+        level: "SUCCESS",
+        options: {}
+      })
+
+      this.setState({pending: false})
+
+      options.cb && options.cb()
+    }
+    const onFailure = (err) => {
+      this.setState({pending: false})
+    }
+
+    const params = {
+      userId: user.id,
+      websiteId: currentWebsite.id
+    }
+
+    this.setState({pending: true})
+    this.props.auditSite(params, cb, onFailure)
+
   }
 
   setCurrentAuditSection (auditSection) {
@@ -271,12 +297,19 @@ class ViewContentAudit extends Component {
         }
         {Helpers.isSuper(user) &&
           <div>
-          <h2>Super Admin Bonuses</h2>
-          <h3>Run Custom Audits</h3>
-          <AuditCreator
-            auditSite={this.auditSite}
-            pending={pending}
-          />
+            <h2>Super Admin Bonuses</h2>
+            <h3>Run Custom Audits</h3>
+            <AuditCreator
+              auditSite={this.auditSite}
+              pending={pending}
+            />
+            <h3>Run Custom Audits</h3>
+            <Button
+              onClick={this.refreshWebsiteAudits}
+              className={classes.twoColumns}
+            >
+              Refresh Audits for Site
+            </Button>
           </div>
         }
       </div>
@@ -306,6 +339,16 @@ const mapDispatchToProps = (dispatch) => {
       cb,
       onFailure,
     }),
+    //TODO setup proper actions etc when we know we want to do it this way
+    refreshWebsiteAudits: (payload, cb, onFailure) => {
+      axios.post("/api/audits/refreshWebsiteAudits", payload)
+      .then((result) => {
+        cb(result)
+      })
+      .catch((err) => {
+        onFailure(err)
+      })
+    }
   }
 }
 

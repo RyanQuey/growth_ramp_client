@@ -48,7 +48,7 @@ function* fetchAuditList(action) {
     const {options = {}} = action
     const params = Object.assign({}, pld, {
       status: "ACTIVE",
-      populate: "auditListItems",
+      populate: "auditListItems", //TODO can't do this, will also return archived ones!!!
     })
 
     if (options.withListsForPreviousAudit) {

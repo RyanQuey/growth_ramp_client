@@ -42,12 +42,12 @@ class ContentAuditRows extends Component {
     ) return <Icon name="spinner"/>
 
     let undisplayedTests = 0
+    let displayedTests = 0
 
     return (
       <div className={`${classes.container} ${this.props.hidden ? classes.hidden : ""}`}>
         <Flexbox className={classes.table} direction="column" align="center">
           {Object.keys(AUDIT_TESTS).map((testKey, index) => {
-            let alternatingClass = (index % 2) == 1 ? "oddRow" : "evenRow"
             const testMetadata = AUDIT_TESTS[testKey]
 
             const testListsIds = Object.keys(currentAuditLists).filter((listId) => currentAuditLists[listId].testKey === testKey)
@@ -65,7 +65,12 @@ class ContentAuditRows extends Component {
               // this is how to signal that we're not showing this row at all
               undisplayedTests ++
               return null
+
+            } else {
+              displayedTests ++
             }
+
+            let alternatingClass = (displayedTests % 2) == 1 ? "oddRow" : "evenRow"
 
             const {itemsToShowByList, completedItemsInTest, totalItemsInTest} = results
 
