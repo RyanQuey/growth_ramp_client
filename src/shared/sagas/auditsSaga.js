@@ -46,10 +46,7 @@ function* fetchAuditList(action) {
   try {
     const pld = action.payload
     const {options = {}} = action
-    const params = Object.assign({}, pld, {
-      status: "ACTIVE",
-      populate: "auditListItems", //TODO can't do this, will also return archived ones!!!
-    })
+    const params = Object.assign({}, pld)
 
     if (options.withListsForPreviousAudit) {
       //get previous audit lists for point of comparison
@@ -60,7 +57,7 @@ function* fetchAuditList(action) {
 
     const query = Helpers.toQueryString(params)
 
-    const res = yield axios.get(`/api/auditLists?${query}`)
+    const res = yield axios.get(`/api/auditLists/getPopulatedLists?${query}`)
 
     //organize by provider
 
