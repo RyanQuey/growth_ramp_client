@@ -49,7 +49,7 @@ function* fetchAuditList(action) {
     const params = Object.assign({}, pld)
 
     let previousAudit = store.getState().previousAudit
-    if (previousAudit && options.withListsForPreviousAudit) {
+    if (previousAudit.id && options.withListsForPreviousAudit) {
       //get previous audit lists for point of comparison
 
       params.auditId = [params.auditId, previousAudit.id]
