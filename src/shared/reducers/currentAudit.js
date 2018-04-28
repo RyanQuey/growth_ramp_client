@@ -3,6 +3,7 @@ import {
   SET_CURRENT_AUDIT,
   SET_CURRENT_WEBSITE,
   SIGN_OUT,
+  UPDATE_WEBSITE_SUCCESS,
 } from 'constants/actionTypes'
 
 const contentAuditReducer = (state = null, action) => {
@@ -19,6 +20,17 @@ const contentAuditReducer = (state = null, action) => {
 
     case SET_CURRENT_WEBSITE:
       return null
+
+    case UPDATE_WEBSITE_SUCCESS:
+      if (pld.id === state.websiteId) {
+        newState = Object.assign({}, state)
+        // only change things if archived current audit
+        if (pld.status === "ARCHIVED") {
+          newState = null
+        }
+
+        return newState
+      }
 
     default:
       return state

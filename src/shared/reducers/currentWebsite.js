@@ -1,5 +1,6 @@
 import {
   SET_CURRENT_WEBSITE,
+  UPDATE_WEBSITE_SUCCESS,
   SIGN_OUT,
 } from 'constants/actionTypes'
 
@@ -11,6 +12,18 @@ export default (state = null, action) => {
 
     case SET_CURRENT_WEBSITE:
       return pld ? Object.assign({}, action.payload) : null
+
+    case UPDATE_WEBSITE_SUCCESS:
+      if (pld.id === state.id) {
+        newState = Object.assign({}, state)
+        if (pld.status === "ARCHIVED") {
+          newState = null
+        } else {
+          newState = pld
+        }
+
+        return newState
+      }
 
     default:
       return state

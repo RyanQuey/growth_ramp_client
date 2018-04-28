@@ -2,7 +2,7 @@ import { StyleSheet, css } from 'aphrodite'
 import PropTypes from 'prop-types'
 import classes from './style.scss'
 
-const Flag = ({ background, children, color, border, onClick, className, hover = {}}) => {
+const Flag = ({ background, children, color, border, onClick, className, hover = {}, title = ""}) => {
   const inlineStyles = StyleSheet.create({
     flag: {
       background,
@@ -19,6 +19,7 @@ const Flag = ({ background, children, color, border, onClick, className, hover =
     <span
       className={`${className} ${classes.flag} ${css(inlineStyles.flag)}`}
       onClick={onClick}
+      title={title}
     >
       {children}
     </span>

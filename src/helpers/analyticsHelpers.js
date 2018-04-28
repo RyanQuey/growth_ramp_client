@@ -394,7 +394,7 @@ const analyticsHelpers = {
   },
 
   // latest audit by baseDate
-  getLatestAudit: (auditsArr, options = {}) => {
+  getLatestAudit: (auditsArr = [], options = {}) => {
 
     if (options.filterFunc) {
       auditsArr = auditsArr.filter(options.filterFunc)

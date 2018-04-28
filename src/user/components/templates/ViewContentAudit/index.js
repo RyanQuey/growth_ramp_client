@@ -357,7 +357,8 @@ const mapDispatchToProps = (dispatch) => {
 const mapStateToProps = state => {
   return {
     analytics: state.analytics,
-    audits: state.audits || {},
+    // only want audits for current website
+    audits: _.pickBy(state.audits, (value, key) => state.currentWebsite && value.websiteId === state.currentWebsite.id),
     availableWebsites: state.availableWebsites,
     currentAudit: state.currentAudit,
     previousAudit: state.previousAudit,

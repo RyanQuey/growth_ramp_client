@@ -27,7 +27,7 @@ class ContentAuditRows extends Component {
   }
 
   render() {
-    const {currentAudit, previousAudit, currentAuditSection, auditLists, auditListItems, user, ifAllEmptyComponent = "", showDifficultyFlags} = this.props
+    const {currentWebsite, currentAudit, previousAudit, currentAuditSection, auditLists, auditListItems, user, ifAllEmptyComponent = "", showDifficultyFlags} = this.props
     if (
       !currentAudit.id || currentAudit.err
     ) return null
@@ -43,6 +43,8 @@ class ContentAuditRows extends Component {
 
     let undisplayedTests = 0
     let displayedTests = 0
+
+    const hasGSCAccess = ["siteOwner", "siteRestrictedUser", "siteFullUser"].includes(currentWebsite.gscPermissionLevel)
 
     return (
       <div className={`${classes.container} ${this.props.hidden ? classes.hidden : ""}`}>
@@ -76,8 +78,11 @@ class ContentAuditRows extends Component {
 
             const summaryText = this.props.getSummaryText({completedItemsInTest, totalItemsInTest})
 
+            const testRequiresGSC = AUDIT_TESTS[testKey].requiresGSCAccess
+            const alertFlag = testRequiresGSC && !hasGSCAccess // will have to change when we have more alerts
 
-            const difficultyFlag = AUDIT_TEST_FLAGS[testKey].difficulty
+            // whether or not to show the difficulty and which one to show (some don't have any difficulty set)
+            const difficultyFlag = !alertFlag && completedItemsInTest.length !== totalItemsInTest.length && AUDIT_TEST_FLAGS[testKey].difficulty
 
             return (
               <Flexbox
@@ -97,21 +102,25 @@ class ContentAuditRows extends Component {
                     {testMetadata.question}&nbsp;
                     <span className={classes.previewText}>{summaryText}</span>
                     <div className={classes.flags}>
-                      {showDifficultyFlags && completedItemsInTest.length === totalItemsInTest.length && (
-                          <Flag background="green"><Icon name="check"/></Flag>
+                      {showDifficultyFlags && !alertFlag && completedItemsInTest.length === totalItemsInTest.length && (
+                        <Flag background="green" title="Everything complete!"><Icon name="check"/></Flag>
                       )}
 
-                      {showDifficultyFlags && completedItemsInTest.length !== totalItemsInTest.length && (
+                      {alertFlag && (
+                        <Flag background="white" color="red" border="red 2px solid" title="This test only runs once this website is configured in Google Search Console"><Icon name="exclamation-triangle"/></Flag>
+                      )}
+
+                      {showDifficultyFlags && (
                          <span>
-                          {difficultyFlag === "easy" && <Flag background="#86c286">Easy</Flag>}
-                          {difficultyFlag === "hard" && <Flag background="#7f7fca">Hard</Flag>}
+                          {difficultyFlag === "easy" && <Flag background="#86c286" title="These fixes will probably be relatively easy to complete">Easy</Flag>}
+                          {difficultyFlag === "hard" && <Flag background="#7f7fca" title="These fixes will probably be relatively hard to complete">Hard</Flag>}
                         </span>
                       )}
                     </div>
                   </div>
                 </Flexbox>
 
-                {this.state[testKey] === "open" &&
+                {!alertFlag && this.state[testKey] === "open" &&
                   <Flexbox className={`${classes.lists} ${classes.row}`} direction="column" align="center" flexWrap="wrap" justify="space-between">
                     <TestResult
                       testKey={testKey}
@@ -140,6 +149,7 @@ const mapStateToProps = state => {
     user: state.user,
     currentPost: state.currentPost,
     currentAudit: state.currentAudit,
+    currentWebsite: state.currentWebsite,
     previousAudit: state.previousAudit,
     currentAuditSection: state.currentAuditSection,
     auditLists: state.auditLists,

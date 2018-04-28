@@ -3,6 +3,7 @@ export const AUDIT_TESTS = {
   pageSpeed: {
     key: "pageSpeed",
     question: "Which of your pages are too slow?",
+    requiresGSCAccess: false,
     lists: {
       slowPages: {
         header: "Slow Pages",
@@ -31,6 +32,7 @@ export const AUDIT_TESTS = {
   headlineStrength: {
     key: "headlineStrength",
     question: "What headlines and meta-descriptions need to be improved?",
+    requiresGSCAccess: true,
     lists: {
       weakHeadlines: {
         header: "Headlines to improve",
@@ -46,6 +48,7 @@ export const AUDIT_TESTS = {
   browserCompatibility: {
     key: "browserCompatibility",
     question: "What browsers does your site not work well on?",
+    requiresGSCAccess: false,
     lists: {
       badBounceRate: {
         header: "Bad Bounce Rate",
@@ -69,6 +72,7 @@ export const AUDIT_TESTS = {
   deviceCompatibility: {
     key: "deviceCompatibility",
     question: "What devices does your site not work well on?",
+    requiresGSCAccess: false,
     lists: {
       badBounceRate: {
         header: "Bad Bounce Rate",
@@ -92,6 +96,7 @@ export const AUDIT_TESTS = {
   userInteraction: {
     key: "userInteraction",
     question: "What other pages may have issues that affect performance?",
+    requiresGSCAccess: false,
     lists: {
       badBounceRate: {
         header: "Bad Bounce Rate",
@@ -118,6 +123,7 @@ export const AUDIT_TESTS = {
   searchPositionToImprove: {
     key: "searchPositionToImprove",
     question: "What pages should you focus on for improving their search position?",
+    requiresGSCAccess: true,
     lists: {
       searchPositionToImprove: {
         header: "Pages to Improve",
@@ -131,6 +137,7 @@ export const AUDIT_TESTS = {
   missingPages: {
     key: "missingPages",
     question: "What pages are getting 404 errors from internal and external links?",
+    requiresGSCAccess: false,
     lists: {
       brokenExternal: {
         header: "Broken External Links",

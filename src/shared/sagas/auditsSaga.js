@@ -82,18 +82,17 @@ function* auditContent (action) {
     const state = store.getState()
     const params = action.payload
     const site = state.websites[params.websiteId]
-    const haveAccess = ["siteOwner", "siteRestrictedUser", "siteFullUser"].includes(site.gscPermissionLevel)
+    const haveGSCAccess = ["siteOwner", "siteRestrictedUser", "siteFullUser"].includes(site.gscPermissionLevel)
 
-    if (!haveAccess) {
-      console.log("not even trying to get analytics data (not security issue, just save time)");
+    if (!haveGSCAccess) {
       alertActions.newAlert({
-        title: "Failed to perform audit:",
-        message: "Please setup Google Search Console for this website before auditing",
+        title: "Warning:",
+        message: "Google Search Console is not setup for this website. Audits will not include Search Console information",
         level: "DANGER",
         options: {timer: false}
       })
 
-      return
+      // but still run the audit
     }
 
     //transfomr into array of objs, each obj with single key (a filter param).
