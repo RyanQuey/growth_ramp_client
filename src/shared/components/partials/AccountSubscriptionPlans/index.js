@@ -20,7 +20,7 @@ class AccountSubscriptionPlans extends Component {
   submit(e) {
     e.preventDefault()
 
-    formActions.setParams("AccountSubscriptionPlans", "plan", {pricingPlan: "basic-monthly"}) // $49/mo. won't use this if there was a button to actually pick plans, haha
+    formActions.setParams("AccountSubscriptionPlans", "plan", {pricingPlan: "standard-monthly"}) // $49/mo. won't use this if there was a button to actually pick plans, haha
     this.props.submitPricing()
   }
 

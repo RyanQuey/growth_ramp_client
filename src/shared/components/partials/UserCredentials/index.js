@@ -11,9 +11,7 @@ class UserCredentials extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      email: '',
-      password: "",
-      validEmail: false,
+      validEmail: true,
       view: props.initialView || 'LOGIN',
       acceptedTerms: false,
     }
@@ -22,6 +20,7 @@ class UserCredentials extends Component {
     this.handleEmail = this.handleEmail.bind(this)
     this.handlePassword = this.handlePassword.bind(this)
     this.toggleTos = this.toggleTos.bind(this)
+    this.resetForm = this.resetForm.bind(this)
   }
   componentWillReceiveProps(props) {
     //(if logging in, and there's an error that's new, stop pending or else it might get stuck indeffinitely spinning)
@@ -41,6 +40,11 @@ class UserCredentials extends Component {
     })
   }
 
+  resetForm () {
+    this.handlePassword("")
+    this.handleEmail("")
+  }
+
   toggleTos(value) {
     this.setState({acceptedTerms: value})
   }
@@ -56,13 +60,16 @@ class UserCredentials extends Component {
     let cb
 
     if (this.props.view === "SET_CREDENTIALS") {
+      // setting email and/or password
       let params = {}
       cb = () => {
         alertActions.newAlert({
           title: "Credentials successfully updated",
           level: "SUCCESS",
         })
+        this.resetForm()
       }
+
       if (password) {params.password = password}
       if (email) {params.email = email}
 
@@ -71,15 +78,23 @@ class UserCredentials extends Component {
     } else if (this.props.view === "RESETTING_PASSWORD") {
       cb = () => {
         this.props.togglePending(false)
-        this.setState({
-          //change view to login
-        })
+        this.props.toggleView()
+        this.resetForm()
+console.log("in th cbcb");
       }
+
       this.props.resetPasswordRequest(email, cb)
 
     } else {
+      //logging in or signingup
+      cb = () => {
+        this.props.togglePending(false)
 
-      this.props.submit()
+        this.resetForm()
+console.log("in th cbcb");
+      }
+
+      this.props.submit({cb})
     }
   }
 

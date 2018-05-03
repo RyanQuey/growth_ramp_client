@@ -6,7 +6,6 @@ module.exports = {
 //currently, just allows them to continue use even when they have no plan. then when their time is over, when they login they'll be prompted to add data, and b/c backend knows it too, no more campaigns can get published
   ALLOWED_EMAILS: [
     "rlquey2@gmail.com",
-    "rlquey2+test@gmail.com",
     //"rlquey2+test2@gmail.com",
     "rlquey2+test3@gmail.com",
     "rlquey2+test4@gmail.com",
@@ -43,9 +42,16 @@ module.exports = {
       price: 0,
       frequency: "month",
     },
+    // no longer using; soon transition out altogether
     "basic-monthly": {
       name: "Basic - Monthly",
       price: 49,
+      frequency: "month",
+    },
+    "standard-monthly": {
+      name: "Standard - Monthly",
+      price: 49, // base price
+      pricePerExtra: 29,
       frequency: "month",
     }
   },

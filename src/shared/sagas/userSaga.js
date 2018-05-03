@@ -232,6 +232,7 @@ function* resetPassword(action) {
       level: "SUCCESS",
       options: {timer: false},
     })
+console.log(action.cb);
     action.cb && action.cb(res.user)
 
   } catch (err) {

@@ -62,8 +62,9 @@ class Login extends Component {
       view: "RESETTING_PASSWORD",
     })
   }
+
   toggleView(e) {
-    e.preventDefault()
+    e && e.preventDefault()
 
     if (this.state.view === "LOGIN") {
       this.setState({view: "SIGN_UP"})
@@ -76,7 +77,7 @@ class Login extends Component {
     this.setState({onboardingStage: value}) //CHOOSE_PRICING_PLAN, ADD_CARD, or ADD_CREDENTIALS
   }
 
-  submitCredentials () {
+  submitCredentials (options = {}) {
     let signInType
     if (this.state.view === "LOGIN"){
       signInType = 'SIGN_IN_WITH_EMAIL'
@@ -89,10 +90,15 @@ class Login extends Component {
     const token = this.props.viewSettings.modalToken
     const onFailure = () => {
       this.togglePending(false)
+      options.onFailure && options.onFailure()
     }
     const cb = (allData) => {
+console.log("in the cbn");
+      this.togglePending(false)
+      options.cb && options.cb()
     }
 
+console.log("calling func");
     const credentials = {password: this.props.password, email: this.props.email}
     this.props.signInRequest(signInType, credentials, token, onFailure, cb)
   }
@@ -128,6 +134,7 @@ class Login extends Component {
           pending={this.state.pending}
           token={this.props.viewSettings.modalToken}
           togglePending={this.togglePending}
+          toggleView={this.toggleView}
           submit={this.submitCredentials}
         />
         {view === "LOGIN"  &&

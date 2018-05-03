@@ -113,9 +113,11 @@ class AccountSubscription extends Component {
     const {accountSubscription} = this.props
 
     // if it's set, use that, if it's not, show default
-    let currentPaymentPlan = accountSubscription && accountSubscription.paymentPlan || (ALLOWED_EMAILS.includes(this.props.user.email) ? "prepaid" : "basic-monthly")
+    let currentPaymentPlan = accountSubscription && accountSubscription.paymentPlan || (ALLOWED_EMAILS.includes(this.props.user.email) ? "prepaid" : "standard-monthly")
 
-    const planText = `${PAYMENT_PLANS[currentPaymentPlan].name} ($${PAYMENT_PLANS[currentPaymentPlan].price}/${PAYMENT_PLANS[currentPaymentPlan].frequency})`
+    const planData = PAYMENT_PLANS[currentPaymentPlan]
+    const pricePerExtraText = planData.pricePerExtra ? ` + ${planData.pricePerExtra}/extra website` : ""
+    const planText = `${planData.name} ($${planData.price}${pricePerExtraText})`
     const currentPaymentMethod = accountSubscription && accountSubscription.defaultSourceId ? `Credit card ending in ${accountSubscription.defaultSourceLastFour}` : "Payment method is not configured"
 
     if (!accountSubscription) {

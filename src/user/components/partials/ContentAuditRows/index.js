@@ -120,15 +120,19 @@ class ContentAuditRows extends Component {
                   </div>
                 </Flexbox>
 
-                {!alertFlag && this.state[testKey] === "open" &&
+                {this.state[testKey] === "open" &&
                   <Flexbox className={`${classes.lists} ${classes.row}`} direction="column" align="center" flexWrap="wrap" justify="space-between">
-                    <TestResult
-                      testKey={testKey}
-                      listsArr={currentAuditSection === "currentIssues" ? testListsArr : previousAuditTestListsArr}
-                      itemsToShowByList={itemsToShowByList}
-                      totalItemsInTest={totalItemsInTest}
-                      completedItemsInTest={completedItemsInTest}
-                    />
+                    {!alertFlag ? (
+                      <TestResult
+                        testKey={testKey}
+                        listsArr={currentAuditSection === "currentIssues" ? testListsArr : previousAuditTestListsArr}
+                        itemsToShowByList={itemsToShowByList}
+                        totalItemsInTest={totalItemsInTest}
+                        completedItemsInTest={completedItemsInTest}
+                      />
+                    ) : (
+                      <div>This test only runs once this website is configured in Google Search Console</div>
+                    )}
                   </Flexbox>
                 }
               </Flexbox>
