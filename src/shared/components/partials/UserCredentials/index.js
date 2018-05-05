@@ -157,7 +157,7 @@ class UserCredentials extends Component {
           title={view === "SIGN_UP" && !this.state.acceptedTerms ? (
             "Please read and accept the terms of service before continuing"
           ) : (
-            invalidFields ? "Fix in fields before continuing" : "Click here to sign up"
+            invalidFields ? "Fix in fields before continuing" : (view === "SIGN_UP" ? "Click here to sign up" : "Click here to login")
           )}
           pending={this.props.pending}
           style="attention"
