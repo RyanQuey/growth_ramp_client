@@ -222,7 +222,7 @@ class AuditSiteSetup extends Component {
 
           {["past-due", "canceled", "unpaid", null].includes(accountSubscription.subscriptionStatus) ? (
             <div>
-              Paid subscription is required before you can begin auditing your site.
+              Paid subscription is required before you can begin auditing your site.&nbsp;
               <a className={classes.toggleSettingsBtn} onClick={this.goToPaymentDetails}>Setup your payments to get started!</a>
             </div>
           ) : (
