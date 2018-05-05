@@ -220,46 +220,43 @@ class AuditSiteSetup extends Component {
             />}
           </div>
 
-          <Flexbox justify="space-between">
-            {Object.keys(gaSites).length > 0 && (
-              <div className={classes.websiteSelect}>
-                <div>Website: </div>
-                <Select
-                  options={websiteOptions}
-                  currentOption={chosenWebsiteOption}
-                  name="website"
-                  onChange={this.setWebsiteFilter}
-                />
-              </div>
-            )}
+          {["past-due", "canceled", "unpaid", null].includes(accountSubscription.subscriptionStatus) ? (
+            <div>
+              Paid subscription is required before you can begin auditing your site.
+              <a className={classes.toggleSettingsBtn} onClick={this.goToPaymentDetails}>Setup your payments to get started!</a>
+            </div>
+          ) : (
+            <Flexbox justify="space-between">
+              {Object.keys(gaSites).length > 0 && (
+                <div className={classes.websiteSelect}>
+                  <div>Website: </div>
+                  <Select
+                    options={websiteOptions}
+                    currentOption={chosenWebsiteOption}
+                    name="website"
+                    onChange={this.setWebsiteFilter}
+                  />
+                </div>
+              )}
 
-            {chosenWebsite &&
-              <div className={classes.websiteSelect}>
-                <div>Analytics Profile: </div>
-                <Select
-                  options={profileOptions}
-                  currentOption={currentProfileOption || profileOptions[0]}
-                  name="profileId"
-                  onChange={this.setAnalyticsProfileFilter}
-                />
-              </div>
-            }
-          </Flexbox>
+              {chosenWebsite &&
+                <div className={classes.websiteSelect}>
+                  <div>Analytics Profile: </div>
+                  <Select
+                    options={profileOptions}
+                    currentOption={currentProfileOption || profileOptions[0]}
+                    name="profileId"
+                    onChange={this.setAnalyticsProfileFilter}
+                  />
+                </div>
+              }
+            </Flexbox>
+          )}
         </Flexbox>
 
         {(currentProfileOption || profileOptions[0]) ? (
           <div className={classes.datetimeFilters}>
-            <Flexbox>
-            </Flexbox>
-
-            {["past-due", "canceled", "unpaid", null].includes(accountSubscription.subscriptionStatus) ? (
-              <div>
-                Paid subscription is required before you can begin auditing your site.
-                <a className={classes.toggleSettingsBtn} onClick={this.goToPaymentDetails}>Setup your payments to get started!</a>
-              </div>
-            ) : (
-              <Button type="submit" pending={pending} disabled={!profileId}>Choose Site to Audit</Button>
-            )}
+            <Button type="submit" pending={pending} disabled={!profileId}>Choose Site to Audit</Button>
           </div>
         ) : (
           chosenWebsite && <div>No analytics profiles connected to this google account.</div>
