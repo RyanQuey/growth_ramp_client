@@ -3,13 +3,14 @@
 .loginWrapper {
   // don't want to change mainContainer to have a fixed height, or else won't dynamically get bigger when it needs to.
   // so set absolute height here
-  height: calc(100vh - 50px);
+  height: calc(100vh - 100px);
   @include mq(xxs) {
   }
   @include mq(sm) {
   }
 
   &.SIGN_UP {
+    min-height: 450px; // for mobile. TODO just use media queries
   }
 
   &.LOGIN {
