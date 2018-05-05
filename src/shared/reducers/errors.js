@@ -1,6 +1,7 @@
 import {
   CLEAR_ERRORS,
   HANDLE_ERRORS,
+  SIGN_OUT_SUCCESS,
 } from 'constants/actionTypes'
 
 //separate out by template the error was made in (even if it will be handled in a different template also)
@@ -46,6 +47,9 @@ export default (state = {}, action)=>{
       }
 
       return newState
+
+    case SIGN_OUT_SUCCESS:
+      return {}
 
     default:
       return state

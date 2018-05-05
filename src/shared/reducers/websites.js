@@ -1,7 +1,7 @@
 import {
   FETCH_WEBSITE_SUCCESS,
   UPDATE_WEBSITE_SUCCESS,
-  SIGN_OUT,
+  SIGN_OUT_SUCCESS,
   REACTIVATE_OR_CREATE_WEBSITE_SUCCESS,
 } from 'constants/actionTypes'
 
@@ -36,7 +36,7 @@ const websitesReducer = (state = {}, action) => {
 
       return newState
 
-    case SIGN_OUT:
+    case SIGN_OUT_SUCCESS:
       return {}
 
     default:

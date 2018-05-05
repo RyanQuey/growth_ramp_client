@@ -1,7 +1,7 @@
 import {
   SET_CURRENT_WEBSITE,
   UPDATE_WEBSITE_SUCCESS,
-  SIGN_OUT,
+  SIGN_OUT_SUCCESS,
 } from 'constants/actionTypes'
 
 export default (state = null, action) => {
@@ -24,6 +24,9 @@ export default (state = null, action) => {
 
         return newState
       }
+
+    case SIGN_OUT_SUCCESS:
+      return null
 
     default:
       return state

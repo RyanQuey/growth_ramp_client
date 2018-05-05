@@ -34,7 +34,7 @@ const userReducer = (state = null, action) => {
       return Object.assign({}, state, { [action.payload.name]: action.payload.url })
 
     case SIGN_OUT_SUCCESS:
-      return false
+      return null
 
     case FETCH_CURRENT_USER_SUCCESS:
       //cover that up, in case some xss can get it or something

@@ -2,7 +2,7 @@ import analyticsHelpers from 'helpers/analyticsHelpers'
 import {
   FETCH_CURRENT_AUDIT_SUCCESS,
   SET_CURRENT_AUDIT,
-  SIGN_OUT,
+  SIGN_OUT_SUCCESS,
 } from 'constants/actionTypes'
 
 export default (state = null, action) => {
@@ -24,6 +24,9 @@ export default (state = null, action) => {
       auditsArr = Object.keys(audits).map((id) => audits[id])
       previousAudit = thisAudit && analyticsHelpers.getLatestAuditBefore(auditsArr, {endDate: thisAudit.baseDate, websiteId: thisAudit.websiteId})
       return Object.assign({}, previousAudit)
+
+    case SIGN_OUT_SUCCESS:
+      return null
 
     default:
       return state

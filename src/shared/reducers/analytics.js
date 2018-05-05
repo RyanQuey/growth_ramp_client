@@ -1,6 +1,6 @@
 import {
   GET_ANALYTICS_SUCCESS,
-  SIGN_OUT,
+  SIGN_OUT_SUCCESS,
   SORT_GSC_ANALYTICS,
 } from 'constants/actionTypes'
 
@@ -23,7 +23,7 @@ const analyticsReducer = (state = {}, action) => {
       newState[dataset] = results
       return newState
 
-    case SIGN_OUT:
+    case SIGN_OUT_SUCCESS:
       return {}
 
     default:

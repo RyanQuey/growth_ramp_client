@@ -1,7 +1,7 @@
 import {
   FETCH_AUDIT_LIST_SUCCESS,
   UPDATE_AUDIT_LIST_ITEM_SUCCESS,
-  SIGN_OUT,
+  SIGN_OUT_SUCCESS,
 } from 'constants/actionTypes'
 
 // namespaced by list for organization / fast retrieval (note: potentially working with hundreds)
@@ -32,7 +32,7 @@ export default (state = {}, action) => {
 
       return newState
 
-    case SIGN_OUT:
+    case SIGN_OUT_SUCCESS:
       return {}
 
     default:

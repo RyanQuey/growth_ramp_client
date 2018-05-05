@@ -3,6 +3,7 @@ import {
   SET_OPTIONS,
   CLEAR_PARAMS,
   FORM_PERSISTED,
+  SIGN_OUT_SUCCESS,
 } from 'constants/actionTypes'
 
 //separate out by template the error was made in (even if it will be handled in a different template also)
@@ -65,6 +66,9 @@ export default (state = {}, action) => {
       _.set(newState, `${pld.component}.${pld.form}.dirty`, false)
 
       return newState
+    case SIGN_OUT_SUCCESS:
+      return {}
+
     default:
       return state
   }

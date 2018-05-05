@@ -3,6 +3,7 @@ import {
   CLOSE_MODAL,
   SET_VIEW_MODE,
   DATA_IS_READY,
+  SIGN_OUT_SUCCESS,
 } from 'constants/actionTypes'
 
 //separate out by template the error was made in (even if it will be handled in a different template also)
@@ -20,6 +21,9 @@ export default (state = {}, action) => {
 
     case DATA_IS_READY:
       return Object.assign({}, state, {dataIsReady: {[action.payload.dataName]: action.payload.boolean}})
+
+    case SIGN_OUT_SUCCESS:
+      return {}
 
     default:
       return state

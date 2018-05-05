@@ -4,7 +4,7 @@ import {
   FETCH_ACCOUNT_SUBSCRIPTION_SUCCESS,
   CANCEL_ACCOUNT_SUBSCRIPTION_SUCCESS,
   UPDATE_ACCOUNT_SUBSCRIPTION_SUCCESS,
-  SIGN_OUT,
+  SIGN_OUT_SUCCESS,
 } from 'constants/actionTypes'
 
 const accountSubscriptionReducer = (state = null, action) => {
@@ -30,7 +30,7 @@ const accountSubscriptionReducer = (state = null, action) => {
       //payload should be the updated accountsSubscription
       return Object.assign({}, pld)
 
-    case SIGN_OUT:
+    case SIGN_OUT_SUCCESS:
       return false
 
     default:

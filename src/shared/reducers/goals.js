@@ -1,6 +1,6 @@
 import {
   GET_GA_GOALS_SUCCESS,
-  SIGN_OUT,
+  SIGN_OUT_SUCCESS,
 } from 'constants/actionTypes'
 
 const contentAuditReducer = (state = {}, action) => {
@@ -14,7 +14,7 @@ const contentAuditReducer = (state = {}, action) => {
       websiteId = pld.params.websiteId
       return Object.assign({}, state, {[websiteId]: pld.results});
 
-    case SIGN_OUT:
+    case SIGN_OUT_SUCCESS:
       return {}
 
     default:

@@ -1,6 +1,6 @@
 import {
   FETCH_ALL_GA_ACCOUNTS_SUCCESS,
-  SIGN_OUT,
+  SIGN_OUT_SUCCESS,
 } from 'constants/actionTypes'
 
 const availableWebsitesReducer = (state = {}, action) => {
@@ -61,7 +61,7 @@ const availableWebsitesReducer = (state = {}, action) => {
 
       return Object.assign({}, state, websites)
 
-    case SIGN_OUT:
+    case SIGN_OUT_SUCCESS:
       return {}
 
     default:

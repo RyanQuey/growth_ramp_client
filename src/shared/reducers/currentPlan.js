@@ -5,7 +5,7 @@ import {
   UPDATE_POST_TEMPLATE_SUCCESS,
   DESTROY_POST_TEMPLATE_SUCCESS,
   UPDATE_PLAN_SUCCESS,
-  SIGN_OUT,
+  SIGN_OUT_SUCCESS,
   SET_CURRENT_PLAN, //probably eventually call this SET_PLAN
   SET_POST,
 } from 'constants/actionTypes'
@@ -86,7 +86,7 @@ const currentPlanReducer = (state = null, action) => {
       let post = action.payload
       return Object.assign({}, plans[post.planId])
 
-    case SIGN_OUT:
+    case SIGN_OUT_SUCCESS:
       return false
 
     default:

@@ -2,7 +2,7 @@ import {
   FETCH_CURRENT_AUDIT_SUCCESS,
   SET_CURRENT_AUDIT,
   SET_CURRENT_WEBSITE,
-  SIGN_OUT,
+  SIGN_OUT_SUCCESS,
   UPDATE_WEBSITE_SUCCESS,
 } from 'constants/actionTypes'
 
@@ -31,6 +31,9 @@ const contentAuditReducer = (state = null, action) => {
 
         return newState
       }
+
+    case SIGN_OUT_SUCCESS:
+      return null
 
     default:
       return state

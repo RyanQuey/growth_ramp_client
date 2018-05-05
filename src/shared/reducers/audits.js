@@ -1,7 +1,7 @@
 import {
   FETCH_AUDIT_SUCCESS,
   AUDIT_CONTENT_SUCCESS,
-  SIGN_OUT,
+  SIGN_OUT_SUCCESS,
 } from 'constants/actionTypes'
 
 const auditReducer = (state = {}, action) => {
@@ -21,7 +21,7 @@ const auditReducer = (state = {}, action) => {
       newState = Object.assign({}, state)
       newState[pld.id] = pld
 
-    case SIGN_OUT:
+    case SIGN_OUT_SUCCESS:
       return {}
 
     default:

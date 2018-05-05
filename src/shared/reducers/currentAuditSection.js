@@ -1,6 +1,6 @@
 import {
   SET_CURRENT_AUDIT_SECTION,
-  SIGN_OUT,
+  SIGN_OUT_SUCCESS,
 } from 'constants/actionTypes'
 
 const contentAuditReducer = (state = null, action) => {
@@ -11,6 +11,9 @@ const contentAuditReducer = (state = null, action) => {
 
     case SET_CURRENT_AUDIT_SECTION:
       return action.payload
+
+    case SIGN_OUT_SUCCESS:
+      return null
 
     default:
       return state
