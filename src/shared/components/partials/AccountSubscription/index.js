@@ -221,7 +221,8 @@ class AccountSubscription extends Component {
               {this.state.updatingWebsiteQuantity && (
                 <Button small={true} pending={this.state.pending} onClick={this.updateAccountSubscription}>Save</Button>
               )}
-              <a href="#" className={classes.toggleButton} onClick={this.toggleUpdatingWebsiteQuantity.bind(this, !this.state.updatingWebsiteQuantity)}>{!this.state.updatingWebsiteQuantity ? "Edit" : "Cancel"}</a>
+              {/* only can edit stuff for account sub if there is a record in stripe, which will happen once they setup a payment source */}
+              {accountSubscription.stripeSubscriptionId && <a href="#" className={classes.toggleButton} onClick={this.toggleUpdatingWebsiteQuantity.bind(this, !this.state.updatingWebsiteQuantity)}>{!this.state.updatingWebsiteQuantity ? "Edit" : "Cancel"}</a>}
             </div>
           </Flexbox>
         </div>
