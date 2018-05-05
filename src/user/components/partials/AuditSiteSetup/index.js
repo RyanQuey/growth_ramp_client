@@ -76,7 +76,14 @@ class AuditSiteSetup extends Component {
     const {gaSites = {}} = availableWebsites
     const chosenWebsite = gaSites[this.state.websiteId]
 
-    return chosenWebsite && chosenWebsite.profiles.map((profile) => ({
+    const currentWebsitesArr = Object.keys(websites).map((siteId) => websites[siteId])
+
+    return chosenWebsite && chosenWebsite.profiles
+    .filter((profile) => {
+      //filter out profiles that are already active
+      return !currentWebsitesArr.some((site) => site.gaProfileId === profile.id)
+    })
+    .map((profile) => ({
       value: {profile},
       label: profile.name,
       profile,
