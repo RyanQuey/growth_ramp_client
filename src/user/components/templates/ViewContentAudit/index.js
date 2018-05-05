@@ -41,6 +41,7 @@ class ViewContentAudit extends Component {
     this.refreshGAAccounts = this.refreshGAAccounts.bind(this)
     this.toggleSettings = this.toggleSettings.bind(this)
     this.configureWebsites = this.configureWebsites.bind(this)
+    this.goToPaymentDetails = this.goToPaymentDetails.bind(this)
   }
 
   componentWillMount() {
@@ -113,6 +114,12 @@ class ViewContentAudit extends Component {
     this.setState({pending: true})
 
     this.props.fetchAudits({websiteId}, cb, onFailure)
+  }
+
+  goToPaymentDetails(e) {
+    e && e.preventDefault()
+
+    this.props.history.push("/settings/paymentDetails")
   }
 
   //gets the accounts and all the availableWebsites we could filter/show
@@ -285,14 +292,23 @@ class ViewContentAudit extends Component {
             </div>
           ) : (
             currentWebsite && <div>
-              No audits yet. Click below to get started!
-              <Button
-                onClick={this.auditSite}
-                className={classes.twoColumns}
-                pending={pending}
-              >
-                Audit site
-              </Button>
+              {["past-due", "canceled", "unpaid", null].includes(accountSubscription.subscriptionStatus) ? (
+                <div>
+                  Paid subscription is required before you can begin auditing your site.
+                  <a className={classes.toggleSettingsBtn} onClick={this.goToPaymentDetails}>Setup your payments to get started!</a>
+                </div>
+              ) : (
+                <div>
+                  No audits yet. Click below to get started!
+                  <Button
+                    onClick={this.auditSite}
+                    className={classes.twoColumns}
+                    pending={pending}
+                  >
+                    Audit site
+                  </Button>
+                </div>
+              )}
             </div>
           )
         }
@@ -357,6 +373,7 @@ const mapDispatchToProps = (dispatch) => {
 
 const mapStateToProps = state => {
   return {
+    accountSubscription: state.accountSubscription,
     analytics: state.analytics,
     // only want audits for current website
     audits: _.pickBy(state.audits, (value, key) => state.currentWebsite && value.websiteId === state.currentWebsite.id),
