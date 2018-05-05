@@ -148,6 +148,18 @@ class AccountSubscription extends Component {
 
   updateWebsiteQuantityParam(value) {
     if (value < 1) {return }
+
+    // don't let them lower below their current website count
+    if (value < Object.keys(this.props.websites).length) {
+      alertActions.newAlert({
+        title: "Can't Drop Below Your Current Website Count:",
+        message: "Please remove a website before going any lower",
+        level: "DANGER",
+      })
+
+      return
+    }
+
     this.setState({websiteQuantityParam: value})
   }
 
@@ -261,6 +273,7 @@ const mapStateToProps = (state) => {
     errors: state.errors,
     user: state.user,
     accountSubscription: state.accountSubscription,
+    websites: state.websites,
   }
 }
 const mapDispatchToProps = (dispatch) => {

@@ -289,6 +289,7 @@ class ViewContentAudit extends Component {
               <Button
                 onClick={this.auditSite}
                 className={classes.twoColumns}
+                pending={pending}
               >
                 Audit site
               </Button>

@@ -31,7 +31,7 @@ const accountSubscriptionReducer = (state = null, action) => {
       return Object.assign({}, pld)
 
     case SIGN_OUT_SUCCESS:
-      return false
+      return null
 
     default:
       return state
