@@ -22,7 +22,7 @@ const contentAuditReducer = (state = null, action) => {
       return null
 
     case UPDATE_WEBSITE_SUCCESS:
-      if (pld.id === state.websiteId) {
+      if (state && pld.id === state.websiteId) {
         newState = Object.assign({}, state)
         // only change things if archived current audit
         if (pld.status === "ARCHIVED") {

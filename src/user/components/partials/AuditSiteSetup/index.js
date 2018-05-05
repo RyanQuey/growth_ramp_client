@@ -194,7 +194,7 @@ class AuditSiteSetup extends Component {
     const currentProfileOption = profileOptions.find((option) => option.profile.id === profileId)
 
     const websitesAllowed = accountSubscription.websiteQuantity || 1
-    if (Object.keys(websites).length > websitesAllowed ) {
+    if (Object.keys(websites).length >= websitesAllowed ) {
       return <div>
         <div>
           You have only paid for {websitesAllowed} website{websitesAllowed > 1 ? "s" : ""} at a time.
