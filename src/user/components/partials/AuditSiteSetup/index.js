@@ -197,10 +197,10 @@ class AuditSiteSetup extends Component {
     if (Object.keys(websites).length > websitesAllowed ) {
       return <div>
         <div>
-          You have only paid for {websitesAllowed} website{websitesAllowed > 1 ? "s" : 0} at a time.
+          You have only paid for {websitesAllowed} website{websitesAllowed > 1 ? "s" : ""} at a time.
         </div>
         <div>
-          <a className={classes.increaseLimit} onClick={this.changeSubscriptionSettings}>Click here to increase your limit</a>
+          <a className={classes.increaseLimit} onClick={this.goToPaymentDetails}>Click here to increase your limit</a>
         </div>
       </div>
     }
