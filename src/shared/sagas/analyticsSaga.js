@@ -43,6 +43,9 @@ function* fetchAllGAAccounts(action) {
 
   } catch (err) {
     console.error('all GA accounts fetch failed', err.response || err)
+    if (Helpers.safeDataPath(err, "response.data.message") === "User does not have any Google Analytics account.") {
+      err.message = "User does not have any Google Analytics account."
+    }
       alertActions.newAlert({
         title: "Failure to fetch Google Analytics accounts: ",
         level: "DANGER",
