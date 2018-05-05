@@ -54,7 +54,9 @@ class AuditMetadata extends Component {
       (props.currentAudit && props.currentAudit.websiteId !== props.currentWebsite.id)
     ) {
       const filterFunc = (audit) => (audit.websiteId === props.currentWebsite.id)
-      let latestAudit = analyticsHelpers.getLatestAudit({filterFunc})
+      let audits = props.audits
+      let auditsArr = Object.keys(audits).map((id) => audits[id])
+      let latestAudit = analyticsHelpers.getLatestAudit(auditsArr, {filterFunc})
       this.setCurrentAudit(latestAudit)
     }
   }

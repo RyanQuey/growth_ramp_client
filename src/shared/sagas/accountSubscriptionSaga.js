@@ -100,28 +100,31 @@ console.log(res);
 }
 
 //NOTE: make sure to always attach the userId to the payload, for all updates. Saves a roundtrip for the api  :)
-function* update(action) {
+function* updateSubscription(action) {
   try {
     const pld = action.payload
-    const accountsSubscriptionData = pld
+    const {user, accountSubscription} = store.getState()
+    const accountsSubscriptionData = Object.assign({}, pld, {id: accountSubscription.id, userId: user.id})
 
     let updatedRecord, res
 
-      res = yield axios.put(`/api/accountSubscriptions/${accountsSubscriptionData.id}`, accountsSubscriptionData)
-      updatedRecord = res.data
+    // updates our record and stripe, not just our record as a regular update would do
+    res = yield axios.put(`/api/accountSubscriptions/updateSubscription`, accountsSubscriptionData)
+    updatedRecord = res.data
 
     yield all([
       put({ type: UPDATE_ACCOUNT_SUBSCRIPTION_SUCCESS, payload: updatedRecord}),
     ])
     alertActions.newAlert({
       title: "Success!",
-      message: "Successfully updated accountSubscription",
+      message: "Successfully updated Account Subscription",
       level: "SUCCESS",
     })
 
     action.cb && action.cb(res.data)
   } catch (err) {
     console.log(`Error in update accountSubscription Saga`)
+    action.onFailure && action.onFailure(err)
     console.log(err.response || err)
   }
 }
@@ -169,7 +172,7 @@ export default function* accountSubscriptionsSaga() {
   yield takeLatest(CANCEL_ACCOUNT_SUBSCRIPTION_REQUEST, cancel)
   yield takeLatest(REACTIVATE_ACCOUNT_SUBSCRIPTION_REQUEST, reactivateAccount)
   yield takeLatest(INITIALIZE_USER_ACCOUNT_SUBSCRIPTION_REQUEST, initializeUserSubscription)
-  yield takeLatest(UPDATE_ACCOUNT_SUBSCRIPTION_REQUEST, update)
+  yield takeLatest(UPDATE_ACCOUNT_SUBSCRIPTION_REQUEST, updateSubscription)
   yield takeLatest(HANDLE_CREDIT_CARD_INFO_REQUEST, handleCreditCardInfo)
 }
 

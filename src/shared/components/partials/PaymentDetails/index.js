@@ -113,7 +113,6 @@ const mapDispatchToProps = (dispatch) => {
   return {
     updateUser: (userData, cb) => store.dispatch({type: UPDATE_USER_REQUEST, payload: userData, cb}),
     handleCreditCardInfo: (source, cb, onFailure) => store.dispatch({type: HANDLE_CREDIT_CARD_INFO_REQUEST, payload: {source}, cb, onFailure}),
-
   }
 }
 const mapStateToProps = (state) => {

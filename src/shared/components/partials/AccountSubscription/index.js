@@ -10,6 +10,7 @@ import {
   CHECK_STRIPE_STATUS_REQUEST,
   CANCEL_ACCOUNT_SUBSCRIPTION_REQUEST,
   REACTIVATE_ACCOUNT_SUBSCRIPTION_REQUEST,
+  UPDATE_ACCOUNT_SUBSCRIPTION_REQUEST,
 } from 'constants/actionTypes'
 import {ALLOWED_EMAILS, PAYMENT_PLANS} from 'constants/accountSubscriptions'
 import { errorActions, formActions, alertActions } from 'shared/actions'
@@ -23,15 +24,17 @@ class AccountSubscription extends Component {
       plansVisible: false,
       updatingCard: false,
       cancellingPayment: false,
+      updatingWebsiteQuantity: false,
     }
 
     this.togglePending = this.togglePending.bind(this)
     this.reactivate = this.reactivate.bind(this)
     this.toggleCancellingPayment = this.toggleCancellingPayment.bind(this)
     this.cancelPayment = this.cancelPayment.bind(this)
-    this.updatePlan = this.updatePlan.bind(this)
+    this.updateAccountSubscription = this.updateAccountSubscription.bind(this)
     this.togglePlans = this.togglePlans.bind(this)
     this.toggleUpdatingCard = this.toggleUpdatingCard.bind(this)
+    this.updateWebsiteQuantityParam = this.updateWebsiteQuantityParam.bind(this)
   }
 
   componentWillMount() {
@@ -42,7 +45,35 @@ class AccountSubscription extends Component {
     this.setState({pending: value})
   }
 
-  updatePlan () {
+  updateAccountSubscription () {
+    this.togglePending(true)
+
+    const cb = () => {
+      this.togglePending(false)
+      this.toggleCancellingPayment(false)
+      alertActions.newAlert({
+        title: "Successfully updated account!",
+        level: "SUCCESS",
+      })
+
+      this.toggleUpdatingWebsiteQuantity(false)
+    }
+
+    const onFailure = () => {
+      this.togglePending(false)
+      alertActions.newAlert({
+        title: "Unknown error updating account: ",
+        message: "Please contact support for help (hello@growthramp.io)", //TODO for this and the other one, make it a link instead of just a string
+        level: "DANGER",
+      })
+    }
+
+    const params = {}
+    if (this.state.updatingWebsiteQuantity) {
+      params.websiteQuantity = this.state.websiteQuantityParam
+    }
+
+    this.props.updateAccountSubscription(params, cb, onFailure)
   }
 
   //cancels account before making next payment (ie, when next payment is due)
@@ -69,6 +100,7 @@ class AccountSubscription extends Component {
 
     this.props.cancelPayment(cb, onFailure)
   }
+
 
   //reactivates cancelled account
   reactivate() {
@@ -104,6 +136,21 @@ class AccountSubscription extends Component {
     this.setState({plansVisible: !this.state.plansVisible})
   }
 
+  toggleUpdatingWebsiteQuantity (value, e) {
+    e && e.preventDefault()
+    if (value) {
+      //set param to default as current quantity
+      this.setState({websiteQuantityParam: this.props.accountSubscription.websiteQuantity || 1})
+    }
+
+    this.setState({updatingWebsiteQuantity: value})
+  }
+
+  updateWebsiteQuantityParam(value) {
+    if (value < 1) {return }
+    this.setState({websiteQuantityParam: value})
+  }
+
   toggleUpdatingCard (value, e) {
     e && e.preventDefault()
     this.setState({updatingCard: value})
@@ -116,13 +163,15 @@ class AccountSubscription extends Component {
     let currentPaymentPlan = accountSubscription && accountSubscription.paymentPlan || (ALLOWED_EMAILS.includes(this.props.user.email) ? "prepaid" : "standard-monthly")
 
     const planData = PAYMENT_PLANS[currentPaymentPlan]
-    const pricePerExtraText = planData.pricePerExtra ? ` + ${planData.pricePerExtra}/extra website` : ""
-    const planText = `${planData.name} ($${planData.price}${pricePerExtraText})`
+    const pricePerExtraText = planData.pricePerExtra ? ` + $${planData.pricePerExtra}/extra website` : ""
+    const planPriceText = `($${planData.price}${pricePerExtraText})`
     const currentPaymentMethod = accountSubscription && accountSubscription.defaultSourceId ? `Credit card ending in ${accountSubscription.defaultSourceLastFour}` : "Payment method is not configured"
 
     if (!accountSubscription) {
       return <Icon name="spinner" size="5x"/>
     }
+
+    const websiteQuantity = accountSubscription.websiteQuantity || 1
 
     return (
       <div>
@@ -130,7 +179,8 @@ class AccountSubscription extends Component {
           <Flexbox justify="space-between">
             <div className={classes.settingLabel}>Current Plan:&nbsp;</div>
             <div className={classes.settingValue}>
-              <div>{planText}</div>
+              <div>{planData.name}</div>
+              <div>{planPriceText}</div>
               {false && <a href="#" className={classes.toggleButton} onClick={this.togglePlans}>View Payment Plans</a>}
             </div>
           </Flexbox>
@@ -139,6 +189,29 @@ class AccountSubscription extends Component {
               updatePlan={this.updatePlan}
             />
           </div>}
+        </div>
+
+        <div className={classes.formSection}>
+          <Flexbox justify="space-between">
+            <div className={classes.settingLabel}>Websites Allowed:&nbsp;</div>
+            <div className={classes.settingValue}>
+              <div>
+                {this.state.updatingWebsiteQuantity ? (
+                  <Input className={classes.inlineInput} onChange={this.updateWebsiteQuantityParam} value={this.state.websiteQuantityParam} type="number"/>
+                ) : (
+                  <div>{websiteQuantity} website{websiteQuantity > 1 ? "s" : ""}</div>
+                )}
+              </div>
+              <div>(${planData.price + planData.pricePerExtra*(
+                (this.state.updatingWebsiteQuantity ? this.state.websiteQuantityParam : websiteQuantity) - 1
+              )}/month)</div>
+
+              {this.state.updatingWebsiteQuantity && (
+                <Button small={true} pending={this.state.pending} onClick={this.updateAccountSubscription}>Save</Button>
+              )}
+              <a href="#" className={classes.toggleButton} onClick={this.toggleUpdatingWebsiteQuantity.bind(this, !this.state.updatingWebsiteQuantity)}>{!this.state.updatingWebsiteQuantity ? "Edit" : "Cancel"}</a>
+            </div>
+          </Flexbox>
         </div>
 
         <div className={classes.formSection}>
@@ -192,9 +265,10 @@ const mapStateToProps = (state) => {
 }
 const mapDispatchToProps = (dispatch) => {
   return {
-    checkStripeStatus: (cb, onFailure) => store.dispatch({type: CHECK_STRIPE_STATUS_REQUEST, cb, onFailure}),
-    cancelPayment: (cb, onFailure) => store.dispatch({type: CANCEL_ACCOUNT_SUBSCRIPTION_REQUEST, cb, onFailure}),
-    reactivateAccount: (cb, onFailure) => store.dispatch({type: REACTIVATE_ACCOUNT_SUBSCRIPTION_REQUEST, cb, onFailure}),
+    checkStripeStatus: (cb, onFailure) => dispatch({type: CHECK_STRIPE_STATUS_REQUEST, cb, onFailure}),
+    cancelPayment: (cb, onFailure) => dispatch({type: CANCEL_ACCOUNT_SUBSCRIPTION_REQUEST, cb, onFailure}),
+    reactivateAccount: (cb, onFailure) => dispatch({type: REACTIVATE_ACCOUNT_SUBSCRIPTION_REQUEST, cb, onFailure}),
+    updateAccountSubscription: (payload, cb, onFailure) => dispatch({type: UPDATE_ACCOUNT_SUBSCRIPTION_REQUEST, payload, cb, onFailure}),
   }
 }
 

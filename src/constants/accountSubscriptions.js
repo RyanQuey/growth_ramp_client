@@ -35,11 +35,13 @@ module.exports = {
     free: {
       name: "Prepaid",
       price: 0,
+      pricePerExtra: 0,
       frequency: "month",
     },
     prepaid: {
       name: "Prepaid",
       price: 0,
+      pricePerExtra: 0,
       frequency: "month",
     },
     // no longer using; soon transition out altogether

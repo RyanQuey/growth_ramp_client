@@ -31,6 +31,7 @@ class AuditSiteSetup extends Component {
     this.setWebsiteFilter = this.setWebsiteFilter.bind(this)
     this.setSite = this.setSite.bind(this)
     this.viewAudits = this.viewAudits.bind(this)
+    this.goToPaymentDetails = this.goToPaymentDetails.bind(this)
   }
 
   componentDidMount() {
@@ -106,6 +107,12 @@ class AuditSiteSetup extends Component {
 
   }
 
+  goToPaymentDetails(e) {
+    e && e.preventDefault()
+
+    this.props.history.push("/settings/paymentDetails")
+  }
+
   viewAudits (e) {
     e && e.preventDefault()
     alertActions.closeAlerts()
@@ -163,7 +170,7 @@ class AuditSiteSetup extends Component {
 
   render () {
     const {pending, websiteId, profileId} = this.state
-    const {googleAccounts, availableWebsites, dirty, websites} = this.props
+    const {googleAccounts, availableWebsites, dirty, websites, accountSubscription} = this.props
     const {gaSites = {}} = availableWebsites
 
 
@@ -179,8 +186,16 @@ class AuditSiteSetup extends Component {
     const profileOptions = this.profileOptions() || []
     const currentProfileOption = profileOptions.find((option) => option.profile.id === profileId)
 
-    if (Object.keys(websites).length ) {
-      return <div>Only one website allowed at a time</div>
+    const websitesAllowed = accountSubscription.websiteQuantity || 1
+    if (Object.keys(websites).length > websitesAllowed ) {
+      return <div>
+        <div>
+          You have only paid for {websitesAllowed} website{websitesAllowed > 1 ? "s" : 0} at a time.
+        </div>
+        <div>
+          <a className={classes.increaseLimit} onClick={this.changeSubscriptionSettings}>Click here to increase your limit</a>
+        </div>
+      </div>
     }
 
     // curently only can do one site. So saving will just overwrite the one website record they have. If they have a website set, will just skip this step
@@ -229,7 +244,7 @@ class AuditSiteSetup extends Component {
             <Flexbox>
             </Flexbox>
 
-            {<Button type="submit" pending={pending} disabled={!profileId}>Choose Site to Audit</Button>}
+            <Button type="submit" pending={pending} disabled={!profileId}>Choose Site to Audit</Button>
           </div>
         ) : (
           chosenWebsite && <div>No analytics profiles connected to this google account.</div>
@@ -248,6 +263,7 @@ const mapDispatchToProps = (dispatch) => {
 const mapStateToProps = state => {
   return {
     user: state.user,
+    accountSubscription: state.accountSubscription,
     googleAccounts: Helpers.safeDataPath(state, "providerAccounts.GOOGLE", []).filter((account) => !account.unsupportedProvider),
     availableWebsites: state.availableWebsites,
     currentWebsite: state.currentWebsite,
