@@ -66,11 +66,15 @@ class Login extends Component {
   toggleView(e) {
     e && e.preventDefault()
 
+    let newView
     if (this.state.view === "LOGIN") {
-      this.setState({view: "SIGN_UP"})
+      newView = "SIGN_UP"
     } else {
-      this.setState({view: "LOGIN"})
+      newView = "LOGIN"
     }
+    this.setState({view: newView})
+    //clean up this so always uses props for view eventually. But for now, just trigger props function the login view
+    this.props.changedView && this.props.changedView(newView)
   }
 
   setOnboardingStage(value) {
@@ -93,12 +97,10 @@ class Login extends Component {
       options.onFailure && options.onFailure()
     }
     const cb = (allData) => {
-console.log("in the cbn");
       this.togglePending(false)
       options.cb && options.cb()
     }
 
-console.log("calling func");
     const credentials = {password: this.props.password, email: this.props.email}
     this.props.signInRequest(signInType, credentials, token, onFailure, cb)
   }
@@ -108,7 +110,7 @@ console.log("calling func");
     let generalText
     switch (view) {
       case "SIGN_UP":
-        generalText = "Signup"
+        generalText = "Continue" //won't be used for a header
         break
 
       case "LOGIN":
@@ -126,8 +128,15 @@ console.log("calling func");
     //TODO: set the title using props into the modal container
 
     return (
-      <Flexbox className={classes.fields} direction="column" justify="center" align="center">
-        <h1 color="primary">{generalText}</h1>
+      <Flexbox className={classes.fields} direction="column" justify="inherit" align="center">
+        {view !== "SIGN_UP" ? (
+          <h1 color="primary">{generalText}</h1>
+        ) : (
+          <div className={classes.pricingInfo}>
+            <h2 color="primary">Standard</h2>
+            <div>$49 / Month</div>
+          </div>
+        )}
         <UserCredentials
           view={view}
           buttonText={generalText}
@@ -149,7 +158,10 @@ console.log("calling func");
             togglePending={this.togglePending}
           />
         </div>}
-        {false && <a
+
+        <br/>
+
+        {false && "addthis back in once we have a more normal flow and remove other one" && <a
           onClick={this.toggleView}
           href="#"
         >
@@ -159,11 +171,21 @@ console.log("calling func");
             "Already have an account? Click here to login"
           )}
         </a>}
-        <a
-          href="https://www.growthramp.io/seo-dashboard/"
-        >
-          Don't have an account? Click here to learn more
-        </a>
+
+        {view === "LOGIN" ? (
+          <a
+            href="https://www.growthramp.io/seo-dashboard/"
+          >
+            Don't have an account? Click here to learn more
+          </a>
+        ) : (
+          <a
+            onClick={this.toggleView}
+            href="#"
+          >
+            Already have an account? Click here to login
+          </a>
+        )}
       </Flexbox>
     )
   }

@@ -1,5 +1,7 @@
 @import 'theme/_helpers';
 
+  // don't want to change mainContainer to have a fixed height, or else won't dynamically get bigger when it needs to.
+  // min-height is fine though
 .mainContainer {
   min-width: 100%;
   min-height: 100vh;

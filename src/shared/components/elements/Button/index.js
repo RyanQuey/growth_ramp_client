@@ -56,6 +56,22 @@ const STYLES = {
       hover: theme.color.danger,
     },
   },
+  attention: { //mostly just for signing up haha. So they want to press it really bad
+    regular: {
+      background: "#f80",
+      color: theme.color.white,
+      hover: "#f70",
+    },
+    disabled: {
+      background: "#ffb055",
+      color: theme.color.white,
+    },
+    selected: {
+      background: "#f70",
+      color: theme.color.white,
+      hover: "#f70",
+    },
+  },
 }
 //takes the style prop and outputs preset button types
 const styles = (style, disabled, selected) => {

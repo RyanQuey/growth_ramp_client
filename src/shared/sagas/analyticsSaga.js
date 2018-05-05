@@ -42,17 +42,16 @@ function* fetchAllGAAccounts(action) {
     action.cb && action.cb(res.data)
 
   } catch (err) {
-    console.error('all GA accounts fetch failed', err.response || err)
-    console.log(Helpers.safeDataPath(err, "response.data.message"), err.response, err.data, err.response.data)
-    if (Helpers.safeDataPath(err, "data.message") === "User does not have any Google Analytics account.") {
+    console.error('all GA accounts fetch failed', err.response || err) //response if coming from axios
+    if (Helpers.safeDataPath(err, "response.data.message", "").includes("User does not have any Google Analytics account")) {
       err.message = "User does not have any Google Analytics account."
     }
-      alertActions.newAlert({
-        title: "Failure to find Google Analytics accounts: ",
-        level: "DANGER",
-        message: err.message || "Unknown error",
-        options: {timer: false},
-      })
+    alertActions.newAlert({
+      title: "Failure to find Google Analytics accounts: ",
+      level: "DANGER",
+      message: err.message || "Unknown error",
+      options: {timer: false},
+    })
     action.onFailure && action.onFailure(err)
     // yield put(userFetchFailed(err.message))
   }

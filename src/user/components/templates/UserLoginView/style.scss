@@ -1,0 +1,30 @@
+@import 'theme/_helpers';
+
+.loginWrapper {
+  // don't want to change mainContainer to have a fixed height, or else won't dynamically get bigger when it needs to.
+  // so set absolute height here
+  height: calc(100vh - 50px);
+  @include mq(xxs) {
+  }
+  @include mq(sm) {
+  }
+
+  &.SIGN_UP {
+  }
+
+  &.LOGIN {
+    min-height: 750px; // for mobile. TODO just use media queries
+  }
+}
+
+
+.container {
+  height: 100%;
+  background: $primary;
+  @include mq(xxs) {
+  }
+  @include mq(sm) {
+    padding: 10px 0 20px 0;
+  }
+}
+

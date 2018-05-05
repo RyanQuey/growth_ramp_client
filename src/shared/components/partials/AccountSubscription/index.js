@@ -169,10 +169,10 @@ class AccountSubscription extends Component {
   }
 
   render (){
-    const {accountSubscription} = this.props
+    const {accountSubscription, user} = this.props
 
     // if it's set, use that, if it's not, show default
-    let currentPaymentPlan = accountSubscription && accountSubscription.paymentPlan || (ALLOWED_EMAILS.includes(this.props.user.email) ? "prepaid" : "standard-monthly")
+    let currentPaymentPlan = accountSubscription && accountSubscription.paymentPlan || (ALLOWED_EMAILS.includes(user.email) ? "prepaid" : "standard-monthly")
 
     const planData = PAYMENT_PLANS[currentPaymentPlan]
     const pricePerExtraText = planData.pricePerExtra ? ` + $${planData.pricePerExtra}/extra website` : ""
@@ -222,7 +222,9 @@ class AccountSubscription extends Component {
                 <Button small={true} pending={this.state.pending} onClick={this.updateAccountSubscription}>Save</Button>
               )}
               {/* only can edit stuff for account sub if there is a record in stripe, which will happen once they setup a payment source */}
-              {accountSubscription.stripeSubscriptionId && <a href="#" className={classes.toggleButton} onClick={this.toggleUpdatingWebsiteQuantity.bind(this, !this.state.updatingWebsiteQuantity)}>{!this.state.updatingWebsiteQuantity ? "Edit" : "Cancel"}</a>}
+              {accountSubscription.stripeSubscriptionId || ALLOWED_EMAILS.includes(user.email) &&
+                <a href="#" className={classes.toggleButton} onClick={this.toggleUpdatingWebsiteQuantity.bind(this, !this.state.updatingWebsiteQuantity)}>{!this.state.updatingWebsiteQuantity ? "Edit" : "Cancel"}</a>
+              }
             </div>
           </Flexbox>
         </div>

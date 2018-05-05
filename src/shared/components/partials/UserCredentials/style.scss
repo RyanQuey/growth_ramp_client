@@ -1,11 +1,12 @@
 @import 'theme/_helpers';
-
-.fields {
-  padding: 0;
-  text-align: center;
-
-  .form {
-    margin: 0 5%;
-
-  }
+.inputWrapper {
+  padding: 5px 10px;
+}
+.input {
+  padding: 10px;
+  width: 250px;
+  max-width: 90%;
+}
+.termsOfService {
+  margin: 5px 0 10px;
 }

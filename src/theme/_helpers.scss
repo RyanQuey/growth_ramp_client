@@ -38,7 +38,7 @@
 	@else if $breakpoint == xs {
 		@media (min-width: 23.4375em) { @content ; } //375
 	}
-  @else if $breakpoint == 2xs {
+  @else if $breakpoint == xxs {
     @media
     only screen and (min-device-pixel-ratio: 2),
     only screen and (min-resolution: 192dpi),

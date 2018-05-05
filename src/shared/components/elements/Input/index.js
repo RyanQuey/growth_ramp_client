@@ -165,10 +165,26 @@ class Input extends Component {
   render() {
     const label = this.props.label ? (<label htmlFor={this.props.name}>{this.props.label}</label>) : null
     const Tag = this.props.textarea ? 'textarea' : 'input'
+    const errorMessage = this.state.errors.map((err) => { return rules[err].hint(this.props.name) })[0]
+
+    let border, title = ""
+    if (this.state.errors.length > 0) {
+      border = `2px solid ${theme.color.danger}`
+      title = errorMessage
+
+    } else if (this.props.border) {
+      border = this.props.border
+
+    } else if (this.props.color) {//TODO just use props.border, don't use color...is just confusing
+      border = `2px solid ${theme.color[this.props.color]}`
+    }
+
+    if (!title && this.props.title) {
+      title = this.props.title || ""
+    }
 
     return (
-      <div className={this.props.className}>
-        {/* TODO need to make div class this.props.containerClassName so not same as input el*/}
+      <div className={this.props.containerClassName}>
         {!this.props.labelAfter && label}
         <Tag
           className={
@@ -182,16 +198,17 @@ class Input extends Component {
           onChange={this.handleChange}
           placeholder={this.props.placeholder}
           style={{
-            border: ((this.props.color && this.state.errors.length === 0) && `2px solid ${theme.color[this.props.color]}`),
+            border,
           }}
           type={this.props.type}
           value={this.props.value}
           maxLength={this.props.maxLength ? this.props.maxLength.toString() : false}
+          title={title}
         />
         {this.props.labelAfter && label}
-        <div className={classes.errorMessages}>
-          {this.state.errors.map((err) => { return rules[err].hint(this.props.name) }).join('; ')}
-        </div>
+        {!this.props.noErrorMessage && <div className={classes.errorMessages}>
+          {errorMessage}
+        </div>}
       </div>
     )
   }
@@ -211,7 +228,8 @@ Input.propTypes = {
   placeholder: PropTypes.string,
   label: PropTypes.string,
   labelAfter: PropTypes.bool,
-  color: PropTypes.string,
+  color: PropTypes.string, //not using anymore
+  border: PropTypes.string,
   hint: PropTypes.string,
   index: PropTypes.number,
 }

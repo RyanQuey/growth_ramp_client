@@ -6,6 +6,7 @@ import { Button, Flexbox, Input, Checkbox } from 'shared/components/elements'
 import { SIGN_IN_REQUEST, UPDATE_USER_REQUEST, RESET_PASSWORD_REQUEST } from 'constants/actionTypes'
 
 import classes from './style.scss'
+import theme from 'theme'
 
 class UserCredentials extends Component {
   constructor(props) {
@@ -80,7 +81,6 @@ class UserCredentials extends Component {
         this.props.togglePending(false)
         this.props.toggleView()
         this.resetForm()
-console.log("in th cbcb");
       }
 
       this.props.resetPasswordRequest(email, cb)
@@ -91,7 +91,6 @@ console.log("in th cbcb");
         this.props.togglePending(false)
 
         this.resetForm()
-console.log("in th cbcb");
       }
 
       this.props.submit({cb})
@@ -103,52 +102,65 @@ console.log("in th cbcb");
     let passwordValidations = ['required']
     if (view === "SIGN_UP") {passwordValidations.push("newPassword")}
     //TODO: set the title using props into the modal container
+
+    const invalidFields = (
+      (!this.props.passwordOnly && !this.state.validEmail) ||
+      (view !== "RESETTING_PASSWORD" && this.props.loginErrors && this.props.loginErrors.length)
+    )
+
     return (
       <form onSubmit={this.submit}>
         {!this.props.passwordOnly && (
           <Input
-            color="primary"
+            containerClassName={classes.inputWrapper}
+            className={classes.input}
+            border={`2px solid ${theme.color.moduleGrayFour}`}
             onChange={this.handleEmail}
-            placeholder="your-email@gmail.com"
+            placeholder="Email"
             type="email"
             value={this.props.email}
             validations={['required', 'email']}
             handleErrors={errors => errorActions.handleErrors(errors, "Login", "credentials", {alert: false})}
+            noErrorMessage={true}
           />
         )}
 
         {view !== "RESETTING_PASSWORD" &&
           <Input
-            color="primary"
+            containerClassName={classes.inputWrapper}
+            className={classes.input}
+            border={`2px solid ${theme.color.moduleGrayFour}`}
             onChange={this.handlePassword}
-            placeholder="password"
+            placeholder="Password"
             type="password"
             value={this.props.password}
             validations={passwordValidations}
             handleErrors={errors => errorActions.handleErrors(errors, "Login", "credentials", {alert: false})}
+            noErrorMessage={true}
           />
         }
 
         {view === "SIGN_UP" &&
-          <div>
+          <div className={classes.termsOfService}>
             <Checkbox
               value={this.state.acceptedTerms}
               onChange={this.toggleTos}
-              label="I have read and agree to the"
+              label="I accept Growth Ramp's"
             />&nbsp;
             <a href="/files/growth-ramp-terms-of-service.pdf" target="_blank">Terms of Service</a>
 
           </div>
         }
         <Button
-          disabled={(
-            (!this.props.passwordOnly && !this.state.validEmail) ||
-            (view !== "RESETTING_PASSWORD" && this.props.loginErrors && this.props.loginErrors.length) ||
-            (view === "SIGN_UP" && !this.state.acceptedTerms)
-          )}
+          disabled={invalidFields || (view === "SIGN_UP" && !this.state.acceptedTerms)}
           type="submit"
-          title={(view === "SIGN_UP" && !this.state.acceptedTerms) ? "Please read and accept the terms of service before continuing" : ""}
+          title={view === "SIGN_UP" && !this.state.acceptedTerms ? (
+            "Please read and accept the terms of service before continuing"
+          ) : (
+            invalidFields ? "Fix in fields before continuing" : "Click here to sign up"
+          )}
           pending={this.props.pending}
+          style="attention"
         >
           {this.props.buttonText}
         </Button>

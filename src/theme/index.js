@@ -16,7 +16,8 @@ export default {
     black: 'rgb(77, 77, 77)', //really is a dark gray
     white: 'rgb(255, 255, 255)',
     lightGray: '#FAFAFA',
-    moduleGrayOne: "#f4f4f4",
+    moduleGrayOne: "#f4f4f4", //really light
+    moduleGrayFour: "#e5e5e5", //medium light
     facebook: 'rgb(59, 89, 152)',
     github: 'rgb(0, 0, 0)',
     google: 'rgb(221, 75, 57)',

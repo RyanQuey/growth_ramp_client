@@ -4,7 +4,7 @@
   padding: 0 5px 20px 5px;
   box-sizing: border-box;
 
-  @include mq(2xs) {
+  @include mq(xxs) {
     @include cols(12)
   }
   @include mq(md) {

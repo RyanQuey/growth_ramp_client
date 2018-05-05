@@ -1,3 +1,4 @@
+import logo from 'images/growth-ramp-logos/GR_side_logo_white.png'
 import { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
@@ -40,21 +41,21 @@ class UserNavbar extends Component {
   }
 
   render() {
-    const { user, noLinks, forLandingPage } = this.props
+    const { user, unauthenticated, forLandingPage } = this.props
 
     return (
-      <Navbar className={classes.header}>
+      <Navbar className={`${classes.header}`}>
         {false && <Flexbox justify="space-between">
           <NavbarBrand/>
         </Flexbox>}
 
-        <Flexbox className={classes.mainNav} justify="space-between">
-          <Flexbox className={classes.leftNav} align="center" justify={!noLinks ? "space-around" : "flex-start" }>
+        <Flexbox className={classes.mainNav} justify={"space-between"}>
+          <Flexbox className={classes.leftNav} align="center" justify={"flex-start"}>
             <Link to="/">
               <Logo />
             </Link>
 
-            {!noLinks && <Button onClick={this.createCampaign}>
+            {!unauthenticated && <Button onClick={this.createCampaign}>
               New Campaign
             </Button>}
           </Flexbox>
@@ -75,7 +76,7 @@ class UserNavbar extends Component {
               </div>
             ) : (
               <div>
-                {false && !noLinks && <a href="#" onClick={this.openLoginModal.bind(this, "login")}>Login</a>}
+                {false && !unauthenticated && <a href="#" onClick={this.openLoginModal.bind(this, "login")}>Login</a>}
                 {false && "will add later.." && <a href="#" onClick={this.openLoginModal.bind(this, "signup")}>Signup</a>}
               </div>
 

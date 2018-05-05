@@ -2,11 +2,10 @@ import { Component } from 'react'
 import PropTypes from 'prop-types'
 import { Flexbox, Navbar } from 'shared/components/elements'
 import classes from './style.scss'
-import { UserLoginView, UserNavbar, UserSidebar, UserContent } from 'user/components/partials'
+import { UnauthenticatedNavbar, UserSidebar, UserContent } from 'user/components/partials'
 import { withRouter } from 'react-router-dom'
-import { UnauthenticatedContent } from 'user/components/templates'
+import { UserLoginView, UnauthenticatedContent } from 'user/components/templates'
 
-//TODO: this will be the picture with the library and search box in the middle
 class Unauthenticated extends Component {
   componentDidMount() {
     /* add this back in if can make sure this doesn't happen while user is still loading
@@ -20,7 +19,6 @@ class Unauthenticated extends Component {
     // if ?signup=true in query, start with signup view
     const queryVariables = this.props.location.search.replace(/^\?/, "").split('&')
     const signupVar = queryVariables.find((set) => set.includes("signup="))
-console.log(signupVar);
     let signup
     if (signupVar) {
       try {
@@ -31,10 +29,9 @@ console.log(signupVar);
       } catch (err) {console.error(err);}
 
     }
-console.log("sa", signup, signup ? "SIGN_UP" : "LOGIN");
     return (
       <div className={classes.mainContainer}>
-        <UserNavbar noLinks={true}/>
+        <UnauthenticatedNavbar />
         <UserLoginView
           initialView={signup ? "SIGN_UP" : "LOGIN"}
         />

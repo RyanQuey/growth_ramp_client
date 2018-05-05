@@ -3,11 +3,12 @@ import { Authenticated, Unauthenticated } from 'user/components/yields'
 import { connect } from 'react-redux'
 import { Alerts } from 'shared/components/groups'
 import { withRouter } from 'react-router-dom'
+import classes from './style.scss'
 
 class User extends Component {
   render() {
     return (
-      <div>
+      <div className={classes.userYield}>
         <Alerts />
         {this.props.user ? (
           <Authenticated />
