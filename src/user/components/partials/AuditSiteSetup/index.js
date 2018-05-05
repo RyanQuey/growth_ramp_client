@@ -212,11 +212,12 @@ class AuditSiteSetup extends Component {
         <Flexbox className={classes.websiteFilters} direction="column">
           <div className={classes.googleBtn}>
             <div>Google Account: {currentGoogleAccount ? currentGoogleAccount.userName : "None available"}</div>
-            <SocialLogin
+            {/* TODO allow multiple google accounts...should be pretty easy actually... just need to add a dropdown to select a google acct*/}
+            {!currentGoogleAccount && <SocialLogin
               pending={pending}
               togglePending={this.props.togglePending}
               providers={_.pick(PROVIDERS, "GOOGLE")}
-            />
+            />}
           </div>
 
           <Flexbox justify="space-between">
@@ -251,7 +252,14 @@ class AuditSiteSetup extends Component {
             <Flexbox>
             </Flexbox>
 
-            <Button type="submit" pending={pending} disabled={!profileId}>Choose Site to Audit</Button>
+            {["past-due", "canceled", "unpaid", null].includes(accountSubscription.subscriptionStatus) ? (
+              <div>
+                Paid subscription is required before you can begin auditing your site.
+                <a className={classes.toggleSettingsBtn} onClick={this.goToPaymentDetails}>Setup your payments to get started!</a>
+              </div>
+            ) : (
+              <Button type="submit" pending={pending} disabled={!profileId}>Choose Site to Audit</Button>
+            )}
           </div>
         ) : (
           chosenWebsite && <div>No analytics profiles connected to this google account.</div>

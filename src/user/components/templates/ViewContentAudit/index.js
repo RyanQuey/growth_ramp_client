@@ -292,23 +292,16 @@ class ViewContentAudit extends Component {
             </div>
           ) : (
             currentWebsite && <div>
-              {["past-due", "canceled", "unpaid", null].includes(accountSubscription.subscriptionStatus) ? (
-                <div>
-                  Paid subscription is required before you can begin auditing your site.
-                  <a className={classes.toggleSettingsBtn} onClick={this.goToPaymentDetails}>Setup your payments to get started!</a>
-                </div>
-              ) : (
-                <div>
-                  No audits yet. Click below to get started!
-                  <Button
-                    onClick={this.auditSite}
-                    className={classes.twoColumns}
-                    pending={pending}
-                  >
-                    Audit site
-                  </Button>
-                </div>
-              )}
+              <div>
+                No audits yet. Click below to get started!
+                <Button
+                  onClick={this.auditSite}
+                  className={classes.twoColumns}
+                  pending={pending}
+                >
+                  Audit site
+                </Button>
+              </div>
             </div>
           )
         }
