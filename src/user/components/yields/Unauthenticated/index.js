@@ -20,7 +20,6 @@ class Unauthenticated extends Component {
     // if ?signup=true in query, start with signup view
     const queryVariables = this.props.location.search.replace(/^\?/, "").split('&')
     const signupVar = queryVariables.find((set) => set.includes("signup="))
-console.log(signupVar);
     let signup
     if (signupVar) {
       try {
@@ -31,7 +30,6 @@ console.log(signupVar);
       } catch (err) {console.error(err);}
 
     }
-console.log("sa", signup, signup ? "SIGN_UP" : "LOGIN");
     return (
       <div className={classes.mainContainer}>
         <UserNavbar noLinks={true}/>
