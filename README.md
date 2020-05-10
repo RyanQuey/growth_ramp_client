@@ -41,3 +41,5 @@ Then fill them all in.
 # Deploy
 `npm run deploy`
 
+- to run with oauth, make sure to request all scopes that we specify in nodeHelpers.js. E.g., for Google, make sure to enable webmasters and analytics apis (specifically analytics reporting) and then request access to those scopes for their oauth
+- Google API key will have to access to all these apis also

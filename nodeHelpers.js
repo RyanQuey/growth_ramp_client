@@ -351,10 +351,15 @@ console.log("\n\n refresh token", refreshToken);
     clientSecret: env.CLIENT_GOOGLE_SECRET,
     callbackURL: `${callbackUrl}/google`,
     passReqToCallback: true,//to extract the code from the query...for some reason, passport doesn't get it by default. also to get cookies
+    // passport automatically adds openid, profile, and email to the request. But not userinfo.profile and
+    // userinfo.email
     scope: [
       "https://www.googleapis.com/auth/analytics.readonly", // to GET google analytics
-      "https://www.googleapis.com/auth/userinfo.profile", // to login with this token later, and passport seems to need it. ANd this is probably better than google plus stuff
-      "https://www.googleapis.com/auth/userinfo.email", // to login with this token later, and passport seems to need it. ANd this is probably better than google plus stuff
+      // UPDATE can no longer use userinfo._, calls a GooglePlusAPIError, see here:
+      // https://stackoverflow.com/questions/52736319/passport-js-authenticate-to-gmail-api-leads-to-googleplusapierror
+      // There's probably a way around it, but don't bother
+      // "https://www.googleapis.com/auth/userinfo.profile", // to login with this token later, and passport seems to need it. ANd this is probably better than google plus stuff
+      // "https://www.googleapis.com/auth/userinfo.email", // to login with this token later, and passport seems to need it. ANd this is probably better than google plus stuff
       "https://www.googleapis.com/auth/webmasters.readonly", // to read GSC stuff. Might do writing later too (?)
       //"https://www.googleapis.com/auth/plus.login", // to login with this token later, and passport seems to need it
     ],
