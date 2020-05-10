@@ -29,7 +29,7 @@ const b2 = new B2({
 })
 
 const bucketId = process.env.B2_BUCKET_ID
-const domain = env.CLIENT_URL || 'http://www.local.test:5000' //Google doesn't like local.test. use http://www.lvh.me:5000
+const domain = env.CLIENT_URL || 'http://www.local.dev:5000' //Google doesn't like local.test. use http://www.lvh.me:5000
 const callbackPath = '/provider_redirect'
 const callbackUrl = domain + callbackPath
 

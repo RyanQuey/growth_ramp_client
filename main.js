@@ -35,6 +35,10 @@ const LinkedInStrategy = require('passport-linkedin-oauth2').Strategy;
 const Helpers = require('./nodeHelpers')
 const PROVIDERS = require('./src/constants/providers').PROVIDERS
 
+/* 
+ * not supporting anything but Google now that this project is just for demonstration
+ * Don't want to have to keep up developer accounts for all these social media platforms, and if
+ * don't have those, this will break without the api keys
 passport.use(new FacebookStrategy(
   Helpers.facebookOptions,
   function(req, accessToken, refreshToken, params, profile, done) {
@@ -57,6 +61,7 @@ console.log("**************");
 ))
 // fb appsecret is automatically set (?)
 
+*/
 passport.use(new GoogleStrategy(
   Helpers.googleOptions,
   function(req, accessToken, refreshToken, params, profile, done) {
@@ -73,6 +78,7 @@ passport.use(new GoogleStrategy(
 ))
 //appsecret is automatically set (?)
 
+/* not supporting twitter or LI now
 passport.use(new TwitterStrategy(
   Helpers.twitterOptions,
   function(req, accessToken, tokenSecret, params, profile, done) {
@@ -102,6 +108,7 @@ passport.use(new LinkedInStrategy(
   }
 ))
 //appsecret is automatically set (?)
+*/
 
 const app = express();
 const apiUrl = process.env.API_URL || 'http://localhost:1337';
@@ -379,4 +386,5 @@ app.use(function(err, req, res, next) {
 });
 
 const port = process.env.PORT || 5000;
+console.log("Now running on Port:", port)
 app.listen(port);
