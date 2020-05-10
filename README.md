@@ -42,4 +42,5 @@ Then fill them all in.
 `npm run deploy`
 
 - to run with oauth, make sure to request all scopes that we specify in nodeHelpers.js. E.g., for Google, make sure to enable webmasters and analytics apis (specifically analytics reporting) and then request access to those scopes for their oauth
+- Unfortunately, Due to the way PassPort is implemented, we also need to ask for Google+ permissions (see [here](https://stackoverflow.com/questions/52736319/passport-js-authenticate-to-gmail-api-leads-to-googleplusapierror))
 - Google API key will have to access to all these apis also

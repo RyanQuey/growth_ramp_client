@@ -355,11 +355,11 @@ console.log("\n\n refresh token", refreshToken);
     // userinfo.email
     scope: [
       "https://www.googleapis.com/auth/analytics.readonly", // to GET google analytics
-      // UPDATE can no longer use userinfo._, calls a GooglePlusAPIError, see here:
-      // https://stackoverflow.com/questions/52736319/passport-js-authenticate-to-gmail-api-leads-to-googleplusapierror
+      // unfortunately, Due to the way PassPort is implemented, we also need to ask for Google+
+      // permissions
       // There's probably a way around it, but don't bother
-      // "https://www.googleapis.com/auth/userinfo.profile", // to login with this token later, and passport seems to need it. ANd this is probably better than google plus stuff
-      // "https://www.googleapis.com/auth/userinfo.email", // to login with this token later, and passport seems to need it. ANd this is probably better than google plus stuff
+      "https://www.googleapis.com/auth/userinfo.profile", // to login with this token later, and passport seems to need it. 
+      "https://www.googleapis.com/auth/userinfo.email", // to login with this token later, and passport seems to need it. 
       "https://www.googleapis.com/auth/webmasters.readonly", // to read GSC stuff. Might do writing later too (?)
       //"https://www.googleapis.com/auth/plus.login", // to login with this token later, and passport seems to need it
     ],
@@ -460,8 +460,8 @@ console.log("\n\n refresh token", refreshToken);
     },
     google: (req, err, raw) => {
       // TODO need to add this error handling
-      console.log("Exception from Google:"); //could be from our api, if decided to throw something too :) (if so, expect it in the raw)
-      console.log(err);
+      console.error("Exception from Google:"); //could be from our api, if decided to throw something too :) (if so, expect it in the raw)
+      console.error(err);
       //if the user rejected the permissions they just asked to give...
       if (err && err.code === 1000) { //TODO fix this
         //then, redirect back to app
