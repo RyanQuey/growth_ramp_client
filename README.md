@@ -1,8 +1,19 @@
-See demo videos [here](https://www.youtube.com/playlist?list=PLGiO0wyxB_OnIQRe9CHlcafq34EdkGoD_).
+# Growth Ramp Frontend Server
+Frontend server built using NodeJS and React. See demo videos [here](https://www.youtube.com/playlist?list=PLGiO0wyxB_OnIQRe9CHlcafq34EdkGoD_).
+
+## App Functionality
+### Content Promotion Campaigns
+Users can use our tool to promote their blog post over several social networks, and several promotion channels. We also supported UTM link creation (which was then shortened using Google link shortener). Users could also build links and keep track of promotion for social networks and channels that we did not support.
+![image](https://github.com/RyanQuey/growth_ramp_api/raw/master/screenshots/Growth-Ramp-Plans.png)
+
+### Content Auditing based off of Google Analytics
+Users can add a website, audit their website based off of Google analytics, and then view some of those analytics using the dashboard.
+
+![image](https://github.com/RyanQuey/growth_ramp_api/raw/master/screenshots/GR-website-overview-chart.png)
 
 # Setup Development Environment
 
-## Prerequisites: 
+## Prerequisites:
 Running on Node 8
 
 - If using nvm, use `nvm use`
@@ -13,18 +24,18 @@ Running on Node 8
 ## Run Local Server
 `npm run watch`
 
-And in separate terminal: 
+And in separate terminal:
 `npm run dev`
 
-It should now be available on port 5000, e.g., 
-`http://172.16.3.2:5000/` if that's where the remote server is, or 
+It should now be available on port 5000, e.g.,
+`http://172.16.3.2:5000/` if that's where the remote server is, or
 `http://localhost:5000/`
 
 Note that we'll have to set things up so Google allows Oauth for local server...harder than it sounds
 
 ## Get Google Oauth consent
 - This app will need to have Google Analytics Reporting API enabled in Google cloud console
-- Make sure to also allow those tokens in the [Oauth consent screen page](https://console.developers.google.com/apis/credentials/consent/edit) 
+- Make sure to also allow those tokens in the [Oauth consent screen page](https://console.developers.google.com/apis/credentials/consent/edit)
 
 ## If you want to use Facebook, Twitter, and LinkedIn, need to apply for those developer accounts as well
 - Our Demo is not supporting any social media platform apart from Google, however.
@@ -32,8 +43,8 @@ Note that we'll have to set things up so Google allows Oauth for local server...
 ## Set Env Vars
 `cp .env.sample .env`
 
-Then fill them all in. 
-- `API_URL` in dev should probably be `localhost:1337`. 
+Then fill them all in.
+- `API_URL` in dev should probably be `localhost:1337`.
 - Some have defaults that work for development environment set already, but many (especially social media account api keys) need to be filled in to work.
 
 
